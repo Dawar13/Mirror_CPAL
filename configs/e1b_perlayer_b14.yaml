@@ -5,6 +5,12 @@ data:
 stats:
   operator_mode: per_layer
 compute:
-  num_workers: 4           # two or three runs share the machine
+  num_workers: 4           # the machine is shared with another project's jobs
+  # Operational only (added after the pre-registration commit; does not change the method): another
+  # project uses about 63 of 80 GB, so cap at 12% and use smaller batches. Statistics are sums over
+  # all images, so batch size only changes floating-point summation order.
+  gpu_memory_fraction: 0.12
+  batch_size: 64
+  stats_batch_size: 16
 matching:
   workers: 4
