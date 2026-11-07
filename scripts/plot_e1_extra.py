@@ -63,8 +63,9 @@ def spectrum(ops, layers_df, path):
         ax.plot(np.arange(len(e)), e / max(np.abs(e).max(), 1e-300), "-", color=color, linewidth=2,
                 label=f"layer {l}")
     ax.axhline(0, color=C_NULL, linewidth=0.8)
+    ax.set_yscale("symlog", linthresh=1e-4)  # one huge even eigenvalue would otherwise flatten the rest
     ax.set_xlabel("eigenvalue rank")
-    ax.set_ylabel("eigenvalue / max |eigenvalue|")
+    ax.set_ylabel("eigenvalue / max |eigenvalue| (symlog)")
     ax.set_title("Spectrum of sym(X^T X~): + even, - odd", fontsize=10, color=C_INK, loc="left")
     ax.legend(frameon=False, fontsize=8)
     _style(ax)

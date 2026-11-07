@@ -1,0 +1,248 @@
+{
+  "date": "2026-11-07 16:38:06",
+  "seed": 0,
+  "git": {
+    "git_hash": "c74827fa0a78ff41933bacef682d36bf7e23727c",
+    "git_dirty": false
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  },
+  "config_path": "configs/e1.yaml",
+  "config": {
+    "seed": 0,
+    "model": {
+      "hub_repo": "facebookresearch/dinov2",
+      "name": "dinov2_vitb14"
+    },
+    "data": {
+      "hf_repo": "ILSVRC/imagenet-1k",
+      "parquet_pattern": "data/validation-*.parquet",
+      "cache_dir": "cache",
+      "resize": 256,
+      "crop": 224,
+      "decode_workers": 16,
+      "per_class": {
+        "fit": 2,
+        "heldout": 1,
+        "bank": 39,
+        "query": 8
+      }
+    },
+    "compute": {
+      "device": "cuda",
+      "gpu_memory_fraction": 0.2,
+      "tf32": false,
+      "batch_size": 128,
+      "stats_batch_size": 32,
+      "num_workers": 8
+    },
+    "stats": {
+      "center": true,
+      "shared_layers": [
+        1,
+        12
+      ],
+      "n_null": 3
+    },
+    "matching": {
+      "top_k": 10,
+      "workers": "auto"
+    },
+    "surgery": {
+      "ks": [
+        6,
+        3,
+        9
+      ]
+    },
+    "knn": {
+      "k": 20,
+      "temperature": 0.07
+    },
+    "decision": {
+      "blocks": [
+        1,
+        6
+      ],
+      "e_null_ratio_go": 5.0,
+      "e_null_ratio_kill": 3.0,
+      "e_identity_ratio_go": 0.5,
+      "dminus_go": 0.2,
+      "dminus_kill": 0.1,
+      "share_go": 0.2,
+      "share_kill": 0.3,
+      "evidence_dminus": 0.2,
+      "evidence_twin_frac": 0.2,
+      "surgery_k": 6,
+      "surgery_drop_go": 10.0,
+      "surgery_margin_go": 5.0
+    },
+    "tiny_mode": false,
+    "config_path": "configs/e1.yaml"
+  },
+  "tiny": false,
+  "split_sizes": {
+    "fit": 2000,
+    "heldout": 1000,
+    "bank": 39000,
+    "query": 8000
+  },
+  "timing": {
+    "stages": {
+      "load": 1.91,
+      "sanity": 0.78,
+      "fit_stats": 19.76,
+      "fit_operators": 5.24,
+      "heldout_errors": 8.92,
+      "position_check": 0.02,
+      "mlp_matching": 160.1,
+      "breaking_share": 0.56,
+      "surgery_knn": 1486.06
+    },
+    "total_s": 1687.96
+  },
+  "shared": {
+    "d_plus": 760,
+    "d_minus": 8,
+    "n_zero": 1,
+    "layers": [
+      1,
+      12
+    ],
+    "d_plus_norm": 672,
+    "d_minus_norm": 96
+  },
+  "matching_workers": 11,
+  "position_check": {
+    "channel_centred": {
+      "A_shared": 0.809148582959541,
+      "A_0 (layer 0)": 0.25605439533895297,
+      "identity": 0.9670089889884912,
+      "null": 0.9809456446191042
+    },
+    "grid_centred": {
+      "A_shared": 0.8449659123933491,
+      "A_0 (layer 0)": 0.24492046294537265,
+      "identity": 1.0136650237977602,
+      "null": 1.0260647118122703
+    }
+  },
+  "sanity": {
+    "fold_max_abs_diff": 6.67572021484375e-06,
+    "identity_surgery_max_abs_diff": 2.8133392333984375e-05
+  },
+  "decision": {
+    "rows": [
+      {
+        "row": 1,
+        "check": "e(null) / e(A_shared), mean over layers; worst layer 1: 1.02",
+        "value": 1.1023735232133942,
+        "go": ">= 5",
+        "kill": "< 3",
+        "cell": "KILL"
+      },
+      {
+        "row": 2,
+        "check": "e(A_shared) / e(I), mean over layers; worst layer 1: 0.996",
+        "value": 0.9375636626401929,
+        "go": "<= 0.5",
+        "kill": "informative only",
+        "cell": "INFO"
+      },
+      {
+        "row": 3,
+        "check": "d- / d (shared operator)",
+        "value": 0.010416666666666666,
+        "go": ">= 0.2",
+        "kill": "< 0.1: blocks GO, no KILL (PIVOT: little to save)",
+        "cell": "KILL"
+      },
+      {
+        "row": 4,
+        "check": "MLP breaking share, max(mean s1, mean s2) [s1 0.307, s2 0.256; matched null s1 0.307, s2 0.308; twin fraction 0.610, d-/d 0.010]",
+        "value": 0.3071605659054984,
+        "go": "<= 0.2, and d-/d >= 0.2 or twin fraction >= 0.2",
+        "kill": "> 0.3",
+        "cell": "KILL"
+      },
+      {
+        "row": 5,
+        "check": "Zero-shot surgery at k = 6: k-NN drop [original 78.21, surgery 14.10, SVD 72.45; margin over SVD -58.35]",
+        "value": 64.11250531673431,
+        "go": "drop <= 10 and margin >= 5",
+        "kill": "no better than SVD (margin <= 0)",
+        "cell": "KILL"
+      }
+    ],
+    "outcome": "KILL",
+    "reason": "KILL cell in row(s) 1, 4, 5",
+    "per_layer": [
+      {
+        "layer": 1,
+        "r1": 1.024964887501568,
+        "r2": 0.9962113359532776
+      },
+      {
+        "layer": 2,
+        "r1": 1.0392564163553486,
+        "r2": 0.9853192945325074
+      },
+      {
+        "layer": 3,
+        "r1": 1.0602855352386609,
+        "r2": 0.976115548134856
+      },
+      {
+        "layer": 4,
+        "r1": 1.2027140026701475,
+        "r2": 0.860880031068006
+      },
+      {
+        "layer": 5,
+        "r1": 1.1929251505020495,
+        "r2": 0.8726371458374577
+      },
+      {
+        "layer": 6,
+        "r1": 1.2259575990199694,
+        "r2": 0.8672441236690988
+      }
+    ],
+    "worst": {
+      "row1": {
+        "layer": 1,
+        "r1": 1.024964887501568,
+        "r2": 0.9962113359532776
+      },
+      "row2": {
+        "layer": 1,
+        "r1": 1.024964887501568,
+        "r2": 0.9962113359532776
+      }
+    },
+    "numbers": {
+      "e_A_shared": 0.7700801257584365,
+      "e_null_shared": 0.8489159413889414,
+      "e_I": 0.8213630246610452,
+      "s1": 0.3071605659054984,
+      "s2": 0.2564727351825575,
+      "s1_null": 0.306740534071556,
+      "s2_null": 0.3082698658735097,
+      "twin_frac": 0.609592013888889,
+      "evidence": true,
+      "top1_original": 78.21250557899475,
+      "top1_surgery": 14.100000262260437,
+      "top1_svd": 72.4500060081482,
+      "drop": 64.11250531673431,
+      "margin_over_svd": -58.350005745887756,
+      "d_minus_frac": 0.010416666666666666
+    }
+  }
+}
