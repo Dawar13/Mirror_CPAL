@@ -25,6 +25,7 @@ wait_for_gpu() {
 
 for arm in e1b_perlayer_b14 e1b_perlayer_b14reg e1b_shared16_b14; do
   mkdir -p runs/$arm/results
+  [ -f runs/$arm/results/E1_REPORT.md ] && { echo "== already done $arm"; continue; }
   wait_for_gpu || { echo "== SKIPPED $arm (no GPU memory) $(date)"; continue; }
   echo "== start $arm $(date)"
   if python scripts/run_e1.py --config configs/$arm.yaml --out-root runs/$arm > runs/$arm/results/e1_log.txt 2>&1 \
