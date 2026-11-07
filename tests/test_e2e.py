@@ -24,7 +24,9 @@ def test_run_e1_tiny_writes_all_outputs(tmp_path):
     for rel in OUTPUTS:
         assert (tmp_path / rel).is_file(), rel
     report = (tmp_path / "results/E1_REPORT.md").read_text(encoding="utf-8")
-    assert any(f"**Outcome: {o}.**" in report for o in ("GO", "PIVOT", "KILL", "AMBER"))
+    outcomes = ("GO", "PIVOT", "PIVOT: structure but little to save", "KILL", "AMBER")
+    assert any(f"**Outcome: {o}.**" in report for o in outcomes)
+    assert "matched null" in report and "twin fraction" in report and "(worst)" in report
     assert "—" not in report  # no em-dashes
     meta = json.loads((tmp_path / "results/e1_meta.json").read_text(encoding="utf-8"))
     assert meta["seed"] == 0 and "git_hash" in meta["git"]

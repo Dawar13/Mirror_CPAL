@@ -34,7 +34,8 @@ from mirror.adapters import build_adapter  # noqa: E402
 from mirror.data import SPLIT_NAMES, get_data, make_loader, normalize  # noqa: E402
 from mirror.fit import agreement, fit_layers, involution_trace, random_involution  # noqa: E402
 from mirror.knn import evaluate_knn  # noqa: E402
-from mirror.matching import match_many, random_pairing  # noqa: E402
+from mirror.matching import match_many  # noqa: E402
+from mirror.nulls import matched_null  # noqa: E402
 from mirror.report import decide, plot_breaking_share, plot_equivariance, write_report  # noqa: E402
 from mirror.stats import collect_fit_stats, collect_heldout_errors  # noqa: E402
 from mirror.surgery import (absorb_block, apply_surgery, apply_svd_baseline,  # noqa: E402
@@ -192,25 +193,37 @@ def main(argv=None) -> dict:
         del R_list
 
     with timer.stage("breaking_share"):
-        A_rand = nulls_shared[0]
         tr_A = involution_trace(A_s)
-        P_rand = [random_pairing(h, matches[b].n_pairs, seed=seed + 5000 + b) for b in range(L)]
+        dminus_frac = fit["d_minus_shared"] / d
+        dc = cfg["decision"]
+        # Matched nulls: same d+ and d- as A_shared (same seeds as the residual nulls, so the same
+        # operators) and, per block, the same numbers of pairs and self-twins as the fitted pairing.
+        nulls = [matched_null(d, fit["d_plus_shared"], [m.n_pairs for m in matches], h, seed=seed + 101 + s)
+                 for s in range(n_null)]
+        A_rand, P_rand = nulls[0].A, nulls[0].perms  # also used for random-involution surgery
         mlp_rows = []
         for b in range(L):
             blk, mres = adapter.model.blocks[b], matches[b]
             sh = mlp_breaking_shares(blk, A_s, mres.perm)
-            shn = mlp_breaking_shares(blk, A_rand, P_rand[b])
+            shn = [mlp_breaking_shares(blk, nl.A, nl.perms[b]) for nl in nulls]
+            s1n = float(np.mean([x["s1"] for x in shn]))
+            s2n = float(np.mean([x["s2"] for x in shn]))
             eq = equivariant_param_count(h, d, mres.trace, tr_A)
             r = svd_rank_for(h, d, eq)
             paired = mres.score[mres.perm != np.arange(h)]
             selfs = mres.score[mres.self_twins]
+            twin = 2 * mres.n_pairs / h
             mlp_rows.append({
                 "block": b + 1, "h": h, "d": d, "n_pairs": mres.n_pairs, "n_self": mres.n_self,
-                "frac_paired": 2 * mres.n_pairs / h, "mean_score": float(mres.score.mean()),
+                "twin_frac": twin, "dminus_frac": dminus_frac,
+                "evidence": bool(dminus_frac >= dc["evidence_dminus"] or twin >= dc["evidence_twin_frac"]),
+                "mean_score": float(mres.score.mean()),
                 "mean_score_pairs": float(paired.mean()) if paired.size else float("nan"),
                 "mean_score_self": float(selfs.mean()) if selfs.size else float("nan"),
                 "s1": sh["s1"], "s2": sh["s2"], "sb1": sh["sb1"], "sb2": sh["sb2"],
-                "s1_null": shn["s1"], "s2_null": shn["s2"],
+                "s1_null": s1n, "s2_null": s2n,
+                "s1_over_null": sh["s1"] / s1n if s1n > 0 else float("nan"),
+                "s2_over_null": sh["s2"] / s2n if s2n > 0 else float("nan"),
                 "tr_P": mres.trace, "tr_A": tr_A, "eq_params": eq, "dense_params": h * d,
                 "param_saving_frac": 1 - eq / (h * d), "svd_rank": r, "svd_params": r * (h + d),
             })
@@ -295,7 +308,8 @@ def main(argv=None) -> dict:
         "d": d, "d_plus_shared": fit["d_plus_shared"], "d_minus_shared": fit["d_minus_shared"],
         "n_zero_shared": fit["n_zero_shared"], "shared_layers": shared_layers, "n_null": n_null,
         "grid": adapter.grid_hw, "decision_blocks": cfg["decision"]["blocks"],
-        "surgery_k": cfg["decision"]["surgery_k"],
+        "surgery_k": cfg["decision"]["surgery_k"], "evidence_dminus": cfg["decision"]["evidence_dminus"],
+        "evidence_twin_frac": cfg["decision"]["evidence_twin_frac"],
     })
     log(f"OUTCOME: {decision['outcome']} ({decision['reason']})")
     log(f"wrote {res_dir / 'E1_REPORT.md'} in {timer.total() / 60:.1f} min")

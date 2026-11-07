@@ -71,14 +71,15 @@ def test_knn_predict_weighted_votes():
 
 DCFG = {"blocks": [1, 2], "e_null_ratio_go": 5.0, "e_null_ratio_kill": 3.0, "e_identity_ratio_go": 0.5,
         "dminus_go": 0.2, "dminus_kill": 0.1, "share_go": 0.2, "share_kill": 0.3, "surgery_k": 2,
-        "surgery_drop_go": 10.0, "surgery_margin_go": 5.0}
+        "surgery_drop_go": 10.0, "surgery_margin_go": 5.0, "evidence_dminus": 0.2, "evidence_twin_frac": 0.2}
 
 
-def frames(e_A=0.01, e_null=0.2, e_I=0.1, s=0.1, orig=80.0, surg=75.0, svd=60.0):
-    layers = pd.DataFrame({"layer": [0, 1, 2, 3], "rel_e_A_shared": [e_A] * 4,
+def frames(e_A=0.01, e_null=0.2, e_I=0.1, s=0.1, orig=80.0, surg=75.0, svd=60.0, twin=0.5, e_A_layer2=None):
+    e_A_layers = [e_A, e_A, e_A if e_A_layer2 is None else e_A_layer2, e_A]
+    layers = pd.DataFrame({"layer": [0, 1, 2, 3], "rel_e_A_shared": e_A_layers,
                            "rel_e_null_shared": [e_null] * 4, "rel_e_I": [e_I] * 4})
     mlp = pd.DataFrame({"block": [1, 2, 3], "s1": [s] * 3, "s2": [s] * 3, "s1_null": [0.5] * 3,
-                        "s2_null": [0.5] * 3})
+                        "s2_null": [0.5] * 3, "twin_frac": [twin] * 3})
     surgery = pd.DataFrame({"k": [0, 2, 2], "variant": ["original", "surgery", "svd"], "top1": [orig, surg, svd]})
     return layers, mlp, surgery
 
@@ -90,5 +91,37 @@ def test_decision_go_pivot_kill_amber():
     assert decide(*frames(s=0.35), 0.3, DCFG)["outcome"] == "KILL"               # row 4
     assert decide(*frames(svd=76.0), 0.3, DCFG)["outcome"] == "KILL"             # row 5
     assert decide(*frames(e_null=0.04), 0.3, DCFG)["outcome"] == "AMBER"         # ratio 4: between
-    out = decide(*frames(), 0.05, DCFG)                                           # row 3 KILL cell
-    assert out["outcome"] == "AMBER" and out["rows"][2]["cell"] == "KILL"
+
+
+def test_decision_little_to_save():
+    out = decide(*frames(), 0.05, DCFG)                                           # d-/d < 0.1, many pairs
+    assert out["rows"][2]["cell"] == "KILL"
+    assert out["outcome"] == "PIVOT: structure but little to save"
+    assert decide(*frames(s=0.35), 0.05, DCFG)["outcome"] == "KILL"              # KILL still wins
+
+
+def test_decision_low_share_needs_evidence():
+    # Low share, few pairs and d-/d < 0.2: the share is not evidence, so row 4 is not GO.
+    out = decide(*frames(twin=0.05), 0.15, DCFG)
+    assert out["rows"][3]["cell"] == "AMBER" and out["outcome"] == "AMBER"
+    assert "NOT evidence" in out["rows"][3]["check"]
+    # Many pairs is enough evidence even with small d-/d.
+    assert decide(*frames(twin=0.5), 0.15, DCFG)["rows"][3]["cell"] == "GO"
+    # Large d-/d is enough evidence even with few pairs.
+    assert decide(*frames(twin=0.05), 0.3, DCFG)["rows"][3]["cell"] == "GO"
+
+
+def test_decision_reports_per_layer_and_worst():
+    out = decide(*frames(e_A_layer2=0.05), 0.3, DCFG)  # layer 2 is the bad one
+    assert [p["layer"] for p in out["per_layer"]] == [1, 2]
+    assert out["worst"]["row1"]["layer"] == 2 and out["worst"]["row2"]["layer"] == 2
+    assert "worst layer 2" in out["rows"][0]["check"]
+
+
+def test_matched_null_has_fitted_counts():
+    from mirror.nulls import matched_null
+
+    nl = matched_null(d=20, d_plus=13, n_pairs_per_block=[0, 5, 31], h=64, seed=3)
+    assert (nl.d_plus, nl.d_minus) == (13, 7)
+    assert nl.n_pairs == [0, 5, 31] and nl.n_self == [64, 54, 2]
+    assert all(np.array_equal(p[p], np.arange(64)) for p in nl.perms)

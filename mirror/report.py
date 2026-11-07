@@ -1,14 +1,17 @@
 """E1 decision table, plots and the markdown report.
 
-Aggregation over "blocks 1 to 6" (the table does not say how to combine blocks; the choice is
-stated in the report):
+Aggregation over "blocks 1 to 6" (approved 2026-11-07):
   rows 1 and 2  mean over layers 1..6 (layer l = output of block l) of relative held-out errors
-                e / ||Xt||^2, then the ratio of those means;
-  row 3         d- / d of the shared operator;
-  row 4         mean over blocks 1..6 of s1 and of s2 separately; the check uses the worse (max);
+                e / ||Xt||^2, then the ratio of those means; every layer's value and the worst
+                layer are reported as well;
+  row 3         d- / d of the shared operator; below 0.1 blocks GO but does not trigger KILL;
+  row 4         mean over blocks 1..6 of s1 and of s2 separately; the check uses the worse (max).
+                GO also needs evidence that the structure is not trivial: d-/d >= 0.2 or a mean
+                twin-neuron fraction >= evidence_twin_frac. Shares are shown next to a matched null;
   row 5         k-NN top-1 at k = 6 (surgery on blocks 1..6).
-Outcome: KILL if any KILL cell in rows 1, 4 or 5; else GO if every row is GO; else PIVOT if rows 1
-to 4 are GO and the surgery drop is above 10 points; otherwise AMBER (the table gives no verdict).
+Outcome, in order: KILL if any KILL cell in rows 1, 4 or 5; GO if every row is GO;
+"PIVOT: structure but little to save" if d-/d < 0.1; PIVOT if rows 1 to 4 are GO and the surgery
+drop is above 10 points; otherwise AMBER (the table gives no verdict).
 """
 from __future__ import annotations
 
@@ -18,6 +21,7 @@ from pathlib import Path
 import numpy as np
 
 GO, KILL, AMBER, INFO, MISSING = "GO", "KILL", "AMBER", "INFO", "MISSING"
+PIVOT, PIVOT_LITTLE = "PIVOT", "PIVOT: structure but little to save"
 
 # Categorical slots 1 to 3 of the reference palette (validated, light surface), plus neutral ink.
 C_BLUE, C_ORANGE, C_AQUA = "#2a78d6", "#eb6834", "#1baf7a"
@@ -44,29 +48,59 @@ def decide(layers_df, mlp_df, surgery_df, d_minus_frac: float, dcfg: dict) -> di
     e_null = float(L["rel_e_null_shared"].mean())
     e_I = float(L["rel_e_I"].mean())
 
+    # Per-layer values behind rows 1 and 2, and the worst layer of each.
+    per_layer = []
+    for _, r in L.iterrows():
+        per_layer.append({"layer": int(r["layer"]),
+                          "r1": _ratio(r["rel_e_null_shared"], r["rel_e_A_shared"]),
+                          "r2": _ratio(r["rel_e_A_shared"], r["rel_e_I"])})
+    ok1 = [p for p in per_layer if not math.isnan(p["r1"])]
+    ok2 = [p for p in per_layer if not math.isnan(p["r2"])]
+    worst1 = min(ok1, key=lambda p: p["r1"]) if ok1 else None   # row 1: lower ratio is worse
+    worst2 = max(ok2, key=lambda p: p["r2"]) if ok2 else None   # row 2: higher ratio is worse
+
+    def worst_txt(w, key):
+        return f"; worst layer {w['layer']}: {_fmt(w[key], '.3g')}" if w else ""
+
     r1 = _ratio(e_null, e_A)
     cell1 = GO if r1 >= dcfg["e_null_ratio_go"] else KILL if r1 < dcfg["e_null_ratio_kill"] else AMBER
-    rows.append({"row": 1, "check": "e(A_shared) vs e(null): e(null) / e(A_shared)", "value": r1,
-                 "go": f">= {dcfg['e_null_ratio_go']:g}", "kill": f"< {dcfg['e_null_ratio_kill']:g}",
+    rows.append({"row": 1, "check": f"e(null) / e(A_shared), mean over layers{worst_txt(worst1, 'r1')}",
+                 "value": r1, "go": f">= {dcfg['e_null_ratio_go']:g}", "kill": f"< {dcfg['e_null_ratio_kill']:g}",
                  "cell": cell1 if _finite(r1) or r1 == float("inf") else MISSING})
 
     r2 = _ratio(e_A, e_I)
     cell2 = GO if _finite(r2) and r2 <= dcfg["e_identity_ratio_go"] else INFO
-    rows.append({"row": 2, "check": "e(A_shared) / e(I)", "value": r2,
-                 "go": f"<= {dcfg['e_identity_ratio_go']:g}", "kill": "informative only", "cell": cell2})
+    rows.append({"row": 2, "check": f"e(A_shared) / e(I), mean over layers{worst_txt(worst2, 'r2')}",
+                 "value": r2, "go": f"<= {dcfg['e_identity_ratio_go']:g}", "kill": "informative only",
+                 "cell": cell2})
 
     cell3 = GO if d_minus_frac >= dcfg["dminus_go"] else KILL if d_minus_frac < dcfg["dminus_kill"] else AMBER
     rows.append({"row": 3, "check": "d- / d (shared operator)", "value": d_minus_frac,
-                 "go": f">= {dcfg['dminus_go']:g}", "kill": f"< {dcfg['dminus_kill']:g} (not decisive)",
+                 "go": f">= {dcfg['dminus_go']:g}",
+                 "kill": f"< {dcfg['dminus_kill']:g}: blocks GO, no KILL (PIVOT: little to save)",
                  "cell": cell3})
 
     s1, s2 = float(M["s1"].mean()), float(M["s2"].mean())
+    s1n, s2n = float(M["s1_null"].mean()), float(M["s2_null"].mean())
     s = max(s1, s2)
-    cell4 = GO if s <= dcfg["share_go"] else KILL if s > dcfg["share_kill"] else AMBER
+    twin = float(M["twin_frac"].mean())
+    evidence = d_minus_frac >= dcfg["evidence_dminus"] or twin >= dcfg["evidence_twin_frac"]
+    if not _finite(s):
+        cell4 = MISSING
+    elif s > dcfg["share_kill"]:
+        cell4 = KILL
+    elif s <= dcfg["share_go"] and evidence:
+        cell4 = GO
+    else:
+        cell4 = AMBER
+    note4 = "" if evidence or s > dcfg["share_go"] else "; low share is NOT evidence here (structure near trivial)"
     rows.append({"row": 4, "check": f"MLP breaking share, max(mean s1, mean s2) [s1 {s1:.3f}, s2 {s2:.3f}; "
-                                    f"null s1 {M['s1_null'].mean():.3f}, s2 {M['s2_null'].mean():.3f}]",
-                 "value": s, "go": f"<= {dcfg['share_go']:g}", "kill": f"> {dcfg['share_kill']:g}",
-                 "cell": cell4 if _finite(s) else MISSING})
+                                    f"matched null s1 {s1n:.3f}, s2 {s2n:.3f}; twin fraction {twin:.3f}, "
+                                    f"d-/d {d_minus_frac:.3f}{note4}]",
+                 "value": s,
+                 "go": f"<= {dcfg['share_go']:g}, and d-/d >= {dcfg['evidence_dminus']:g} or twin fraction >= "
+                       f"{dcfg['evidence_twin_frac']:g}",
+                 "kill": f"> {dcfg['share_kill']:g}", "cell": cell4})
 
     k = int(dcfg["surgery_k"])
     def top1(variant, kk):
@@ -91,19 +125,26 @@ def decide(layers_df, mlp_df, surgery_df, d_minus_frac: float, dcfg: dict) -> di
 
     cells = {r["row"]: r["cell"] for r in rows}
     kill_rows = [i for i in (1, 4, 5) if cells[i] == KILL]
+    open_rows = [str(i) for i, c in cells.items() if c != GO and i != 3]
     if kill_rows:
         outcome, reason = KILL, f"KILL cell in row(s) {', '.join(map(str, kill_rows))}"
     elif all(c == GO for c in cells.values()):
         outcome, reason = GO, "every check is in its GO cell"
+    elif cells[3] == KILL:
+        outcome = PIVOT_LITTLE
+        reason = (f"d-/d = {d_minus_frac:.3f} is below {dcfg['dminus_kill']:g}, which blocks GO but does not "
+                  "trigger KILL" + (f"; also not GO: row(s) {', '.join(open_rows)}" if open_rows else ""))
     elif all(cells[i] == GO for i in (1, 2, 3, 4)) and _finite(drop) and drop > dcfg["surgery_drop_go"]:
-        outcome, reason = "PIVOT", (f"structure checks pass but the surgery drop is {drop:.2f} points "
-                                    f"(above {dcfg['surgery_drop_go']:g}); run the 1-hour healing check")
+        outcome, reason = PIVOT, (f"structure checks pass but the surgery drop is {drop:.2f} points "
+                                  f"(above {dcfg['surgery_drop_go']:g}); run the 1-hour healing check")
     else:
-        open_rows = [str(i) for i, c in cells.items() if c != GO]
-        outcome, reason = AMBER, (f"no rule fires: row(s) {', '.join(open_rows)} not GO and no KILL cell "
+        open_all = [str(i) for i, c in cells.items() if c != GO]
+        outcome, reason = AMBER, (f"no rule fires: row(s) {', '.join(open_all)} not GO and no KILL cell "
                                   "in rows 1, 4, 5; needs a human decision")
-    return {"rows": rows, "outcome": outcome, "reason": reason,
+    return {"rows": rows, "outcome": outcome, "reason": reason, "per_layer": per_layer,
+            "worst": {"row1": worst1, "row2": worst2},
             "numbers": {"e_A_shared": e_A, "e_null_shared": e_null, "e_I": e_I, "s1": s1, "s2": s2,
+                        "s1_null": s1n, "s2_null": s2n, "twin_frac": twin, "evidence": bool(evidence),
                         "top1_original": orig, "top1_surgery": surg, "top1_svd": svd,
                         "drop": drop, "margin_over_svd": margin, "d_minus_frac": d_minus_frac}}
 
@@ -183,8 +224,8 @@ def plot_breaking_share(mlp_df, path: Path, dcfg: dict, title_suffix: str = "") 
     ax.set_facecolor("#fcfcfb")
     ax.plot(x, mlp_df["s1"], "-", color=C_BLUE, marker="o", markersize=5, linewidth=2, label="fc1 (s1)")
     ax.plot(x, mlp_df["s2"], "-", color=C_ORANGE, marker="s", markersize=5, linewidth=2, label="fc2 (s2)")
-    ax.plot(x, mlp_df["s1_null"], "--", color=C_NULL, linewidth=2, label="null, fc1")
-    ax.plot(x, mlp_df["s2_null"], ":", color=C_NULL, linewidth=2, label="null, fc2")
+    ax.plot(x, mlp_df["s1_null"], "--", color=C_NULL, linewidth=2, label="matched null, fc1")
+    ax.plot(x, mlp_df["s2_null"], ":", color=C_NULL, linewidth=2, label="matched null, fc2")
     for thr, name in ((dcfg["share_go"], "GO"), (dcfg["share_kill"], "KILL")):
         ax.axhline(thr, color=C_MUTED, linewidth=0.8, linestyle=(0, (2, 3)))
         ax.annotate(f"{name} {thr:g}", (x.min(), thr), textcoords="offset points", xytext=(0, 3),
@@ -198,14 +239,19 @@ def plot_breaking_share(mlp_df, path: Path, dcfg: dict, title_suffix: str = "") 
 
     ax = axes[1]
     ax.set_facecolor("#fcfcfb")
-    ax.plot(x, mlp_df["frac_paired"], "-", color=C_BLUE, marker="o", markersize=5, linewidth=2,
-            label="share of neurons in twin pairs")
-    ax.plot(x, mlp_df["param_saving_frac"], "-", color=C_ORANGE, marker="s", markersize=5, linewidth=2,
+    ax.plot(x, mlp_df["twin_frac"], "-", color=C_BLUE, marker="o", markersize=5, linewidth=2,
+            label="twin-neuron fraction (neurons in pairs / all)")
+    ax.plot(x, mlp_df["dminus_frac"], "-", color=C_ORANGE, marker="s", markersize=5, linewidth=2,
+            label="d- / d (shared operator)")
+    ax.plot(x, mlp_df["param_saving_frac"], "-", color=C_AQUA, marker="^", markersize=5, linewidth=2,
             label="implied MLP parameter saving")
+    ax.axhline(dcfg["evidence_dminus"], color=C_MUTED, linewidth=0.8, linestyle=(0, (2, 3)))
+    ax.annotate(f"evidence {dcfg['evidence_dminus']:g}", (x.min(), dcfg["evidence_dminus"]),
+                textcoords="offset points", xytext=(0, 3), fontsize=8, color=C_MUTED)
     ax.set_xlabel("block")
     ax.set_ylim(-0.02, 1.02)
-    ax.set_title("Twin structure", fontsize=10, color=C_INK, loc="left")
-    ax.legend(frameon=False, fontsize=8)
+    ax.legend(frameon=False, fontsize=8, loc="upper right")
+    ax.set_title("Twin structure and odd share", fontsize=10, color=C_INK, loc="left")
     _style(ax)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
@@ -216,6 +262,8 @@ def plot_breaking_share(mlp_df, path: Path, dcfg: dict, title_suffix: str = "") 
 # Markdown
 # ----------------------------------------------------------------------------------------------
 def _fmt(v, spec: str) -> str:
+    if isinstance(v, (bool, np.bool_)):
+        return "yes" if v else "no"
     if isinstance(v, (int, np.integer)):
         return str(int(v))
     if isinstance(v, (float, np.floating)):
@@ -271,12 +319,25 @@ def write_report(path: Path, ctx: dict) -> None:
         lines.append(f"| {r['row']} | {r['check']} | {_fmt(r['value'], '.4g')} | {r['go']} | {r['kill']} | "
                      f"**{r['cell']}** |")
     lines.append("")
-    lines.append(f"How blocks are combined (the table does not specify it): rows 1 and 2 use the mean over "
-                 f"layers {lo} to {hi} (layer l is the output of block l) of the relative held-out error "
-                 f"e / ||X~||², then the ratio of those means; row 4 averages s1 and s2 over blocks {lo} to "
-                 f"{hi} and uses the larger; row 5 uses surgery on the first {ctx['surgery_k']} blocks. "
-                 "Rule: KILL if any KILL cell in rows 1, 4 or 5; GO if all rows are GO; PIVOT if rows 1 to 4 "
-                 "are GO and the drop is above the GO limit; otherwise AMBER (the table gives no verdict).")
+    w1, w2 = d["worst"]["row1"], d["worst"]["row2"]
+    lines.append(f"Per-layer values behind rows 1 and 2 (layer l is the output of block l). Worst layer: row 1 "
+                 f"layer {w1['layer'] if w1 else 'n/a'}, row 2 layer {w2['layer'] if w2 else 'n/a'}.")
+    lines.append("")
+    lines.append("| Layer | e(null) / e(A_shared) | e(A_shared) / e(I) |")
+    lines.append("|---|---|---|")
+    for p in d["per_layer"]:
+        m1 = " (worst)" if w1 and p["layer"] == w1["layer"] else ""
+        m2 = " (worst)" if w2 and p["layer"] == w2["layer"] else ""
+        lines.append(f"| {p['layer']} | {_fmt(p['r1'], '.4g')}{m1} | {_fmt(p['r2'], '.4g')}{m2} |")
+    lines.append("")
+    lines.append(f"How blocks are combined: rows 1 and 2 use the mean over layers {lo} to {hi} of the relative "
+                 f"held-out error e / ||X~||², then the ratio of those means. Row 4 averages s1 and s2 over "
+                 f"blocks {lo} to {hi} and uses the larger; a low share counts as evidence only if d-/d is at "
+                 f"least {ctx['evidence_dminus']:g} or the mean twin-neuron fraction is at least "
+                 f"{ctx['evidence_twin_frac']:g}. Row 5 uses surgery on the first {ctx['surgery_k']} blocks. "
+                 "Outcome, in order: KILL if any KILL cell in rows 1, 4 or 5; GO if all rows are GO; "
+                 "PIVOT: structure but little to save, if d-/d is below the row 3 KILL limit; PIVOT if rows 1 "
+                 "to 4 are GO and the drop is above the GO limit; otherwise AMBER (the table gives no verdict).")
     lines.append("")
 
     lines.append("## Residual stream: one mirror operator?")
@@ -318,13 +379,20 @@ def write_report(path: Path, ctx: dict) -> None:
     lines.append("## MLP twins and breaking share")
     lines.append("")
     lines.append("Neuron involution per block from the mirrored-versus-original fc1 correlations; breaking "
-                 "share of the folded weights against the shared operator. Null: random involution with "
-                 "the same d+ and random pairing with the same number of pairs.")
+                 "share of the folded weights against the shared operator. Matched null (mean of "
+                 f"{ctx['n_null']} seeds): a random involution with the same d+ and d- as the shared operator "
+                 "and, per block, a random pairing with the same numbers of pairs and self-twins as the fitted "
+                 "one. If the fitted structure is nearly trivial (few odd features, few pairs), the matched "
+                 "null is nearly trivial too and its share is also low; a low share then is not evidence. "
+                 "Twin fraction = neurons in pairs / all neurons. Evidence = d-/d at least "
+                 f"{ctx['evidence_dminus']:g} or twin fraction at least {ctx['evidence_twin_frac']:g}.")
     lines.append("")
     lines.append(md_table(ctx["mlp_df"], [
         ("block", "block", "d"), ("n_pairs", "pairs", "d"), ("n_self", "self-twins", "d"),
+        ("twin_frac", "twin fraction", ".3f"), ("dminus_frac", "d-/d", ".3f"),
         ("mean_score_pairs", "mean corr (pairs)", ".3f"), ("mean_score_self", "mean corr (self)", ".3f"),
-        ("s1", "s1", ".3f"), ("s2", "s2", ".3f"), ("s1_null", "s1 null", ".3f"), ("s2_null", "s2 null", ".3f"),
+        ("s1", "s1", ".3f"), ("s1_null", "s1 matched null", ".3f"),
+        ("s2", "s2", ".3f"), ("s2_null", "s2 matched null", ".3f"), ("evidence", "evidence", "s"),
         ("param_saving_frac", "implied saving", ".3f"), ("svd_rank", "SVD rank", "d"),
     ]))
     lines.append("")
