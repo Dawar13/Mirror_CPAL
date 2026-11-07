@@ -38,22 +38,27 @@ def _ratio(a, b):
     return float(a) / float(b) if b != 0 else float("inf")
 
 
-def decide(layers_df, mlp_df, surgery_df, d_minus_frac: float, dcfg: dict) -> dict:
+def decide(layers_df, mlp_df, surgery_df, d_minus_frac: float, dcfg: dict, mode: str = "shared") -> dict:
+    """`mode` "shared" tests one operator for all layers (E1); "per_layer" tests each layer's own
+    operator (E1b). The thresholds and the outcome rule are the same in both modes."""
     lo, hi = int(dcfg["blocks"][0]), int(dcfg["blocks"][1])
     L = layers_df[(layers_df["layer"] >= lo) & (layers_df["layer"] <= hi)]
     M = mlp_df[(mlp_df["block"] >= lo) & (mlp_df["block"] <= hi)]
     rows = []
+    col_A = "rel_e_A_used" if "rel_e_A_used" in L else "rel_e_A_shared"
+    col_null = "rel_e_null_used" if "rel_e_null_used" in L else "rel_e_null_shared"
+    opA = "A_l (per layer)" if mode == "per_layer" else "A_shared"
 
-    e_A = float(L["rel_e_A_shared"].mean())
-    e_null = float(L["rel_e_null_shared"].mean())
+    e_A = float(L[col_A].mean())
+    e_null = float(L[col_null].mean())
     e_I = float(L["rel_e_I"].mean())
 
     # Per-layer values behind rows 1 and 2, and the worst layer of each.
     per_layer = []
     for _, r in L.iterrows():
         per_layer.append({"layer": int(r["layer"]),
-                          "r1": _ratio(r["rel_e_null_shared"], r["rel_e_A_shared"]),
-                          "r2": _ratio(r["rel_e_A_shared"], r["rel_e_I"])})
+                          "r1": _ratio(r[col_null], r[col_A]),
+                          "r2": _ratio(r[col_A], r["rel_e_I"])})
     ok1 = [p for p in per_layer if not math.isnan(p["r1"])]
     ok2 = [p for p in per_layer if not math.isnan(p["r2"])]
     worst1 = min(ok1, key=lambda p: p["r1"]) if ok1 else None   # row 1: lower ratio is worse
@@ -64,18 +69,20 @@ def decide(layers_df, mlp_df, surgery_df, d_minus_frac: float, dcfg: dict) -> di
 
     r1 = _ratio(e_null, e_A)
     cell1 = GO if r1 >= dcfg["e_null_ratio_go"] else KILL if r1 < dcfg["e_null_ratio_kill"] else AMBER
-    rows.append({"row": 1, "check": f"e(null) / e(A_shared), mean over layers{worst_txt(worst1, 'r1')}",
+    rows.append({"row": 1, "check": f"e(null) / e({opA}), mean over layers{worst_txt(worst1, 'r1')}",
                  "value": r1, "go": f">= {dcfg['e_null_ratio_go']:g}", "kill": f"< {dcfg['e_null_ratio_kill']:g}",
                  "cell": cell1 if _finite(r1) or r1 == float("inf") else MISSING})
 
     r2 = _ratio(e_A, e_I)
     cell2 = GO if _finite(r2) and r2 <= dcfg["e_identity_ratio_go"] else INFO
-    rows.append({"row": 2, "check": f"e(A_shared) / e(I), mean over layers{worst_txt(worst2, 'r2')}",
+    rows.append({"row": 2, "check": f"e({opA}) / e(I), mean over layers{worst_txt(worst2, 'r2')}",
                  "value": r2, "go": f"<= {dcfg['e_identity_ratio_go']:g}", "kill": "informative only",
                  "cell": cell2})
 
     cell3 = GO if d_minus_frac >= dcfg["dminus_go"] else KILL if d_minus_frac < dcfg["dminus_kill"] else AMBER
-    rows.append({"row": 3, "check": "d- / d (shared operator)", "value": d_minus_frac,
+    row3_label = (f"d- / d (mean of per-layer A_l over layers {lo} to {hi})" if mode == "per_layer"
+                  else "d- / d (shared operator)")
+    rows.append({"row": 3, "check": row3_label, "value": d_minus_frac,
                  "go": f">= {dcfg['dminus_go']:g}",
                  "kill": f"< {dcfg['dminus_kill']:g}: blocks GO, no KILL (PIVOT: little to save)",
                  "cell": cell3})
@@ -305,6 +312,12 @@ def write_report(path: Path, ctx: dict) -> None:
                  f"; seed {meta['seed']}.")
     lines.append(f"- Config: `{meta['config_path']}`; device {meta['env'].get('gpu', meta['env']['device'])}; "
                  f"torch {meta['env']['torch']}.")
+    mode = ctx.get("operator_mode", "shared")
+    lines.append("- Operator under test: " + (
+        "one operator per layer (block b: fc1 against the operator of its input layer, fc2 against its "
+        "output layer; nulls and SVD ranks matched per layer)." if mode == "per_layer"
+        else "one shared operator for all layers.")
+        + f" Data split: {'cached order of appearance' if ctx.get('split_seed') is None else 'shuffled within class, seed ' + str(ctx['split_seed'])}.")
     lines.append(f"- Data: fit {meta['split_sizes']['fit']}, held-out {meta['split_sizes']['heldout']}, "
                  f"k-NN bank {meta['split_sizes']['bank']}, queries {meta['split_sizes']['query']} images "
                  "(each with its mirror).")
@@ -325,7 +338,8 @@ def write_report(path: Path, ctx: dict) -> None:
     lines.append(f"Per-layer values behind rows 1 and 2 (layer l is the output of block l). Worst layer: row 1 "
                  f"layer {w1['layer'] if w1 else 'n/a'}, row 2 layer {w2['layer'] if w2 else 'n/a'}.")
     lines.append("")
-    lines.append("| Layer | e(null) / e(A_shared) | e(A_shared) / e(I) |")
+    opname = "A_l" if ctx.get("operator_mode") == "per_layer" else "A_shared"
+    lines.append(f"| Layer | e(null) / e({opname}) | e({opname}) / e(I) |")
     lines.append("|---|---|---|")
     for p in d["per_layer"]:
         m1 = " (worst)" if w1 and p["layer"] == w1["layer"] else ""
@@ -380,11 +394,16 @@ def write_report(path: Path, ctx: dict) -> None:
 
     lines.append("## MLP twins and breaking share")
     lines.append("")
+    per_layer_mode = ctx.get("operator_mode") == "per_layer"
     lines.append("Neuron involution per block from the mirrored-versus-original fc1 correlations; breaking "
-                 "share of the folded weights against the shared operator. Matched null (mean of "
-                 f"{ctx['n_null']} seeds): a random involution with the same d+ and d- as the shared operator "
-                 "and, per block, a random pairing with the same numbers of pairs and self-twins as the fitted "
-                 "one. If the fitted structure is nearly trivial (few odd features, few pairs), the matched "
+                 "share of the folded weights against "
+                 + ("each block's input-layer operator (fc1) and output-layer operator (fc2)"
+                    if per_layer_mode else "the shared operator")
+                 + f". Matched null (mean of {ctx['n_null']} seeds): a random involution with the same d+ and "
+                 "d- as " + ("each layer's operator" if per_layer_mode else "the shared operator")
+                 + " and, per block, a random pairing with the same numbers of pairs and self-twins as the "
+                 "fitted one. d-/d is that of the block's input-layer operator."
+                 " If the fitted structure is nearly trivial (few odd features, few pairs), the matched "
                  "null is nearly trivial too and its share is also low; a low share then is not evidence. "
                  "Twin fraction = neurons in pairs / all neurons. Evidence = d-/d at least "
                  f"{ctx['evidence_dminus']:g} or twin fraction at least {ctx['evidence_twin_frac']:g}.")

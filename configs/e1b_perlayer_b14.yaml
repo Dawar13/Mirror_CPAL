@@ -1,0 +1,10 @@
+# E1b PRIMARY (pre-registered in E1B_PREREG.md): per-layer operators, fresh data split, DINOv2 ViT-B/14.
+base: e1.yaml
+data:
+  split_seed: 1            # shuffle within class before the 2 / 1 / 39 / 8 split (E1 used order of appearance)
+stats:
+  operator_mode: per_layer
+compute:
+  num_workers: 4           # two or three runs share the machine
+matching:
+  workers: 4

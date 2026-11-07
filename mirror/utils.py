@@ -30,13 +30,24 @@ def deep_update(base: dict, override: dict | None) -> dict:
 
 def load_config(path: str | Path, tiny: bool = False) -> dict:
     """Load a yaml config. With `tiny=True` the `tiny:` section overrides the main settings."""
-    with open(path, "r", encoding="utf-8") as f:
-        cfg = yaml.safe_load(f)
+    cfg = _load_yaml_with_base(Path(path))
     tiny_override = cfg.pop("tiny", {}) or {}
     if tiny:
         cfg = deep_update(cfg, tiny_override)
     cfg["tiny_mode"] = bool(tiny)
     cfg["config_path"] = str(path)
+    return cfg
+
+
+def _load_yaml_with_base(path: Path, depth: int = 0) -> dict:
+    """A config may name `base: other.yaml` (relative to itself) and override parts of it."""
+    if depth > 8:
+        raise ValueError("config base chain too deep")
+    with open(path, "r", encoding="utf-8") as f:
+        cfg = yaml.safe_load(f) or {}
+    base = cfg.pop("base", None)
+    if base:
+        cfg = deep_update(_load_yaml_with_base(path.parent / base, depth + 1), cfg)
     return cfg
 
 

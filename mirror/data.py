@@ -28,18 +28,22 @@ SPLIT_NAMES = ("fit", "heldout", "bank", "query")
 # ----------------------------------------------------------------------------------------------
 # Splits
 # ----------------------------------------------------------------------------------------------
-def make_splits(labels: np.ndarray, per_class: dict[str, int]) -> dict[str, np.ndarray]:
+def make_splits(labels: np.ndarray, per_class: dict[str, int], seed: int | None = None) -> dict[str, np.ndarray]:
     """Class-balanced split by order of appearance within each class.
 
     `per_class` is ordered, e.g. {"fit": 2, "heldout": 1, "bank": 39, "query": 8}: the first 2
     images of every class go to fit, the next 1 to heldout, and so on. Indices are returned
-    sorted (dataset order) so memmap reads are sequential.
+    sorted (dataset order) so memmap reads are sequential. With `seed`, each class's images are
+    first shuffled with that seed (a fresh, still class-balanced split; E1 used seed None).
     """
     labels = np.asarray(labels)
     need = sum(per_class.values())
+    rng = np.random.default_rng(seed) if seed is not None else None
     out: dict[str, list] = {name: [] for name in per_class}
     for c in np.unique(labels):
         idx = np.flatnonzero(labels == c)  # dataset order = order of appearance
+        if rng is not None:
+            idx = rng.permutation(idx)
         if len(idx) < need:
             raise ValueError(f"class {c} has {len(idx)} images, need {need}")
         start = 0
@@ -229,7 +233,10 @@ def get_data(cfg: dict):
     if cfg.get("tiny_mode"):
         total = sum(d["per_class"].values())
         images, labels = synthetic_dataset(int(d["num_classes"]), total, int(d["crop"]), seed=int(cfg["seed"]))
-        splits = make_splits(labels, d["per_class"])
+        seed = d.get("split_seed")
+        splits = make_splits(labels, d["per_class"], seed=None if seed is None else int(seed))
         return images, labels, splits, int(d["num_classes"])
     images, labels, splits, meta = load_val_cache(d["cache_dir"], int(d["crop"]))
+    if d.get("split_seed") is not None:  # fresh class-balanced split (E1b); E1 used the cached one
+        splits = make_splits(labels, d["per_class"], seed=int(d["split_seed"]))
     return images, labels, splits, int(meta["n_classes"])

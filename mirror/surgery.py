@@ -121,8 +121,13 @@ def svd_rank_for(h: int, d: int, param_count: int) -> int:
 
 
 def mlp_breaking_shares(block: nn.Module, A, perm) -> dict:
+    return mlp_breaking_shares_two(block, A, A, perm)
+
+
+def mlp_breaking_shares_two(block: nn.Module, A_in, A_out, perm) -> dict:
+    """Breaking shares with fc1 tested against A_in and fc2 against A_out (equal for one operator)."""
     f = fold_mlp(block)
-    e = project_mlp(**f, A=A, perm=perm)
+    e = project_mlp_two(**f, A_in=A_in, A_out=A_out, perm=perm)
     return {
         "s1": breaking_share(f["W1"], e["W1"]),
         "s2": breaking_share(f["W2"], e["W2"]),
@@ -168,10 +173,14 @@ def svd_truncate(W: torch.Tensor, r: int) -> torch.Tensor:
 
 @torch.no_grad()
 def apply_svd_baseline(model: nn.Module, blocks: list[int], ranks) -> None:
-    """Rank-r truncation of folded fc1 and fc2 in `blocks` (biases kept), in place."""
+    """Rank truncation of folded fc1 and fc2 in `blocks` (biases kept), in place.
+
+    `ranks` is an int, a list of ints (same rank for fc1 and fc2), or a list of (r_fc1, r_fc2).
+    """
     if isinstance(ranks, int):
         ranks = [ranks] * len(blocks)
     for b, r in zip(blocks, ranks):
+        r1, r2 = (r if isinstance(r, (tuple, list)) else (r, r))
         blk = model.blocks[b]
         f = fold_mlp(blk)
-        write_absorbed_mlp(blk, svd_truncate(f["W1"], int(r)), f["b1"], svd_truncate(f["W2"], int(r)), f["b2"])
+        write_absorbed_mlp(blk, svd_truncate(f["W1"], int(r1)), f["b1"], svd_truncate(f["W2"], int(r2)), f["b2"])

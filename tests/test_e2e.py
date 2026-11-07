@@ -12,10 +12,21 @@ OUTPUTS = [
 ]
 
 
-def run(script, out_root):
+def run(script, out_root, config="e1.yaml"):
     return subprocess.run([sys.executable, str(ROOT / "scripts" / script), "--tiny", "--out-root", str(out_root),
-                           "--config", str(ROOT / "configs" / "e1.yaml")],
+                           "--config", str(ROOT / "configs" / config)],
                           capture_output=True, text=True, timeout=600)
+
+
+def test_run_e1b_per_layer_tiny(tmp_path):
+    proc = run("run_e1.py", tmp_path, config="e1b_perlayer_b14.yaml")
+    assert proc.returncode == 0, proc.stdout[-3000:] + proc.stderr[-3000:]
+    for rel in OUTPUTS:
+        assert (tmp_path / rel).is_file(), rel
+    report = (tmp_path / "results/E1_REPORT.md").read_text(encoding="utf-8")
+    assert "one operator per layer" in report and "seed 1" in report and "e(null) / e(A_l (per layer))" in report
+    meta = json.loads((tmp_path / "results/e1_meta.json").read_text(encoding="utf-8"))
+    assert meta["operator_mode"] == "per_layer"
 
 
 def test_run_e1_tiny_writes_all_outputs(tmp_path):

@@ -24,6 +24,17 @@ def test_splits_follow_order_of_appearance():
     assert all(np.all(np.diff(v) > 0) for v in s.values())
 
 
+def test_seeded_splits_are_fresh_balanced_and_deterministic():
+    labels = np.repeat(np.arange(4), 8)
+    a, b = make_splits(labels, PLAN, seed=1), make_splits(labels, PLAN, seed=1)
+    base = make_splits(labels, PLAN)
+    assert all(np.array_equal(a[k], b[k]) for k in PLAN)                     # deterministic
+    assert any(not np.array_equal(a[k], base[k]) for k in PLAN)              # differs from E1's split
+    for k, n in PLAN.items():
+        assert np.bincount(labels[a[k]], minlength=4).tolist() == [n] * 4    # still class-balanced
+    assert len(np.concatenate(list(a.values()))) == len(set(np.concatenate(list(a.values()))))
+
+
 def test_splits_reject_small_classes():
     with pytest.raises(ValueError):
         make_splits(np.array([0, 0, 1]), PLAN)

@@ -34,12 +34,11 @@ from mirror.adapters import build_adapter  # noqa: E402
 from mirror.data import SPLIT_NAMES, get_data, make_loader, normalize  # noqa: E402
 from mirror.fit import agreement, fit_layers, involution_trace, random_involution  # noqa: E402
 from mirror.knn import evaluate_knn  # noqa: E402
-from mirror.matching import match_many  # noqa: E402
-from mirror.nulls import matched_null  # noqa: E402
+from mirror.matching import match_many, random_pairing  # noqa: E402
 from mirror.report import decide, plot_breaking_share, plot_equivariance, write_report  # noqa: E402
 from mirror.stats import collect_fit_stats, collect_heldout_errors  # noqa: E402
-from mirror.surgery import (absorb_block, apply_surgery, apply_svd_baseline,  # noqa: E402
-                            equivariant_param_count, mlp_breaking_shares, svd_rank_for)
+from mirror.surgery import (absorb_block, apply_surgery, apply_surgery_two, apply_svd_baseline,  # noqa: E402
+                            equivariant_param_count, mlp_breaking_shares_two, svd_rank_for)
 from mirror.utils import (REPO_ROOT, StageTimer, env_info, git_info, load_config, log,  # noqa: E402
                           set_seed, setup_torch)
 
@@ -131,6 +130,10 @@ def main(argv=None) -> dict:
     # ---------------------------------------------------------------- 1. fit statistics
     st = cfg["stats"]
     center = bool(st.get("center", True))
+    mode = str(st.get("operator_mode", "shared"))  # shared (E1) | per_layer (E1b)
+    if mode not in ("shared", "per_layer"):
+        raise ValueError(f"unknown operator_mode {mode}")
+    log(f"operator mode: {mode}")
     with timer.stage("fit_stats"):
         fs = collect_fit_stats(adapter, stats_loaders["fit"], device, center=center, mlp=True)
         res = fs.residual.numpy()
@@ -174,6 +177,9 @@ def main(argv=None) -> dict:
         row["ratio_shared_over_I"] = row["rel_e_A_shared"] / row["rel_e_I"] if row["rel_e_I"] > 0 else float("inf")
         layer_rows.append(row)
     layers_df = pd.DataFrame(layer_rows)
+    # Columns the decision table reads: the operator under test and its matched null.
+    layers_df["rel_e_A_used"] = layers_df["rel_e_A_layer" if mode == "per_layer" else "rel_e_A_shared"]
+    layers_df["rel_e_null_used"] = layers_df["rel_e_null_layer" if mode == "per_layer" else "rel_e_null_shared"]
 
     # ---------------------------------------------------------------- 3. position embedding
     with timer.stage("position_check"):
@@ -193,30 +199,45 @@ def main(argv=None) -> dict:
         del R_list
 
     with timer.stage("breaking_share"):
-        tr_A = involution_trace(A_s)
-        dminus_frac = fit["d_minus_shared"] / d
         dc = cfg["decision"]
-        # Matched nulls: same d+ and d- as A_shared (same seeds as the residual nulls, so the same
-        # operators) and, per block, the same numbers of pairs and self-twins as the fitted pairing.
-        nulls = [matched_null(d, fit["d_plus_shared"], [m.n_pairs for m in matches], h, seed=seed + 101 + s)
-                 for s in range(n_null)]
-        A_rand, P_rand = nulls[0].A, nulls[0].perms  # also used for random-involution surgery
+        lo_d, hi_d = int(dc["blocks"][0]), min(int(dc["blocks"][1]), L)
+        n_pairs = [m.n_pairs for m in matches]
+        if mode == "per_layer":
+            # Block b (0-based) reads layer b and writes layer b+1: fc1 is tested against A_b and
+            # fc2 against A_(b+1). Nulls: the per-layer residual nulls (same d+ as each A_l).
+            A_in = [fit["A_layers"][b] for b in range(L)]
+            A_out = [fit["A_layers"][b + 1] for b in range(L)]
+            null_in = [[nulls_layer[b][s] for b in range(L)] for s in range(n_null)]
+            null_out = [[nulls_layer[b + 1][s] for b in range(L)] for s in range(n_null)]
+            dminus_blocks = [fit["d_minus"][b] / d for b in range(L)]
+            dminus_frac = float(np.mean([fit["d_minus"][l] / d for l in range(lo_d, hi_d + 1)]))
+        else:
+            # One operator everywhere; nulls have the same d+ and d- as A_shared (E1 behaviour).
+            A_in = A_out = [A_s] * L
+            null_in = null_out = [[nulls_shared[s]] * L for s in range(n_null)]
+            dminus_blocks = [fit["d_minus_shared"] / d] * L
+            dminus_frac = fit["d_minus_shared"] / d
+        # Matched pairings: same numbers of pairs and self-twins as the fitted ones, per block.
+        null_P = [[random_pairing(h, n_pairs[b], seed=(seed + 101 + s) * 1000 + 17 + b) for b in range(L)]
+                  for s in range(n_null)]
+        assert all(int((p != np.arange(h)).sum()) == 2 * n_pairs[b] for ps in null_P for b, p in enumerate(ps))
         mlp_rows = []
         for b in range(L):
             blk, mres = adapter.model.blocks[b], matches[b]
-            sh = mlp_breaking_shares(blk, A_s, mres.perm)
-            shn = [mlp_breaking_shares(blk, nl.A, nl.perms[b]) for nl in nulls]
+            sh = mlp_breaking_shares_two(blk, A_in[b], A_out[b], mres.perm)
+            shn = [mlp_breaking_shares_two(blk, null_in[s][b], null_out[s][b], null_P[s][b]) for s in range(n_null)]
             s1n = float(np.mean([x["s1"] for x in shn]))
             s2n = float(np.mean([x["s2"] for x in shn]))
-            eq = equivariant_param_count(h, d, mres.trace, tr_A)
-            r = svd_rank_for(h, d, eq)
+            eq1 = equivariant_param_count(h, d, mres.trace, involution_trace(A_in[b]))
+            eq2 = equivariant_param_count(h, d, mres.trace, involution_trace(A_out[b]))
+            r1, r2 = svd_rank_for(h, d, eq1), svd_rank_for(h, d, eq2)
             paired = mres.score[mres.perm != np.arange(h)]
             selfs = mres.score[mres.self_twins]
             twin = 2 * mres.n_pairs / h
             mlp_rows.append({
                 "block": b + 1, "h": h, "d": d, "n_pairs": mres.n_pairs, "n_self": mres.n_self,
-                "twin_frac": twin, "dminus_frac": dminus_frac,
-                "evidence": bool(dminus_frac >= dc["evidence_dminus"] or twin >= dc["evidence_twin_frac"]),
+                "twin_frac": twin, "dminus_frac": dminus_blocks[b],
+                "evidence": bool(dminus_blocks[b] >= dc["evidence_dminus"] or twin >= dc["evidence_twin_frac"]),
                 "mean_score": float(mres.score.mean()),
                 "mean_score_pairs": float(paired.mean()) if paired.size else float("nan"),
                 "mean_score_self": float(selfs.mean()) if selfs.size else float("nan"),
@@ -224,8 +245,10 @@ def main(argv=None) -> dict:
                 "s1_null": s1n, "s2_null": s2n,
                 "s1_over_null": sh["s1"] / s1n if s1n > 0 else float("nan"),
                 "s2_over_null": sh["s2"] / s2n if s2n > 0 else float("nan"),
-                "tr_P": mres.trace, "tr_A": tr_A, "eq_params": eq, "dense_params": h * d,
-                "param_saving_frac": 1 - eq / (h * d), "svd_rank": r, "svd_params": r * (h + d),
+                "tr_P": mres.trace, "tr_A_in": involution_trace(A_in[b]), "tr_A_out": involution_trace(A_out[b]),
+                "eq_params_fc1": eq1, "eq_params_fc2": eq2, "dense_params": 2 * h * d,
+                "param_saving_frac": 1 - (eq1 + eq2) / (2 * h * d),
+                "svd_rank": r1, "svd_rank_fc2": r2, "svd_params": (r1 + r2) * (h + d),
             })
         mlp_df = pd.DataFrame(mlp_rows)
 
@@ -263,13 +286,17 @@ def main(argv=None) -> dict:
                 log(f"skip k = {k} (> depth {L})")
                 continue
             blocks = list(range(k))
-            eq_sum = float(mlp_df["eq_params"].iloc[:k].sum())
+            eq_sum = float((mlp_df["eq_params_fc1"] + mlp_df["eq_params_fc2"]).iloc[:k].sum())
             svd_sum = float(mlp_df["svd_params"].iloc[:k].sum())
-            dense = float(k * h * d)
+            dense = float(mlp_df["dense_params"].iloc[:k].sum())
+            ranks = [(int(mlp_df["svd_rank"].iloc[b]), int(mlp_df["svd_rank_fc2"].iloc[b])) for b in blocks]
             variants = {
-                "surgery": (lambda m: apply_surgery(m, blocks, A_s, [matches[b].perm for b in blocks]), eq_sum),
-                "svd": (lambda m: apply_svd_baseline(m, blocks, [int(mlp_df["svd_rank"].iloc[b]) for b in blocks]), svd_sum),
-                "random": (lambda m: apply_surgery(m, blocks, A_rand, [P_rand[b] for b in blocks]), eq_sum),
+                "surgery": (lambda m: apply_surgery_two(m, blocks, [A_in[b] for b in blocks], [A_out[b] for b in blocks],
+                                                        [matches[b].perm for b in blocks]), eq_sum),
+                "svd": (lambda m: apply_svd_baseline(m, blocks, ranks), svd_sum),
+                "random": (lambda m: apply_surgery_two(m, blocks, [null_in[0][b] for b in blocks],
+                                                       [null_out[0][b] for b in blocks],
+                                                       [null_P[0][b] for b in blocks]), eq_sum),
             }
             for name, (fn, kept) in variants.items():
                 m = copy.deepcopy(adapter.model)
@@ -284,7 +311,7 @@ def main(argv=None) -> dict:
         surgery_df = pd.DataFrame(surg_rows).sort_values("k", kind="stable").reset_index(drop=True)
 
     # ---------------------------------------------------------------- outputs
-    decision = decide(layers_df, mlp_df, surgery_df, fit["d_minus_shared"] / d, cfg["decision"])
+    decision = decide(layers_df, mlp_df, surgery_df, dminus_frac, cfg["decision"], mode=mode)
     surgery_df["git_hash"] = git["git_hash"]
     surgery_df["seed"] = seed
     surgery_df.to_csv(res_dir / "e1_surgery.csv", index=False)
@@ -301,6 +328,7 @@ def main(argv=None) -> dict:
         "shared": {"d_plus": fit["d_plus_shared"], "d_minus": fit["d_minus_shared"],
                    "n_zero": fit["n_zero_shared"], "layers": list(shared_layers),
                    "d_plus_norm": fit["d_plus_shared_norm"], "d_minus_norm": fit["d_minus_shared_norm"]},
+        "operator_mode": mode, "dminus_frac_decision": dminus_frac,
         "matching_workers": workers, "position_check": pos, "sanity": sanity, "decision": decision,
     }
     with open(res_dir / "e1_meta.json", "w", encoding="utf-8") as fh:
@@ -312,7 +340,8 @@ def main(argv=None) -> dict:
         "layers_df": layers_df, "mlp_df": mlp_df, "surgery_df": surgery_df, "pos": pos, "sanity": sanity,
         "d": d, "d_plus_shared": fit["d_plus_shared"], "d_minus_shared": fit["d_minus_shared"],
         "n_zero_shared": fit["n_zero_shared"], "shared_layers": shared_layers, "n_null": n_null,
-        "grid": adapter.grid_hw, "decision_blocks": cfg["decision"]["blocks"],
+        "grid": adapter.grid_hw, "decision_blocks": cfg["decision"]["blocks"], "operator_mode": mode,
+        "split_seed": cfg["data"].get("split_seed"),
         "surgery_k": cfg["decision"]["surgery_k"], "evidence_dminus": cfg["decision"]["evidence_dminus"],
         "evidence_twin_frac": cfg["decision"]["evidence_twin_frac"],
     })
