@@ -229,6 +229,23 @@ def main(argv=None) -> dict:
             })
         mlp_df = pd.DataFrame(mlp_rows)
 
+    # Save the structure results now, so a failure in the surgery stage cannot lose them.
+    for df in (layers_df, mlp_df):
+        df["git_hash"] = git["git_hash"]
+        df["seed"] = seed
+    layers_df.to_csv(res_dir / "e1_layers.csv", index=False)
+    mlp_df.to_csv(res_dir / "e1_mlp.csv", index=False)
+    np.savez_compressed(
+        res_dir / "e1_operators.npz",
+        A_layers=np.stack(fit["A_layers"]).astype(np.float32), A_shared=A_s.astype(np.float32),
+        A_shared_norm=A_sn.astype(np.float32), eigvals=np.stack(fit["eigvals"]),
+        eigvals_shared=fit["eigvals_shared"], C=res["C"].astype(np.float32),
+        perms=np.stack([m.perm for m in matches]).astype(np.int32),
+        match_scores=np.stack([m.score for m in matches]).astype(np.float32),
+        self_corr=np.stack(diag_scores).astype(np.float32),
+    )
+    log(f"saved structure results to {res_dir}")
+
     # ---------------------------------------------------------------- 5. zero-shot surgery
     kc = cfg["knn"]
     with timer.stage("surgery_knn"):
@@ -263,26 +280,14 @@ def main(argv=None) -> dict:
                 surg_rows.append({"k": k, "variant": name, "top1": t1, "flip_consistency": fc,
                                   "drop_points": top1_0 - t1, "mlp_params_kept_frac": kept / dense})
                 log(f"k = {k} {name}: top-1 {t1:.2f}, flip consistency {fc:.2f}")
-        surgery_df = pd.DataFrame(surg_rows)
+                pd.DataFrame(surg_rows).to_csv(res_dir / "e1_surgery.csv", index=False)  # partial, kept on failure
+        surgery_df = pd.DataFrame(surg_rows).sort_values("k", kind="stable").reset_index(drop=True)
 
     # ---------------------------------------------------------------- outputs
     decision = decide(layers_df, mlp_df, surgery_df, fit["d_minus_shared"] / d, cfg["decision"])
-    for df in (layers_df, mlp_df, surgery_df):
-        df["git_hash"] = git["git_hash"]
-        df["seed"] = seed
-    layers_df.to_csv(res_dir / "e1_layers.csv", index=False)
-    mlp_df.to_csv(res_dir / "e1_mlp.csv", index=False)
+    surgery_df["git_hash"] = git["git_hash"]
+    surgery_df["seed"] = seed
     surgery_df.to_csv(res_dir / "e1_surgery.csv", index=False)
-
-    np.savez_compressed(
-        res_dir / "e1_operators.npz",
-        A_layers=np.stack(fit["A_layers"]).astype(np.float32), A_shared=A_s.astype(np.float32),
-        A_shared_norm=A_sn.astype(np.float32), eigvals=np.stack(fit["eigvals"]),
-        eigvals_shared=fit["eigvals_shared"], C=res["C"].astype(np.float32),
-        perms=np.stack([m.perm for m in matches]).astype(np.int32),
-        match_scores=np.stack([m.score for m in matches]).astype(np.float32),
-        self_corr=np.stack(diag_scores).astype(np.float32),
-    )
 
     suffix = " (TINY TEST)" if tiny else ""
     plot_equivariance(layers_df, plot_dir / "equivariance_vs_depth.png", suffix)
