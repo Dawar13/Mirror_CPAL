@@ -1,0 +1,77 @@
+# E1: Mirror Surgery go/kill on DINOv2 ViT-B/14. See E1_INSTRUCTIONS.md.
+seed: 0
+
+model:
+  hub_repo: facebookresearch/dinov2
+  name: dinov2_vitb14
+
+data:
+  hf_repo: ILSVRC/imagenet-1k
+  parquet_pattern: "data/validation-*.parquet"   # 14 shards, about 6.7 GB (checked 2026-11-07)
+  cache_dir: cache
+  resize: 256
+  crop: 224
+  decode_workers: 8
+  per_class:            # order matters: first 2 per class -> fit, next 1 -> heldout, ...
+    fit: 2              # 2,000 images
+    heldout: 1          # 1,000
+    bank: 39            # 39,000 (k-NN memory bank)
+    query: 8            # 8,000 (k-NN queries)
+
+compute:
+  device: cuda
+  gpu_memory_fraction: 0.2   # GPU is shared with the CVPR project
+  tf32: false                # full fp32 matmuls (folding test needs 1e-4)
+  batch_size: 128            # k-NN feature extraction
+  stats_batch_size: 32       # statistics passes (run as 64 with mirrors, float64 accumulators)
+  num_workers: 8
+
+stats:
+  center: true               # subtract each token's channel mean before accumulating
+  shared_layers: [1, 12]     # shared A from summed C over these layers (inclusive)
+  n_null: 3                  # random-involution null seeds
+
+matching:
+  top_k: 10
+  workers: auto              # processes for the networkx blossom step (one block each)
+
+surgery:
+  ks: [3, 6, 9]
+
+knn:
+  k: 20
+  temperature: 0.07
+
+decision:                    # thresholds from E1_INSTRUCTIONS.md B4; do not change without asking
+  blocks: [1, 6]
+  e_null_ratio_go: 5.0       # e(null) / e(A_shared) >= 5
+  e_null_ratio_kill: 3.0     # < 3
+  e_identity_ratio_go: 0.5   # e(A) <= 0.5 e(I)
+  dminus_go: 0.2
+  dminus_kill: 0.1
+  share_go: 0.2
+  share_kill: 0.3
+  surgery_k: 6
+  surgery_drop_go: 10.0      # k-NN points
+  surgery_margin_go: 5.0     # points better than rank-matched SVD
+
+# --tiny: random 4-block timm ViT (d 64, h 256) on synthetic 56 x 56 images, CPU, under a minute.
+tiny:
+  data:
+    crop: 56
+    num_classes: 5
+    per_class: {fit: 4, heldout: 2, bank: 12, query: 4}
+  compute:
+    device: cpu
+    batch_size: 32
+    stats_batch_size: 16
+    num_workers: 0
+  stats:
+    shared_layers: [1, 4]
+  matching:
+    workers: 1
+  surgery:
+    ks: [1, 2, 3]
+  decision:
+    blocks: [1, 2]
+    surgery_k: 2
