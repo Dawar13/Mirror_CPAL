@@ -75,9 +75,31 @@ def git_info(root: Path = REPO_ROOT) -> dict:
         except Exception:
             return ""
 
-    commit = run("rev-parse", "HEAD") or "unknown"
-    dirty = bool(run("status", "--porcelain", "--untracked-files=no"))
-    return {"git_hash": commit, "git_dirty": dirty}
+    commit = run("rev-parse", "HEAD")
+    if commit:
+        dirty = bool(run("status", "--porcelain", "--untracked-files=no"))
+        return {"git_hash": commit, "git_dirty": dirty}
+    # No git binary (fresh VM): read the commit straight from .git; dirtiness is then unknown.
+    return {"git_hash": _read_git_head(root) or "unknown", "git_dirty": None}
+
+
+def _read_git_head(root: Path) -> str:
+    git_dir = Path(root) / ".git"
+    try:
+        head = (git_dir / "HEAD").read_text().strip()
+        if not head.startswith("ref:"):
+            return head
+        ref = head.split(" ", 1)[1].strip()
+        if (git_dir / ref).exists():
+            return (git_dir / ref).read_text().strip()
+        packed = git_dir / "packed-refs"
+        if packed.exists():
+            for line in packed.read_text().splitlines():
+                if line.endswith(" " + ref):
+                    return line.split(" ", 1)[0]
+    except OSError:
+        pass
+    return ""
 
 
 def env_info(device: torch.device) -> dict:

@@ -300,7 +300,9 @@ def write_report(path: Path, ctx: dict) -> None:
     lines.append("## Run")
     lines.append("")
     lines.append(f"- Date: {meta['date']}; git commit `{meta['git']['git_hash']}`"
-                 f"{' (uncommitted changes present)' if meta['git']['git_dirty'] else ''}; seed {meta['seed']}.")
+                 f"{' (uncommitted changes present)' if meta['git']['git_dirty'] else ''}"
+                 f"{' (git not installed; uncommitted changes not checked)' if meta['git']['git_dirty'] is None else ''}"
+                 f"; seed {meta['seed']}.")
     lines.append(f"- Config: `{meta['config_path']}`; device {meta['env'].get('gpu', meta['env']['device'])}; "
                  f"torch {meta['env']['torch']}.")
     lines.append(f"- Data: fit {meta['split_sizes']['fit']}, held-out {meta['split_sizes']['heldout']}, "
