@@ -33,6 +33,8 @@ Accept the ImageNet-1k terms first at https://huggingface.co/datasets/ILSVRC/ima
 git clone <private repo url> Mirror_CPAL && cd Mirror_CPAL
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+# if torch.cuda.is_available() is False (driver too old for the newest wheel), see requirements.txt:
+pip uninstall -y torch torchvision && pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
 export HF_HOME=/path/on/vm/big_disk/hf        # every download goes under here (hub weights too)
 python -c "from huggingface_hub import login; login()"   # paste a read token
 nvidia-smi                                     # check what the CVPR job is using
