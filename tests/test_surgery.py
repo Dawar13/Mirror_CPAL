@@ -113,6 +113,22 @@ def test_projected_mlp_branch_is_exactly_equivariant(tiny64):
     assert orig.abs().max().item() > 1e-3
 
 
+def test_two_operator_surgery_maps_A_in_to_A_out(tiny64):
+    """Per-layer variant: f(x A_in) = f(x) A_out after projection with different involutions."""
+    from mirror.surgery import apply_surgery_two
+
+    d, h = tiny64.embed_dim, tiny64.mlp_hidden
+    A_in = involution_fixing_ones(d, 30, seed=11)
+    A_out = involution_fixing_ones(d, 50, seed=12)
+    perm = random_pairing(h, 70, seed=13)
+    m = copy.deepcopy(tiny64.model)
+    apply_surgery_two(m, [2], [A_in], [A_out], [perm])
+    blk = m.blocks[2]
+    x = torch.randn(4, 17, d, dtype=torch.float64, generator=torch.Generator().manual_seed(2))
+    f = lambda t: blk.ls2(blk.mlp(blk.norm2(t)))  # noqa: E731
+    assert (f(x @ torch.tensor(A_in)) - f(x) @ torch.tensor(A_out)).abs().max().item() < 1e-10
+
+
 def test_svd_baseline_rank(tiny64):
     d, h = tiny64.embed_dim, tiny64.mlp_hidden
     r = svd_rank_for(h, d, equivariant_param_count(h, d, 100, 8))

@@ -144,6 +144,23 @@ def apply_surgery(model: nn.Module, blocks: list[int], A, P_list: list) -> None:
         write_absorbed_mlp(blk, **project_mlp(**fold_mlp(blk), A=A, perm=perm))
 
 
+def project_mlp_two(W1, b1, W2, b2, A_in, A_out, perm) -> dict:
+    """Equivariant projection when input and output streams have different involutions:
+    P W1 = W1 A_in, P b1 = b1 (fc1 side) and A_out W2 = W2 P, A_out b2 = b2 (fc2 side), so that
+    MLP(x A_in) = MLP(x) A_out."""
+    e_in = project_mlp(W1, b1, W2, b2, A=A_in, perm=perm)
+    e_out = project_mlp(W1, b1, W2, b2, A=A_out, perm=perm)
+    return {"W1": e_in["W1"], "b1": e_in["b1"], "W2": e_out["W2"], "b2": e_out["b2"]}
+
+
+@torch.no_grad()
+def apply_surgery_two(model: nn.Module, blocks: list[int], A_in_list: list, A_out_list: list, P_list: list) -> None:
+    """Surgery with a per-block input operator (fc1) and output operator (fc2), in place."""
+    for b, A_in, A_out, perm in zip(blocks, A_in_list, A_out_list, P_list):
+        blk = model.blocks[b]
+        write_absorbed_mlp(blk, **project_mlp_two(**fold_mlp(blk), A_in=A_in, A_out=A_out, perm=perm))
+
+
 def svd_truncate(W: torch.Tensor, r: int) -> torch.Tensor:
     U, S, Vh = torch.linalg.svd(W, full_matrices=False)
     return (U[:, :r] * S[:r]) @ Vh[:r]
