@@ -15,10 +15,12 @@ model:
 blocks: [0, 1, 2, 3, 4, 5, 6, 7, 8]   # k = 9, 0-based (blocks 1 to 9 in the reports)
 
 structure:
-  operators: null              # TODO (X2): path to the X2-protocol operator file (A_layers, A_shared, perms)
-  mode: per_layer              # per_layer = V-local; shared = one operator over the span (V-exact)
+  operators: runs/x2/perlayer_reg_s0/results/e1_operators.npz   # X2-protocol fit, registers model, fit seed 0
+  heads: runs/m1/m1_structure.npz   # M1 head pairing, head maps and A_out choice (scripts/m1_attention.py)
+  attn_a_out: auto             # auto = the M1 choice; same = A_b; next = A_b+1 (Wo's output operator)
+  mode: per_layer              # per_layer = V-local; shared = one operator over the span (V-exact, MLP only here)
   shared_key: A_shared         # operator used when mode is shared
-  attention: true              # pilot is MLP plus attention; TODO (M1) until the attention projector exists
+  attention: true              # pilot is MLP plus attention (false: MLP only, A6)
   random_seed: 1               # random-structure control
   random_fix_ones: true        # random involutions keep A 1 = 1, like the fitted operators
 
@@ -32,7 +34,7 @@ data:
 heal:                          # mirror/heal.py HealConfig; the same recipe for every method
   epochs: 2
   batch_size: 256
-  micro_batch: 64
+  micro_batch: 32               # shared GPU; does not change results (fixed normaliser)
   weight_decay: 0.05
   warmup_frac: 0.05
   min_lr_ratio: 0.0
@@ -55,6 +57,16 @@ lr_selection:
   lrs: [1.0e-5, 5.0e-5, 1.0e-4]
   budget_steps: 100            # short budget per rate (a choice; check that it separates the rates)
 
+knn:                           # final Tier-1 evaluation (PAPER_EXPERIMENTS.md Section 1), after healing
+  enabled: true
+  cache_dir: cache             # train224 bank (100 per class) and val224 queries (50k), as run_e1.py protocol v2
+  k: 20
+  temperature: 0.07
+  amp: bf16                    # same as every zero-shot number
+  batch_size: 128
+  num_workers: 4
+  zero_shot: true              # also score the unhealed student (same structure, before training)
+
 compute:
   device: cuda
   gpu_memory_fraction: 0.2     # GPU is shared
@@ -64,8 +76,12 @@ out_dir: runs/m3_pilot
 
 tiny:
   blocks: [0, 1, 2]
-  structure:
-    attention: false
+  knn:
+    num_classes: 4
+    bank_per_class: 8
+    query_per_class: 4
+    batch_size: 16
+    num_workers: 0
   data:
     image_size: 64
     n_train: 32
