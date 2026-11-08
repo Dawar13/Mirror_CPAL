@@ -95,7 +95,7 @@ def main(argv=None) -> int:
 
     dt = getattr(torch, args.dtype)
     adapter = Dinov2Adapter(hub_repo=args.hub_repo, name=args.name, img_size=args.crop).to(device=device, dtype=dt)
-    adapter.model.float().eval()
+    adapter.model.to(dt).eval()
     folded = copy.deepcopy(adapter.model)
     info = fold_layernorm_full(folded, final_norm_affine=True)
     folded.eval()
