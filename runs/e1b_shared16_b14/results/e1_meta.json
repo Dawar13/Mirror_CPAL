@@ -1,0 +1,252 @@
+{
+  "date": "2026-11-07 22:34:07",
+  "seed": 0,
+  "git": {
+    "git_hash": "894d462b6c06e19ebd55bd661fe2355bb506cd0c",
+    "git_dirty": false
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  },
+  "config_path": "configs/e1b_shared16_b14.yaml",
+  "config": {
+    "seed": 0,
+    "model": {
+      "hub_repo": "facebookresearch/dinov2",
+      "name": "dinov2_vitb14"
+    },
+    "data": {
+      "hf_repo": "ILSVRC/imagenet-1k",
+      "parquet_pattern": "data/validation-*.parquet",
+      "cache_dir": "cache",
+      "resize": 256,
+      "crop": 224,
+      "decode_workers": 16,
+      "per_class": {
+        "fit": 2,
+        "heldout": 1,
+        "bank": 39,
+        "query": 8
+      },
+      "split_seed": 1
+    },
+    "compute": {
+      "device": "cuda",
+      "gpu_memory_fraction": 0.06,
+      "tf32": false,
+      "batch_size": 64,
+      "stats_batch_size": 16,
+      "num_workers": 4
+    },
+    "stats": {
+      "center": true,
+      "shared_layers": [
+        1,
+        6
+      ],
+      "n_null": 3,
+      "operator_mode": "shared"
+    },
+    "matching": {
+      "top_k": 10,
+      "workers": 4
+    },
+    "surgery": {
+      "ks": [
+        6,
+        3,
+        9
+      ]
+    },
+    "knn": {
+      "k": 20,
+      "temperature": 0.07
+    },
+    "decision": {
+      "blocks": [
+        1,
+        6
+      ],
+      "e_null_ratio_go": 5.0,
+      "e_null_ratio_kill": 3.0,
+      "e_identity_ratio_go": 0.5,
+      "dminus_go": 0.2,
+      "dminus_kill": 0.1,
+      "share_go": 0.2,
+      "share_kill": 0.3,
+      "evidence_dminus": 0.2,
+      "evidence_twin_frac": 0.2,
+      "surgery_k": 6,
+      "surgery_drop_go": 10.0,
+      "surgery_margin_go": 5.0
+    },
+    "tiny_mode": false,
+    "config_path": "configs/e1b_shared16_b14.yaml"
+  },
+  "tiny": false,
+  "split_sizes": {
+    "fit": 2000,
+    "heldout": 1000,
+    "bank": 39000,
+    "query": 8000
+  },
+  "timing": {
+    "stages": {
+      "load": 3.14,
+      "sanity": 0.68,
+      "fit_stats": 24.62,
+      "fit_operators": 126.7,
+      "heldout_errors": 22.06,
+      "position_check": 0.23,
+      "mlp_matching": 233.54,
+      "breaking_share": 1.66,
+      "surgery_knn": 2611.98
+    },
+    "total_s": 3030.04
+  },
+  "shared": {
+    "d_plus": 595,
+    "d_minus": 173,
+    "n_zero": 1,
+    "layers": [
+      1,
+      6
+    ],
+    "d_plus_norm": 567,
+    "d_minus_norm": 201
+  },
+  "operator_mode": "shared",
+  "dminus_frac_decision": 0.22526041666666666,
+  "matching_workers": 4,
+  "position_check": {
+    "channel_centred": {
+      "A_shared": 0.5307270210693388,
+      "A_0 (layer 0)": 0.2559021738261868,
+      "identity": 0.9670089889884912,
+      "null": 1.1950706405510498
+    },
+    "grid_centred": {
+      "A_shared": 0.5456054201017808,
+      "A_0 (layer 0)": 0.24483214395434705,
+      "identity": 1.0136650237977602,
+      "null": 1.22069406940977
+    }
+  },
+  "sanity": {
+    "fold_max_abs_diff": 8.821487426757812e-06,
+    "identity_surgery_max_abs_diff": 2.4080276489257812e-05
+  },
+  "decision": {
+    "rows": [
+      {
+        "row": 1,
+        "check": "e(null) / e(A_shared), mean over layers; worst layer 6: 3.44",
+        "value": 4.389842786020625,
+        "go": ">= 5",
+        "kill": "< 3",
+        "cell": "AMBER"
+      },
+      {
+        "row": 2,
+        "check": "e(A_shared) / e(I), mean over layers; worst layer 6: 0.667",
+        "value": 0.37307848997761023,
+        "go": "<= 0.5",
+        "kill": "informative only",
+        "cell": "GO"
+      },
+      {
+        "row": 3,
+        "check": "d- / d (shared operator)",
+        "value": 0.22526041666666666,
+        "go": ">= 0.2",
+        "kill": "< 0.1: blocks GO, no KILL (PIVOT: little to save)",
+        "cell": "GO"
+      },
+      {
+        "row": 4,
+        "check": "MLP breaking share, max(mean s1, mean s2) [s1 0.244, s2 0.232; matched null s1 0.392, s2 0.392; twin fraction 0.610, d-/d 0.225]",
+        "value": 0.2440234415330149,
+        "go": "<= 0.2, and d-/d >= 0.2 or twin fraction >= 0.2",
+        "kill": "> 0.3",
+        "cell": "AMBER"
+      },
+      {
+        "row": 5,
+        "check": "Zero-shot surgery at k = 6: k-NN drop [original 77.35, surgery 72.60, SVD 65.96; margin over SVD 6.64]",
+        "value": 4.750001430511475,
+        "go": "drop <= 10 and margin >= 5",
+        "kill": "no better than SVD (margin <= 0)",
+        "cell": "GO"
+      }
+    ],
+    "outcome": "AMBER",
+    "reason": "no rule fires: row(s) 1, 4 not GO and no KILL cell in rows 1, 4, 5; needs a human decision",
+    "per_layer": [
+      {
+        "layer": 1,
+        "r1": 6.968077071914655,
+        "r2": 0.19814169142810226
+      },
+      {
+        "layer": 2,
+        "r1": 4.485714028710496,
+        "r2": 0.31647918466869684
+      },
+      {
+        "layer": 3,
+        "r1": 4.3124670265781395,
+        "r2": 0.38400627129959697
+      },
+      {
+        "layer": 4,
+        "r1": 4.174217547628681,
+        "r2": 0.40348570412551804
+      },
+      {
+        "layer": 5,
+        "r1": 3.893329835942222,
+        "r2": 0.4616652354170171
+      },
+      {
+        "layer": 6,
+        "r1": 3.442171366443792,
+        "r2": 0.6671728023012873
+      }
+    ],
+    "worst": {
+      "row1": {
+        "layer": 6,
+        "r1": 3.442171366443792,
+        "r2": 0.6671728023012873
+      },
+      "row2": {
+        "layer": 6,
+        "r1": 3.442171366443792,
+        "r2": 0.6671728023012873
+      }
+    },
+    "numbers": {
+      "e_A_shared": 0.30692373798855843,
+      "e_null_shared": 1.3473469570675578,
+      "e_I": 0.8226787290979387,
+      "s1": 0.2440234415330149,
+      "s2": 0.232027346415097,
+      "s1_null": 0.39153621039402536,
+      "s2_null": 0.392257328574912,
+      "twin_frac": 0.6099175347222222,
+      "evidence": true,
+      "top1_original": 77.35000252723694,
+      "top1_surgery": 72.60000109672546,
+      "top1_svd": 65.96250534057617,
+      "drop": 4.750001430511475,
+      "margin_over_svd": 6.637495756149292,
+      "d_minus_frac": 0.22526041666666666
+    }
+  }
+}
