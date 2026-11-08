@@ -1,6 +1,6 @@
 # STATUS (paper experiments)
 
-Updated 2026-11-08 about 18:45 UTC (00:15 IST on 9 November); the A100 session continues. Pre-registration `PREREG_E2.md`
+Updated 2026-11-08 about 20:25 UTC (01:55 IST on 9 November); the A100 session continues. Pre-registration `PREREG_E2.md`
 committed as 9804f06 before any gated run. Every number below is in `results/paper/` (tables, `numbers.json`
 with source file, seed and commit for each value); raw outputs in `runs/`; large artefacts (operators,
 statistics, healed checkpoints, 2 GB) in `artifacts/a100/` on the laptop only. Protocol: operators fitted on
@@ -33,11 +33,13 @@ ImageNet train (fit seeds 0, 1, 2), k-NN with a 100k train bank and 50k validati
 - Ablations (k = 6): wrong operator collapses (shared over all layers 20.5, identity 24.5, random 3 to 4); wrong pairing collapses (random 25 to 32, self-twins 13.7, generic weight-cosine 24.7); Hungarian without the involution constraint matches mirror (77.2 to 77.3); 100 fit images suffice (77.03).
 - X4 folding: algebra exact in float64 on the registers model; fp32 bar missed through rounding; folded model k-NN 78.98.
 - Transfer probes (linear, 4 datasets) complete: healed mirror within 0.5 points of the original on CIFAR-100, DTD, Flowers and Pets, ahead of healed SVD and healed random (`runs/t2/t2_transfer.csv`).
+- Ablations, more seeds and k = 9 (raw rows in `runs/a/`, on the VM until pulled): A4 and A5 for fit seeds 1 and 2 agree with seed 0 (last 6 blocks 78.63 / 78.64 vs first 6 77.04 / 77.10; A5 falls smoothly from 78.94 at alpha 0 to 77.04 / 77.10 at alpha 1). A2 at k = 9, seed 0: mirror 76.37, Hungarian 76.52, random pairing 12.59, self-twins 12.06, generic weight-cosine 13.86. A1 at k = 9, seed 0: per-layer 76.37, shared over the span 67.68, shared over all layers 15.34, identity 16.74, random operator 3.03, SVD 5.83.
+- G, DINOv2-S/14 with registers (k = 6 of 12): PIVOT. Rows 1 to 4 GO (fit ratio 20.3, d-/d 0.27, breaking share 0.198 vs null 0.407); surgery 56.00 vs original 74.46 (drop 18.46, above the 10-point bar), SVD 10.24.
 - M2 latency, clean re-run (`runs/m2_clean/`, GPU otherwise quiet apart from one small process of another project): the even/odd implementation matches the dense model it is built from (float64 16 of 16, fp32 16 of 16; bf16 differences are at the bf16 rounding level). Analytic saving 1.10x to 1.30x, but measured speed against the dense reference at batch 256 (compiled) is 0.70x to 0.91x for every mirror variant, so **no wall-clock gain with plain PyTorch ops**. SVD at matched parameters is also slower (0.92x to 0.98x); MLP width pruning at matched parameters is faster (1.13x to 1.17x). The extra gathers, butterflies and smaller GEMMs cost more than they save; a fused kernel would be needed for a latency claim.
 
 ## Not done yet
 - M3 grid (on hold after G2), M4.
-- Running or queued on the A100 (2026-11-08 evening): A1/A2 at k = 9 (seeds 0, 1, 2), A4/A5 seeds 1 and 2, DINOv2-S and DINOv2-L generality; code being written for ADE20K linear segmentation. V-exact healing is wired and CPU-tested but not yet run (`scripts/heal_vexact.py`, `configs/m3_vexact.yaml`, job list `jobs/stage9_vexact.txt`: k = 12, then 6).
+- Running on the A100 (2026-11-08, 20:25 UTC): V-exact healing k = 12 (then k = 6), ADE20K linear segmentation (7 variants, two processes), DINOv2-L (k = 12 of 24), A1/A2 at k = 9 for seeds 1 and 2, A1 at k = 9 seed 0 (rerun, see deviations). M2 profile waits for a quiet GPU. The other project on the GPU started three more jobs at about 20:05 UTC, so everything runs 2 to 3 times slower than earlier.
 
 ## Decisions waiting for Dawar
 1. Framing after G2 (report as is; a new pre-registered healing test where the ceiling does not bind; or recentre on the symmetry tax, exact conversion and zero-shot results).
@@ -49,4 +51,5 @@ ImageNet train (fit seeds 0, 1, 2), k-NN with a 100k train bank and 50k validati
 - GPU shared with another project: memory caps 6 to 20% per job; some jobs paused or reordered.
 - X3 seeds at k = 6 only; A3 to A5 seed 0 only; ablations at k = 6 only.
 - A3 largest fit set is 6,000 images (all fit seeds pooled), not 10,000.
+- A1 at k = 9, seed 0 was rerun: shipping code to the VM at about 19:01 UTC unpacked the committed copy of `runs/a/dinov2_vitb14_reg/A1_s0.csv` over the file the job had just written, losing its 7 k = 9 rows (values are in `logs/stage8_more/job1.log`). The ship step now skips `runs/`, `results/` and `logs/`; an audit of every ablation CSV against its log found no other loss. The rerun reproduces the logged values exactly so far.
 - M2: the first timings (`runs/m2/`) were contended and are superseded by `runs/m2_clean/`; the VM tree was exported from commit ced98c8 without git, so its metadata flags it as dirty.
