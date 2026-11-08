@@ -1,0 +1,2 @@
+# M2 latency: starts after the Stage 3 ablation queue finishes (less contention from our own jobs).
+bash -c 'while ! grep -q QUEUE_DONE logs/queue_stage3.log; do sleep 60; done; python scripts/m2_latency.py --model dinov2_vitb14_reg --k 6,9,12 --variants original,dense,vlocal,vlocal_r2,vexact,mlp_only,svd,prune --out runs/m2'
