@@ -26,10 +26,24 @@ Seeds: registers model seed 2 running; seed 1 must be rerun (both copies stopped
 - **G generality (k = 6):** DeiT-III AMBER (rows 1 to 4 GO; surgery 81.55 vs SVD 80.67, margin 0.9); MAE strongest structure (row 1 = 40.8; k-NN baseline only 13.7%, not meaningful); SigLIP2 KILL (row 1 = 2.4; surgery 13.8 vs original 75.5). **P4:** DeiT-III and MAE bullets pass; the SigLIP2 bullet fails as worded (its raw breaking share 0.137 is below DINOv2-reg's 0.223 because its structure is near trivial; rows 1 to 3 show much weaker symmetry). `runs/g/`
 - **M1 V-exact:** one operator for layers 0 to 6 has 216 odd directions (28%); exactness inside the span passes (relative about 2e-6); **full conversion (k = 12) gives 100.00% flip consistency in fp32**. k-NN of the attention variants running. `runs/m1/`
 
+## M3 healing pilot (gate G2, P3): FAIL on the SVD condition
+k = 9, MLP plus attention, V-local, registers model. Healed k-NN: mirror 78.81, SVD 77.57, random 73.28 (original 78.94).
+Mirror beats random by 5.54 (PASS, bar 2.0), beats SVD by 1.24 (FAIL, bar 3.0; at most 1.36 was possible), and is within
+0.12 of the original (PASS). Held-out distillation loss after healing: mirror 0.86, SVD 2.13, random 3.88.
+Per the plan, the healing grid is not started; framing goes back to Dawar. Full table: `results/M3_PILOT_G2.md`.
+
+## D data-free (P5): FAIL overall
+Part 1 (layer-0 operator from weights): 0.90, PASS (bar 0.8; random involutions with matched d+ reach about 0.65 to 0.73).
+Part 2 (weight-only twin pairing, block 1): 46.6% of data-driven pairs, FAIL (bar 70%); strict reading 44.1%. Gate G4 is worded
+on the layer-0 agreement, which passes. `runs/d/`
+
+## M1 attention conversion (k-NN, registers model, original 78.94)
+k = 6: V-exact 77.37 (exactly equivariant over the span), V-local 76.02, MLP only 77.11, SVD 5.27, random 4.19; k = 9 V-local 74.70;
+full conversion k = 12: 100% flip consistency in fp32. `runs/m1/m1_knn.csv`
+
 ## Running now
-- M3 healing pilot (gate G2, P3): mirror, then SVD, then random; about 45 min each at 1.74 s per step.
-- M1 k-NN (V-local, V-exact, MLP-only, SVD, random at k = 6, 9, 12).
-- X3: registers model seed 2; D data-free pilot (CPU).
+- X3: registers model seed 1 rerun (seed 2 done: AMBER, same row 4 as seed 0).
+- Paper data package (`results/paper/`) being built.
 
 ## Will not fit on this A100 (needs another GPU)
 X3 seed 1 rerun and plain-model seeds; A1 to A5; F4; M3 grid; M2 latency (not implemented); Tier-2 evaluations; DINOv2-S/L; V-exact healed; M4.
