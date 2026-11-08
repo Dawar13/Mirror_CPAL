@@ -1,0 +1,124 @@
+# V-exact healing (PAPER_EXPERIMENTS.md, Stage 3 "V-exact full conversion, healed"; also the V-exact arm
+# of the M3 grid). One operator A* over blocks 1..k, exactly mirror-equivariant over the span; k = 12 is
+# the full conversion (100% flip consistency). Same healing budget and recipe as configs/m3_pilot.yaml.
+# One healing job at a time on the shared GPU:
+#   python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 12
+#   python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 6
+# CPU smoke test: add --tiny.
+seed: 0
+method: vexact
+k: 12                          # converted blocks 1..k (0-based 0..k-1); needs A* for this k in structure.heads
+
+model:
+  hub_repo: facebookresearch/dinov2
+  name: dinov2_vitb14_reg      # main model (PROJECT_CONTEXT.md, Section 7)
+  img_size: 224
+
+structure:
+  operators: runs/x2/perlayer_reg_s0/results/e1_operators.npz   # neuron pairings (X2 fit, registers model, fit seed 0)
+  heads: runs/m1/m1_structure.npz   # M1 head maps, span operators A* (ks 6, 9, 12) and register pairings
+  attn_a_out: auto             # unused by V-exact (A_out = A*); kept so the shared loader reads the M1 file as the pilot does
+  mode: per_layer              # how the shared loader reads the operator file (V-exact takes A* from structure.heads)
+  attention: true              # V-exact converts MLP and attention
+
+vexact:
+  train_embeddings: true       # true: patch embedding, positions, CLS and registers train and are re-projected
+                               # after every step; false: frozen after the projection
+  symmetrise_targets: true     # teacher block outputs centred and symmetrised with A*; at k = depth the final
+                               # features mirror-averaged (mirror/heal_vexact.py)
+  final_target: symmetrised    # k = depth only: symmetrised (mirror average) | even (even projection before the affine)
+
+data:
+  images: cache/heal256_uint8.npy   # uint8 [105000, 256, 256, 3], train images, resize 256 + centre crop 256
+  index: cache/train_index.npz
+  meta: cache/train_meta.json
+  train_key: heal_rows              # 100k distillation images
+  heldout_key: healval_rows         # 5k held-out train images, used only for learning-rate selection
+
+heal:                          # mirror/heal.py HealConfig; the pilot's recipe (train_scope is set from vexact.train_embeddings)
+  epochs: 2
+  batch_size: 256
+  micro_batch: 32               # shared GPU; does not change results (fixed normaliser)
+  weight_decay: 0.05
+  warmup_frac: 0.05
+  min_lr_ratio: 0.0
+  crop_size: 224
+  crop_scale: [0.35, 1.0]
+  hflip_p: 0.5
+  w_cls: 1.0
+  w_patch: 1.0
+  w_block: 1.0
+  normaliser: fixed
+  calib_images: 1024
+  grad_checkpoint: false
+  amp: auto
+  eval_every: 200
+  log_every: 20
+  prefetch: 2
+
+lr_selection:
+  lrs: [1.0e-5, 5.0e-5, 1.0e-4]
+  budget_steps: 100
+
+knn:                           # final Tier-1 evaluation (PAPER_EXPERIMENTS.md Section 1), after healing
+  enabled: true
+  cache_dir: cache
+  k: 20
+  temperature: 0.07
+  amp: bf16                    # same as every zero-shot number
+  batch_size: 128
+  num_workers: 4
+  zero_shot: true              # also score the unhealed V-exact student
+
+checks:                        # after healing, fp32 with TF32 off (compute.tf32 false)
+  cache_dir: cache
+  exact_images: 64             # validation images for the exactness probe (M1: 64)
+  exact_tol: 1.0e-4            # M1 tolerance (max relative error inside the span)
+  flip_check: true             # k = depth only
+  flip_bank_per_class: 10      # M1 flip check: 10 bank images per class
+  flip_queries: 5000           # M1 flip check: 5,000 validation queries
+  batch_size: 128
+  num_workers: 4
+
+compute:
+  device: cuda
+  gpu_memory_fraction: 0.25    # GPU is shared
+  tf32: false
+
+out_dir: runs/m3_vexact        # results in runs/m3_vexact/k<k>/
+
+tiny:
+  k: 4                         # the tiny model has 4 blocks: full conversion
+  knn:
+    num_classes: 4
+    bank_per_class: 8
+    query_per_class: 4
+    batch_size: 16
+    num_workers: 0
+  checks:
+    exact_images: 8
+    num_classes: 4
+    bank_per_class: 8
+    query_per_class: 4
+    probe_per_class: 2
+    batch_size: 16
+    num_workers: 0
+  data:
+    image_size: 64
+    n_train: 32
+    n_heldout: 8
+  heal:
+    epochs: 1
+    batch_size: 8
+    micro_batch: 4
+    crop_size: 56
+    calib_images: 8
+    eval_every: 0
+    log_every: 0
+    prefetch: 0
+  lr_selection:
+    lrs: [1.0e-4, 1.0e-3]
+    budget_steps: 2
+  compute:
+    device: cpu
+  out_dir: tiny_out/m3_vexact

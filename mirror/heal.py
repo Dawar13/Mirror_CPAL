@@ -25,6 +25,11 @@ Constraint protocol. Any callable `c(model) -> None` works. Optional methods, us
 An attention projector (M1) is added later as one more callable in the same list. The
 random-structure control is MirrorMLPConstraint with a random involution and a random pairing.
 
+Teacher targets. By default the targets are the teacher's own final-norm tokens and block outputs.
+A teacher adapter with a method `distill_targets(x, plan) -> (feats, start)` supplies its own
+targets instead (same keys; `start` may be None); mirror.heal_vexact.VExactTeacher uses this to
+map the original model's outputs into the V-exact student's folded, exactly symmetric space.
+
 Normaliser. With `normaliser="fixed"` (default) each term's teacher mean square is measured once,
 before training, on `calib_images` evenly spaced training images (centre view) and then held
 fixed. The loss is then a fixed weighted MSE, so gradient accumulation is exact (the micro-batch
@@ -613,6 +618,9 @@ def _final_terms(final: torch.Tensor, n_prefix: int, feats: dict) -> dict:
 
 @torch.no_grad()
 def _teacher_forward(adapter, x: torch.Tensor, plan: _Plan):
+    custom = getattr(adapter, "distill_targets", None)
+    if callable(custom):  # a teacher that maps its outputs into the student's space (mirror.heal_vexact)
+        return custom(x, plan)
     m = adapter.model
     t = adapter.layer0_tokens(x, m)
     start = t if plan.first_grad == 0 else None

@@ -1,0 +1,4 @@
+# V-exact healing (Stage 3 "V-exact full conversion, healed"; V-exact arm of the M3 grid). One healing job at a
+# time: run with PAR=1. k = 12 first (full conversion, fp32 flip check must be 100%), then k = 6.
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4; python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 12'
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4; python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 6'

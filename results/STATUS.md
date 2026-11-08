@@ -37,7 +37,7 @@ ImageNet train (fit seeds 0, 1, 2), k-NN with a 100k train bank and 50k validati
 
 ## Not done yet
 - M3 grid (on hold after G2), M4.
-- Running or queued on the A100 (2026-11-08 evening): A1/A2 at k = 9 (seeds 0, 1, 2), A4/A5 seeds 1 and 2, DINOv2-S and DINOv2-L generality; code being written for ADE20K linear segmentation and V-exact healing (k = 12 and 6).
+- Running or queued on the A100 (2026-11-08 evening): A1/A2 at k = 9 (seeds 0, 1, 2), A4/A5 seeds 1 and 2, DINOv2-S and DINOv2-L generality; code being written for ADE20K linear segmentation. V-exact healing is wired and CPU-tested but not yet run (`scripts/heal_vexact.py`, `configs/m3_vexact.yaml`, job list `jobs/stage9_vexact.txt`: k = 12, then 6).
 
 ## Decisions waiting for Dawar
 1. Framing after G2 (report as is; a new pre-registered healing test where the ceiling does not bind; or recentre on the symmetry tax, exact conversion and zero-shot results).
