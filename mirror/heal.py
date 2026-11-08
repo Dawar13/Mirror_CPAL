@@ -292,13 +292,22 @@ def exact_involution(A, tol: float = 1e-3) -> np.ndarray:
     """Nearest exact symmetric orthogonal involution V sign(lam) V^T (float64).
 
     Operators saved in float32 are involutions only to about 1e-7; projecting with them every step
-    would drift by W (A^2 - I) / 4 per step, so they are cleaned once here."""
+    would drift by W (A^2 - I) / 4 per step, so they are cleaned once here. Results are cached by
+    content, so every student build reuses them (eigh of 768 x 768 is slow on a contended CPU)."""
+    import hashlib
+
     A = np.asarray(A, dtype=np.float64)
-    lam, V = np.linalg.eigh(0.5 * (A + A.T))
-    if np.max(np.abs(np.abs(lam) - 1.0)) > tol:
-        raise ValueError("operator is not close to an orthogonal involution")
-    out = (V * np.sign(lam)) @ V.T
-    return 0.5 * (out + out.T)
+    key = (A.shape, tol, hashlib.sha1(np.ascontiguousarray(A).tobytes()).hexdigest())
+    if key not in _EXACT_CACHE:
+        lam, V = np.linalg.eigh(0.5 * (A + A.T))
+        if np.max(np.abs(np.abs(lam) - 1.0)) > tol:
+            raise ValueError("operator is not close to an orthogonal involution")
+        out = (V * np.sign(lam)) @ V.T
+        _EXACT_CACHE[key] = 0.5 * (out + out.T)
+    return _EXACT_CACHE[key].copy()
+
+
+_EXACT_CACHE: dict = {}
 
 
 def _absorbed_parameters(block: nn.Module) -> list:

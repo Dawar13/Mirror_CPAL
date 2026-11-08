@@ -1,4 +1,4 @@
-# M3 pilot (gate G2, P3): one healing job at a time; each waits for the M1 head maps.
-bash -c 'while [ ! -f runs/m1/m1_structure.npz ]; do sleep 60; done; python scripts/heal.py --config configs/m3_pilot.yaml --method mirror'
-bash -c 'python scripts/heal.py --config configs/m3_pilot.yaml --method svd'
-bash -c 'python scripts/heal.py --config configs/m3_pilot.yaml --method random'
+# M3 pilot (gate G2, P3): one healing job at a time. BLAS threads capped: the CPU is shared.
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4; python scripts/heal.py --config configs/m3_pilot.yaml --method mirror'
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4; python scripts/heal.py --config configs/m3_pilot.yaml --method svd'
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4; python scripts/heal.py --config configs/m3_pilot.yaml --method random'
