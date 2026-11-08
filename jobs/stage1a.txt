@@ -1,0 +1,8 @@
+# Stage 1a (prioritised for the remaining A100 time): G generality, then X3 seeds for the headline arms.
+python scripts/run_e1.py --config configs/g_deit3_b16.yaml --fit-seed 0 --ks 6 --out-root runs/g/deit3_b16_s0
+python scripts/run_e1.py --config configs/g_siglip2_b16.yaml --fit-seed 0 --ks 6 --out-root runs/g/siglip2_b16_s0
+python scripts/run_e1.py --config configs/g_mae_b16.yaml --fit-seed 0 --ks 6 --out-root runs/g/mae_b16_s0
+python scripts/run_e1.py --config configs/x2_perlayer_reg.yaml --fit-seed 1 --ks 6 --out-root runs/x2/perlayer_reg_s1
+python scripts/run_e1.py --config configs/x2_perlayer_reg.yaml --fit-seed 2 --ks 6 --out-root runs/x2/perlayer_reg_s2
+python scripts/run_e1.py --config configs/x2_perlayer_plain.yaml --fit-seed 1 --ks 6 --out-root runs/x2/perlayer_plain_s1
+python scripts/run_e1.py --config configs/x2_perlayer_plain.yaml --fit-seed 2 --ks 6 --out-root runs/x2/perlayer_plain_s2
