@@ -1,0 +1,378 @@
+{
+  "experiment": "Tier 2 transfer linear probes",
+  "model": "dinov2_vitb14_reg",
+  "variants": [
+    "original",
+    "healed_mirror_k9",
+    "healed_svd_k9",
+    "healed_random_k9",
+    "vexact_k6",
+    "vlocal_k9"
+  ],
+  "datasets": {
+    "cifar100": {
+      "hf_id": "uoft-cs/cifar100",
+      "train": [
+        "train"
+      ],
+      "test": "test",
+      "image": "img",
+      "label": "fine_label",
+      "num_classes": 100,
+      "name": "CIFAR-100",
+      "note": "(verify on VM)",
+      "cache": {
+        "format": 1,
+        "hf_id": "uoft-cs/cifar100",
+        "train_splits": [
+          "train"
+        ],
+        "test_split": "test",
+        "image": "img",
+        "label": "fine_label",
+        "resize": 256,
+        "crop": 224,
+        "complete": true,
+        "counts": {
+          "train": 50000,
+          "test": 10000
+        },
+        "loader": "parquet",
+        "sources": {
+          "train": [
+            "train-00000-of-00001.parquet"
+          ],
+          "test": [
+            "test-00000-of-00001.parquet"
+          ]
+        },
+        "decode": {
+          "train": {
+            "n": 50000,
+            "seconds": 48.4
+          },
+          "test": {
+            "n": 10000,
+            "seconds": 13.7
+          }
+        },
+        "seconds": 64.7,
+        "interpolation": "bicubic",
+        "note": "(verify on VM)"
+      }
+    },
+    "flowers102": {
+      "hf_id": "dpdl-benchmark/oxford_flowers102",
+      "train": [
+        "train",
+        "validation"
+      ],
+      "test": "test",
+      "image": "image",
+      "label": "label",
+      "num_classes": 102,
+      "name": "Oxford Flowers-102",
+      "note": "official 1,020 / 1,020 / 6,149 split sizes (verify on VM)",
+      "cache": {
+        "format": 1,
+        "hf_id": "dpdl-benchmark/oxford_flowers102",
+        "train_splits": [
+          "train",
+          "validation"
+        ],
+        "test_split": "test",
+        "image": "image",
+        "label": "label",
+        "resize": 256,
+        "crop": 224,
+        "complete": true,
+        "counts": {
+          "train": 2040,
+          "test": 6149
+        },
+        "loader": "parquet",
+        "sources": {
+          "train": [
+            "train-00000-of-00001.parquet",
+            "validation-00000-of-00001.parquet"
+          ],
+          "test": [
+            "test-00000-of-00006.parquet",
+            "test-00001-of-00006.parquet",
+            "test-00002-of-00006.parquet",
+            "test-00003-of-00006.parquet",
+            "test-00004-of-00006.parquet",
+            "test-00005-of-00006.parquet"
+          ]
+        },
+        "decode": {
+          "train": {
+            "n": 2040,
+            "seconds": 15.5
+          },
+          "test": {
+            "n": 6149,
+            "seconds": 40.1
+          }
+        },
+        "seconds": 73.1,
+        "interpolation": "bicubic",
+        "note": "official 1,020 / 1,020 / 6,149 split sizes (verify on VM)"
+      }
+    },
+    "pets": {
+      "hf_id": "timm/oxford-iiit-pet",
+      "train": [
+        "train"
+      ],
+      "test": "test",
+      "image": "image",
+      "label": "label",
+      "num_classes": 37,
+      "name": "Oxford-IIIT Pets",
+      "note": "train = official trainval (verify on VM)",
+      "cache": {
+        "format": 1,
+        "hf_id": "timm/oxford-iiit-pet",
+        "train_splits": [
+          "train"
+        ],
+        "test_split": "test",
+        "image": "image",
+        "label": "label",
+        "resize": 256,
+        "crop": 224,
+        "complete": true,
+        "counts": {
+          "train": 3680,
+          "test": 3669
+        },
+        "loader": "parquet",
+        "sources": {
+          "train": [
+            "train-00000-of-00001.parquet"
+          ],
+          "test": [
+            "test-00000-of-00001.parquet"
+          ]
+        },
+        "decode": {
+          "train": {
+            "n": 3680,
+            "seconds": 11.8
+          },
+          "test": {
+            "n": 3669,
+            "seconds": 12.1
+          }
+        },
+        "seconds": 30.7,
+        "interpolation": "bicubic",
+        "note": "train = official trainval (verify on VM)"
+      }
+    },
+    "dtd": {
+      "hf_id": "tanganke/dtd",
+      "train": [
+        "train"
+      ],
+      "test": "test",
+      "image": "image",
+      "label": "label",
+      "num_classes": 47,
+      "name": "DTD",
+      "note": "3,760 / 1,880: one official split, train + val (verify on VM)",
+      "cache": {
+        "format": 1,
+        "hf_id": "tanganke/dtd",
+        "train_splits": [
+          "train"
+        ],
+        "test_split": "test",
+        "image": "image",
+        "label": "label",
+        "resize": 256,
+        "crop": 224,
+        "complete": true,
+        "counts": {
+          "train": 3760,
+          "test": 1880
+        },
+        "loader": "parquet",
+        "sources": {
+          "train": [
+            "train-00000-of-00001.parquet"
+          ],
+          "test": [
+            "test-00000-of-00001.parquet"
+          ]
+        },
+        "decode": {
+          "train": {
+            "n": 3760,
+            "seconds": 13.0
+          },
+          "test": {
+            "n": 1880,
+            "seconds": 7.2
+          }
+        },
+        "seconds": 24.4,
+        "interpolation": "bicubic",
+        "note": "3,760 / 1,880: one official split, train + val (verify on VM)"
+      }
+    }
+  },
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "variants": "original,healed_mirror_k9,healed_svd_k9,healed_random_k9,vexact_k6,vlocal_k9",
+    "datasets": "cifar100,flowers102,pets,dtd",
+    "out": "runs/t2",
+    "cache_dir": "cache",
+    "loader": "parquet",
+    "decode_workers": 8,
+    "operators": null,
+    "m1_structure": null,
+    "heal_dir": null,
+    "heal_config": null,
+    "random_seed": 1,
+    "seed": 0,
+    "img_size": 224,
+    "batch_size": 256,
+    "num_workers": 6,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "no_wd_refine": false,
+    "holdout_frac": 0.1,
+    "max_iter": 1000,
+    "history_size": 20,
+    "tol_grad": 1e-06,
+    "probe_tf32": false,
+    "skip_probe": false,
+    "force_features": false,
+    "force_probe": false,
+    "memory_fraction": null,
+    "device": null,
+    "tiny": false
+  },
+  "paths": {
+    "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "m1_structure": "runs/m1/m1_structure.npz",
+    "heal_dir": "runs/m3_pilot"
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  },
+  "seed": 0,
+  "feature_recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+  "timing": {
+    "stages": {
+      "datasets": 192.89,
+      "load": 2.59
+    },
+    "variants": {
+      "original": {
+        "build original": 0.01,
+        "extract original cifar100 train": 55.93,
+        "extract original cifar100 test": 11.18,
+        "extract original flowers102 train": 3.05,
+        "extract original flowers102 test": 7.5,
+        "extract original pets train": 4.6,
+        "extract original pets test": 4.75,
+        "extract original dtd train": 4.78,
+        "extract original dtd test": 2.62,
+        "probe original cifar100": 176.57,
+        "probe original flowers102": 20.46,
+        "probe original pets": 58.63,
+        "probe original dtd": 79.75
+      },
+      "healed_mirror_k9": {
+        "build healed_mirror_k9": 95.55,
+        "extract healed_mirror_k9 cifar100 train": 32.05,
+        "extract healed_mirror_k9 cifar100 test": 6.98,
+        "extract healed_mirror_k9 flowers102 train": 2.18,
+        "extract healed_mirror_k9 flowers102 test": 4.78,
+        "extract healed_mirror_k9 pets train": 3.0,
+        "extract healed_mirror_k9 pets test": 2.89,
+        "extract healed_mirror_k9 dtd train": 2.88,
+        "extract healed_mirror_k9 dtd test": 1.75,
+        "probe healed_mirror_k9 cifar100": 24.99,
+        "probe healed_mirror_k9 flowers102": 4.19,
+        "probe healed_mirror_k9 pets": 11.7,
+        "probe healed_mirror_k9 dtd": 15.71
+      },
+      "healed_svd_k9": {
+        "build healed_svd_k9": 59.92,
+        "extract healed_svd_k9 cifar100 train": 47.79,
+        "extract healed_svd_k9 cifar100 test": 10.42,
+        "extract healed_svd_k9 flowers102 train": 2.52,
+        "extract healed_svd_k9 flowers102 test": 6.5,
+        "extract healed_svd_k9 pets train": 4.23,
+        "extract healed_svd_k9 pets test": 4.44,
+        "extract healed_svd_k9 dtd train": 4.33,
+        "extract healed_svd_k9 dtd test": 2.43,
+        "probe healed_svd_k9 cifar100": 38.67,
+        "probe healed_svd_k9 flowers102": 4.03,
+        "probe healed_svd_k9 pets": 8.84,
+        "probe healed_svd_k9 dtd": 4.21
+      },
+      "healed_random_k9": {
+        "build healed_random_k9": 97.32,
+        "extract healed_random_k9 cifar100 train": 24.86,
+        "extract healed_random_k9 cifar100 test": 6.02,
+        "extract healed_random_k9 flowers102 train": 1.85,
+        "extract healed_random_k9 flowers102 test": 4.01,
+        "extract healed_random_k9 pets train": 2.35,
+        "extract healed_random_k9 pets test": 2.56,
+        "extract healed_random_k9 dtd train": 2.44,
+        "extract healed_random_k9 dtd test": 1.77,
+        "probe healed_random_k9 cifar100": 12.9,
+        "probe healed_random_k9 flowers102": 0.92,
+        "probe healed_random_k9 pets": 3.46,
+        "probe healed_random_k9 dtd": 4.35
+      },
+      "vexact_k6": {
+        "build vexact_k6": 19.37,
+        "extract vexact_k6 cifar100 train": 26.22,
+        "extract vexact_k6 cifar100 test": 5.81,
+        "extract vexact_k6 flowers102 train": 1.86,
+        "extract vexact_k6 flowers102 test": 4.2,
+        "extract vexact_k6 pets train": 2.99,
+        "extract vexact_k6 pets test": 2.95,
+        "extract vexact_k6 dtd train": 3.04,
+        "extract vexact_k6 dtd test": 1.79,
+        "probe vexact_k6 cifar100": 12.97,
+        "probe vexact_k6 flowers102": 0.98,
+        "probe vexact_k6 pets": 4.07,
+        "probe vexact_k6 dtd": 4.97
+      },
+      "vlocal_k9": {
+        "build vlocal_k9": 0.44,
+        "extract vlocal_k9 cifar100 train": 24.27,
+        "extract vlocal_k9 cifar100 test": 5.83,
+        "extract vlocal_k9 flowers102 train": 1.86,
+        "extract vlocal_k9 flowers102 test": 3.78,
+        "extract vlocal_k9 pets train": 2.43,
+        "extract vlocal_k9 pets test": 2.41,
+        "extract vlocal_k9 dtd train": 2.54,
+        "extract vlocal_k9 dtd test": 1.68,
+        "probe vlocal_k9 cifar100": 14.87,
+        "probe vlocal_k9 flowers102": 0.97,
+        "probe vlocal_k9 pets": 3.61,
+        "probe vlocal_k9 dtd": 4.77
+      }
+    },
+    "total_s": 1364.82
+  }
+}

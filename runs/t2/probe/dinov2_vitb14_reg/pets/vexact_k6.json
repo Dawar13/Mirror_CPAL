@@ -1,0 +1,320 @@
+{
+  "transfer_row": {
+    "model": "dinov2_vitb14_reg",
+    "dataset": "pets",
+    "variant": "vexact_k6",
+    "label": "Mirror V-exact, MLP + attention, k = 6",
+    "family": "m1",
+    "method": "vexact",
+    "k": 6,
+    "top1": 95.72090487871354,
+    "top5": 99.83646770237122,
+    "mean_per_class_top1": 95.68443162102045,
+    "chosen_wd": 0.0316,
+    "wd_at_grid_edge": true,
+    "holdout_top1_at_chosen": 96.4769647696477,
+    "final_hit_iter_limit": false,
+    "feature_dim": 1536,
+    "n_train": 3680,
+    "n_test": 3669,
+    "num_classes": 37,
+    "hf_id": "timm/oxford-iiit-pet",
+    "t_extract_s": 5.9,
+    "t_probe_s": 4.1,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 17:34:54"
+  },
+  "selection": {
+    "chosen_wd": 0.0316,
+    "holdout_top1_at_chosen": 96.4769647696477,
+    "wd_at_grid_edge": true,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 96.4769647696477,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.12014399376018907,
+        "train_objective": 0.07366201281547546,
+        "grad_max": 5.995047104079276e-06,
+        "n_iter": 158,
+        "n_eval": 175,
+        "hit_limit": false,
+        "seconds": 1.18
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 96.4769647696477,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.09452592389693429,
+        "train_objective": 0.01438917312771082,
+        "grad_max": 3.513705905788811e-06,
+        "n_iter": 114,
+        "n_eval": 126,
+        "hit_limit": false,
+        "seconds": 0.62
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 96.4769647696477,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.09269602705792683,
+        "train_objective": 0.00247286818921566,
+        "grad_max": 7.695066415180918e-07,
+        "n_iter": 111,
+        "n_eval": 121,
+        "hit_limit": false,
+        "seconds": 0.54
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 96.2059620596206,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.10112384082825203,
+        "train_objective": 0.0003878680581692606,
+        "grad_max": 6.476799399024458e-07,
+        "n_iter": 18,
+        "n_eval": 25,
+        "hit_limit": false,
+        "seconds": 0.07
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 96.4769647696477,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.11350060026173993,
+        "train_objective": 5.819248690386303e-05,
+        "grad_max": 5.637272693093109e-07,
+        "n_iter": 7,
+        "n_eval": 12,
+        "hit_limit": false,
+        "seconds": 0.03
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 96.4769647696477,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.11350060026173993,
+        "train_objective": 1.4733916032128036e-05,
+        "grad_max": 5.767712991655571e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.0
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 96.4769647696477,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.1550567647628991,
+        "train_objective": 0.15659675002098083,
+        "grad_max": 2.7048750780522823e-05,
+        "n_iter": 70,
+        "n_eval": 78,
+        "hit_limit": false,
+        "seconds": 0.34
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 96.4769647696477,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.10254544100464198,
+        "train_objective": 0.033150941133499146,
+        "grad_max": 6.074623343010899e-06,
+        "n_iter": 105,
+        "n_eval": 127,
+        "hit_limit": false,
+        "seconds": 0.95
+      }
+    ],
+    "n_train": 3311,
+    "n_holdout": 369,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.0316,
+    "train_objective": 0.15973109006881714,
+    "grad_max": 1.7911299437400885e-05,
+    "n_iter": 70,
+    "n_eval": 76,
+    "hit_limit": false,
+    "seconds": 0.32,
+    "train_top1": 99.8913043478261
+  },
+  "test": {
+    "top1": 95.72090487871354,
+    "top5": 99.83646770237122,
+    "mean_per_class_top1": 95.68443162102045,
+    "loss": 0.17462737113846585,
+    "n": 3669
+  },
+  "variant_info": {
+    "variant": "vexact_k6",
+    "label": "Mirror V-exact, MLP + attention, k = 6",
+    "family": "m1",
+    "method": "vexact",
+    "k": 6,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/m1_attention.make_variant('vexact', k=6)",
+    "mlp_params_kept": 16444608,
+    "attn_params_kept": 8633568,
+    "a_out_offset": 1,
+    "m1_saved": {
+      "fit_seed": 0,
+      "random_seed": 1,
+      "register_margin": 0.0,
+      "ks": [
+        6,
+        9,
+        12
+      ]
+    },
+    "even_head": false,
+    "converted_params_dense": 42467328,
+    "converted_params_kept": 25078176,
+    "model_params": 69194400
+  },
+  "sources": {
+    "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+    "m1_structure": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+    "m1_structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3"
+  },
+  "dataset_meta": {
+    "format": 1,
+    "hf_id": "timm/oxford-iiit-pet",
+    "train_splits": [
+      "train"
+    ],
+    "test_split": "test",
+    "image": "image",
+    "label": "label",
+    "resize": 256,
+    "crop": 224,
+    "complete": true,
+    "counts": {
+      "train": 3680,
+      "test": 3669
+    },
+    "loader": "parquet",
+    "sources": {
+      "train": [
+        "train-00000-of-00001.parquet"
+      ],
+      "test": [
+        "test-00000-of-00001.parquet"
+      ]
+    },
+    "decode": {
+      "train": {
+        "n": 3680,
+        "seconds": 11.8
+      },
+      "test": {
+        "n": 3669,
+        "seconds": 12.1
+      }
+    },
+    "seconds": 30.7,
+    "interpolation": "bicubic",
+    "note": "train = official trainval (verify on VM)"
+  },
+  "feature_meta": {
+    "train": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+        "m1_structure": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+        "m1_structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3"
+      },
+      "img_size": 224,
+      "dataset": "pets",
+      "hf_id": "timm/oxford-iiit-pet",
+      "split": "train",
+      "n": 3680,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 2.99
+    },
+    "test": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+        "m1_structure": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+        "m1_structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3"
+      },
+      "img_size": 224,
+      "dataset": "pets",
+      "hf_id": "timm/oxford-iiit-pet",
+      "split": "test",
+      "n": 3669,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 2.95
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

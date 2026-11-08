@@ -1,0 +1,8 @@
+# After the clean M2 run: more ablation seeds, ablations at k = 9, DINOv2-S/L generality.
+bash -c 'while [ ! -f runs/m2_clean/M2_SUMMARY.md ]; do sleep 60; done; export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s0 --fit-seed 0 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg'
+bash -c 'while [ ! -f runs/m2_clean/M2_SUMMARY.md ]; do sleep 60; done; export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s1 --fit-seed 1 --ablation A4,A5 --ks 6 --out runs/a/dinov2_vitb14_reg'
+bash -c 'while [ ! -f runs/m2_clean/M2_SUMMARY.md ]; do sleep 60; done; export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A4,A5 --ks 6 --out runs/a/dinov2_vitb14_reg'
+python scripts/run_e1.py --config configs/g_dinov2_s_reg.yaml --fit-seed 0 --ks 6 --out-root runs/g/dinov2_s_reg_s0
+python scripts/run_e1.py --config configs/g_dinov2_l_reg.yaml --fit-seed 0 --ks 12 --out-root runs/g/dinov2_l_reg_s0
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s1 --fit-seed 1 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg'
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg'

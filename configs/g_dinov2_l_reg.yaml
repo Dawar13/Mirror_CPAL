@@ -1,0 +1,6 @@
+# G (nice-to-have): DINOv2 ViT-L/14 with registers; 24 blocks, so the first half is blocks 1 to 12 and k = L/2 = 12.
+base: x2_perlayer_reg.yaml
+model: {name: dinov2_vitl14_reg}
+stats: {shared_layers: [1, 24]}
+decision: {blocks: [1, 12], surgery_k: 12}
+compute: {gpu_memory_fraction: 0.2}

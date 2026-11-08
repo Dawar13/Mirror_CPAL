@@ -1,0 +1,320 @@
+{
+  "transfer_row": {
+    "model": "dinov2_vitb14_reg",
+    "dataset": "dtd",
+    "variant": "vexact_k6",
+    "label": "Mirror V-exact, MLP + attention, k = 6",
+    "family": "m1",
+    "method": "vexact",
+    "k": 6,
+    "top1": 81.64893617021276,
+    "top5": 97.18085106382979,
+    "mean_per_class_top1": 81.64893617021278,
+    "chosen_wd": 0.0316,
+    "wd_at_grid_edge": true,
+    "holdout_top1_at_chosen": 81.64893617021276,
+    "final_hit_iter_limit": false,
+    "feature_dim": 1536,
+    "n_train": 3760,
+    "n_test": 1880,
+    "num_classes": 47,
+    "hf_id": "tanganke/dtd",
+    "t_extract_s": 4.8,
+    "t_probe_s": 5.0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 17:34:59"
+  },
+  "selection": {
+    "chosen_wd": 0.0316,
+    "holdout_top1_at_chosen": 81.64893617021276,
+    "wd_at_grid_edge": true,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 81.11702127659575,
+        "holdout_top5": 94.94680851063829,
+        "holdout_loss": 0.6889225574249916,
+        "train_objective": 0.20003026723861694,
+        "grad_max": 1.1874275514855981e-05,
+        "n_iter": 174,
+        "n_eval": 183,
+        "hit_limit": false,
+        "seconds": 0.94
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 80.31914893617021,
+        "holdout_top5": 94.14893617021276,
+        "holdout_loss": 0.7899915816936087,
+        "train_objective": 0.04214119911193848,
+        "grad_max": 3.076973371207714e-06,
+        "n_iter": 189,
+        "n_eval": 204,
+        "hit_limit": false,
+        "seconds": 0.95
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 80.58510638297872,
+        "holdout_top5": 94.14893617021276,
+        "holdout_loss": 0.9653640909397856,
+        "train_objective": 0.007556425407528877,
+        "grad_max": 9.44770363275893e-07,
+        "n_iter": 163,
+        "n_eval": 176,
+        "hit_limit": false,
+        "seconds": 1.19
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 80.58510638297872,
+        "holdout_top5": 93.88297872340425,
+        "holdout_loss": 1.1873164075486204,
+        "train_objective": 0.0012176508316770196,
+        "grad_max": 9.60061015575775e-07,
+        "n_iter": 20,
+        "n_eval": 28,
+        "hit_limit": false,
+        "seconds": 0.08
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 80.58510638297872,
+        "holdout_top5": 94.14893617021276,
+        "holdout_loss": 1.424247904026762,
+        "train_objective": 0.00018277061462868005,
+        "grad_max": 8.862314189173048e-07,
+        "n_iter": 11,
+        "n_eval": 16,
+        "hit_limit": false,
+        "seconds": 0.04
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 80.58510638297872,
+        "holdout_top5": 94.14893617021276,
+        "holdout_loss": 1.424247904026762,
+        "train_objective": 4.573356272885576e-05,
+        "grad_max": 9.279789310312481e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.0
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 81.64893617021276,
+        "holdout_top5": 95.47872340425532,
+        "holdout_loss": 0.6919602739050034,
+        "train_objective": 0.39772504568099976,
+        "grad_max": 2.9562797863036394e-05,
+        "n_iter": 88,
+        "n_eval": 104,
+        "hit_limit": false,
+        "seconds": 0.55
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 80.85106382978724,
+        "holdout_top5": 94.41489361702128,
+        "holdout_loss": 0.7268710846596576,
+        "train_objective": 0.09409444779157639,
+        "grad_max": 5.1424140110611916e-06,
+        "n_iter": 154,
+        "n_eval": 165,
+        "hit_limit": false,
+        "seconds": 0.76
+      }
+    ],
+    "n_train": 3384,
+    "n_holdout": 376,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.0316,
+    "train_objective": 0.4136837422847748,
+    "grad_max": 1.58460607053712e-05,
+    "n_iter": 86,
+    "n_eval": 93,
+    "hit_limit": false,
+    "seconds": 0.43,
+    "train_top1": 98.77659574468085
+  },
+  "test": {
+    "top1": 81.64893617021276,
+    "top5": 97.18085106382979,
+    "mean_per_class_top1": 81.64893617021278,
+    "loss": 0.6329396349318483,
+    "n": 1880
+  },
+  "variant_info": {
+    "variant": "vexact_k6",
+    "label": "Mirror V-exact, MLP + attention, k = 6",
+    "family": "m1",
+    "method": "vexact",
+    "k": 6,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/m1_attention.make_variant('vexact', k=6)",
+    "mlp_params_kept": 16444608,
+    "attn_params_kept": 8633568,
+    "a_out_offset": 1,
+    "m1_saved": {
+      "fit_seed": 0,
+      "random_seed": 1,
+      "register_margin": 0.0,
+      "ks": [
+        6,
+        9,
+        12
+      ]
+    },
+    "even_head": false,
+    "converted_params_dense": 42467328,
+    "converted_params_kept": 25078176,
+    "model_params": 69194400
+  },
+  "sources": {
+    "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+    "m1_structure": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+    "m1_structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3"
+  },
+  "dataset_meta": {
+    "format": 1,
+    "hf_id": "tanganke/dtd",
+    "train_splits": [
+      "train"
+    ],
+    "test_split": "test",
+    "image": "image",
+    "label": "label",
+    "resize": 256,
+    "crop": 224,
+    "complete": true,
+    "counts": {
+      "train": 3760,
+      "test": 1880
+    },
+    "loader": "parquet",
+    "sources": {
+      "train": [
+        "train-00000-of-00001.parquet"
+      ],
+      "test": [
+        "test-00000-of-00001.parquet"
+      ]
+    },
+    "decode": {
+      "train": {
+        "n": 3760,
+        "seconds": 13.0
+      },
+      "test": {
+        "n": 1880,
+        "seconds": 7.2
+      }
+    },
+    "seconds": 24.4,
+    "interpolation": "bicubic",
+    "note": "3,760 / 1,880: one official split, train + val (verify on VM)"
+  },
+  "feature_meta": {
+    "train": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+        "m1_structure": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+        "m1_structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3"
+      },
+      "img_size": 224,
+      "dataset": "dtd",
+      "hf_id": "tanganke/dtd",
+      "split": "train",
+      "n": 3760,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 3.04
+    },
+    "test": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+        "m1_structure": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+        "m1_structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3"
+      },
+      "img_size": 224,
+      "dataset": "dtd",
+      "hf_id": "tanganke/dtd",
+      "split": "test",
+      "n": 1880,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 1.79
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

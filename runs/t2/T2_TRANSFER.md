@@ -7,8 +7,11 @@ Same features and probe as the ImageNet linear probe (T2_LINEAR.md): [CLS (or po
 | Variant | cifar100 | flowers102 | pets | dtd |
 |---|---|---|---|---|
 | original | 91.40 (91.40) | 99.69 (99.73) | 95.99 (95.96) | 83.56 (83.56) |
+| vexact_k6 | 85.21 (85.21) | 99.69 (99.73) | 95.72 (95.68) | 81.65 (81.65) |
 | healed_mirror_k9 | 90.89 (90.89) | 99.69 (99.73) | 95.58 (95.55) | 83.35 (83.35) |
+| healed_random_k9 | 84.47 (84.47) | 99.56 (99.55) | 94.30 (94.26) | 77.39 (77.39) |
 | healed_svd_k9 | 88.67 (88.67) | 99.69 (99.73) | 95.50 (95.47) | 80.69 (80.69) |
+| vlocal_k9 | 80.89 (80.89) | 99.59 (99.62) | 94.74 (94.68) | 80.37 (80.37) |
 
 Datasets (Hugging Face ids, verify on VM): cifar100: uoft-cs/cifar100; flowers102: dpdl-benchmark/oxford_flowers102; pets: timm/oxford-iiit-pet; dtd: tanganke/dtd.
 Source: `t2_transfer.csv` and `probe/<model>/<dataset>/<variant>.json`. Commit(s): 8a7b6c4e42 (dirty); seed(s): 0.
