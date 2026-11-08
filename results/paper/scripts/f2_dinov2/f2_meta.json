@@ -1,0 +1,64 @@
+{
+  "experiment": "F2",
+  "date": "2026-11-08 18:16:48",
+  "git": {
+    "git_hash": "8f294b9831e1faa97bbde1db3448988dedc21364",
+    "git_dirty": false
+  },
+  "seed": 0,
+  "args": {
+    "run": [
+      "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\x2\\perlayer_plain_s0\\results\\e1_operators.npz",
+      "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\x2\\perlayer_reg_s0\\results\\e1_operators.npz",
+      "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\x2\\perlayer_reg_s2\\results\\e1_operators.npz"
+    ],
+    "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f2_dinov2",
+    "energy": 0.95,
+    "seed": 0,
+    "n_null": 3
+  },
+  "inputs": [
+    {
+      "path": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\x2\\perlayer_plain_s0\\results\\e1_operators.npz",
+      "npz": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\x2\\perlayer_plain_s0\\results\\e1_operators.npz",
+      "npz_sha256": "c7686674f09cf4c9942a249dd068e283aba360edc6717c05c64151d23b6d3b36",
+      "model": "dinov2_vitb14",
+      "fit_seed": 0,
+      "input_git_hash": "e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd",
+      "tiny": false,
+      "G_present": true
+    },
+    {
+      "path": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\x2\\perlayer_reg_s0\\results\\e1_operators.npz",
+      "npz": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\x2\\perlayer_reg_s0\\results\\e1_operators.npz",
+      "npz_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+      "model": "dinov2_vitb14_reg",
+      "fit_seed": 0,
+      "input_git_hash": "e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd",
+      "tiny": false,
+      "G_present": true
+    },
+    {
+      "path": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\x2\\perlayer_reg_s2\\results\\e1_operators.npz",
+      "npz": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\x2\\perlayer_reg_s2\\results\\e1_operators.npz",
+      "npz_sha256": "476058c403c7b38807eb69e5b81e34acfb4d4afd96626ffaf6b96894f6bf2600",
+      "model": "dinov2_vitb14_reg",
+      "fit_seed": 2,
+      "input_git_hash": "ced2c089288d658bb0ce1666c1ec49fd684427f9",
+      "tiny": false,
+      "G_present": true
+    }
+  ],
+  "cleaning": {
+    "max_eig_dev": 5.151803250669218e-08,
+    "max_rel_change": 2.144990261819988e-08,
+    "d_plus_mismatch_rows": 0
+  },
+  "definitions": {
+    "agree_full": "tr(A_l A_m) / d, operators cleaned to exact involutions",
+    "agree_energy": "tr(U_l^T A_l A_m U_l) / k_l, U_l = top eigenvectors of G_l covering 0.95 of tr(G_l)",
+    "agree_energy_weighted": "tr(G_l A_l A_m) / tr(G_l)",
+    "pa_mean_cos": "mean cosine of the principal angles between the +1 eigenspaces of A_l and A_l+1",
+    "nulls": "3 random involutions per layer and run with the same d+: even subspace Haar-random (mirror.findings.random_subspace), operator 2 E E^T - I; base seed 0"
+  }
+}

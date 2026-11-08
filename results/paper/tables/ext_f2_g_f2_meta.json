@@ -1,0 +1,64 @@
+{
+  "experiment": "F2",
+  "date": "2026-11-08 18:20:29",
+  "git": {
+    "git_hash": "8f294b9831e1faa97bbde1db3448988dedc21364",
+    "git_dirty": false
+  },
+  "seed": 0,
+  "args": {
+    "run": [
+      "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\g\\deit3_b16_s0\\results\\e1_operators.npz",
+      "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\g\\mae_b16_s0\\results\\e1_operators.npz",
+      "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\g\\siglip2_b16_s0\\results\\e1_operators.npz"
+    ],
+    "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f2_g",
+    "energy": 0.95,
+    "seed": 0,
+    "n_null": 3
+  },
+  "inputs": [
+    {
+      "path": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\g\\deit3_b16_s0\\results\\e1_operators.npz",
+      "npz": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\g\\deit3_b16_s0\\results\\e1_operators.npz",
+      "npz_sha256": "cc65a9ba9425c9ba6bb707cfac15696f0a8a9068c7c3ba9257385d33b9a5f92d",
+      "model": "deit3_b16",
+      "fit_seed": 0,
+      "input_git_hash": "98faa6454f6447b57958487eea0fd57a44676947",
+      "tiny": false,
+      "G_present": true
+    },
+    {
+      "path": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\g\\mae_b16_s0\\results\\e1_operators.npz",
+      "npz": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\g\\mae_b16_s0\\results\\e1_operators.npz",
+      "npz_sha256": "67ce4d475a2ea86f2ccefe71d2598c2462aa0fe8d7568009e7fbee4744ea35e3",
+      "model": "mae_b16",
+      "fit_seed": 0,
+      "input_git_hash": "98faa6454f6447b57958487eea0fd57a44676947",
+      "tiny": false,
+      "G_present": true
+    },
+    {
+      "path": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\g\\siglip2_b16_s0\\results\\e1_operators.npz",
+      "npz": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100\\runs\\g\\siglip2_b16_s0\\results\\e1_operators.npz",
+      "npz_sha256": "361af23bdf088df977d685d3b2efb37be30df5c4ffe8da40269b28f17787f4ee",
+      "model": "siglip2_b16",
+      "fit_seed": 0,
+      "input_git_hash": "98faa6454f6447b57958487eea0fd57a44676947",
+      "tiny": false,
+      "G_present": true
+    }
+  ],
+  "cleaning": {
+    "max_eig_dev": 5.289619564585735e-08,
+    "max_rel_change": 2.1090389236045107e-08,
+    "d_plus_mismatch_rows": 0
+  },
+  "definitions": {
+    "agree_full": "tr(A_l A_m) / d, operators cleaned to exact involutions",
+    "agree_energy": "tr(U_l^T A_l A_m U_l) / k_l, U_l = top eigenvectors of G_l covering 0.95 of tr(G_l)",
+    "agree_energy_weighted": "tr(G_l A_l A_m) / tr(G_l)",
+    "pa_mean_cos": "mean cosine of the principal angles between the +1 eigenspaces of A_l and A_l+1",
+    "nulls": "3 random involutions per layer and run with the same d+: even subspace Haar-random (mirror.findings.random_subspace), operator 2 E E^T - I; base seed 0"
+  }
+}

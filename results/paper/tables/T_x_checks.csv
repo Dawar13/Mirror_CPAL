@@ -1,0 +1,45 @@
+experiment,model,git_hash,check_id,quantity,value,bar,verdict
+X1,dinov2_vitb14_reg,a3cb82488900e61656999c78db1de8ba4310f406,x1.reg.full_rank_diff,full-rank SVD on all blocks: max abs CLS difference,5.120038986206055e-05,identical outputs (no numeric bar),
+X1,dinov2_vitb14_reg,a3cb82488900e61656999c78db1de8ba4310f406,x1.reg.fold_max_rel,folding: max relative difference over blocks,4.287720003048889e-06,exact folding (no numeric bar),
+X1,dinov2_vitb14_reg,a3cb82488900e61656999c78db1de8ba4310f406,x1.reg.rank_ratio_fc1_min,"SVD rank parameters / matched count, fc1, min over blocks",0.9979,within 1% and not above (PAPER_EXPERIMENTS.md Section 1),PASS
+X1,dinov2_vitb14_reg,a3cb82488900e61656999c78db1de8ba4310f406,x1.reg.rank_ratio_fc2_min,"SVD rank parameters / matched count, fc2, min over blocks",0.9973,within 1% and not above (PAPER_EXPERIMENTS.md Section 1),PASS
+X1,dinov2_vitb14_reg,a3cb82488900e61656999c78db1de8ba4310f406,x1.reg.finite,features finite after SVD at k = 6,True,true,PASS
+X1,dinov2_vitb14_reg,a3cb82488900e61656999c78db1de8ba4310f406,x1.reg.dtype,precision,torch.float32,no fp16,PASS
+X1,dinov2_vitb14_reg,a3cb82488900e61656999c78db1de8ba4310f406,x1.reg.small_top1,"original top-1, small protocol",74.45000410079956,,
+X1,dinov2_vitb14_reg,a3cb82488900e61656999c78db1de8ba4310f406,x1.reg.single_block_max_drop,single-block SVD: largest top-1 drop (small protocol),1.55,,
+X1,dinov2_vitb14_reg,a3cb82488900e61656999c78db1de8ba4310f406,x1.reg.svd_energy_fc1,"weight energy discarded by SVD, fc1, mean over blocks 1 to 6",0.12693333333333334,,
+X1,dinov2_vitb14_reg,a3cb82488900e61656999c78db1de8ba4310f406,x1.reg.svd_energy_fc2,"weight energy discarded by SVD, fc2, mean over blocks 1 to 6",0.13663333333333336,,
+X1,dinov2_vitb14,a3cb82488900e61656999c78db1de8ba4310f406,x1.plain.full_rank_diff,full-rank SVD on all blocks: max abs CLS difference,3.3915042877197266e-05,identical outputs (no numeric bar),
+X1,dinov2_vitb14,a3cb82488900e61656999c78db1de8ba4310f406,x1.plain.fold_max_rel,folding: max relative difference over blocks,6.286390089371707e-06,exact folding (no numeric bar),
+X1,dinov2_vitb14,a3cb82488900e61656999c78db1de8ba4310f406,x1.plain.rank_ratio_fc1_min,"SVD rank parameters / matched count, fc1, min over blocks",0.9985,within 1% and not above (PAPER_EXPERIMENTS.md Section 1),PASS
+X1,dinov2_vitb14,a3cb82488900e61656999c78db1de8ba4310f406,x1.plain.rank_ratio_fc2_min,"SVD rank parameters / matched count, fc2, min over blocks",0.9973,within 1% and not above (PAPER_EXPERIMENTS.md Section 1),PASS
+X1,dinov2_vitb14,a3cb82488900e61656999c78db1de8ba4310f406,x1.plain.finite,features finite after SVD at k = 6,True,true,PASS
+X1,dinov2_vitb14,a3cb82488900e61656999c78db1de8ba4310f406,x1.plain.dtype,precision,torch.float32,no fp16,PASS
+X1,dinov2_vitb14,a3cb82488900e61656999c78db1de8ba4310f406,x1.plain.small_top1,"original top-1, small protocol",74.25000071525574,,
+X1,dinov2_vitb14,a3cb82488900e61656999c78db1de8ba4310f406,x1.plain.single_block_max_drop,single-block SVD: largest top-1 drop (small protocol),1.85,,
+X1,dinov2_vitb14,a3cb82488900e61656999c78db1de8ba4310f406,x1.plain.svd_energy_fc1,"weight energy discarded by SVD, fc1, mean over blocks 1 to 6",0.13873333333333335,,
+X1,dinov2_vitb14,a3cb82488900e61656999c78db1de8ba4310f406,x1.plain.svd_energy_fc2,"weight energy discarded by SVD, fc2, mean over blocks 1 to 6",0.14338333333333333,,
+X1b,dinov2_vitb14_reg,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.reg.k0.top1,SVD on the first 0 blocks: top-1 (small protocol),74.45000410079956,,
+X1b,dinov2_vitb14_reg,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.reg.k1.top1,SVD on the first 1 blocks: top-1 (small protocol),73.7000048160553,,
+X1b,dinov2_vitb14_reg,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.reg.k2.top1,SVD on the first 2 blocks: top-1 (small protocol),73.1000006198883,,
+X1b,dinov2_vitb14_reg,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.reg.k3.top1,SVD on the first 3 blocks: top-1 (small protocol),71.75000309944153,,
+X1b,dinov2_vitb14_reg,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.reg.k4.top1,SVD on the first 4 blocks: top-1 (small protocol),35.100001096725464,,
+X1b,dinov2_vitb14_reg,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.reg.k5.top1,SVD on the first 5 blocks: top-1 (small protocol),8.950000256299973,,
+X1b,dinov2_vitb14_reg,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.reg.k6.top1,SVD on the first 6 blocks: top-1 (small protocol),4.800000041723251,,
+X1b,dinov2_vitb14,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.plain.k0.top1,SVD on the first 0 blocks: top-1 (small protocol),74.25000071525574,,
+X1b,dinov2_vitb14,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.plain.k1.top1,SVD on the first 1 blocks: top-1 (small protocol),74.00000095367432,,
+X1b,dinov2_vitb14,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.plain.k2.top1,SVD on the first 2 blocks: top-1 (small protocol),72.60000109672546,,
+X1b,dinov2_vitb14,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.plain.k3.top1,SVD on the first 3 blocks: top-1 (small protocol),70.70000171661377,,
+X1b,dinov2_vitb14,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.plain.k4.top1,SVD on the first 4 blocks: top-1 (small protocol),68.75000596046448,,
+X1b,dinov2_vitb14,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.plain.k5.top1,SVD on the first 5 blocks: top-1 (small protocol),64.50000405311584,,
+X1b,dinov2_vitb14,7456d50a173a357bce08443f1e84e06aa7db3979,x1b.plain.k6.top1,SVD on the first 6 blocks: top-1 (small protocol),58.75000357627869,,
+X4,dinov2_vitb14,e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd,x4.plain.float32.max_abs,"folded vs original, max abs difference (float32, 256 images)",0.010489940643310547,"<= 0.0001 (the plan's bar, set for fp32)",FAIL
+X4,dinov2_vitb14,e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd,x4.plain.float32.max_rel,"folded vs original, max relative difference (float32)",0.0003853776855476448,,
+X4,dinov2_vitb14,aabbbfa3bc3219935467fb269c09c0c9dfe37e5d,x4.plain.float64.max_abs,"folded vs original, max abs difference (float64, 256 images)",0.00019743091961021975,"<= 0.0001 (the plan's bar, set for fp32)",FAIL
+X4,dinov2_vitb14,aabbbfa3bc3219935467fb269c09c0c9dfe37e5d,x4.plain.float64.max_rel,"folded vs original, max relative difference (float64)",7.253209466224935e-06,,
+X4,dinov2_vitb14_reg,e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd,x4.reg.float32.max_abs,"folded vs original, max abs difference (float32, 256 images)",0.000980973243713379,"<= 0.0001 (the plan's bar, set for fp32)",FAIL
+X4,dinov2_vitb14_reg,e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd,x4.reg.float32.max_rel,"folded vs original, max relative difference (float32)",4.570156280795378e-05,,
+X4,dinov2_vitb14_reg,aabbbfa3bc3219935467fb269c09c0c9dfe37e5d,x4.reg.float64.max_abs,"folded vs original, max abs difference (float64, 256 images)",5.720137578046902e-06,"<= 0.0001 (the plan's bar, set for fp32)",PASS
+X4,dinov2_vitb14_reg,aabbbfa3bc3219935467fb269c09c0c9dfe37e5d,x4.reg.float64.max_rel,"folded vs original, max relative difference (float64)",2.6648954254080495e-07,,
+X4,dinov2_vitb14_reg,ced2c089288d658bb0ce1666c1ec49fd684427f9,x4.m1.original.top1,"k-NN top-1, original model (protocol v2, M1 run)",78.9359986782074,,
+X4,dinov2_vitb14_reg,ced2c089288d658bb0ce1666c1ec49fd684427f9,x4.m1.folded.top1,"k-NN top-1, folded model (protocol v2, M1 run)",78.97799611091614,,

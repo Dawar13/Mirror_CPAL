@@ -1,0 +1,94 @@
+{
+  "assumptions": [
+    "Analytic counts at 224 px, not measured latency (M2 measures latency; not run).",
+    "MACs = multiply-accumulates per image; GFLOPs per image = 2 x MACs / 1e9.",
+    "Counted: patch embedding n_patches x (in_chans p^2) x d; per block and token: attention projections 4 d^2 (qkv 3 d^2 plus proj d^2) and MLP 2 h d; per block and image: attention token mixing 2 T^2 d (q k^T and attention times v), which surgery does not change.",
+    "Not counted: biases, norms, softmax, GELU, LayerScale, residual additions, the twin butterfly additions (u + v, u - v) and the k-NN head.",
+    "Mirror MLP: each matrix costs its equivariant free-parameter count (h d + tr(P) tr(A)) / 2 per token (eq_params_fc1, eq_params_fc2 of e1_mlp.csv; mlp_eq_fc1, mlp_eq_fc2 of m1_ranks.csv), i.e. every free parameter is used once per token in even/odd coordinates.",
+    "Mirror attention (M1): the free-parameter counts of Wq, Wk, Wv, Wo per block (attn_free_q/k/v/o of m1_ranks.csv for V-local; attn_free_matrices and mlp_free of m1_vexact_blocks.csv for V-exact, which depend on the span k).",
+    "Basis rotations: every variant with per-layer operators (Mirror MLP only, V-local, and the random controls, which use random per-layer involutions) pays one d x d rotation per converted block (d^2 MACs per token): the stream is rotated from the basis of A_(l-1) to that of A_l at each converted block, the rotation into the first basis is folded into the linear patch embedding and the one after the last converted block into the next dense block. V-exact (one operator for the span) and SVD need none. Rotation matrices are d^2 stored parameters each; they are reported in rotation_params and are not included in model_params (which follows m1_knn.csv).",
+    "SVD: r (in + out) per matrix (ranks svd_rank and svd_rank_fc2 of e1_mlp.csv; svd_r_* of m1_ranks.csv).",
+    "Whole-model parameters: the dense model's total minus the dense matrix parameters of the converted matrices plus the kept ones (biases stay dense), as in m1_knn.csv."
+  ],
+  "architectures": [
+    {
+      "model": "dinov2_vitb14_reg",
+      "d": 768,
+      "h": 3072,
+      "depth": 12,
+      "in_chans": 3,
+      "sources": {
+        "d, h, depth": "runs/x2/perlayer_reg_s0/results/e1_mlp.csv",
+        "in_chans": "assumption: RGB input",
+        "T": "n_tokens / split_sizes.heldout (runs/x2/perlayer_reg_s0/results/e1_layers.csv, runs/x2/perlayer_reg_s0/results/e1_meta.json)",
+        "grid": "runs/f3/f3_dinov2_vitb14_reg.json data.grid_hw",
+        "patch": "crop 224 (runs/x2/perlayer_reg_s0/results/e1_meta.json config.data.crop) / grid width",
+        "model_params_dense": "runs/m1/m1_knn.csv (k = 0, original, model_params)"
+      },
+      "T": 261,
+      "n_patches": 256,
+      "patch": 14,
+      "n_prefix": 5,
+      "model_params_dense": 86583552
+    },
+    {
+      "model": "dinov2_vitb14",
+      "d": 768,
+      "h": 3072,
+      "depth": 12,
+      "in_chans": 3,
+      "sources": {
+        "d, h, depth": "runs/x2/perlayer_plain_s0/results/e1_mlp.csv",
+        "in_chans": "assumption: RGB input",
+        "T": "n_tokens / split_sizes.heldout (runs/x2/perlayer_plain_s0/results/e1_layers.csv, runs/x2/perlayer_plain_s0/results/e1_meta.json)",
+        "grid": "runs/f3/f3_dinov2_vitb14.json data.grid_hw",
+        "patch": "crop 224 (runs/x2/perlayer_plain_s0/results/e1_meta.json config.data.crop) / grid width",
+        "model_params_dense": "runs/m1/m1_knn.csv original model_params of dinov2_vitb14_reg minus n_registers x d (runs/m1/m1_meta.json: n_registers 4); the two models differ only by the register tokens (verify against the hub model)"
+      },
+      "T": 257,
+      "n_patches": 256,
+      "patch": 14,
+      "n_prefix": 1,
+      "model_params_dense": 86580480
+    }
+  ],
+  "dense": {
+    "dinov2_vitb14_reg": {
+      "matrix_params_converted_dense": 0,
+      "matrix_params_kept": 0,
+      "kept_frac_converted": 1.0,
+      "mlp_kept_frac": 1.0,
+      "rotation_params": 0,
+      "model_params": 86583552,
+      "macs_model": 23539156992,
+      "macs_model_dense": 23539156992,
+      "gflops_model": 47.078313984,
+      "gflops_model_dense": 47.078313984,
+      "gflops_saved_model_pct": 0.0,
+      "macs_converted": 0,
+      "gflops_converted": 0.0,
+      "gflops_converted_dense": 0.0,
+      "gflops_saved_converted_pct": 0.0,
+      "model_params_frac": 1.0
+    },
+    "dinov2_vitb14": {
+      "matrix_params_converted_dense": 0,
+      "matrix_params_kept": 0,
+      "kept_frac_converted": 1.0,
+      "mlp_kept_frac": 1.0,
+      "rotation_params": 0,
+      "model_params": 86580480,
+      "macs_model": 23161227264,
+      "macs_model_dense": 23161227264,
+      "gflops_model": 46.322454528,
+      "gflops_model_dense": 46.322454528,
+      "gflops_saved_model_pct": 0.0,
+      "macs_converted": 0,
+      "gflops_converted": 0.0,
+      "gflops_converted_dense": 0.0,
+      "gflops_saved_converted_pct": 0.0,
+      "model_params_frac": 1.0
+    }
+  },
+  "max_rel_check_diff": 0.0
+}

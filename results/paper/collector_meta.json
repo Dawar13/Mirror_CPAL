@@ -1,0 +1,408 @@
+{
+  "written_by": "scripts/collect_results.py",
+  "date": "2026-11-08 18:20:37",
+  "git": {
+    "git_hash": "8f294b9831e1faa97bbde1db3448988dedc21364",
+    "git_dirty": false
+  },
+  "args": {
+    "root": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL",
+    "out": null,
+    "artifacts": null,
+    "skip_scripts": false
+  },
+  "root": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL",
+  "artifacts": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100",
+  "seed": null,
+  "seed_note": "no randomness in the collector; F2 null draws use f2_drift.py's own --seed (default 0)",
+  "prereg_thresholds": {
+    "file": "PREREG_E2.md",
+    "commit": "9804f0670ea630e03b1bde285943f7d735b90ccd",
+    "p1_plain_cut": 2.0,
+    "p1_reg_ratio": 2.0,
+    "p2_frac_pct": 75.0,
+    "p3_random": 2.0,
+    "p3_svd": 3.0,
+    "p3_orig": 2.0,
+    "p4_share": 0.25,
+    "p4_ratio": 5.0,
+    "p5_cos": 0.8,
+    "p5_pairs_pct": 70.0
+  },
+  "prereg_commits": {
+    "E1_INSTRUCTIONS.md": "153b21cd0671535614d6669b1d25711dc3d378c0",
+    "E1B_PREREG.md": "93bd945766e6774a8a7fdf0b3961e2e061137e84",
+    "PREREG_E2.md": "9804f0670ea630e03b1bde285943f7d735b90ccd",
+    "PAPER_EXPERIMENTS.md": "b8902116c1972c5080ca0bc88a3dac0091e50881"
+  },
+  "figures": {
+    "fig_accuracy_vs_k.png": true,
+    "fig_healing_curves.png": true,
+    "fig_tax_vs_depth.png": true,
+    "fig_eA_vs_depth.png": true,
+    "fig_structure_summary.png": true
+  },
+  "tables": {
+    "T_main_zeroshot": 67,
+    "T_healing": 3,
+    "T_healing_p3": 5,
+    "T_generality": 6,
+    "T_generality_p4": 7,
+    "T_structure_per_layer": 78,
+    "T_structure_summary": 10,
+    "T_e1_history": 5,
+    "T_x_checks": 44,
+    "T_attention": 12,
+    "T_attention_vexact": 3,
+    "T_attention_conversion": 7,
+    "T_ablations": 0,
+    "T_prereg": 46,
+    "T_f1_ranges": 10,
+    "T_f2_drift": 6
+  },
+  "f1": [
+    {
+      "status": "ok",
+      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f1_dinov2",
+      "arms": [
+        "perlayer_reg",
+        "perlayer_plain"
+      ],
+      "tag": "f1_dinov2",
+      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\x2",
+      "hist": true
+    },
+    {
+      "status": "ok",
+      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f1_g",
+      "arms": [
+        "deit3_b16",
+        "mae_b16",
+        "siglip2_b16"
+      ],
+      "tag": "f1_g",
+      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\g",
+      "hist": true
+    }
+  ],
+  "f2": [
+    {
+      "status": "ok",
+      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f2_dinov2",
+      "inputs": [
+        "artifacts/a100/runs/x2/perlayer_plain_s0/results/e1_operators.npz",
+        "artifacts/a100/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "artifacts/a100/runs/x2/perlayer_reg_s2/results/e1_operators.npz"
+      ],
+      "tag": "f2_dinov2"
+    },
+    {
+      "status": "ok",
+      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f2_g",
+      "inputs": [
+        "artifacts/a100/runs/g/deit3_b16_s0/results/e1_operators.npz",
+        "artifacts/a100/runs/g/mae_b16_s0/results/e1_operators.npz",
+        "artifacts/a100/runs/g/siglip2_b16_s0/results/e1_operators.npz"
+      ],
+      "tag": "f2_g"
+    }
+  ],
+  "inventory": [
+    {
+      "path": "results/e1_meta.json",
+      "what": "E1",
+      "present": true
+    },
+    {
+      "path": "runs/e1b_perlayer_b14/results/e1_meta.json",
+      "what": "E1b arm",
+      "present": true
+    },
+    {
+      "path": "runs/e1b_perlayer_b14reg/results/e1_meta.json",
+      "what": "E1b arm",
+      "present": true
+    },
+    {
+      "path": "runs/e1b_shared16_b14/results/e1_meta.json",
+      "what": "E1b arm",
+      "present": true
+    },
+    {
+      "path": "runs/x1/x1_svd_check.json",
+      "what": "X1",
+      "present": true
+    },
+    {
+      "path": "runs/x1/x1b_svd_compound.json",
+      "what": "X1b",
+      "present": true
+    },
+    {
+      "path": "runs/x2/perlayer_plain_s0/results/e1_meta.json",
+      "what": "X2/X3 run (meta)",
+      "present": true
+    },
+    {
+      "path": "runs/x2/perlayer_plain_s0/results/e1_surgery.csv",
+      "what": "X2/X3 run (surgery)",
+      "present": true
+    },
+    {
+      "path": "runs/x2/perlayer_plain_s1/results/e1_meta.json",
+      "what": "X2/X3 run (meta)",
+      "present": false
+    },
+    {
+      "path": "runs/x2/perlayer_plain_s1/results/e1_surgery.csv",
+      "what": "X2/X3 run (surgery)",
+      "present": false
+    },
+    {
+      "path": "runs/x2/perlayer_plain_s2/results/e1_meta.json",
+      "what": "X2/X3 run (meta)",
+      "present": false
+    },
+    {
+      "path": "runs/x2/perlayer_plain_s2/results/e1_surgery.csv",
+      "what": "X2/X3 run (surgery)",
+      "present": false
+    },
+    {
+      "path": "runs/x2/perlayer_reg_s0/results/e1_meta.json",
+      "what": "X2/X3 run (meta)",
+      "present": true
+    },
+    {
+      "path": "runs/x2/perlayer_reg_s0/results/e1_surgery.csv",
+      "what": "X2/X3 run (surgery)",
+      "present": true
+    },
+    {
+      "path": "runs/x2/perlayer_reg_s1/results/e1_meta.json",
+      "what": "X2/X3 run (meta)",
+      "present": false
+    },
+    {
+      "path": "runs/x2/perlayer_reg_s1/results/e1_surgery.csv",
+      "what": "X2/X3 run (surgery)",
+      "present": false
+    },
+    {
+      "path": "runs/x2/perlayer_reg_s2/results/e1_meta.json",
+      "what": "X2/X3 run (meta)",
+      "present": true
+    },
+    {
+      "path": "runs/x2/perlayer_reg_s2/results/e1_surgery.csv",
+      "what": "X2/X3 run (surgery)",
+      "present": true
+    },
+    {
+      "path": "runs/x2/shared16_plain_s0/results/e1_meta.json",
+      "what": "X2/X3 run (meta)",
+      "present": false
+    },
+    {
+      "path": "runs/x2/shared16_plain_s0/results/e1_surgery.csv",
+      "what": "X2/X3 run (surgery)",
+      "present": true
+    },
+    {
+      "path": "runs/x2/shared16_plain_s1/results/e1_meta.json",
+      "what": "X2/X3 run (meta)",
+      "present": false
+    },
+    {
+      "path": "runs/x2/shared16_plain_s1/results/e1_surgery.csv",
+      "what": "X2/X3 run (surgery)",
+      "present": false
+    },
+    {
+      "path": "runs/x2/shared16_plain_s2/results/e1_meta.json",
+      "what": "X2/X3 run (meta)",
+      "present": false
+    },
+    {
+      "path": "runs/x2/shared16_plain_s2/results/e1_surgery.csv",
+      "what": "X2/X3 run (surgery)",
+      "present": false
+    },
+    {
+      "path": "runs/g/deit3_b16_s0/results/e1_meta.json",
+      "what": "G run (meta)",
+      "present": true
+    },
+    {
+      "path": "runs/g/deit3_b16_s0/results/e1_surgery.csv",
+      "what": "G run (surgery)",
+      "present": true
+    },
+    {
+      "path": "runs/g/mae_b16_s0/results/e1_meta.json",
+      "what": "G run (meta)",
+      "present": false
+    },
+    {
+      "path": "runs/g/mae_b16_s0/results/e1_surgery.csv",
+      "what": "G run (surgery)",
+      "present": true
+    },
+    {
+      "path": "runs/g/siglip2_b16_s0/results/e1_meta.json",
+      "what": "G run (meta)",
+      "present": true
+    },
+    {
+      "path": "runs/g/siglip2_b16_s0/results/e1_surgery.csv",
+      "what": "G run (surgery)",
+      "present": true
+    },
+    {
+      "path": "runs/m1/m1_knn.csv",
+      "what": "M1",
+      "present": true
+    },
+    {
+      "path": "runs/m1/m1_meta.json",
+      "what": "M1",
+      "present": true
+    },
+    {
+      "path": "runs/m1/m1_ranks.csv",
+      "what": "M1",
+      "present": true
+    },
+    {
+      "path": "runs/m1/m1_heads.csv",
+      "what": "M1",
+      "present": true
+    },
+    {
+      "path": "runs/m1/m1_vexact.csv",
+      "what": "M1",
+      "present": true
+    },
+    {
+      "path": "runs/m1/m1_vexact_blocks.csv",
+      "what": "M1",
+      "present": true
+    },
+    {
+      "path": "runs/m1/m1_exactness.csv",
+      "what": "M1",
+      "present": true
+    },
+    {
+      "path": "runs/m1/m1_flipcheck.json",
+      "what": "M1",
+      "present": true
+    },
+    {
+      "path": "runs/m3_pilot/mirror/knn.json",
+      "what": "M3 pilot mirror: final k-NN",
+      "present": true
+    },
+    {
+      "path": "runs/m3_pilot/mirror/final/metrics.json",
+      "what": "M3 pilot mirror: healing metrics",
+      "present": true
+    },
+    {
+      "path": "runs/m3_pilot/svd/knn.json",
+      "what": "M3 pilot svd: final k-NN",
+      "present": true
+    },
+    {
+      "path": "runs/m3_pilot/svd/final/metrics.json",
+      "what": "M3 pilot svd: healing metrics",
+      "present": true
+    },
+    {
+      "path": "runs/m3_pilot/random/knn.json",
+      "what": "M3 pilot random: final k-NN",
+      "present": true
+    },
+    {
+      "path": "runs/m3_pilot/random/final/metrics.json",
+      "what": "M3 pilot random: healing metrics",
+      "present": true
+    },
+    {
+      "path": "runs/d/d_datafree.json",
+      "what": "D (P5)",
+      "present": true
+    },
+    {
+      "path": "runs/f3/f3_gate_G3.json",
+      "what": "F3 (P1, G3)",
+      "present": true
+    },
+    {
+      "path": "runs/f4/f4_p2.json",
+      "what": "F4 (P2)",
+      "present": false
+    },
+    {
+      "path": "runs/a",
+      "what": "A1 to A5 ablations",
+      "present": false
+    },
+    {
+      "path": "runs/m2",
+      "what": "M2 latency",
+      "present": false
+    },
+    {
+      "path": "artifacts/a100/runs/x2/perlayer_plain_s0/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": true
+    },
+    {
+      "path": "artifacts/a100/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": true
+    },
+    {
+      "path": "artifacts/a100/runs/x2/perlayer_reg_s2/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": true
+    },
+    {
+      "path": "artifacts/a100/runs/g/deit3_b16_s0/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": true
+    },
+    {
+      "path": "artifacts/a100/runs/g/mae_b16_s0/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": true
+    },
+    {
+      "path": "artifacts/a100/runs/g/siglip2_b16_s0/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": true
+    },
+    {
+      "path": "artifacts/a100/runs/m1/m1_structure.npz",
+      "what": "M1 structure npz (not needed by the tables)",
+      "present": true
+    }
+  ],
+  "deviations": [
+    "X3: DINOv2-reg has fit seeds 0, 2 (plan: 3 seeds for every headline number).",
+    "X3: DINOv2 has fit seeds 0 (plan: 3 seeds for every headline number).",
+    "Budget: DINOv2-reg k = 9 vexact keeps +1.91% parameters relative to its SVD baseline (plan: within 1%; SVD and random are matched to V-local).",
+    "Budget: DINOv2-reg k = 12 vexact keeps +3.49% parameters relative to its SVD baseline (plan: within 1%; SVD and random are matched to V-local).",
+    "X4: dinov2_vitb14 folded vs original, max abs difference (float32, 256 images) = 1.05e-02 misses <= 0.0001 (the plan's bar, set for fp32).",
+    "X4: dinov2_vitb14 folded vs original, max abs difference (float64, 256 images) = 1.97e-04 misses <= 0.0001 (the plan's bar, set for fp32).",
+    "X4: dinov2_vitb14_reg folded vs original, max abs difference (float32, 256 images) = 9.81e-04 misses <= 0.0001 (the plan's bar, set for fp32).",
+    "P4: P4.siglip2 fails as worded (SigLIP2 breaking share minus DINOv2-reg breaking share (row 4 definition, fit seed 0)).",
+    "P5: FAIL (runs/d/d_datafree.json).",
+    "G4: FAIL (runs/d/d_datafree.json).",
+    "G: the MAE run has no e1_meta.json (its k-NN run was stopped); its decision rows are recomputed with mirror.report.decide and its git hash is not recorded.",
+    "X2: `runs/x2/shared16_plain_s0` is partial (missing e1_meta.json)."
+  ],
+  "n_numbers": 318,
+  "elapsed_s": 501.1
+}
