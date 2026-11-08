@@ -75,6 +75,8 @@ def main(argv=None) -> int:
     p.add_argument("--batch-size", type=int, default=32)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--tol", type=float, default=1e-4)
+    p.add_argument("--dtype", default="float32", choices=["float32", "float64"],
+                   help="float64 separates rounding from a real folding error")
     p.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     p.add_argument("--out", default=None)
     args = p.parse_args(argv)
@@ -91,7 +93,8 @@ def main(argv=None) -> int:
     idx = np.sort(rng.choice(len(images), size=args.n_images, replace=False)).astype(np.int64)
     log(f"{len(idx)} validation images (seed {args.seed}) from {args.cache_dir}")
 
-    adapter = Dinov2Adapter(hub_repo=args.hub_repo, name=args.name, img_size=args.crop).to(device=device)
+    dt = getattr(torch, args.dtype)
+    adapter = Dinov2Adapter(hub_repo=args.hub_repo, name=args.name, img_size=args.crop).to(device=device, dtype=dt)
     adapter.model.float().eval()
     folded = copy.deepcopy(adapter.model)
     info = fold_layernorm_full(folded, final_norm_affine=True)
@@ -112,7 +115,7 @@ def main(argv=None) -> int:
         for s in range(0, len(idx), args.batch_size):
             b = idx[s:s + args.batch_size]
             x = torch.from_numpy(np.ascontiguousarray(images[b])).permute(0, 3, 1, 2).to(device)
-            x = normalize(x, torch.float32)
+            x = normalize(x, dt)
             pre_ref = adapter.forward_tokens(x)
             pre_new = adapter.forward_tokens(x, folded)
             ref = adapter.model.norm(pre_ref)
@@ -136,7 +139,7 @@ def main(argv=None) -> int:
     log(f"hub forward CLS diff {hub_cls_diff:.3e}; folded stream vs centred original "
         f"{stream_vs_centred:.3e} (max |stream| {stream_ref_max:.3g}); "
         f"max relative channel mean of folded stream {max(probe.vals):.3e}")
-    log(f"X4 FOLD CHECK {'PASS' if ok else 'FAIL'} (tol {args.tol:g}, fp32)")
+    log(f"X4 FOLD CHECK {'PASS' if ok else 'FAIL'} (tol {args.tol:g}, {args.dtype})")
 
     out = {
         "experiment": "X4 full LayerNorm folding check",
@@ -147,7 +150,7 @@ def main(argv=None) -> int:
         "git": git_info(),
         "env": env_info(device),
         "tf32": False,
-        "dtype": "float32",
+        "dtype": args.dtype,
         "image_indices": idx.tolist(),
         "cache_meta": {k: meta.get(k) for k in ("n_images", "n_classes", "resize", "crop", "interpolation")},
         "fold": {"family": info["family"], "n_blocks": info["n_blocks"], "n_rmsnorm": info["n_rmsnorm"],
