@@ -97,7 +97,12 @@ class Dinov2Adapter(ViTAdapter):
         hf_home = os.environ.get("HF_HOME")
         if hf_home and "TORCH_HOME" not in os.environ:
             torch.hub.set_dir(os.path.join(hf_home, "torch_hub"))
-        model = torch.hub.load(hub_repo, name, trust_repo=True)
+        # Prefer the local copy of the hub repo (no GitHub call; GitHub returned 504s on the VM).
+        local = os.path.join(torch.hub.get_dir(), hub_repo.replace("/", "_") + "_main")
+        if os.path.isfile(os.path.join(local, "hubconf.py")):
+            model = torch.hub.load(local, name, source="local")
+        else:
+            model = torch.hub.load(hub_repo, name, trust_repo=True)
         if getattr(model, "chunked_blocks", False):
             raise ValueError("Chunked DINOv2 blocks are not supported; load with block_chunks=0.")
         n_prefix = 1 + int(getattr(model, "num_register_tokens", 0))
