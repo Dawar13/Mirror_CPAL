@@ -1,15 +1,16 @@
 {
   "written_by": "scripts/collect_results.py",
-  "date": "2026-11-08 20:21:38",
+  "date": "2026-11-08 20:40:13",
   "git": {
-    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_hash": "66d8ef9e22058ba123bef807090f493502fde742",
     "git_dirty": true
   },
   "args": {
     "root": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL",
     "out": null,
     "artifacts": null,
-    "skip_scripts": true
+    "skip_scripts": true,
+    "skip_f2": false
   },
   "root": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL",
   "artifacts": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100",
@@ -56,12 +57,73 @@
     "T_attention_vexact": 3,
     "T_attention_conversion": 7,
     "T_ablations": 47,
+    "T_ablations_seeds": 25,
+    "T_ablations_a2_extra": 5,
+    "T_tier2": 4,
+    "T_tier2_transfer": 0,
+    "T_latency": 0,
+    "T_latency_checks": 0,
+    "T_f4": 0,
+    "T_f4_p2": 0,
     "T_prereg": 46,
-    "T_f1_ranges": 0,
-    "T_f2_drift": 0
+    "T_f1_ranges": 10,
+    "T_f2_drift": 6
   },
-  "f1": [],
-  "f2": [],
+  "f1": [
+    {
+      "status": "reused",
+      "tag": "f1_dinov2",
+      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\x2",
+      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f1_dinov2",
+      "arms": [
+        "perlayer_reg",
+        "perlayer_plain"
+      ],
+      "stale": [
+        "perlayer_plain_s1",
+        "perlayer_plain_s2",
+        "perlayer_reg_s1"
+      ],
+      "hist": true
+    },
+    {
+      "status": "reused",
+      "tag": "f1_g",
+      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\g",
+      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f1_g",
+      "arms": [
+        "deit3_b16",
+        "mae_b16",
+        "siglip2_b16"
+      ],
+      "stale": [],
+      "hist": true
+    }
+  ],
+  "f2": [
+    {
+      "status": "reused",
+      "tag": "f2_dinov2",
+      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f2_dinov2",
+      "inputs": [
+        "artifacts/a100/runs/x2/perlayer_plain_s0/results/e1_operators.npz",
+        "artifacts/a100/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "artifacts/a100/runs/x2/perlayer_reg_s2/results/e1_operators.npz"
+      ],
+      "stale": []
+    },
+    {
+      "status": "reused",
+      "tag": "f2_g",
+      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f2_g",
+      "inputs": [
+        "artifacts/a100/runs/g/deit3_b16_s0/results/e1_operators.npz",
+        "artifacts/a100/runs/g/mae_b16_s0/results/e1_operators.npz",
+        "artifacts/a100/runs/g/siglip2_b16_s0/results/e1_operators.npz"
+      ],
+      "stale": []
+    }
+  ],
   "inventory": [
     {
       "path": "results/e1_meta.json",
@@ -299,13 +361,48 @@
       "present": false
     },
     {
+      "path": "runs/f4/f4_dinov2_vitb14_reg.csv",
+      "what": "F4 per-block rows (P2 model)",
+      "present": false
+    },
+    {
+      "path": "runs/f4/f4_dinov2_vitb14.csv",
+      "what": "F4 per-block rows (P2 model)",
+      "present": false
+    },
+    {
+      "path": "runs/f4/f4_deit3_b16.csv",
+      "what": "F4 per-block rows (P2 model)",
+      "present": false
+    },
+    {
       "path": "runs/a",
       "what": "A1 to A5 ablations",
       "present": true
     },
     {
-      "path": "runs/m2",
+      "path": "runs/m2/m2_latency.csv",
       "what": "M2 latency",
+      "present": false
+    },
+    {
+      "path": "runs/m2/m2_checks.csv",
+      "what": "M2 latency",
+      "present": false
+    },
+    {
+      "path": "runs/m2/m2_meta.json",
+      "what": "M2 latency",
+      "present": false
+    },
+    {
+      "path": "runs/t2/t2_linear.csv",
+      "what": "Tier 2 ImageNet linear probe",
+      "present": true
+    },
+    {
+      "path": "runs/t2/t2_transfer.csv",
+      "what": "Tier 2 transfer probes",
       "present": false
     },
     {
@@ -371,6 +468,6 @@
     "G: the MAE run has no e1_meta.json (its k-NN run was stopped); its decision rows are recomputed with mirror.report.decide and its git hash is not recorded.",
     "X2: `runs/x2/shared16_plain_s0` is partial (missing e1_meta.json)."
   ],
-  "n_numbers": 316,
-  "elapsed_s": 11.8
+  "n_numbers": 408,
+  "elapsed_s": 10.1
 }

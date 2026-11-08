@@ -965,7 +965,8 @@ def build_healing(P, m3, m1, th, prereg_commit):
     for method in ("mirror", "svd", "random"):
         r = m3[method]
         cfg = (r["summary"] or {}).get("config")
-        row = {"method": method, "status": r["status"], "_src": r["dir"], "_derived": {}, "_loc": {}}
+        row = {"method": method, "status": r["status"], "_src": r["dir"], "_derived": {}, "_loc": {},
+               "model": ((cfg or default_cfg or {}).get("model") or {}).get("name")}
         knn, kf, pre = r["knn"] or {}, r["knn_file"], r["knn_prefix"]
         for part in ("original", "zero_shot", "healed"):
             if part in knn:
@@ -1059,6 +1060,49 @@ def build_healing(P, m3, m1, th, prereg_commit):
            "threshold_text": "both pass", "prereg_commit": prereg_commit, "_src": "T_healing_p3", "_git": gits,
            "_seed": seed})
     return T, G
+
+
+def add_linear_to_healing(Th: Table, T2: Table) -> None:
+    """Second measure next to k-NN: the Tier-2 linear probe of each healed student (information only; the P3
+    verdict stays on k-NN, as pre-registered)."""
+    Th.md_cols += [("linear: healed", "linear_top1", ".2f"), ("linear: original", "linear_original_top1", ".2f"),
+                   ("Mirror minus this: k-NN", "mirror_minus_knn", ".2f"),
+                   ("Mirror minus this: linear", "mirror_minus_linear", ".2f")]
+    Th.notes.append("Linear: Tier-2 ImageNet linear probe top-1 (%) of the same healed student (T_tier2), a second "
+                    "measure next to k-NN. Information only: the P3 verdict below stays on k-NN, as pre-registered.")
+    for r in Th.rows:
+        model, k = r.get("model"), r.get("k")
+        if not model or not k:
+            continue
+        t = T2.find(model=model, variant=f"healed_{r['method']}_k{k}")
+        o = T2.find(model=model, variant="original")
+        if t is not None:
+            for src, dst in (("top1", "linear_top1"), ("top5", "linear_top5"), ("chosen_wd", "linear_chosen_wd"),
+                             ("knn_check_top1", "linear_knn_check")):
+                if t.get(src) is not None:
+                    r[dst] = t[src]
+                    if t["_loc"].get(src):
+                        r["_loc"][dst] = t["_loc"][src]
+            r["linear_source"] = t["_src"]
+        if o is not None and o.get("top1") is not None:
+            r["linear_original_top1"] = o["top1"]
+            if o["_loc"].get("top1"):
+                r["_loc"]["linear_original_top1"] = o["_loc"]["top1"]
+            if r.get("linear_top1") is not None:
+                r["linear_drop"] = o["top1"] - r["linear_top1"]
+                r["_derived"]["linear_drop"] = "linear top1 of the original minus that of the healed student (T_tier2)"
+    mir = Th.find(method="mirror")
+    if mir is None:
+        return
+    for r in Th.rows:
+        if r is mir:
+            continue
+        if r.get("healed_top1") is not None and mir.get("healed_top1") is not None:
+            r["mirror_minus_knn"] = mir["healed_top1"] - r["healed_top1"]
+            r["_derived"]["mirror_minus_knn"] = "healed k-NN top1 of mirror minus this method's"
+        if r.get("linear_top1") is not None and mir.get("linear_top1") is not None:
+            r["mirror_minus_linear"] = mir["linear_top1"] - r["linear_top1"]
+            r["_derived"]["mirror_minus_linear"] = "healed linear top1 of mirror minus this method's (T_tier2)"
 
 
 # ================================================================================================
@@ -1667,9 +1711,20 @@ def build_prereg(P, e1, e1b, f3, d_free, Tp3, Tp4, x1, status, th, commits, f4):
     if f4:
         j = f4["json"]
         prim = j.get("primary_prereg_models") or {}
-        row = T.add({"id": "P2", "experiment": "F4", "statement": j.get("hypothesis"), "value": py(prim.get("fraction")),
-                     "threshold": f">= {fmt(j.get('threshold'), 'g')}", "verdict": j.get("verdict"), "source_file": f4["file"],
-                     "prereg_file": "PREREG_E2.md", "prereg_commit": th.get("commit"), "_src": f4["file"]})
+        wb = j.get("written_by") or {}
+        g4 = (wb.get("git") or {}).get("git_hash") or ";".join(j.get("git_hashes") or [])
+        exp = th.get("p2_frac_pct")
+        row = T.add({"id": "P2", "experiment": "F4", "statement": j.get("hypothesis") or "P2 rule",
+                     "value": py(prim.get("fraction")), "threshold": f">= {fmt(j.get('threshold'), 'g')}",
+                     "verdict": j.get("verdict") or NOT_RUN, "source_file": f4["file"],
+                     "note": (f"{prim.get('n_hits')} of {prim.get('n_cases')} cases; models complete: "
+                              f"{j.get('complete')}" if prim else str(j.get("status", ""))),
+                     "threshold_matches_prereg": (exp is not None and j.get("threshold") is not None
+                                                  and abs(float(j["threshold"]) - exp / 100) < 1e-12),
+                     "commit_recorded_by_run": ";".join(j.get("prereg_commits") or []) or j.get("prereg_commit_this_run"),
+                     "run_git_hash": g4, "prereg_file": "PREREG_E2.md", "prereg_commit": th.get("commit"),
+                     "_src": f4["file"], "_git": g4, "_seed": wb.get("seed")})
+        row["_loc"]["verdict"] = json_loc(f4["file"], ["verdict"]) if "verdict" in j else None
         if "fraction" in prim:
             row["_loc"]["value"] = json_loc(f4["file"], ["primary_prereg_models", "fraction"])
     else:
@@ -1742,31 +1797,360 @@ def build_prereg(P, e1, e1b, f3, d_free, Tp3, Tp4, x1, status, th, commits, f4):
 
 
 # ================================================================================================
-# Optional tables: A (ablations), F2 summary, F1 ranges
+# A (ablations), Tier 2 (linear and transfer probes), M2 (latency), F4 (P2)
 # ================================================================================================
+A2_EXTRA = ("hungarian", "hungarian_cycle", "generic")
+
+
+def _info(text) -> dict:
+    try:
+        v = json.loads(text) if isinstance(text, str) and text.strip().startswith("{") else {}
+        return v if isinstance(v, dict) else {}
+    except ValueError:
+        return {}
+
+
 def build_ablations(P):
-    T = Table("T_ablations", "A1 to A5: zero-shot ablations (registers model)", ["model", "ablation", "variant", "k", "fit_seed"],
-              [("model", "model", ""), ("ablation", "ablation", ""), ("variant", "variant", ""), ("k", "k", "d"),
+    """Per-seed rows of runs/a/<model>/A*_s*.csv, the mean over fit seeds, and the A2 extra pairings."""
+    T = Table("T_ablations", "A1 to A5: zero-shot ablations, one row per fit seed",
+              ["model", "ablation", "variant", "k", "fit_seed"],
+              [("model", "model_label", ""), ("ablation", "ablation", ""), ("variant", "variant", ""), ("k", "k", "d"),
                ("fit seed", "fit_seed", "d"), ("top-1", "top1", ".2f"), ("drop", "drop_points", ".2f"),
-               ("flip consistency", "flip_consistency", ".2f")])
+               ("flip consistency", "flip_consistency", ".2f"), ("MLP kept", "mlp_params_kept_frac", ".3f"),
+               ("exact projection", "params_exact", ""), ("reused from", "reused_from", "")])
+    T.notes = ["Zero-shot k-NN top-1 and flip consistency (%), paper protocol; drop = original minus variant. "
+               "Reused from: the variant is the same model as the named cell (identical content signature in "
+               "scripts/stage1_ablate.py), so its result was reused, not evaluated again. A fit seed of -1 marks a row "
+               "fitted on pooled fit images (see the row's info)."]
+    S = Table("T_ablations_seeds", "A1 to A5: mean over fit seeds", ["model", "ablation", "variant", "k"],
+              [("model", "model_label", ""), ("ablation", "ablation", ""), ("variant", "variant", ""), ("k", "k", "d"),
+               ("n", "n_seeds", "d"), ("fit seeds", "fit_seeds", ""),
+               ("top-1", lambda r: pm(r.get("top1_mean"), r.get("top1_std")), ""),
+               ("drop", lambda r: pm(r.get("drop_mean"), r.get("drop_std")), ""),
+               ("flip consistency", lambda r: pm(r.get("flip_mean"), r.get("flip_std")), ""), ("note", "note", "")])
+    S.notes = ["Mean and sample standard deviation (n - 1) over the fit seeds present; with one seed none is shown."]
+    X = Table("T_ablations_a2_extra", "A2 pairings hungarian, hungarian_cycle and generic: pairing and projection as recorded",
+              ["model", "variant", "k", "fit_seed"],
+              [("variant", "variant", ""), ("k", "k", "d"), ("fit seed", "fit_seed", "d"), ("top-1", "top1", ".2f"),
+               ("exact projection", "params_exact", ""), ("pairing", "pairing", ""), ("projection", "projection", "")])
+    X.notes = ["Pairing and projection are the descriptions each row records in its info column (scripts/stage1_ablate.py)."]
     base = P.runs / "a"
     files = sorted(base.glob("*/A*_s*.csv")) if base.is_dir() else []
     for f in files:
         df = read_csv(f)
         if df is None:
             continue
-        model = f.parent.name
+        model = str(df["model"].iloc[0]) if "model" in df else f.parent.name
         for _, r in df.iterrows():
-            row = {"model": model, "ablation": r.get("ablation"), "variant": r.get("variant"), "k": py(r.get("k")),
-                   "fit_seed": py(r.get("fit_seed")), "_src": P.rel(f), "_git": r.get("git_hash"), "_seed": py(r.get("seed")),
-                   "_loc": {}, "_derived": {}}
-            for c in ("top1", "drop_points", "flip_consistency"):
+            info = _info(r.get("info"))
+            row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "ablation": r.get("ablation"),
+                   "variant": r.get("variant"), "k": py(r.get("k")), "fit_seed": py(r.get("fit_seed")),
+                   "reused_from": "" if pd.isna(r.get("reused_from")) else str(r.get("reused_from")),
+                   "params_exact": py(r.get("params_exact")), "n_fit_images": py(r.get("n_fit_images")),
+                   "info": "" if pd.isna(r.get("info")) else str(r.get("info")), "source": P.rel(f),
+                   "git_hash": r.get("git_hash"), "_src": P.rel(f), "_git": r.get("git_hash"), "_seed": py(r.get("seed")),
+                   "_fit_seed": py(r.get("fit_seed")), "_loc": {}, "_derived": {}}
+            where = {"ablation": r["ablation"], "variant": r["variant"], "k": int(r["k"]), "fit_seed": int(r["fit_seed"])}
+            for c in ("top1", "drop_points", "flip_consistency", "mlp_params_kept_frac", "params_vs_mirror_first_k"):
+                if c in r and py(r[c]) is not None:
+                    row[c] = py(r[c])
+                    row["_loc"][c] = csv_loc(P.rel(f), where, c)
+            row["pairing"], row["projection"] = info.get("pairing", ""), info.get("projection", "")
+            row["fit_rows"] = info.get("fit_rows", "")
+            T.add(row)
+            if row["ablation"] == "A2" and row["variant"] in A2_EXTRA:
+                X.add({**{k: v for k, v in row.items() if not k.startswith("_")}, "_src": row["_src"], "_git": row["_git"],
+                       "_seed": row["_seed"], "_fit_seed": row["_fit_seed"], "_loc": dict(row["_loc"]), "_derived": {}})
+    groups: dict = {}
+    for r in T.rows:
+        groups.setdefault((r["model"], r["ablation"], r["variant"], r["k"]), []).append(r)
+    for (model, abl, var, k), rs in groups.items():
+        rs = sorted(rs, key=lambda x: x["fit_seed"])
+        out = {"model": model, "model_label": MODEL_LABEL.get(model, model), "ablation": abl, "variant": var, "k": k,
+               "n_seeds": len(rs), "fit_seeds": ",".join(str(x["fit_seed"]) for x in rs),
+               "_src": ";".join(sorted({x["_src"] for x in rs})), "_git": ";".join(sorted({str(x["_git"]) for x in rs})),
+               "_seed": rs[0]["_seed"] if len({x["_seed"] for x in rs}) == 1 else None,
+               "_fit_seed": ",".join(str(x["fit_seed"]) for x in rs), "_loc": {}, "_derived": {}}
+        for name, col in (("top1", "top1"), ("drop", "drop_points"), ("flip", "flip_consistency")):
+            m_, s_, n_ = agg([x.get(col) for x in rs])
+            out[f"{name}_mean"], out[f"{name}_std"] = m_, s_
+            if len(rs) == 1 and col in rs[0]["_loc"]:
+                out["_loc"][f"{name}_mean"] = rs[0]["_loc"][col]
+            else:
+                out["_derived"][f"{name}_mean"] = f"mean of {col} over fit seeds {out['fit_seeds']}"
+        notes = []
+        if any(x["fit_seed"] == -1 for x in rs):
+            notes.append("fit seed -1: " + (rs[0].get("fit_rows") or "pooled fit images"))
+        reused = sorted({x["reused_from"] for x in rs if x["reused_from"]})
+        if reused:
+            notes.append("same model as " + ", ".join(reused) + " (result reused)")
+        if any(x.get("params_exact") is False for x in rs):
+            notes.append("projection not exact (params_exact = False)")
+        out["note"] = "; ".join(notes)
+        S.add(out)
+    return T, S, X, files
+
+
+def _runs_path_in(obj):
+    """First string in a nested JSON naming a run folder known to the collector, and its fit seed."""
+    stack = [obj]
+    while stack:
+        o = stack.pop(0)
+        if isinstance(o, dict):
+            stack.extend(o.values())
+        elif isinstance(o, list):
+            stack.extend(o)
+        elif isinstance(o, str):
+            fs = fit_seed_from_path(o)
+            if fs is not None:
+                return o, fs
+    return None, None
+
+
+T2_MIRROR = {("mlp", "mirror"), ("m1", "vlocal"), ("m1", "vexact"), ("healed", "mirror")}
+
+
+def _t2_margins(T: Table, keys: tuple) -> None:
+    """Drop against the original and margins of Mirror rows over SVD and random of the same family and k."""
+    for r in T.rows:
+        same = [x for x in T.rows if all(x.get(k) == r.get(k) for k in keys)]
+        orig = next((x for x in same if x["family"] == "original"), None)
+        if orig is not None and r.get("top1") is not None:
+            r["drop_vs_original"] = orig["top1"] - r["top1"]
+            r["_derived"]["drop_vs_original"] = f"top1 of original minus top1 of {r['variant']} ({r['_src']})"
+        if (r.get("family"), r.get("method")) in T2_MIRROR:
+            for base in ("svd", "random"):
+                b = next((x for x in same if x["family"] == r["family"] and x["method"] == base and x["k"] == r["k"]), None)
+                if b is not None:
+                    r[f"margin_{base}"] = r["top1"] - b["top1"]
+                    r["_derived"][f"margin_{base}"] = f"top1 of {r['variant']} minus top1 of {b['variant']} ({r['_src']})"
+
+
+def build_tier2(P, Tm: Table, Th: Table, m1: dict, x2: dict):
+    T = Table("T_tier2", "Tier 2: ImageNet linear probe (runs/t2/t2_linear.csv)", ["model", "variant"],
+              [("model", "model_label", ""), ("variant", "variant", ""), ("k", "k", "d"), ("top-1", "top1", ".2f"),
+               ("top-5", "top5", ".2f"), ("drop", "drop_vs_original", ".2f"), ("vs SVD", "margin_svd", ".2f"),
+               ("vs random", "margin_random", ".2f"), ("chosen wd", "chosen_wd", "g"), ("wd at grid edge", "wd_at_grid_edge", ""),
+               ("k-NN check", "knn_check_top1", ".2f"), ("Tier-1 k-NN", "tier1_knn_top1", ".2f"),
+               ("model params", "model_params", ",d")])
+    T.notes = ["Logistic regression on [CLS, mean patch token] trained on the 100k bank, tested on all 50k validation "
+               "images; weight decay chosen on a 10% split of the bank (scripts/tier2_linear.py). Drop: original minus "
+               "variant; vs SVD and vs random: Mirror variant minus the SVD or random variant of the same family and k "
+               "(empty where that baseline was not probed). k-NN check: k-NN on the probe's own cached CLS features; "
+               "Tier-1 k-NN: the same variant's number from the k-NN tables (source in tier1_source)."]
+    X = Table("T_tier2_transfer", "Tier 2: transfer linear probes (runs/t2/t2_transfer.csv)", ["model", "dataset", "variant"],
+              [("model", "model_label", ""), ("dataset", "dataset", ""), ("variant", "variant", ""), ("k", "k", "d"),
+               ("top-1", "top1", ".2f"), ("top-5", "top5", ".2f"), ("mean per-class", "mean_per_class_top1", ".2f"),
+               ("drop", "drop_vs_original", ".2f"), ("vs SVD", "margin_svd", ".2f"), ("vs random", "margin_random", ".2f"),
+               ("chosen wd", "chosen_wd", "g"), ("train / test", lambda r: f"{fmt(r.get('n_train'), ',d')} / "
+                                                                         f"{fmt(r.get('n_test'), ',d')}", "")])
+    X.notes = ["Same probe recipe as the ImageNet probe, trained on each dataset's training split and scored once on "
+               "its test split (scripts/tier2_transfer.py; dataset splits marked (verify on VM) in that script)."]
+    f = P.runs / "t2" / "t2_linear.csv"
+    df = read_csv(f)
+    if df is not None:
+        for _, r in df.iterrows():
+            model, var = str(r["model"]), str(r["variant"])
+            vj = read_json(P.runs / "t2" / "probe" / model / f"{var}_variant.json") or \
+                read_json(P.runs / "t2" / "probe" / model / f"{var}.json") or {}
+            ops, fs = _runs_path_in(vj)
+            row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "variant": var,
+                   "label": r.get("label"), "family": r.get("family"), "method": r.get("method"), "k": py(r.get("k")),
+                   "fit_seed": fs, "structure_source": ops, "source": P.rel(f), "git_hash": r.get("git_hash"),
+                   "seed": py(r.get("seed")), "date": r.get("date"), "_src": P.rel(f), "_git": r.get("git_hash"),
+                   "_seed": py(r.get("seed")), "_fit_seed": fs, "_loc": {}, "_derived": {}}
+            for c in ("top1", "top5", "mean_per_class_top1", "knn_check_top1", "chosen_wd", "wd_at_grid_edge",
+                      "holdout_top1_at_chosen", "final_hit_iter_limit", "model_params", "converted_params_kept",
+                      "converted_params_dense", "n_bank", "n_val", "feature_dim", "feature_kind"):
                 if c in r:
                     row[c] = py(r[c])
-                    row["_loc"][c] = csv_loc(P.rel(f), {"ablation": r["ablation"], "variant": r["variant"], "k": int(r["k"]),
-                                                        "fit_seed": int(r["fit_seed"])}, c)
+                    if c not in ("wd_at_grid_edge", "final_hit_iter_limit", "feature_kind"):
+                        row["_loc"][c] = csv_loc(P.rel(f), {"model": model, "variant": var}, c)
+            # the same variant's Tier-1 k-NN number
+            fam, meth, k = row["family"], row["method"], row["k"]
+            t1, t1src, t1loc = None, "", None
+            if fam == "original":
+                o = Tm.find(model=model, k=0, variant="original")
+                if o is not None and o.get("top1_mean") is not None:
+                    t1, t1src = o["top1_mean"], f"T_main_zeroshot original ({o.get('source_files')})"
+                    t1loc = o["_loc"].get("top1_mean")
+            elif fam == "healed":
+                h = Th.find(method=meth)
+                if h is not None and h.get("k") == k and h.get("healed_top1") is not None:
+                    t1, t1src, t1loc = h["healed_top1"], f"T_healing healed ({h.get('source')})", h["_loc"].get("healed_top1")
+            elif fam == "m1" and m1.get("knn") is not None and m1.get("model") == model:
+                sel = m1["knn"][(m1["knn"]["k"] == k) & (m1["knn"]["variant"] == meth)]
+                if len(sel) == 1:
+                    t1, t1src = float(sel["top1"].iloc[0]), m1["knn_file"]
+                    t1loc = csv_loc(m1["knn_file"], {"k": k, "variant": meth}, "top1")
+            elif fam == "mlp" and fs is not None:
+                run = next((x for x in x2.values() if x["model"] == model and x["fit_seed"] == fs
+                            and x["operator_mode"] == "per_layer" and x["surgery"] is not None), None)
+                sv = {"mirror": "surgery", "svd": "svd", "random": "random"}.get(meth)
+                if run is not None and sv:
+                    s = run["surgery"]
+                    sel = s[(s["k"] == k) & (s["variant"] == sv)]
+                    if len(sel) == 1:
+                        t1, t1src = float(sel["top1"].iloc[0]), run["surgery_file"]
+                        t1loc = csv_loc(run["surgery_file"], {"k": k, "variant": sv}, "top1")
+            row["tier1_knn_top1"], row["tier1_source"] = t1, t1src
+            if t1loc:
+                row["_loc"]["tier1_knn_top1"] = t1loc
+            elif t1 is not None:
+                row["_derived"]["tier1_knn_top1"] = t1src
             T.add(row)
-    return T, files
+        _t2_margins(T, ("model",))
+    f2 = P.runs / "t2" / "t2_transfer.csv"
+    dx = read_csv(f2)
+    if dx is not None:
+        for _, r in dx.iterrows():
+            model, var, ds = str(r["model"]), str(r["variant"]), str(r["dataset"])
+            row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "dataset": ds, "variant": var,
+                   "label": r.get("label"), "family": r.get("family"), "method": r.get("method"), "k": py(r.get("k")),
+                   "source": P.rel(f2), "git_hash": r.get("git_hash"), "seed": py(r.get("seed")), "_src": P.rel(f2),
+                   "_git": r.get("git_hash"), "_seed": py(r.get("seed")), "_loc": {}, "_derived": {}}
+            for c in ("top1", "top5", "mean_per_class_top1", "chosen_wd", "wd_at_grid_edge", "n_train", "n_test",
+                      "num_classes", "hf_id"):
+                if c in r:
+                    row[c] = py(r[c])
+                    if c in ("top1", "top5", "mean_per_class_top1", "chosen_wd"):
+                        row["_loc"][c] = csv_loc(P.rel(f2), {"model": model, "dataset": ds, "variant": var}, c)
+            X.add(row)
+        _t2_margins(X, ("model", "dataset"))
+    return T, X
+
+
+M2_TO_MAIN = {"vlocal": "vlocal", "vexact": "vexact", "mlp_only": "mirror_mlp_m1", "svd": "svd_attn",
+              "random": "random_attn", "dense": "original", "original": "original"}
+
+
+def build_latency(P, Tm: Table, archs: dict):
+    L = Table("T_latency", "M2: measured latency against analytic cost (runs/m2/m2_latency.csv)",
+              ["model", "variant", "k", "batch", "mode"],
+              [("variant", "variant", ""), ("k", "k", "d"), ("batch", "batch", "d"), ("mode", "mode_used", ""),
+               ("median ms", "latency_ms_median", ".3f"), ("img/s", "throughput_img_s", ",.0f"),
+               ("speed-up vs dense", "speedup_vs_dense", ".3f"), ("vs original", "speedup_vs_original", ".3f"),
+               ("analytic (M2)", "flop_speedup_vs_dense", ".3f"), ("analytic (collector)", "collector_flop_speedup", ".3f"),
+               ("measured / analytic", "measured_over_analytic", ".3f"), ("GFLOPs", "gflops", ".2f"),
+               ("params", "params_model", ",d"), ("checks", "checks", "")])
+    L.notes = ["Median of the timed forwards (bf16, CUDA events; scripts/m2_latency.py). Speed-up vs dense: dense "
+               "latency over the variant's, same batch and mode; dense is the folded original in the same efficient "
+               "implementation, original the hub model as released. Analytic (M2): dense multiply-adds over the "
+               "variant's, counted by m2_latency.py; analytic (collector): the same ratio from tables/cost_model.md "
+               "(whole model); measured / analytic: measured speed-up over the M2 analytic one. Checks: float64, float32 "
+               "and bfloat16 agreement of the efficient model with the dense model it was built from "
+               "(T_latency_checks)."]
+    C = Table("T_latency_checks", "M2 checks: efficient model against the dense model it was built from",
+              ["variant", "k", "dtype"],
+              [("variant", "variant", ""), ("k", "k", "d"), ("dtype", "dtype", ""), ("criterion", "criterion", ""),
+               ("value", "value", ".2e"), ("pass", "pass", ""), ("noise floor", "noise_floor_unit", ".2e")])
+    base = P.runs / "m2"
+    lat, chk, meta = read_csv(base / "m2_latency.csv"), read_csv(base / "m2_checks.csv"), read_json(base / "m2_meta.json")
+    mgit = ((meta or {}).get("git") or {}).get("git_hash")
+    status: dict = {}
+    if chk is not None:
+        fchk = P.rel(base / "m2_checks.csv")
+        for _, r in chk.iterrows():
+            key = str(r.get("criterion", "")).split(" ")[0]
+            row = {"variant": r["variant"], "k": py(r["k"]), "dtype": r["dtype"], "criterion": r.get("criterion"),
+                   "value": py(r.get(key)) if key in r else None, "pass": py(r.get("pass")),
+                   "noise_floor_unit": py(r.get("noise_floor_unit")), "_src": fchk, "_git": r.get("git_hash") or mgit,
+                   "_seed": py(r.get("seed")), "_loc": {}, "_derived": {}}
+            if key in r:
+                row["_loc"]["value"] = csv_loc(fchk, {"variant": r["variant"], "k": int(r["k"]), "dtype": r["dtype"]}, key)
+            C.add(row)
+            status.setdefault((r["variant"], int(r["k"])), []).append((r["dtype"], bool(py(r.get("pass")))))
+    if lat is not None:
+        flat = P.rel(base / "m2_latency.csv")
+        for _, r in lat.iterrows():
+            model, var, k = str(r.get("model")), str(r["variant"]), int(r["k"])
+            where = {"variant": var, "k": k, "batch": int(r["batch"]), "mode": r["mode"]}
+            row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "variant": var, "label": r.get("label"),
+                   "k": k, "batch": int(r["batch"]), "mode": r["mode"], "mode_used": r.get("mode_used"),
+                   "source": flat, "git_hash": r.get("git_hash") or mgit, "seed": py(r.get("seed")),
+                   "_src": flat, "_git": r.get("git_hash") or mgit, "_seed": py(r.get("seed")), "_loc": {}, "_derived": {}}
+            for c in ("latency_ms_median", "latency_ms_p10", "latency_ms_p90", "throughput_img_s", "speedup_vs_dense",
+                      "speedup_vs_original", "flop_speedup_vs_dense", "gflops", "gflops_exec", "params_model",
+                      "params_stored", "kept_frac_converted", "rotation_params", "n_rotations", "macs_per_image",
+                      "compile_ok", "error"):
+                if c in r:
+                    row[c] = py(r[c])
+                    if c not in ("compile_ok", "error"):
+                        row["_loc"][c] = csv_loc(flat, where, c)
+            if row.get("speedup_vs_dense") is not None and row.get("flop_speedup_vs_dense"):
+                row["measured_over_analytic"] = row["speedup_vs_dense"] / row["flop_speedup_vs_dense"]
+                row["_derived"]["measured_over_analytic"] = "speedup_vs_dense / flop_speedup_vs_dense (m2_latency.csv)"
+            mk = M2_TO_MAIN.get(var)
+            arch = archs.get(model)
+            tm = Tm.find(model=model, k=0 if var in ("dense", "original") else k, variant=mk) if mk else None
+            if arch and tm is not None and tm.get("gflops_model"):
+                row["collector_flop_speedup"] = analytic_cost(arch, [])["gflops_model_dense"] / tm["gflops_model"]
+                row["_derived"]["collector_flop_speedup"] = (f"dense GFLOPs / GFLOPs of T_main_zeroshot {mk} at k = {tm['k']} "
+                                                             "(analytic_cost)")
+            st = status.get((var, k))
+            if st:
+                row["checks_pass"] = all(p for _, p in st)
+                row["checks"] = " / ".join(f"{d}: {'pass' if p else 'FAIL'}" for d, p in st)
+            L.add(row)
+    return L, C, meta
+
+
+def build_f4(P):
+    T = Table("T_f4", "F4: single-block surgery, symmetry against low rank (runs/f4/f4_<model>.csv)", ["model", "block"],
+              [("model", "model_label", ""), ("block", "block", "d"), ("s (act.)", "s_act", ".3f"),
+               ("E_svd (act.)", "E_act", ".3f"), ("E_svd - s", "rule_x", ".3f"), ("drop Mirror", "drop_mirror", ".2f"),
+               ("drop SVD", "drop_svd", ".2f"), ("SVD - Mirror drop", "rule_y", ".2f"), ("rule right", "rule_correct", ""),
+               ("s (weight)", "s_weight", ".3f"), ("E_svd (weight)", "E_weight", ".3f")])
+    T.notes = ["Activation-weighted breaking share s and SVD discarded energy E_svd at matched parameters, and the k-NN "
+               "drops of single-block Mirror surgery and SVD (scripts/f4_rule.py). The P2 rule is right when "
+               "E_svd - s and SVD drop - Mirror drop have the same sign (a zero counts as a miss)."]
+    S = Table("T_f4_p2", "P2 (pre-registered): fraction of cases the rule gets right (runs/f4/f4_p2.json)", ["scope"],
+              [("scope", "scope", ""), ("cases", "n_cases", "d"), ("hits", "n_hits", "d"), ("fraction", "fraction", ".3f"),
+               ("note", "note", "")])
+    base = P.runs / "f4"
+    files = sorted(p for p in base.glob("f4_*.csv")) if base.is_dir() else []
+    for f in files:
+        df = read_csv(f)
+        if df is None:
+            continue
+        for _, r in df.iterrows():
+            model = str(r.get("model"))
+            row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "block": py(r.get("block")),
+                   "depth": py(r.get("depth")), "fit_seed": py(r.get("fit_seed")), "prereg_commit": r.get("prereg_commit"),
+                   "source": P.rel(f), "git_hash": r.get("git_hash"), "_src": P.rel(f), "_git": r.get("git_hash"),
+                   "_seed": py(r.get("seed")), "_fit_seed": py(r.get("fit_seed")), "_loc": {}, "_derived": {}}
+            for c in ("s_act", "E_act", "rule_x", "drop_mirror", "drop_svd", "rule_y", "rule_correct", "s_weight",
+                      "E_weight", "rule_x_weight", "top1_original", "top1_mirror", "top1_svd", "mlp_params_mirror",
+                      "mlp_params_svd", "act_source"):
+                if c in r:
+                    row[c] = py(r[c])
+                    if c not in ("rule_correct", "act_source"):
+                        row["_loc"][c] = csv_loc(P.rel(f), {"model": model, "block": int(r["block"])}, c)
+            T.add(row)
+    pj = read_json(base / "f4_p2.json")
+    if pj:
+        fj = P.rel(base / "f4_p2.json")
+        wb = pj.get("written_by") or {}
+        g = (wb.get("git") or {}).get("git_hash") or ";".join(pj.get("git_hashes") or [])
+        scopes = [("pre-registered models (primary)", ["primary_prereg_models"]),
+                  ("all models run", ["primary_all_models_run"])]
+        scopes += [(f"{MODEL_LABEL.get(m, m)}", ["per_model", m]) for m in (pj.get("per_model") or {})]
+        scopes += [(f"secondary: {k}", ["secondary", k]) for k in (pj.get("secondary") or {})]
+        for name, path in scopes:
+            d = pj
+            for k in path:
+                d = (d or {}).get(k)
+            if not isinstance(d, dict):
+                continue
+            row = {"scope": name, "n_cases": py(d.get("n_cases")), "n_hits": py(d.get("n_hits")),
+                   "fraction": py(d.get("fraction")), "_src": fj, "_git": g, "_seed": wb.get("seed"), "_loc": {},
+                   "_derived": {}}
+            for c in ("n_cases", "n_hits", "fraction"):
+                row["_loc"][c] = json_loc(fj, path + [c])
+            if path == ["primary_prereg_models"]:
+                row["note"] = f"verdict {pj.get('verdict')} (threshold {fmt(pj.get('threshold'), 'g')})"
+            S.add(row)
+    return T, S, files, pj
 
 
 # ================================================================================================
@@ -1840,7 +2224,7 @@ def build_f1_table(P, f1res: list[dict]) -> Table:
                ("twin frac", "twin_frac_mean", ".3f"), ("s1", "s1_mean", ".3f"), ("s1 null", "s1_null_mean", ".3f"),
                ("d-/d", "dminus_frac_mean", ".3f")])
     for fr in f1res:
-        if fr["status"] != "ok":
+        if fr["status"] not in ("ok", "reused"):
             continue
         f = Path(fr["out"]) / "f1_ranges.csv"
         df = read_csv(f)
@@ -1865,7 +2249,7 @@ def build_f2_table(P, f2list: list[dict]) -> Table:
                ("PA null", "pa_null_mean_cos", ".3f")])
     for f2res in f2list:
         f = Path(f2res["out"]) / "f2_neighbours.csv"
-        df = read_csv(f) if f2res.get("status") in ("ok", "failed") else None
+        df = read_csv(f) if f2res.get("status") in ("ok", "failed", "reused") else None
         if df is None:
             continue
         g = ";".join(sorted(set(df["git_hash"].astype(str)))) if "git_hash" in df else None
@@ -2278,16 +2662,22 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                      f"s1 {c(f'f1.{ms}.first_half.s1', 'T_structure_summary', {'model': model, 'blocks': '1-6'}, 's1_mean', '.3f')} "
                      f"(null {c(f'f1.{ms}.first_half.s1_null', 'T_structure_summary', {'model': model, 'blocks': '1-6'}, 's1_null_mean', '.3f')}).")
     if not ctx["f1"]:
-        L.append("- `scripts/f1_tax.py` was not run in this collection (--skip-scripts).")
+        L.append("- `scripts/f1_tax.py` was not run in this collection (skipped, and no earlier outputs to reuse).")
     for fr in ctx["f1"]:
-        if fr["status"] == "ok":
+        if fr["status"] in ("ok", "reused"):
             fm = Path(fr["out"]) / "f1_meta.json"
             mx = R.put(f"f1.{fr['tag']}.max_abs_tax_minus_saving", (fr.get("meta") or {}).get("max_abs_tax_minus_saving"),
                        ".2e", source=P.rel(fm), git_hash=((fr.get("meta") or {}).get("git") or {}).get("git_hash"),
                        locator=json_loc(P.rel(fm), ["max_abs_tax_minus_saving"]))
-            L.append(f"- `scripts/f1_tax.py` ran on `{P.rel(fr['runs_dir'])}` (arms {', '.join(fr['arms'])}); outputs in "
+            verb = "ran on" if fr["status"] == "ok" else "outputs (reused) for"
+            L.append(f"- `scripts/f1_tax.py` {verb} `{P.rel(fr['runs_dir'])}` (arms {', '.join(fr['arms'])}); outputs in "
                      f"`{P.rel(fr['out'])}/` and copied as `tables/ext_{fr['tag']}_*`, `figures/ext_{fr['tag']}_fig2_tax.png`; "
                      f"largest |tax - saving| recorded in its f1_meta.json: {mx} (bookkeeping check).")
+            if fr["status"] == "reused":
+                L.append(f"  - Reused from an earlier collection (f1_meta.json: {(fr.get('meta') or {}).get('date')}, commit "
+                         f"{short(((fr.get('meta') or {}).get('git') or {}).get('git_hash'))}); not refreshed in this run "
+                         "(skipped with --skip-scripts)." + (f" Stale: runs present now that it did not read: {', '.join(fr['stale'])}."
+                                                if fr.get("stale") else ""))
             if not fr.get("hist"):
                 L.append("  - Twin-score histograms: not drawn (operator npz files for these runs are not on this "
                          "machine; they are expected under `artifacts/a100/`).")
@@ -2299,11 +2689,17 @@ def build_index(P, ctx, R: Registry) -> list[str]:
     L += ["## F2: operator drift", ""]
     f2list = ctx["f2"]
     if not f2list:
-        L.append("- `scripts/f2_drift.py` was not run in this collection (--skip-scripts).")
+        L.append("- `scripts/f2_drift.py` was not run in this collection (skipped, and no earlier outputs to reuse).")
     for f2 in f2list:
         if f2.get("status") == "ok":
             L.append(f"- `scripts/f2_drift.py` ({f2['tag']}) ran on {', '.join('`' + x + '`' for x in f2['inputs'])}; "
                      f"outputs in `{P.rel(f2['out'])}/` (copied as `tables/ext_{f2['tag']}_*`, `figures/ext_{f2['tag']}_*`).")
+        elif f2.get("status") == "reused":
+            L.append(f"- `scripts/f2_drift.py` ({f2['tag']}) outputs reused from an earlier collection (f2_meta.json: "
+                     f"{(f2.get('meta') or {}).get('date')}, commit {short(((f2.get('meta') or {}).get('git') or {}).get('git_hash'))}), "
+                     f"read from {', '.join('`' + x + '`' for x in f2.get('inputs', []))}; not refreshed in this run "
+                     "(skipped with --skip-scripts or --skip-f2)." + (f" Stale: operator files present now that it did not read: "
+                                            f"{', '.join('`' + x + '`' for x in f2['stale'])}." if f2.get("stale") else ""))
         elif f2.get("status") == "failed":
             L.append(f"- `scripts/f2_drift.py` ({f2['tag']}) failed after reading {', '.join('`' + x + '`' for x in f2.get('inputs', []))}: "
                      f"{str(f2.get('error', '')).splitlines()[0][:160]}; its CSVs, if written, are still summarised below.")
@@ -2457,6 +2853,26 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                  + (f", value {c('m3.' + r['check'].lower() + '.value', 'T_healing_p3', {'check': r['check']}, 'value', headline=r['check'] + ' value: ' + r['statement'])}" if r.get("value") is not None else "")
                  + f" ({r.get('threshold_text', '')}): **{c('m3.' + r['check'].lower() + '.verdict', 'T_healing_p3', {'check': r['check']}, 'verdict', headline=r['check'] + ' verdict' if r['check'] in ('P3', 'G2') else None)}**"
                  + (f"; {r['note']}" if r.get("note") else "") + ".")
+    t2 = T.get("T_tier2")
+    if t2 is not None and any(r["family"] == "healed" for r in t2.rows):
+        bits = []
+        for r in [r for r in t2.rows if r["family"] == "healed"]:
+            wh = {"model": r["model"], "variant": r["variant"]}
+            ms = MODEL_SHORT.get(r["model"], r["model"])
+            bits.append(f"{r['method']} {c(f't2.{ms}.' + r['variant'] + '.top1', 'T_tier2', wh, 'top1')}")
+        mrow = next((r for r in t2.rows if r["family"] == "healed" and r["method"] == "mirror"), None)
+        extra = ""
+        if mrow is not None:
+            wh = {"model": mrow["model"], "variant": mrow["variant"]}
+            ms = MODEL_SHORT.get(mrow["model"], mrow["model"])
+            parts = []
+            for base in ("svd", "random"):
+                if mrow.get(f"margin_{base}") is not None:
+                    parts.append(f"over {base} {c(f't2.{ms}.' + mrow['variant'] + '.margin_' + base, 'T_tier2', wh, 'margin_' + base)}")
+            extra = "; Mirror's margin " + ", ".join(parts) if parts else ""
+        L.append("- Second measure, Tier-2 ImageNet linear probe of the healed students (information only; the P3 "
+                 "verdict above stays on k-NN, as pre-registered): top-1 " + ", ".join(bits) + extra
+                 + ". Columns `linear_*` and `mirror_minus_*` in `T_healing`; rows in `T_tier2`.")
     rs = reasons(["M3 grid"])
     L.append("- M3 grid: " + NOT_RUN + (" (" + " | ".join(rs) + ")" if rs else "") + ". Tables `T_healing`, `T_healing_p3`; "
              "figure `fig_healing_curves.png`.")
@@ -2480,32 +2896,187 @@ def build_index(P, ctx, R: Registry) -> list[str]:
         L.append(f"- {NOT_RUN}: no `runs/d/d_datafree.json`.")
     L.append("")
     # ---------------------------------------------------------------- A, F4, M2, Tier 2
+    plan_text = ctx.get("plan_text") or ""
     L += ["## A: zero-shot ablations (A1 to A5)", ""]
-    ta = T["T_ablations"]
+    ta, tas, tax = T["T_ablations"], T["T_ablations_seeds"], T["T_ablations_a2_extra"]
     if ta.rows:
-        L.append(f"- {len(ta.rows)} rows from {', '.join('`' + P.rel(f) + '`' for f in ctx['a_files'])}. Table `T_ablations`.")
+        hashes = sorted({short(r["_git"]) for r in ta.rows})
+        L.append(f"- Runs: {', '.join('`' + P.rel(f) + '`' for f in ctx['a_files'])} (scripts/stage1_ablate.py); "
+                 f"git {', '.join(hashes)}; run seed(s) {', '.join(sorted({str(r['_seed']) for r in ta.rows}))}. "
+                 "Tables `T_ablations_seeds` (mean over fit seeds), `T_ablations` (per seed), `T_ablations_a2_extra`.")
+        for abl in sorted({r["ablation"] for r in tas.rows}):
+            rows = [r for r in tas.rows if r["ablation"] == abl]
+            bits = []
+            for r in rows:
+                ms = MODEL_SHORT.get(r["model"], r["model"])
+                key = f"a.{ms}.{abl}.{r['variant']}.k{r['k']}"
+                wh = {"model": r["model"], "ablation": abl, "variant": r["variant"], "k": r["k"]}
+                b = f"{r['variant']} {c(key + '.top1', 'T_ablations_seeds', wh, 'top1_mean')}"
+                if r.get("top1_std") is not None:
+                    b += f" ± {c(key + '.top1_std', 'T_ablations_seeds', wh, 'top1_std')}"
+                bits.append(b + f" (fit seeds {r['fit_seeds']})")
+            ks = sorted({r["k"] for r in rows})
+            models = sorted({r["model_label"] for r in rows})
+            L.append(f"- {abl} ({', '.join(models)}, k = {', '.join(map(str, ks))}), k-NN top-1 (%), mean over fit seeds: "
+                     + "; ".join(bits) + ".")
+        if tax.rows:
+            bits = []
+            for r in tax.rows:
+                rv, rf = r["variant"], r["fit_seed"]
+                ms = MODEL_SHORT.get(r["model"], r["model"])
+                wh = {"model": r["model"], "variant": r["variant"], "k": r["k"], "fit_seed": r["fit_seed"]}
+                bits.append(f"{r['variant']} (fit seed {r['fit_seed']}) "
+                            f"{c(f'a.{ms}.A2x.{rv}.s{rf}.top1', 'T_ablations_a2_extra', wh, 'top1')}"
+                            f" [{r['pairing']}{'; projection: ' + r['projection'] if r.get('projection') else ''}; exact "
+                            f"projection: {fmt(r.get('params_exact'))}]")
+            L.append("- A2 pairings hungarian, hungarian_cycle and generic, with the pairing and projection each row records: " + "; ".join(bits) + ".")
+        reused = [r for r in ta.rows if r["reused_from"]]
+        if reused:
+            L.append("- Reused cells (same model as another cell, so its result was reused rather than evaluated again): "
+                     + "; ".join(f"{r['ablation']}/{r['variant']}/k{r['k']}/s{r['fit_seed']} = {r['reused_from']}"
+                                 for r in reused) + ".")
+        pooled = [r for r in ta.rows if r["fit_seed"] == -1]
+        for r in pooled:
+            L.append(f"- {r['ablation']} {r['variant']}: fit seed -1 means pooled fit images ({r.get('fit_rows') or 'see info'}).")
+        m = re.search(r"Track A: zero-shot ablations \(k-NN, k = (\d+) and (\d+), (\d+) seeds", plan_text)
+        if m:
+            want_k, want_n = {int(m[1]), int(m[2])}, int(m[3])
+            gaps = []
+            for abl in sorted({r["ablation"] for r in ta.rows}):
+                rr = [r for r in ta.rows if r["ablation"] == abl]
+                ks = {r["k"] for r in rr}
+                seeds = {r["fit_seed"] for r in rr if r["fit_seed"] is not None and r["fit_seed"] >= 0}
+                if not want_k <= ks or len(seeds) < want_n:
+                    gaps.append(f"{abl} has k = {', '.join(map(str, sorted(ks)))} and fit seeds "
+                                f"{', '.join(map(str, sorted(seeds)))}")
+            if gaps:
+                L.append(f"- Not yet run against the plan (k = {m[1]} and {m[2]}, {m[3]} seeds): " + "; ".join(gaps) + ".")
     else:
         rs = reasons(["A1 to A5", "A1/A2", "A1"])
         L.append(f"- {NOT_RUN}: no `runs/a/*/A*_s*.csv`." + (" " + " | ".join(rs) + "." if rs else ""))
-    L.append("- A6 and A7 (zero-shot part) come from M1; their latency part needs M2.")
+    L.append("- A6 and A7: zero-shot from the M1 rows of `T_main_zeroshot`; latency from M2 (`T_latency`).")
     L.append("")
     L += ["## F4: symmetry versus low rank (P2)", ""]
-    if ctx["f4"]:
+    tf, tp = T["T_f4"], T["T_f4_p2"]
+    if tf.rows or ctx["f4"]:
+        models = sorted({r["model"] for r in tf.rows})
+        hashes = sorted({short(r["_git"]) for r in tf.rows})
+        L.append(f"- Runs: {', '.join('`' + P.rel(f) + '`' for f in ctx['f4_files']) or 'no per-block CSV'} "
+                 f"(scripts/f4_rule.py), git {', '.join(hashes) or 'n/a'}; blocks per model: "
+                 + ", ".join(f"{MODEL_LABEL.get(m_, m_)} {sum(1 for r in tf.rows if r['model'] == m_)}" for m_ in models) + ".")
         r = T["T_prereg"].find(id="P2")
-        L.append(f"- P2 value {c('p2.value', 'T_prereg', {'id': 'P2'}, 'value', '.3f')}: **{c('p2.verdict', 'T_prereg', {'id': 'P2'}, 'verdict')}** "
-                 f"(`{ctx['f4']['file']}`).")
+        if r is not None and r["verdict"] != NOT_RUN:
+            L.append(f"- P2 (pre-registered, {r['threshold']}): value {c('p2.value', 'T_prereg', {'id': 'P2'}, 'value', '.3f', headline='P2 fraction of cases the rule gets right')}: "
+                     f"**{c('p2.verdict', 'T_prereg', {'id': 'P2'}, 'verdict', headline='P2 verdict')}** ({r.get('note', '')}).")
+        for row in tp.rows:
+            sc = row["scope"]
+            key = "f4." + re.sub(r"[^a-z0-9]+", "_", sc.lower()).strip("_")
+            L.append(f"- {sc}: fraction {c(key + '.fraction', 'T_f4_p2', {'scope': sc}, 'fraction', '.3f')} "
+                     f"({c(key + '.hits', 'T_f4_p2', {'scope': sc}, 'n_hits', 'd')} of "
+                     f"{c(key + '.cases', 'T_f4_p2', {'scope': sc}, 'n_cases', 'd')} cases).")
+        if (Path(ctx["figs_dir"]) / "ext_f4_fig4_rule.png").is_file():
+            L.append("- Figure `figures/ext_f4_fig4_rule.png` (copied from `runs/f4/plots/`). Tables `T_f4`, `T_f4_p2`.")
+        else:
+            L.append("- Tables `T_f4`, `T_f4_p2`.")
     else:
         rs = reasons(["F4"])
-        L.append(f"- {NOT_RUN}: no `runs/f4/f4_p2.json`; P2 cannot be evaluated." + (" " + " | ".join(rs) + "." if rs else ""))
+        L.append(f"- {NOT_RUN}: no `runs/f4/f4_*.csv` or `runs/f4/f4_p2.json`; P2 cannot be evaluated."
+                 + (" " + " | ".join(rs) + "." if rs else ""))
     L.append("")
     L += ["## M2: efficient implementation and latency", ""]
-    rs = reasons(["M2"])
-    L.append(f"- {NOT_RUN}: no `runs/m2/`." + (" " + " | ".join(rs) + "." if rs else "") + " The cost columns of "
-             "`T_main_zeroshot` are analytic counts from `tables/cost_model.md`, not measured latency.")
+    tl, tck = T["T_latency"], T["T_latency_checks"]
+    if tl.rows:
+        mm = ctx.get("m2_meta") or {}
+        L.append(f"- Run: `runs/m2/` (scripts/m2_latency.py): model {mm.get('model')}, seed {mm.get('seed')}, git "
+                 f"{short((mm.get('git') or {}).get('git_hash'))}, {mm.get('date')}, device "
+                 f"{(mm.get('env') or {}).get('gpu') or (mm.get('env') or {}).get('device')}; timing settings in "
+                 "`runs/m2/m2_meta.json` (warm-up and timed runs, compile mode). Summary `runs/m2/M2_SUMMARY.md`.")
+        if tck.rows:
+            n_ok = R.put("m2.checks.n_pass", sum(1 for r in tck.rows if r.get("pass")), "d", source="runs/m2/m2_checks.csv",
+                         git_hash=tck.rows[0].get("_git"), seed=tck.rows[0].get("_seed"),
+                         derived="number of rows with pass = True in m2_checks.csv")
+            fails = [f"{r['variant']} k = {r['k']} {r['dtype']}" for r in tck.rows if not r.get("pass")]
+            L.append(f"- Checks (efficient model against the dense model it was built from): {n_ok} of {len(tck.rows)} pass"
+                     + (f"; failing: {', '.join(fails)}" if fails else "") + ". Table `T_latency_checks`.")
+        modes = sorted({r["mode"] for r in tl.rows})
+        mode = "compile" if "compile" in modes else modes[0]
+        rows_m = [r for r in tl.rows if r["mode"] == mode]
+        batches = sorted({r["batch"] for r in rows_m})
+        show = sorted({batches[0], batches[-1]}) if batches else []
+        for b in show:
+            if b == batches[0] and len(show) > 1 and b != 1:
+                continue
+            for k in sorted({r["k"] for r in rows_m if r["k"]}):
+                bits = []
+                for r in [r for r in rows_m if r["batch"] == b and r["k"] == k]:
+                    v = r["variant"]
+                    wh = {"model": r["model"], "variant": v, "k": k, "batch": b, "mode": mode}
+                    key = f"m2.{v}.k{k}.b{b}.{mode}"
+                    hl = (f"M2 {v} k = {k}, batch {b}: measured speed-up vs dense"
+                          if v in ("vlocal", "vexact") and b == batches[-1] else None)
+                    bits.append(f"{v} measured {c(key + '.speedup', 'T_latency', wh, 'speedup_vs_dense', '.3f', headline=hl)}x, "
+                                f"analytic {c(key + '.flop', 'T_latency', wh, 'flop_speedup_vs_dense', '.3f')}x (M2 count)"
+                                + (f", {c(key + '.flop_collector', 'T_latency', wh, 'collector_flop_speedup', '.3f')}x "
+                                   "(collector)" if r.get("collector_flop_speedup") is not None else ""))
+                if bits:
+                    L.append(f"- k = {k}, batch {b}, {mode}: speed-up against dense, measured vs analytic: "
+                             + "; ".join(bits) + ".")
+        o = [r for r in rows_m if r["variant"] == "original" and r["batch"] == (batches[-1] if batches else None)]
+        if o:
+            r = o[0]
+            wh = {"model": r["model"], "variant": "original", "k": 0, "batch": r["batch"], "mode": mode}
+            L.append(f"- Hub original against the dense reference (batch {r['batch']}, {mode}): speed-up "
+                     f"{c('m2.original.speedup_vs_dense', 'T_latency', wh, 'speedup_vs_dense', '.3f')}x "
+                     "(below 1 means the efficient implementation's dense model is faster than the hub model).")
+        L.append("- Table `T_latency` (every variant, k, batch and mode, with measured / analytic).")
+    else:
+        rs = reasons(["M2"])
+        L.append(f"- {NOT_RUN}: no `runs/m2/m2_latency.csv`." + (" " + " | ".join(rs) + "." if rs else "")
+                 + " The cost columns of `T_main_zeroshot` are analytic counts from `tables/cost_model.md`, not measured "
+                 "latency.")
     L.append("")
     L += ["## Tier 2: linear probes, transfer, segmentation", ""]
-    rs = reasons(["Tier-2", "Tier 2"])
-    L.append(f"- {NOT_RUN}: no Tier-2 result files." + (" " + " | ".join(rs) + "." if rs else ""))
+    t2, t2x = T["T_tier2"], T["T_tier2_transfer"]
+    if t2.rows:
+        L.append(f"- ImageNet linear probe: `runs/t2/t2_linear.csv` and `runs/t2/probe/` (scripts/tier2_linear.py), git "
+                 f"{', '.join(sorted({short(r['_git']) for r in t2.rows}))}, seed(s) "
+                 f"{', '.join(sorted({str(r['_seed']) for r in t2.rows}))}. Table `T_tier2`.")
+        for r in t2.rows:
+            rv = r["variant"]
+            ms = MODEL_SHORT.get(r["model"], r["model"])
+            wh = {"model": r["model"], "variant": r["variant"]}
+            key = f"t2.{ms}.{r['variant']}"
+            hl = f"Tier 2 linear probe top-1, {r['model_label']} {r['variant']}" if r["family"] in ("original", "healed") else None
+            b = (f"- {r['model_label']} {r['variant']}: top-1 {c(key + '.top1', 'T_tier2', wh, 'top1', headline=hl)}, "
+                 f"top-5 {c(key + '.top5', 'T_tier2', wh, 'top5')}")
+            if r.get("drop_vs_original") is not None and r["family"] != "original":
+                b += f", drop {c(key + '.drop', 'T_tier2', wh, 'drop_vs_original')}"
+            for base in ("svd", "random"):
+                if r.get(f"margin_{base}") is not None:
+                    b += f", vs {base.upper() if base == 'svd' else base} {c(key + '.margin_' + base, 'T_tier2', wh, 'margin_' + base, headline=(f'Tier 2 linear: {rv} margin over {base}' if r['family'] == 'healed' else None))}"
+            b += (f"; chosen wd {c(key + '.wd', 'T_tier2', wh, 'chosen_wd', 'g')}"
+                  + (" (at the grid edge)" if r.get("wd_at_grid_edge") else "")
+                  + f"; k-NN check {c(key + '.knn_check', 'T_tier2', wh, 'knn_check_top1')}")
+            if r.get("tier1_knn_top1") is not None:
+                b += f" (Tier-1 k-NN {c(key + '.tier1_knn', 'T_tier2', wh, 'tier1_knn_top1')})"
+            L.append(b + ".")
+    else:
+        rs = reasons(["Tier-2", "Tier 2"])
+        L.append(f"- ImageNet linear probe: {NOT_RUN} (no `runs/t2/t2_linear.csv`)." + (" " + " | ".join(rs) + "." if rs else ""))
+    if t2x.rows:
+        L.append(f"- Transfer probes: `runs/t2/t2_transfer.csv` (scripts/tier2_transfer.py). Table `T_tier2_transfer`.")
+        for r in t2x.rows:
+            ms = MODEL_SHORT.get(r["model"], r["model"])
+            wh = {"model": r["model"], "dataset": r["dataset"], "variant": r["variant"]}
+            key = f"t2x.{ms}.{r['dataset']}.{r['variant']}"
+            b = (f"- {r['dataset']}, {r['model_label']} {r['variant']}: top-1 {c(key + '.top1', 'T_tier2_transfer', wh, 'top1')}, "
+                 f"mean per-class {c(key + '.mpc', 'T_tier2_transfer', wh, 'mean_per_class_top1')}")
+            if r.get("drop_vs_original") is not None and r["family"] != "original":
+                b += f", drop {c(key + '.drop', 'T_tier2_transfer', wh, 'drop_vs_original')}"
+            L.append(b + ".")
+    else:
+        L.append(f"- Transfer probes (CIFAR-100, Flowers-102, Pets, DTD): {NOT_RUN} (no `runs/t2/t2_transfer.csv`).")
+    L.append(f"- ADE20K linear segmentation: {NOT_RUN} (no result files in the repo).")
     L.append("")
     # ---------------------------------------------------------------- inputs
     L += ["## Inputs found and missing", ""]
@@ -2567,7 +3138,10 @@ def parse_args(argv=None):
     p.add_argument("--root", default=str(REPO_ROOT), help="repository root holding runs/, results/, configs/, jobs/")
     p.add_argument("--out", default=None, help="output folder (default <root>/results/paper)")
     p.add_argument("--artifacts", default=None, help="large VM artefacts (default <root>/artifacts/a100)")
-    p.add_argument("--skip-scripts", action="store_true", help="do not run scripts/f1_tax.py and scripts/f2_drift.py")
+    p.add_argument("--skip-scripts", action="store_true",
+                   help="do not run scripts/f1_tax.py or scripts/f2_drift.py; reuse their earlier outputs under <out>/scripts/")
+    p.add_argument("--skip-f2", action="store_true",
+                   help="run scripts/f1_tax.py (seconds) but reuse the earlier scripts/f2_drift.py outputs (minutes)")
     return p.parse_args(argv)
 
 
@@ -2671,15 +3245,25 @@ def main(argv=None) -> dict:
     T["T_e1_history"] = build_e1_history(P, e1, e1b, diag, commits)
     T["T_x_checks"] = build_x_checks(P, x1, x1b, x4, m1, plan_text)
     T["T_attention"], T["T_attention_vexact"], T["T_attention_conversion"] = build_attention(P, m1)
-    T["T_ablations"], a_files = build_ablations(P)
+    T["T_ablations"], T["T_ablations_seeds"], T["T_ablations_a2_extra"], a_files = build_ablations(P)
+    T["T_tier2"], T["T_tier2_transfer"] = build_tier2(P, T["T_main_zeroshot"], T["T_healing"], m1, x2)
+    add_linear_to_healing(T["T_healing"], T["T_tier2"])
+    T["T_latency"], T["T_latency_checks"], m2_meta = build_latency(P, T["T_main_zeroshot"], archs)
+    T["T_f4"], T["T_f4_p2"], f4_files, _ = build_f4(P)
     T["T_prereg"] = build_prereg(P, e1, e1b, f3, d_free, T["T_healing_p3"], T["T_generality_p4"], x1, status, th,
                                  commits, f4)
 
     # ------------------------------------------------------------- external scripts (F1, F2)
     f1res, f2res = [], []
+    f1_groups = (("f1_dinov2", "x2", ["perlayer_reg", "perlayer_plain"]),
+                 ("f1_g", "g", ["deit3_b16", "mae_b16", "siglip2_b16"]))
+    # f2_drift.py draws at most three models per figure: the paper pair (both DINOv2 models), then G.
+    f2_groups = (("f2_dinov2", [r for r in gen_runs if r["model"] in MAIN_MODELS]),
+                 ("f2_g", [r for r in gen_runs if r["model"] not in MAIN_MODELS]))
+    # Skipped scripts: reuse outputs of an earlier collection (marked "reused"), so the package keeps F1 and F2,
+    # and flag them as stale when runs or operator files are present now that they did not read.
     if not a.skip_scripts:
-        for tag, sub, arms in (("f1_dinov2", "x2", ["perlayer_reg", "perlayer_plain"]),
-                               ("f1_g", "g", ["deit3_b16", "mae_b16", "siglip2_b16"])):
+        for tag, sub, arms in f1_groups:
             runs_dir = P.runs / sub
             fr = run_f1(P, sdir / tag, runs_dir, arms) if runs_dir.is_dir() else {"status": NOT_RUN, "arms": arms,
                                                                                   "error": f"no {runs_dir}"}
@@ -2688,29 +3272,53 @@ def main(argv=None) -> dict:
                 npz_for(P, r) is not None for r in (x2 if sub == "x2" else g).values() if r["arm"] in arms))
             f1res.append(fr)
             log(f"F1 {tag}: {fr['status']}")
-        # f2_drift.py draws at most three models per figure: the paper pair (both DINOv2 models), then G.
-        for tag, group in (("f2_dinov2", [r for r in gen_runs if r["model"] in MAIN_MODELS]),
-                           ("f2_g", [r for r in gen_runs if r["model"] not in MAIN_MODELS])):
+    else:
+        for tag, sub, arms in f1_groups:
+            fm = read_json(sdir / tag / "f1_meta.json")
+            if not fm:
+                continue
+            read_names = {Path(str(x.get("dir", ""))).name for x in fm.get("runs", [])}
+            now = {r["name"] for r in (x2 if sub == "x2" else g).values() if r["arm"] in arms
+                   and r["layers"] is not None and r["mlp"] is not None}
+            summ = sdir / tag / "F1_SUMMARY.md"
+            f1res.append({"status": "reused", "meta": fm, "tag": tag, "runs_dir": P.runs / sub, "out": sdir / tag,
+                          "arms": arms, "stale": sorted(now - read_names),
+                          "hist": summ.is_file() and "Twin-score histograms" in summ.read_text(encoding="utf-8")})
+    if not (a.skip_scripts or a.skip_f2):
+        for tag, group in f2_groups:
             fr = run_f2(P, sdir / tag, [r for r in group if r["layers"] is not None])
             fr["tag"] = tag
             f2res.append(fr)
             log(f"F2 {tag}: {fr['status']} ({', '.join(fr.get('inputs', []))})")
+    else:
+        for tag, group in f2_groups:
+            fm = read_json(sdir / tag / "f2_meta.json")
+            if not fm:
+                continue
+            used = [P.rel(Path(str(x.get("npz")))) for x in fm.get("inputs", [])]
+            now = [P.rel(npz_for(P, r)) for r in group if r["layers"] is not None and npz_for(P, r) is not None]
+            f2res.append({"status": "reused", "meta": fm, "tag": tag, "out": sdir / tag, "inputs": used,
+                          "stale": sorted(set(now) - set(used))})
     T["T_f1_ranges"] = build_f1_table(P, f1res)
     T["T_f2_drift"] = build_f2_table(P, f2res)
     for fr in f1res:
-        if fr["status"] == "ok":
+        if fr["status"] in ("ok", "reused"):
             for f in Path(fr["out"]).glob("*"):
                 if f.is_file():
                     shutil.copy2(f, tdir / f"ext_{fr['tag']}_{f.name}")
             for f in (Path(fr["out"]) / "plots").glob("*.png"):
                 shutil.copy2(f, fdir / f"ext_{fr['tag']}_{f.name}")
     for fr in f2res:
-        if fr.get("status") in ("ok", "failed") and Path(fr["out"]).is_dir():
+        if fr.get("status") in ("ok", "failed", "reused") and Path(fr["out"]).is_dir():
             for f in Path(fr["out"]).glob("*"):
                 if f.is_file():
                     shutil.copy2(f, tdir / f"ext_{fr['tag']}_{f.name}")
             for f in (Path(fr["out"]) / "plots").glob("*.png"):
                 shutil.copy2(f, fdir / f"ext_{fr['tag']}_{f.name}")
+
+    for sub, tag in (("f4", "f4"), ("m2", "m2")):
+        for f in sorted((P.runs / sub / "plots").glob("*.png")) if (P.runs / sub / "plots").is_dir() else []:
+            shutil.copy2(f, fdir / f"ext_{tag}_{f.name}")
 
     # ------------------------------------------------------------- figures
     figs = {}
@@ -2730,7 +3338,10 @@ def main(argv=None) -> dict:
         ("T_x_checks", "Stage 0 checks", ["T_x_checks"]),
         ("T_e1_history", "E1 and E1b (earlier protocol)", ["T_e1_history"]),
         ("T_attention", "Attention conversion (M1)", ["T_attention", "T_attention_vexact", "T_attention_conversion"]),
-        ("T_ablations", "Ablations (A1 to A5)", ["T_ablations"]),
+        ("T_ablations", "Ablations (A1 to A5)", ["T_ablations_seeds", "T_ablations", "T_ablations_a2_extra"]),
+        ("T_tier2", "Tier 2: linear probes", ["T_tier2", "T_tier2_transfer"]),
+        ("T_latency", "M2: latency and analytic cost", ["T_latency", "T_latency_checks"]),
+        ("T_f4", "F4: symmetry against low rank (P2)", ["T_f4_p2", "T_f4"]),
         ("T_f1_ranges", "F1 ranges (scripts/f1_tax.py)", ["T_f1_ranges"]),
         ("T_f2_drift", "F2 drift summary (scripts/f2_drift.py)", ["T_f2_drift"]),
     ]
@@ -2826,6 +3437,19 @@ def main(argv=None) -> dict:
     for r in x2.values():
         if r["status"].startswith("partial"):
             dev.append(f"X2: `{r['dir']}` is {r['status']}.")
+    for r in T["T_tier2"].rows + T["T_tier2_transfer"].rows:
+        if r.get("wd_at_grid_edge"):
+            dev.append(f"Tier 2: {r['model_label']} {r.get('dataset', 'ImageNet')} {r['variant']}: the chosen weight decay "
+                       f"{fmt(r.get('chosen_wd'), 'g')} is at the edge of the grid.")
+        if r.get("final_hit_iter_limit"):
+            dev.append(f"Tier 2: {r['model_label']} {r['variant']}: the final L-BFGS fit hit its iteration limit.")
+    for r in T["T_latency_checks"].rows:
+        if r.get("pass") is False:
+            dev.append(f"M2 check failed: {r['variant']} k = {r['k']} {r['dtype']} ({r.get('criterion')}, value "
+                       f"{fmt(r.get('value'), '.2e')}).")
+    p2r = T["T_prereg"].find(id="P2")
+    if p2r is not None and str(p2r.get("verdict", "")).startswith("INCOMPLETE"):
+        dev.append(f"P2: {p2r['verdict']} (runs/f4/f4_p2.json).")
     inv = []
 
     def inv_add(path, what):
@@ -2852,8 +3476,15 @@ def main(argv=None) -> dict:
     inv_add("runs/d/d_datafree.json", "D (P5)")
     inv_add("runs/f3/f3_gate_G3.json", "F3 (P1, G3)")
     inv_add("runs/f4/f4_p2.json", "F4 (P2)")
+    fsrc = P.root / "scripts" / "f4_rule.py"
+    mm_ = re.search(r"PREREG_MODELS = \(([^)]*)\)", fsrc.read_text(encoding="utf-8")) if fsrc.is_file() else None
+    for m_ in re.findall(r'"([^"]+)"', mm_[1]) if mm_ else []:
+        inv_add(f"runs/f4/f4_{m_}.csv", "F4 per-block rows (P2 model)")
     inv_add("runs/a", "A1 to A5 ablations")
-    inv_add("runs/m2", "M2 latency")
+    for f in ("m2_latency.csv", "m2_checks.csv", "m2_meta.json"):
+        inv_add(f"runs/m2/{f}", "M2 latency")
+    inv_add("runs/t2/t2_linear.csv", "Tier 2 ImageNet linear probe")
+    inv_add("runs/t2/t2_transfer.csv", "Tier 2 transfer probes")
     for r in list(x2.values()) + list(g.values()):
         if r["operator_mode"] == "per_layer" and r["status"] != NOT_RUN:
             inv_add(P.rel(P.artifacts / r["res_rel"] / "e1_operators.npz") if npz_for(P, r) is None or
@@ -2862,7 +3493,8 @@ def main(argv=None) -> dict:
     inv_add(P.rel(P.artifacts / "runs" / "m1" / "m1_structure.npz"), "M1 structure npz (not needed by the tables)")
     ctx = {"tables": T, "status": status, "date": time.strftime("%Y-%m-%d %H:%M:%S"), "git": git, "commits": commits,
            "e1": e1, "e1b": e1b, "x1": x1, "x1b": x1b, "x2": x2, "g": g, "x4": x4, "m1": m1, "m3": m3, "d": d_free,
-           "f4": f4, "f1": f1res, "f2": f2res, "a_files": a_files, "inventory": inv, "deviations": dev}
+           "f4": f4, "f1": f1res, "f2": f2res, "a_files": a_files, "inventory": inv, "deviations": dev,
+           "plan_text": plan_text, "m2_meta": m2_meta, "f4_files": f4_files, "figs_dir": fdir}
 
     # ------------------------------------------------------------- INDEX and numbers
     R = Registry()
