@@ -1,0 +1,632 @@
+{
+  "transfer_row": {
+    "model": "dinov2_vitb14_reg",
+    "dataset": "dtd",
+    "variant": "healed_svd_k9",
+    "label": "healed SVD, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "svd",
+    "k": 9,
+    "top1": 80.69148936170212,
+    "top5": 97.6063829787234,
+    "mean_per_class_top1": 80.69148936170211,
+    "chosen_wd": 0.0316,
+    "wd_at_grid_edge": true,
+    "holdout_top1_at_chosen": 82.7127659574468,
+    "final_hit_iter_limit": false,
+    "feature_dim": 1536,
+    "n_train": 3760,
+    "n_test": 1880,
+    "num_classes": 47,
+    "hf_id": "tanganke/dtd",
+    "t_extract_s": 6.8,
+    "t_probe_s": 4.2,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 17:30:40"
+  },
+  "selection": {
+    "chosen_wd": 0.0316,
+    "holdout_top1_at_chosen": 82.7127659574468,
+    "wd_at_grid_edge": true,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 82.18085106382979,
+        "holdout_top5": 95.47872340425532,
+        "holdout_loss": 0.6894846165433843,
+        "train_objective": 0.19678913056850433,
+        "grad_max": 1.674647501204163e-05,
+        "n_iter": 139,
+        "n_eval": 151,
+        "hit_limit": false,
+        "seconds": 0.66
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 81.91489361702128,
+        "holdout_top5": 95.2127659574468,
+        "holdout_loss": 0.7996438209046709,
+        "train_objective": 0.04145704209804535,
+        "grad_max": 1.7445981939090416e-06,
+        "n_iter": 186,
+        "n_eval": 200,
+        "hit_limit": false,
+        "seconds": 0.9
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 81.64893617021276,
+        "holdout_top5": 94.41489361702128,
+        "holdout_loss": 0.9839183726209275,
+        "train_objective": 0.0074379839934408665,
+        "grad_max": 8.976580829767045e-07,
+        "n_iter": 118,
+        "n_eval": 123,
+        "hit_limit": false,
+        "seconds": 1.33
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 81.11702127659575,
+        "holdout_top5": 94.41489361702128,
+        "holdout_loss": 1.2150922734686669,
+        "train_objective": 0.0011981797870248556,
+        "grad_max": 6.811442290199921e-07,
+        "n_iter": 25,
+        "n_eval": 34,
+        "hit_limit": false,
+        "seconds": 0.11
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 80.31914893617021,
+        "holdout_top5": 94.41489361702128,
+        "holdout_loss": 1.47269358533494,
+        "train_objective": 0.00017953106726054102,
+        "grad_max": 7.002551001278334e-07,
+        "n_iter": 10,
+        "n_eval": 16,
+        "hit_limit": false,
+        "seconds": 0.03
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 80.31914893617021,
+        "holdout_top5": 94.41489361702128,
+        "holdout_loss": 1.47269358533494,
+        "train_objective": 4.438352334545925e-05,
+        "grad_max": 8.599974989920156e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.0
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 82.7127659574468,
+        "holdout_top5": 95.74468085106383,
+        "holdout_loss": 0.6885887308323637,
+        "train_objective": 0.39157581329345703,
+        "grad_max": 1.4801626093685627e-05,
+        "n_iter": 88,
+        "n_eval": 96,
+        "hit_limit": false,
+        "seconds": 0.39
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 82.44680851063829,
+        "holdout_top5": 95.2127659574468,
+        "holdout_loss": 0.7320893470277178,
+        "train_objective": 0.0925520658493042,
+        "grad_max": 6.214415407157503e-06,
+        "n_iter": 99,
+        "n_eval": 113,
+        "hit_limit": false,
+        "seconds": 0.46
+      }
+    ],
+    "n_train": 3384,
+    "n_holdout": 376,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.0316,
+    "train_objective": 0.4072703719139099,
+    "grad_max": 3.3040152629837394e-05,
+    "n_iter": 63,
+    "n_eval": 71,
+    "hit_limit": false,
+    "seconds": 0.3,
+    "train_top1": 98.77659574468085
+  },
+  "test": {
+    "top1": 80.69148936170212,
+    "top5": 97.6063829787234,
+    "mean_per_class_top1": 80.69148936170211,
+    "loss": 0.6405118252368683,
+    "n": 1880
+  },
+  "variant_info": {
+    "variant": "healed_svd_k9",
+    "label": "healed SVD, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "svd",
+    "k": 9,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "svd",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mlp_params_dense": 42467328,
+      "structure_source": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "structure_mode": "per_layer",
+      "attention": true,
+      "attn_params_dense": 21233664,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "attn_params_mirror": 14147360,
+      "ranks": [
+        [
+          310,
+          327
+        ],
+        [
+          330,
+          333
+        ],
+        [
+          339,
+          350
+        ],
+        [
+          354,
+          361
+        ],
+        [
+          369,
+          382
+        ],
+        [
+          406,
+          422
+        ],
+        [
+          438,
+          455
+        ],
+        [
+          477,
+          506
+        ],
+        [
+          551,
+          563
+        ]
+      ],
+      "mlp_params_kept": 27928320,
+      "mlp_params_mirror": 27949768,
+      "attn_ranks": [
+        [
+          195,
+          195,
+          194,
+          206
+        ],
+        [
+          213,
+          213,
+          206,
+          208
+        ],
+        [
+          222,
+          222,
+          215,
+          223
+        ],
+        [
+          246,
+          246,
+          242,
+          250
+        ],
+        [
+          248,
+          248,
+          243,
+          254
+        ],
+        [
+          263,
+          263,
+          254,
+          264
+        ],
+        [
+          276,
+          276,
+          271,
+          281
+        ],
+        [
+          290,
+          290,
+          293,
+          311
+        ],
+        [
+          341,
+          341,
+          342,
+          349
+        ]
+      ],
+      "attn_params_kept": 14121984
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 780,
+      "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+      "git_dirty": true
+    },
+    "constraint_checks": {
+      "0:LowRankMLP": {
+        "numerical_ranks": [
+          [
+            310,
+            327
+          ],
+          [
+            330,
+            333
+          ],
+          [
+            339,
+            350
+          ],
+          [
+            354,
+            361
+          ],
+          [
+            369,
+            382
+          ],
+          [
+            406,
+            422
+          ],
+          [
+            438,
+            455
+          ],
+          [
+            477,
+            506
+          ],
+          [
+            551,
+            563
+          ]
+        ],
+        "target_ranks": [
+          [
+            310,
+            327
+          ],
+          [
+            330,
+            333
+          ],
+          [
+            339,
+            350
+          ],
+          [
+            354,
+            361
+          ],
+          [
+            369,
+            382
+          ],
+          [
+            406,
+            422
+          ],
+          [
+            438,
+            455
+          ],
+          [
+            477,
+            506
+          ],
+          [
+            551,
+            563
+          ]
+        ],
+        "note": "ranks of U V formed in float64 from the factors"
+      },
+      "1:LowRankAttention": {
+        "numerical_ranks": [
+          [
+            195,
+            195,
+            194,
+            206
+          ],
+          [
+            213,
+            213,
+            206,
+            208
+          ],
+          [
+            222,
+            222,
+            215,
+            223
+          ],
+          [
+            246,
+            246,
+            242,
+            250
+          ],
+          [
+            248,
+            248,
+            243,
+            254
+          ],
+          [
+            263,
+            263,
+            254,
+            264
+          ],
+          [
+            276,
+            276,
+            271,
+            281
+          ],
+          [
+            290,
+            290,
+            293,
+            311
+          ],
+          [
+            341,
+            341,
+            342,
+            349
+          ]
+        ],
+        "target_ranks": [
+          [
+            195,
+            195,
+            194,
+            206
+          ],
+          [
+            213,
+            213,
+            206,
+            208
+          ],
+          [
+            222,
+            222,
+            215,
+            223
+          ],
+          [
+            246,
+            246,
+            242,
+            250
+          ],
+          [
+            248,
+            248,
+            243,
+            254
+          ],
+          [
+            263,
+            263,
+            254,
+            264
+          ],
+          [
+            276,
+            276,
+            271,
+            281
+          ],
+          [
+            290,
+            290,
+            293,
+            311
+          ],
+          [
+            341,
+            341,
+            342,
+            349
+          ]
+        ]
+      }
+    },
+    "mlp_params_kept": 27928320,
+    "attn_params_kept": 14121984,
+    "converted_params_dense": 63700992,
+    "converted_params_kept": 42050304,
+    "model_params": 64932864
+  },
+  "sources": {
+    "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd",
+    "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/final/trained_blocks.pt",
+    "checkpoint_sha256": "bf7d48aa2a4c282ef1e12378d8524972cba6e909fc7789c5c9b589431bf9d218"
+  },
+  "dataset_meta": {
+    "format": 1,
+    "hf_id": "tanganke/dtd",
+    "train_splits": [
+      "train"
+    ],
+    "test_split": "test",
+    "image": "image",
+    "label": "label",
+    "resize": 256,
+    "crop": 224,
+    "complete": true,
+    "counts": {
+      "train": 3760,
+      "test": 1880
+    },
+    "loader": "parquet",
+    "sources": {
+      "train": [
+        "train-00000-of-00001.parquet"
+      ],
+      "test": [
+        "test-00000-of-00001.parquet"
+      ]
+    },
+    "decode": {
+      "train": {
+        "n": 3760,
+        "seconds": 13.0
+      },
+      "test": {
+        "n": 1880,
+        "seconds": 7.2
+      }
+    },
+    "seconds": 24.4,
+    "interpolation": "bicubic",
+    "note": "3,760 / 1,880: one official split, train + val (verify on VM)"
+  },
+  "feature_meta": {
+    "train": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_svd_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/final/trained_blocks.pt",
+        "checkpoint_sha256": "bf7d48aa2a4c282ef1e12378d8524972cba6e909fc7789c5c9b589431bf9d218"
+      },
+      "img_size": 224,
+      "dataset": "dtd",
+      "hf_id": "tanganke/dtd",
+      "split": "train",
+      "n": 3760,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 4.33
+    },
+    "test": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_svd_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/final/trained_blocks.pt",
+        "checkpoint_sha256": "bf7d48aa2a4c282ef1e12378d8524972cba6e909fc7789c5c9b589431bf9d218"
+      },
+      "img_size": 224,
+      "dataset": "dtd",
+      "hf_id": "tanganke/dtd",
+      "split": "test",
+      "n": 1880,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 2.43
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

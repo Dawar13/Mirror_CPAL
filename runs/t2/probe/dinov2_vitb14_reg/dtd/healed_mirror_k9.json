@@ -1,0 +1,395 @@
+{
+  "transfer_row": {
+    "model": "dinov2_vitb14_reg",
+    "dataset": "dtd",
+    "variant": "healed_mirror_k9",
+    "label": "healed Mirror V-local, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "mirror",
+    "k": 9,
+    "top1": 83.35106382978724,
+    "top5": 97.34042553191489,
+    "mean_per_class_top1": 83.35106382978724,
+    "chosen_wd": 0.00316,
+    "wd_at_grid_edge": false,
+    "holdout_top1_at_chosen": 83.77659574468085,
+    "final_hit_iter_limit": false,
+    "feature_dim": 1536,
+    "n_train": 3760,
+    "n_test": 1880,
+    "num_classes": 47,
+    "hf_id": "tanganke/dtd",
+    "t_extract_s": 4.6,
+    "t_probe_s": 15.7,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 17:27:21"
+  },
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 83.77659574468085,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 83.51063829787235,
+        "holdout_top5": 96.01063829787235,
+        "holdout_loss": 0.6110818741169382,
+        "train_objective": 0.17960479855537415,
+        "grad_max": 1.4635559637099504e-05,
+        "n_iter": 164,
+        "n_eval": 177,
+        "hit_limit": false,
+        "seconds": 3.4
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 83.51063829787235,
+        "holdout_top5": 96.01063829787235,
+        "holdout_loss": 0.6835664789727394,
+        "train_objective": 0.037361785769462585,
+        "grad_max": 1.591809905221453e-06,
+        "n_iter": 176,
+        "n_eval": 185,
+        "hit_limit": false,
+        "seconds": 3.67
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 82.97872340425532,
+        "holdout_top5": 95.74468085106383,
+        "holdout_loss": 0.8215745966485206,
+        "train_objective": 0.0066633946262300014,
+        "grad_max": 8.834163054416422e-07,
+        "n_iter": 114,
+        "n_eval": 123,
+        "hit_limit": false,
+        "seconds": 2.45
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 83.24468085106383,
+        "holdout_top5": 95.74468085106383,
+        "holdout_loss": 1.0024373480614195,
+        "train_objective": 0.0010705525055527687,
+        "grad_max": 5.878935098735383e-07,
+        "n_iter": 20,
+        "n_eval": 28,
+        "hit_limit": false,
+        "seconds": 0.26
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 82.18085106382979,
+        "holdout_top5": 95.74468085106383,
+        "holdout_loss": 1.197391023027136,
+        "train_objective": 0.00016172631876543164,
+        "grad_max": 8.831950140120171e-07,
+        "n_iter": 8,
+        "n_eval": 16,
+        "hit_limit": false,
+        "seconds": 0.09
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 82.18085106382979,
+        "holdout_top5": 95.74468085106383,
+        "holdout_loss": 1.197391023027136,
+        "train_objective": 4.016286402475089e-05,
+        "grad_max": 8.979421863841708e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.0
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 82.97872340425532,
+        "holdout_top5": 96.27659574468085,
+        "holdout_loss": 0.6254104451930269,
+        "train_objective": 0.3618062734603882,
+        "grad_max": 1.6349717043340206e-05,
+        "n_iter": 85,
+        "n_eval": 94,
+        "hit_limit": false,
+        "seconds": 1.56
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 83.77659574468085,
+        "holdout_top5": 96.27659574468085,
+        "holdout_loss": 0.6359340586560838,
+        "train_objective": 0.08382727950811386,
+        "grad_max": 6.896836566738784e-06,
+        "n_iter": 95,
+        "n_eval": 113,
+        "hit_limit": false,
+        "seconds": 2.21
+      }
+    ],
+    "n_train": 3384,
+    "n_holdout": 376,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.00316,
+    "train_objective": 0.08928586542606354,
+    "grad_max": 8.991286449600011e-06,
+    "n_iter": 111,
+    "n_eval": 120,
+    "hit_limit": false,
+    "seconds": 2.02,
+    "train_top1": 100.0
+  },
+  "test": {
+    "top1": 83.35106382978724,
+    "top5": 97.34042553191489,
+    "mean_per_class_top1": 83.35106382978724,
+    "loss": 0.5983745169132314,
+    "n": 1880
+  },
+  "variant_info": {
+    "variant": "healed_mirror_k9",
+    "label": "healed Mirror V-local, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "mirror",
+    "k": 9,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "mirror",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mlp_params_dense": 42467328,
+      "structure_source": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "structure_mode": "per_layer",
+      "attention": true,
+      "attn_params_dense": 21233664,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "attn_params_mirror": 14147360,
+      "mlp_params_kept": 27949768,
+      "structure_used": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "n_pairs": [
+        1168,
+        1116,
+        1013,
+        963,
+        878,
+        672,
+        554,
+        406,
+        155
+      ],
+      "attn_params_kept": 14147360,
+      "n_head_pairs": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 780,
+      "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+      "git_dirty": true
+    },
+    "constraint_checks": {
+      "0:MirrorMLPConstraint": {
+        "max_rel_violation": 2.404312307750846e-08,
+        "per_block": [
+          2.404312307750846e-08,
+          2.3399989156477648e-08,
+          2.3173682462318624e-08,
+          2.224983948279154e-08,
+          2.1448561291780776e-08,
+          1.9451953897060132e-08,
+          1.837470964295732e-08,
+          1.7413706138471668e-08,
+          1.3551132038454496e-08
+        ]
+      },
+      "1:MirrorAttnConstraint": {
+        "max_rel_violation": 9.403491030261782e-09,
+        "per_block": [
+          6.524728436933297e-09,
+          9.403491030261782e-09,
+          9.15545339581436e-09,
+          8.100664939807226e-09,
+          9.126880167413332e-09,
+          8.773974534707577e-09,
+          7.68927528604994e-09,
+          8.039952572880524e-09,
+          5.705862846760097e-09
+        ]
+      }
+    },
+    "mlp_params_kept": 27949768,
+    "attn_params_kept": 14147360,
+    "converted_params_dense": 63700992,
+    "converted_params_kept": 42097128,
+    "model_params": 64979688
+  },
+  "sources": {
+    "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+    "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+    "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+  },
+  "dataset_meta": {
+    "format": 1,
+    "hf_id": "tanganke/dtd",
+    "train_splits": [
+      "train"
+    ],
+    "test_split": "test",
+    "image": "image",
+    "label": "label",
+    "resize": 256,
+    "crop": 224,
+    "complete": true,
+    "counts": {
+      "train": 3760,
+      "test": 1880
+    },
+    "loader": "parquet",
+    "sources": {
+      "train": [
+        "train-00000-of-00001.parquet"
+      ],
+      "test": [
+        "test-00000-of-00001.parquet"
+      ]
+    },
+    "decode": {
+      "train": {
+        "n": 3760,
+        "seconds": 13.0
+      },
+      "test": {
+        "n": 1880,
+        "seconds": 7.2
+      }
+    },
+    "seconds": 24.4,
+    "interpolation": "bicubic",
+    "note": "3,760 / 1,880: one official split, train + val (verify on VM)"
+  },
+  "feature_meta": {
+    "train": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_mirror_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+        "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+      },
+      "img_size": 224,
+      "dataset": "dtd",
+      "hf_id": "tanganke/dtd",
+      "split": "train",
+      "n": 3760,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 2.88
+    },
+    "test": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_mirror_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+        "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+      },
+      "img_size": 224,
+      "dataset": "dtd",
+      "hf_id": "tanganke/dtd",
+      "split": "test",
+      "n": 1880,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 1.75
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

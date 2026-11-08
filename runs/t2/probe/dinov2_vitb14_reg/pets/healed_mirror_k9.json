@@ -1,0 +1,395 @@
+{
+  "transfer_row": {
+    "model": "dinov2_vitb14_reg",
+    "dataset": "pets",
+    "variant": "healed_mirror_k9",
+    "label": "healed Mirror V-local, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "mirror",
+    "k": 9,
+    "top1": 95.5846279640229,
+    "top5": 99.9182338511856,
+    "mean_per_class_top1": 95.54761339583699,
+    "chosen_wd": 0.0316,
+    "wd_at_grid_edge": true,
+    "holdout_top1_at_chosen": 97.289972899729,
+    "final_hit_iter_limit": false,
+    "feature_dim": 1536,
+    "n_train": 3680,
+    "n_test": 3669,
+    "num_classes": 37,
+    "hf_id": "timm/oxford-iiit-pet",
+    "t_extract_s": 5.9,
+    "t_probe_s": 11.7,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 17:27:05"
+  },
+  "selection": {
+    "chosen_wd": 0.0316,
+    "holdout_top1_at_chosen": 97.289972899729,
+    "wd_at_grid_edge": true,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 97.289972899729,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.10700625908084033,
+        "train_objective": 0.07043913006782532,
+        "grad_max": 1.1604804967646487e-05,
+        "n_iter": 156,
+        "n_eval": 169,
+        "hit_limit": false,
+        "seconds": 3.07
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 97.0189701897019,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.08158652246159913,
+        "train_objective": 0.013735311105847359,
+        "grad_max": 4.127125521335984e-06,
+        "n_iter": 118,
+        "n_eval": 135,
+        "hit_limit": false,
+        "seconds": 2.4
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 97.0189701897019,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.07891812621739498,
+        "train_objective": 0.0023617956321686506,
+        "grad_max": 9.89309228316415e-07,
+        "n_iter": 67,
+        "n_eval": 75,
+        "hit_limit": false,
+        "seconds": 1.57
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 96.7479674796748,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.08560960144208375,
+        "train_objective": 0.0003710476739797741,
+        "grad_max": 9.959367162082344e-07,
+        "n_iter": 15,
+        "n_eval": 22,
+        "hit_limit": false,
+        "seconds": 0.17
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 97.0189701897019,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.0993091304127763,
+        "train_objective": 5.517872341442853e-05,
+        "grad_max": 4.896612040283799e-07,
+        "n_iter": 7,
+        "n_eval": 13,
+        "hit_limit": false,
+        "seconds": 0.07
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 97.0189701897019,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.0993091304127763,
+        "train_objective": 1.3868935639038682e-05,
+        "grad_max": 5.14982843924372e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.0
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 97.289972899729,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.1405469589440157,
+        "train_objective": 0.15003810822963715,
+        "grad_max": 2.0980078261345625e-05,
+        "n_iter": 74,
+        "n_eval": 79,
+        "hit_limit": false,
+        "seconds": 1.32
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 97.0189701897019,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.08979489292878769,
+        "train_objective": 0.03166455775499344,
+        "grad_max": 7.105375516403001e-06,
+        "n_iter": 111,
+        "n_eval": 122,
+        "hit_limit": false,
+        "seconds": 2.44
+      }
+    ],
+    "n_train": 3311,
+    "n_holdout": 369,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.0316,
+    "train_objective": 0.15297186374664307,
+    "grad_max": 3.430982542340644e-05,
+    "n_iter": 39,
+    "n_eval": 42,
+    "hit_limit": false,
+    "seconds": 0.61,
+    "train_top1": 99.8913043478261
+  },
+  "test": {
+    "top1": 95.5846279640229,
+    "top5": 99.9182338511856,
+    "mean_per_class_top1": 95.54761339583699,
+    "loss": 0.16661306751882324,
+    "n": 3669
+  },
+  "variant_info": {
+    "variant": "healed_mirror_k9",
+    "label": "healed Mirror V-local, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "mirror",
+    "k": 9,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "mirror",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mlp_params_dense": 42467328,
+      "structure_source": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "structure_mode": "per_layer",
+      "attention": true,
+      "attn_params_dense": 21233664,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "attn_params_mirror": 14147360,
+      "mlp_params_kept": 27949768,
+      "structure_used": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "n_pairs": [
+        1168,
+        1116,
+        1013,
+        963,
+        878,
+        672,
+        554,
+        406,
+        155
+      ],
+      "attn_params_kept": 14147360,
+      "n_head_pairs": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 780,
+      "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+      "git_dirty": true
+    },
+    "constraint_checks": {
+      "0:MirrorMLPConstraint": {
+        "max_rel_violation": 2.404312307750846e-08,
+        "per_block": [
+          2.404312307750846e-08,
+          2.3399989156477648e-08,
+          2.3173682462318624e-08,
+          2.224983948279154e-08,
+          2.1448561291780776e-08,
+          1.9451953897060132e-08,
+          1.837470964295732e-08,
+          1.7413706138471668e-08,
+          1.3551132038454496e-08
+        ]
+      },
+      "1:MirrorAttnConstraint": {
+        "max_rel_violation": 9.403491030261782e-09,
+        "per_block": [
+          6.524728436933297e-09,
+          9.403491030261782e-09,
+          9.15545339581436e-09,
+          8.100664939807226e-09,
+          9.126880167413332e-09,
+          8.773974534707577e-09,
+          7.68927528604994e-09,
+          8.039952572880524e-09,
+          5.705862846760097e-09
+        ]
+      }
+    },
+    "mlp_params_kept": 27949768,
+    "attn_params_kept": 14147360,
+    "converted_params_dense": 63700992,
+    "converted_params_kept": 42097128,
+    "model_params": 64979688
+  },
+  "sources": {
+    "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+    "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+    "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+  },
+  "dataset_meta": {
+    "format": 1,
+    "hf_id": "timm/oxford-iiit-pet",
+    "train_splits": [
+      "train"
+    ],
+    "test_split": "test",
+    "image": "image",
+    "label": "label",
+    "resize": 256,
+    "crop": 224,
+    "complete": true,
+    "counts": {
+      "train": 3680,
+      "test": 3669
+    },
+    "loader": "parquet",
+    "sources": {
+      "train": [
+        "train-00000-of-00001.parquet"
+      ],
+      "test": [
+        "test-00000-of-00001.parquet"
+      ]
+    },
+    "decode": {
+      "train": {
+        "n": 3680,
+        "seconds": 11.8
+      },
+      "test": {
+        "n": 3669,
+        "seconds": 12.1
+      }
+    },
+    "seconds": 30.7,
+    "interpolation": "bicubic",
+    "note": "train = official trainval (verify on VM)"
+  },
+  "feature_meta": {
+    "train": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_mirror_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+        "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+      },
+      "img_size": 224,
+      "dataset": "pets",
+      "hf_id": "timm/oxford-iiit-pet",
+      "split": "train",
+      "n": 3680,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 3.0
+    },
+    "test": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_mirror_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+        "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+      },
+      "img_size": 224,
+      "dataset": "pets",
+      "hf_id": "timm/oxford-iiit-pet",
+      "split": "test",
+      "n": 3669,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 2.89
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "experiment": "Tier 2 ImageNet linear probe",
+  "model": "dinov2_vitb14",
+  "variants": [
+    "original",
+    "mirror_mlp_k6",
+    "svd_mlp_k6",
+    "random_k6"
+  ],
+  "args": {
+    "model": "dinov2_vitb14",
+    "variants": "original,mirror_mlp_k6,svd_mlp_k6,random_k6",
+    "out": "runs/t2",
+    "operators": null,
+    "m1_structure": null,
+    "heal_dir": null,
+    "heal_config": null,
+    "random_seed": 1,
+    "seed": 0,
+    "cache_dir": "cache",
+    "img_size": 224,
+    "batch_size": 256,
+    "num_workers": 6,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "no_wd_refine": false,
+    "holdout_frac": 0.1,
+    "max_iter": 1000,
+    "history_size": 20,
+    "tol_grad": 1e-06,
+    "probe_tf32": false,
+    "skip_probe": false,
+    "force_features": false,
+    "force_probe": false,
+    "memory_fraction": null,
+    "device": null,
+    "tiny": false,
+    "tiny_classes": 4,
+    "tiny_bank_per_class": 20,
+    "tiny_val_per_class": 8
+  },
+  "paths": {
+    "operators": "runs/x2/perlayer_plain_s0/results/e1_operators.npz",
+    "m1_structure": null,
+    "heal_dir": null
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  },
+  "seed": 0,
+  "feature_recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+  "timing": {
+    "stages": {
+      "load": 3.52
+    },
+    "variants": {
+      "original": {
+        "build original": 0.0,
+        "extract original bank": 180.22,
+        "extract original val": 79.33,
+        "probe original": 451.32
+      },
+      "mirror_mlp_k6": {
+        "build mirror_mlp_k6": 178.54,
+        "extract mirror_mlp_k6 bank": 151.07,
+        "extract mirror_mlp_k6 val": 76.18,
+        "probe mirror_mlp_k6": 447.57
+      },
+      "svd_mlp_k6": {
+        "build svd_mlp_k6": 4.77,
+        "extract svd_mlp_k6 bank": 151.22,
+        "extract svd_mlp_k6 val": 74.91,
+        "probe svd_mlp_k6": 420.09
+      },
+      "random_k6": {
+        "build random_k6": 89.22,
+        "extract random_k6 bank": 151.03,
+        "extract random_k6 val": 76.73,
+        "probe random_k6": 803.91
+      }
+    },
+    "total_s": 3344.31
+  }
+}

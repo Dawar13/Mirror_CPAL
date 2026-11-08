@@ -2189,7 +2189,7 @@
     "source_file": "results/paper/scripts/f1_dinov2/f1_meta.json",
     "seed": null,
     "fit_seed": null,
-    "git_hash": "f9879964770dc1ef029119087755b38742320390",
+    "git_hash": "b15a83447af90af7fcc56dded4c4686621efa9e1",
     "locator": {
       "type": "json",
       "file": "results/paper/scripts/f1_dinov2/f1_meta.json",
@@ -2205,7 +2205,7 @@
     "source_file": "results/paper/scripts/f1_g/f1_meta.json",
     "seed": null,
     "fit_seed": null,
-    "git_hash": "f9879964770dc1ef029119087755b38742320390",
+    "git_hash": "b15a83447af90af7fcc56dded4c4686621efa9e1",
     "locator": {
       "type": "json",
       "file": "results/paper/scripts/f1_g/f1_meta.json",
@@ -5889,46 +5889,48 @@
     "derived": "computed by scripts/collect_results.py from the source file(s)"
   },
   "a.reg.A2.hungarian.k6.top1": {
-    "value": 77.32999920845032,
+    "value": 77.2706667582194,
     "table": "T_ablations_seeds",
     "row": "model=dinov2_vitb14_reg, ablation=A2, variant=hungarian, k=6",
     "column": "top1_mean",
-    "source_file": "runs/a/dinov2_vitb14_reg/A2_s0.csv",
+    "source_file": "runs/a/dinov2_vitb14_reg/A2_s0.csv;runs/a/dinov2_vitb14_reg/A2_s1.csv;runs/a/dinov2_vitb14_reg/A2_s2.csv",
     "seed": 0,
-    "fit_seed": "0",
+    "fit_seed": "0,1,2",
     "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
-    "locator": {
-      "type": "csv",
-      "file": "runs/a/dinov2_vitb14_reg/A2_s0.csv",
-      "where": {
-        "ablation": "A2",
-        "variant": "hungarian",
-        "k": 6,
-        "fit_seed": 0
-      },
-      "column": "top1"
-    }
+    "derived": "mean of top1 over fit seeds 0,1,2"
+  },
+  "a.reg.A2.hungarian.k6.top1_std": {
+    "value": 0.0525476503381176,
+    "table": "T_ablations_seeds",
+    "row": "model=dinov2_vitb14_reg, ablation=A2, variant=hungarian, k=6",
+    "column": "top1_std",
+    "source_file": "runs/a/dinov2_vitb14_reg/A2_s0.csv;runs/a/dinov2_vitb14_reg/A2_s1.csv;runs/a/dinov2_vitb14_reg/A2_s2.csv",
+    "seed": 0,
+    "fit_seed": "0,1,2",
+    "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+    "derived": "computed by scripts/collect_results.py from the source file(s)"
   },
   "a.reg.A2.hungarian_cycle.k6.top1": {
-    "value": 77.17999815940857,
+    "value": 77.19666560490926,
     "table": "T_ablations_seeds",
     "row": "model=dinov2_vitb14_reg, ablation=A2, variant=hungarian_cycle, k=6",
     "column": "top1_mean",
-    "source_file": "runs/a/dinov2_vitb14_reg/A2_s0.csv",
+    "source_file": "runs/a/dinov2_vitb14_reg/A2_s0.csv;runs/a/dinov2_vitb14_reg/A2_s1.csv;runs/a/dinov2_vitb14_reg/A2_s2.csv",
     "seed": 0,
-    "fit_seed": "0",
+    "fit_seed": "0,1,2",
     "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
-    "locator": {
-      "type": "csv",
-      "file": "runs/a/dinov2_vitb14_reg/A2_s0.csv",
-      "where": {
-        "ablation": "A2",
-        "variant": "hungarian_cycle",
-        "k": 6,
-        "fit_seed": 0
-      },
-      "column": "top1"
-    }
+    "derived": "mean of top1 over fit seeds 0,1,2"
+  },
+  "a.reg.A2.hungarian_cycle.k6.top1_std": {
+    "value": 0.023860303131355034,
+    "table": "T_ablations_seeds",
+    "row": "model=dinov2_vitb14_reg, ablation=A2, variant=hungarian_cycle, k=6",
+    "column": "top1_std",
+    "source_file": "runs/a/dinov2_vitb14_reg/A2_s0.csv;runs/a/dinov2_vitb14_reg/A2_s1.csv;runs/a/dinov2_vitb14_reg/A2_s2.csv",
+    "seed": 0,
+    "fit_seed": "0,1,2",
+    "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+    "derived": "computed by scripts/collect_results.py from the source file(s)"
   },
   "a.reg.A3.n100.k6.top1": {
     "value": 77.03199982643127,
@@ -6266,6 +6268,48 @@
       "column": "top1"
     }
   },
+  "a.reg.A2x.hungarian.s1.top1": {
+    "value": 77.25200057029724,
+    "table": "T_ablations_a2_extra",
+    "row": "model=dinov2_vitb14_reg, variant=hungarian, k=6, fit_seed=1",
+    "column": "top1",
+    "source_file": "runs/a/dinov2_vitb14_reg/A2_s1.csv",
+    "seed": 0,
+    "fit_seed": 1,
+    "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+    "locator": {
+      "type": "csv",
+      "file": "runs/a/dinov2_vitb14_reg/A2_s1.csv",
+      "where": {
+        "ablation": "A2",
+        "variant": "hungarian",
+        "k": 6,
+        "fit_seed": 1
+      },
+      "column": "top1"
+    }
+  },
+  "a.reg.A2x.hungarian_cycle.s1.top1": {
+    "value": 77.22399830818176,
+    "table": "T_ablations_a2_extra",
+    "row": "model=dinov2_vitb14_reg, variant=hungarian_cycle, k=6, fit_seed=1",
+    "column": "top1",
+    "source_file": "runs/a/dinov2_vitb14_reg/A2_s1.csv",
+    "seed": 0,
+    "fit_seed": 1,
+    "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+    "locator": {
+      "type": "csv",
+      "file": "runs/a/dinov2_vitb14_reg/A2_s1.csv",
+      "where": {
+        "ablation": "A2",
+        "variant": "hungarian_cycle",
+        "k": 6,
+        "fit_seed": 1
+      },
+      "column": "top1"
+    }
+  },
   "a.reg.A2x.generic.s2.top1": {
     "value": 24.66599941253662,
     "table": "T_ablations_a2_extra",
@@ -6283,6 +6327,2767 @@
         "variant": "generic",
         "k": 6,
         "fit_seed": 2
+      },
+      "column": "top1"
+    }
+  },
+  "a.reg.A2x.hungarian.s2.top1": {
+    "value": 77.23000049591064,
+    "table": "T_ablations_a2_extra",
+    "row": "model=dinov2_vitb14_reg, variant=hungarian, k=6, fit_seed=2",
+    "column": "top1",
+    "source_file": "runs/a/dinov2_vitb14_reg/A2_s2.csv",
+    "seed": 0,
+    "fit_seed": 2,
+    "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+    "locator": {
+      "type": "csv",
+      "file": "runs/a/dinov2_vitb14_reg/A2_s2.csv",
+      "where": {
+        "ablation": "A2",
+        "variant": "hungarian",
+        "k": 6,
+        "fit_seed": 2
+      },
+      "column": "top1"
+    }
+  },
+  "a.reg.A2x.hungarian_cycle.s2.top1": {
+    "value": 77.18600034713745,
+    "table": "T_ablations_a2_extra",
+    "row": "model=dinov2_vitb14_reg, variant=hungarian_cycle, k=6, fit_seed=2",
+    "column": "top1",
+    "source_file": "runs/a/dinov2_vitb14_reg/A2_s2.csv",
+    "seed": 0,
+    "fit_seed": 2,
+    "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+    "locator": {
+      "type": "csv",
+      "file": "runs/a/dinov2_vitb14_reg/A2_s2.csv",
+      "where": {
+        "ablation": "A2",
+        "variant": "hungarian_cycle",
+        "k": 6,
+        "fit_seed": 2
+      },
+      "column": "top1"
+    }
+  },
+  "p2.value": {
+    "value": 0.4444444444444444,
+    "table": "T_prereg",
+    "row": "id=P2",
+    "column": "value",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "primary_prereg_models",
+        "fraction"
+      ]
+    }
+  },
+  "p2.verdict": {
+    "value": "FAIL",
+    "table": "T_prereg",
+    "row": "id=P2",
+    "column": "verdict",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "verdict"
+      ]
+    }
+  },
+  "f4.pre_registered_models_primary.fraction": {
+    "value": 0.4444444444444444,
+    "table": "T_f4_p2",
+    "row": "scope=pre-registered models (primary)",
+    "column": "fraction",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "primary_prereg_models",
+        "fraction"
+      ]
+    }
+  },
+  "f4.pre_registered_models_primary.hits": {
+    "value": 16,
+    "table": "T_f4_p2",
+    "row": "scope=pre-registered models (primary)",
+    "column": "n_hits",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "primary_prereg_models",
+        "n_hits"
+      ]
+    }
+  },
+  "f4.pre_registered_models_primary.cases": {
+    "value": 36,
+    "table": "T_f4_p2",
+    "row": "scope=pre-registered models (primary)",
+    "column": "n_cases",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "primary_prereg_models",
+        "n_cases"
+      ]
+    }
+  },
+  "f4.all_models_run.fraction": {
+    "value": 0.4444444444444444,
+    "table": "T_f4_p2",
+    "row": "scope=all models run",
+    "column": "fraction",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "primary_all_models_run",
+        "fraction"
+      ]
+    }
+  },
+  "f4.all_models_run.hits": {
+    "value": 16,
+    "table": "T_f4_p2",
+    "row": "scope=all models run",
+    "column": "n_hits",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "primary_all_models_run",
+        "n_hits"
+      ]
+    }
+  },
+  "f4.all_models_run.cases": {
+    "value": 36,
+    "table": "T_f4_p2",
+    "row": "scope=all models run",
+    "column": "n_cases",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "primary_all_models_run",
+        "n_cases"
+      ]
+    }
+  },
+  "f4.deit_iii.fraction": {
+    "value": 0.75,
+    "table": "T_f4_p2",
+    "row": "scope=DeiT-III",
+    "column": "fraction",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "per_model",
+        "deit3_b16",
+        "fraction"
+      ]
+    }
+  },
+  "f4.deit_iii.hits": {
+    "value": 9,
+    "table": "T_f4_p2",
+    "row": "scope=DeiT-III",
+    "column": "n_hits",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "per_model",
+        "deit3_b16",
+        "n_hits"
+      ]
+    }
+  },
+  "f4.deit_iii.cases": {
+    "value": 12,
+    "table": "T_f4_p2",
+    "row": "scope=DeiT-III",
+    "column": "n_cases",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "per_model",
+        "deit3_b16",
+        "n_cases"
+      ]
+    }
+  },
+  "f4.dinov2.fraction": {
+    "value": 0.25,
+    "table": "T_f4_p2",
+    "row": "scope=DINOv2",
+    "column": "fraction",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "per_model",
+        "dinov2_vitb14",
+        "fraction"
+      ]
+    }
+  },
+  "f4.dinov2.hits": {
+    "value": 3,
+    "table": "T_f4_p2",
+    "row": "scope=DINOv2",
+    "column": "n_hits",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "per_model",
+        "dinov2_vitb14",
+        "n_hits"
+      ]
+    }
+  },
+  "f4.dinov2.cases": {
+    "value": 12,
+    "table": "T_f4_p2",
+    "row": "scope=DINOv2",
+    "column": "n_cases",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "per_model",
+        "dinov2_vitb14",
+        "n_cases"
+      ]
+    }
+  },
+  "f4.dinov2_reg.fraction": {
+    "value": 0.3333333333333333,
+    "table": "T_f4_p2",
+    "row": "scope=DINOv2-reg",
+    "column": "fraction",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "per_model",
+        "dinov2_vitb14_reg",
+        "fraction"
+      ]
+    }
+  },
+  "f4.dinov2_reg.hits": {
+    "value": 4,
+    "table": "T_f4_p2",
+    "row": "scope=DINOv2-reg",
+    "column": "n_hits",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "per_model",
+        "dinov2_vitb14_reg",
+        "n_hits"
+      ]
+    }
+  },
+  "f4.dinov2_reg.cases": {
+    "value": 12,
+    "table": "T_f4_p2",
+    "row": "scope=DINOv2-reg",
+    "column": "n_cases",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "per_model",
+        "dinov2_vitb14_reg",
+        "n_cases"
+      ]
+    }
+  },
+  "f4.secondary_weight_only.fraction": {
+    "value": 0.6944444444444444,
+    "table": "T_f4_p2",
+    "row": "scope=secondary: weight_only",
+    "column": "fraction",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "secondary",
+        "weight_only",
+        "fraction"
+      ]
+    }
+  },
+  "f4.secondary_weight_only.hits": {
+    "value": 25,
+    "table": "T_f4_p2",
+    "row": "scope=secondary: weight_only",
+    "column": "n_hits",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "secondary",
+        "weight_only",
+        "n_hits"
+      ]
+    }
+  },
+  "f4.secondary_weight_only.cases": {
+    "value": 36,
+    "table": "T_f4_p2",
+    "row": "scope=secondary: weight_only",
+    "column": "n_cases",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "secondary",
+        "weight_only",
+        "n_cases"
+      ]
+    }
+  },
+  "f4.secondary_activation_weighted_plain_svd_error.fraction": {
+    "value": 0.8333333333333334,
+    "table": "T_f4_p2",
+    "row": "scope=secondary: activation_weighted_plain_svd_error",
+    "column": "fraction",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "secondary",
+        "activation_weighted_plain_svd_error",
+        "fraction"
+      ]
+    }
+  },
+  "f4.secondary_activation_weighted_plain_svd_error.hits": {
+    "value": 30,
+    "table": "T_f4_p2",
+    "row": "scope=secondary: activation_weighted_plain_svd_error",
+    "column": "n_hits",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "secondary",
+        "activation_weighted_plain_svd_error",
+        "n_hits"
+      ]
+    }
+  },
+  "f4.secondary_activation_weighted_plain_svd_error.cases": {
+    "value": 36,
+    "table": "T_f4_p2",
+    "row": "scope=secondary: activation_weighted_plain_svd_error",
+    "column": "n_cases",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "secondary",
+        "activation_weighted_plain_svd_error",
+        "n_cases"
+      ]
+    }
+  },
+  "f4.secondary_fc1_g_approximation.fraction": {
+    "value": 0.6111111111111112,
+    "table": "T_f4_p2",
+    "row": "scope=secondary: fc1_G_approximation",
+    "column": "fraction",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "secondary",
+        "fc1_G_approximation",
+        "fraction"
+      ]
+    }
+  },
+  "f4.secondary_fc1_g_approximation.hits": {
+    "value": 22,
+    "table": "T_f4_p2",
+    "row": "scope=secondary: fc1_G_approximation",
+    "column": "n_hits",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "secondary",
+        "fc1_G_approximation",
+        "n_hits"
+      ]
+    }
+  },
+  "f4.secondary_fc1_g_approximation.cases": {
+    "value": 36,
+    "table": "T_f4_p2",
+    "row": "scope=secondary: fc1_G_approximation",
+    "column": "n_cases",
+    "source_file": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "json",
+      "file": "runs/f4/f4_p2.json",
+      "path": [
+        "secondary",
+        "fc1_G_approximation",
+        "n_cases"
+      ]
+    }
+  },
+  "m2.checks.n_pass": {
+    "value": 38,
+    "table": null,
+    "row": null,
+    "source_file": "runs/m2/m2_checks.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "number of rows with pass = True in m2_checks.csv"
+  },
+  "m2.vlocal.k6.b1.compile.speedup": {
+    "value": 0.2023139990740651,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=6, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k6.b1.compile.flop": {
+    "value": 1.1619489862656145,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=6, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k6.b1.compile.flop_collector": {
+    "value": 1.1829635297310028,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=6, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vlocal at k = 6 (analytic_cost)"
+  },
+  "m2.vlocal_r2.k6.b1.compile.speedup": {
+    "value": 0.7498511353787485,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=6, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal_r2.k6.b1.compile.flop": {
+    "value": 1.1304555421088192,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=6, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k6.b1.compile.speedup": {
+    "value": 0.2095713761281289,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=6, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k6.b1.compile.flop": {
+    "value": 1.238826182966605,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=6, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k6.b1.compile.flop_collector": {
+    "value": 1.2388646391134484,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=6, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vexact at k = 6 (analytic_cost)"
+  },
+  "m2.mlp_only.k6.b1.compile.speedup": {
+    "value": 0.8641043311372626,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=6, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k6.b1.compile.flop": {
+    "value": 1.10146134520037,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=6, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k6.b1.compile.flop_collector": {
+    "value": 1.1014917457924716,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=6, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot mirror_mlp_m1 at k = 6 (analytic_cost)"
+  },
+  "m2.svd.k6.b1.compile.speedup": {
+    "value": 0.1721238651993206,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=6, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.svd.k6.b1.compile.flop": {
+    "value": 1.2411281547541024,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=6, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.svd.k6.b1.compile.flop_collector": {
+    "value": 1.2411281547541024,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=6, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot svd_attn at k = 6 (analytic_cost)"
+  },
+  "m2.prune.k6.b1.compile.speedup": {
+    "value": 1.0606571905049031,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=6, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.prune.k6.b1.compile.flop": {
+    "value": 1.2406167912709638,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=6, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 6,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k9.b1.compile.speedup": {
+    "value": 0.1715025251864492,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=9, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k9.b1.compile.flop": {
+    "value": 1.1930568446048635,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=9, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k9.b1.compile.flop_collector": {
+    "value": 1.220527947222264,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=9, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vlocal at k = 9 (analytic_cost)"
+  },
+  "m2.vlocal_r2.k9.b1.compile.speedup": {
+    "value": 0.1791660746775691,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=9, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal_r2.k9.b1.compile.flop": {
+    "value": 1.1386903683828082,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=9, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k9.b1.compile.speedup": {
+    "value": 0.198596111458283,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=9, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k9.b1.compile.flop": {
+    "value": 1.3006228321227955,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=9, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k9.b1.compile.flop_collector": {
+    "value": 1.3006652206606049,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=9, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vexact at k = 9 (analytic_cost)"
+  },
+  "m2.mlp_only.k9.b1.compile.speedup": {
+    "value": 0.3051381420363911,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=9, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k9.b1.compile.flop": {
+    "value": 1.113691263390494,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=9, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k9.b1.compile.flop_collector": {
+    "value": 1.1137223428372778,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=9, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot mirror_mlp_m1 at k = 9 (analytic_cost)"
+  },
+  "m2.svd.k9.b1.compile.speedup": {
+    "value": 0.2972494485561092,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=9, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.svd.k9.b1.compile.flop": {
+    "value": 1.315894797431901,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=9, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.svd.k9.b1.compile.flop_collector": {
+    "value": 1.315894797431901,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=9, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot svd_attn at k = 9 (analytic_cost)"
+  },
+  "m2.prune.k9.b1.compile.speedup": {
+    "value": 1.074232153019006,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=9, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.prune.k9.b1.compile.flop": {
+    "value": 1.3151432174271684,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=9, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 9,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k12.b1.compile.speedup": {
+    "value": 0.2877714366241377,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=12, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k12.b1.compile.flop": {
+    "value": 1.177947815319981,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=12, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k12.b1.compile.flop_collector": {
+    "value": 1.2061611051788355,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=12, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vlocal at k = 12 (analytic_cost)"
+  },
+  "m2.vlocal_r2.k12.b1.compile.speedup": {
+    "value": 0.1862150622313158,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=12, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal_r2.k12.b1.compile.flop": {
+    "value": 1.101830431365422,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=12, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k12.b1.compile.speedup": {
+    "value": 0.1886707739021439,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=12, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k12.b1.compile.flop": {
+    "value": 1.2919076249586363,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=12, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k12.b1.compile.flop_collector": {
+    "value": 1.2919457441862137,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=12, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vexact at k = 12 (analytic_cost)"
+  },
+  "m2.mlp_only.k12.b1.compile.speedup": {
+    "value": 0.7373353000193252,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=12, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k12.b1.compile.flop": {
+    "value": 1.0955579810085927,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=12, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k12.b1.compile.flop_collector": {
+    "value": 1.095588056601024,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=12, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot mirror_mlp_m1 at k = 12 (analytic_cost)"
+  },
+  "m2.svd.k12.b1.compile.speedup": {
+    "value": 0.6906198691129083,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=12, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.svd.k12.b1.compile.flop": {
+    "value": 1.333572811250589,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=12, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.svd.k12.b1.compile.flop_collector": {
+    "value": 1.333572811250589,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=12, batch=1, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot svd_attn at k = 12 (analytic_cost)"
+  },
+  "m2.prune.k12.b1.compile.speedup": {
+    "value": 1.057094922571592,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=12, batch=1, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.prune.k12.b1.compile.flop": {
+    "value": 1.3324833247993382,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=12, batch=1, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 12,
+        "batch": 1,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k6.b256.compile.speedup": {
+    "value": 0.982403023371658,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=6, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k6.b256.compile.flop": {
+    "value": 1.1619489862656145,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=6, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k6.b256.compile.flop_collector": {
+    "value": 1.1829635297310028,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=6, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vlocal at k = 6 (analytic_cost)"
+  },
+  "m2.vlocal_r2.k6.b256.compile.speedup": {
+    "value": 0.7696219694462741,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=6, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal_r2.k6.b256.compile.flop": {
+    "value": 1.1304555421088192,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=6, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k6.b256.compile.speedup": {
+    "value": 1.012512183762392,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=6, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k6.b256.compile.flop": {
+    "value": 1.238826182966605,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=6, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k6.b256.compile.flop_collector": {
+    "value": 1.2388646391134484,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=6, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vexact at k = 6 (analytic_cost)"
+  },
+  "m2.mlp_only.k6.b256.compile.speedup": {
+    "value": 1.081147223480183,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=6, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k6.b256.compile.flop": {
+    "value": 1.10146134520037,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=6, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k6.b256.compile.flop_collector": {
+    "value": 1.1014917457924716,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=6, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot mirror_mlp_m1 at k = 6 (analytic_cost)"
+  },
+  "m2.svd.k6.b256.compile.speedup": {
+    "value": 1.136964679597847,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=6, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.svd.k6.b256.compile.flop": {
+    "value": 1.2411281547541024,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=6, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.svd.k6.b256.compile.flop_collector": {
+    "value": 1.2411281547541024,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=6, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot svd_attn at k = 6 (analytic_cost)"
+  },
+  "m2.prune.k6.b256.compile.speedup": {
+    "value": 1.3300931832246057,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=6, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.prune.k6.b256.compile.flop": {
+    "value": 1.2406167912709638,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=6, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 6,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k9.b256.compile.speedup": {
+    "value": 0.91920474303025,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=9, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k9.b256.compile.flop": {
+    "value": 1.1930568446048635,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=9, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k9.b256.compile.flop_collector": {
+    "value": 1.220527947222264,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=9, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vlocal at k = 9 (analytic_cost)"
+  },
+  "m2.vlocal_r2.k9.b256.compile.speedup": {
+    "value": 0.6805931246153777,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=9, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal_r2.k9.b256.compile.flop": {
+    "value": 1.1386903683828082,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=9, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k9.b256.compile.speedup": {
+    "value": 1.0625136123680452,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=9, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k9.b256.compile.flop": {
+    "value": 1.3006228321227955,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=9, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k9.b256.compile.flop_collector": {
+    "value": 1.3006652206606049,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=9, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vexact at k = 9 (analytic_cost)"
+  },
+  "m2.mlp_only.k9.b256.compile.speedup": {
+    "value": 1.5370788348236657,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=9, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k9.b256.compile.flop": {
+    "value": 1.113691263390494,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=9, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k9.b256.compile.flop_collector": {
+    "value": 1.1137223428372778,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=9, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot mirror_mlp_m1 at k = 9 (analytic_cost)"
+  },
+  "m2.svd.k9.b256.compile.speedup": {
+    "value": 1.651604608522916,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=9, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.svd.k9.b256.compile.flop": {
+    "value": 1.315894797431901,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=9, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.svd.k9.b256.compile.flop_collector": {
+    "value": 1.315894797431901,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=9, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot svd_attn at k = 9 (analytic_cost)"
+  },
+  "m2.prune.k9.b256.compile.speedup": {
+    "value": 2.1361870139449004,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=9, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.prune.k9.b256.compile.flop": {
+    "value": 1.3151432174271684,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=9, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 9,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k12.b256.compile.speedup": {
+    "value": 1.245065330588865,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=12, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k12.b256.compile.flop": {
+    "value": 1.177947815319981,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=12, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vlocal.k12.b256.compile.flop_collector": {
+    "value": 1.2061611051788355,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal, k=12, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vlocal at k = 12 (analytic_cost)"
+  },
+  "m2.vlocal_r2.k12.b256.compile.speedup": {
+    "value": 1.921353274099622,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=12, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vlocal_r2.k12.b256.compile.flop": {
+    "value": 1.101830431365422,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_r2, k=12, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vlocal_r2",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k12.b256.compile.speedup": {
+    "value": 0.8896574390636185,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=12, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k12.b256.compile.flop": {
+    "value": 1.2919076249586363,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=12, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "vexact",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.vexact.k12.b256.compile.flop_collector": {
+    "value": 1.2919457441862137,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=vexact, k=12, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot vexact at k = 12 (analytic_cost)"
+  },
+  "m2.mlp_only.k12.b256.compile.speedup": {
+    "value": 0.995598142030065,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=12, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k12.b256.compile.flop": {
+    "value": 1.0955579810085927,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=12, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "mlp_only",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.mlp_only.k12.b256.compile.flop_collector": {
+    "value": 1.095588056601024,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=mlp_only, k=12, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot mirror_mlp_m1 at k = 12 (analytic_cost)"
+  },
+  "m2.svd.k12.b256.compile.speedup": {
+    "value": 1.1206752713198036,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=12, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.svd.k12.b256.compile.flop": {
+    "value": 1.333572811250589,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=12, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "svd",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.svd.k12.b256.compile.flop_collector": {
+    "value": 1.333572811250589,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=svd, k=12, batch=256, mode=compile",
+    "column": "collector_flop_speedup",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "dense GFLOPs / GFLOPs of T_main_zeroshot svd_attn at k = 12 (analytic_cost)"
+  },
+  "m2.prune.k12.b256.compile.speedup": {
+    "value": 1.412029213078647,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=12, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "m2.prune.k12.b256.compile.flop": {
+    "value": 1.3324833247993382,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=prune, k=12, batch=256, mode=compile",
+    "column": "flop_speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "prune",
+        "k": 12,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "flop_speedup_vs_dense"
+    }
+  },
+  "m2.original.speedup_vs_dense": {
+    "value": 0.9205315844336788,
+    "table": "T_latency",
+    "row": "model=dinov2_vitb14_reg, variant=original, k=0, batch=256, mode=compile",
+    "column": "speedup_vs_dense",
+    "source_file": "runs/m2/m2_latency.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m2/m2_latency.csv",
+      "where": {
+        "variant": "original",
+        "k": 0,
+        "batch": 256,
+        "mode": "compile"
+      },
+      "column": "speedup_vs_dense"
+    }
+  },
+  "t2.plain.original.top1": {
+    "value": 80.678,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=original",
+    "column": "top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "original"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.plain.original.top5": {
+    "value": 95.794,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=original",
+    "column": "top5",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "original"
+      },
+      "column": "top5"
+    }
+  },
+  "t2.plain.original.wd": {
+    "value": 0.00316,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=original",
+    "column": "chosen_wd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "original"
+      },
+      "column": "chosen_wd"
+    }
+  },
+  "t2.plain.original.knn_check": {
+    "value": 78.70199680328369,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=original",
+    "column": "knn_check_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "original"
+      },
+      "column": "knn_check_top1"
+    }
+  },
+  "t2.plain.original.tier1_knn": {
+    "value": 78.70599627494812,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=original",
+    "column": "tier1_knn_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "T_main_zeroshot original (runs/x2/perlayer_plain_s0/results/e1_surgery.csv;runs/x2/perlayer_plain_s1/results/e1_surgery.csv;runs/x2/perlayer_plain_s2/results/e1_surgery.csv)"
+  },
+  "t2.plain.mirror_mlp_k6.top1": {
+    "value": 76.796,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=mirror_mlp_k6",
+    "column": "top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "mirror_mlp_k6"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.plain.mirror_mlp_k6.top5": {
+    "value": 93.976,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=mirror_mlp_k6",
+    "column": "top5",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "mirror_mlp_k6"
+      },
+      "column": "top5"
+    }
+  },
+  "t2.plain.mirror_mlp_k6.drop": {
+    "value": 3.881999999999991,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=mirror_mlp_k6",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of mirror_mlp_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.plain.mirror_mlp_k6.margin_svd": {
+    "value": 7.318000000000012,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=mirror_mlp_k6",
+    "column": "margin_svd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of mirror_mlp_k6 minus top1 of svd_mlp_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.plain.mirror_mlp_k6.margin_random": {
+    "value": 67.028,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=mirror_mlp_k6",
+    "column": "margin_random",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of mirror_mlp_k6 minus top1 of random_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.plain.mirror_mlp_k6.wd": {
+    "value": 0.00316,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=mirror_mlp_k6",
+    "column": "chosen_wd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "mirror_mlp_k6"
+      },
+      "column": "chosen_wd"
+    }
+  },
+  "t2.plain.mirror_mlp_k6.knn_check": {
+    "value": 74.68000054359436,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=mirror_mlp_k6",
+    "column": "knn_check_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "mirror_mlp_k6"
+      },
+      "column": "knn_check_top1"
+    }
+  },
+  "t2.plain.mirror_mlp_k6.tier1_knn": {
+    "value": 74.67799782752991,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=mirror_mlp_k6",
+    "column": "tier1_knn_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/x2/perlayer_plain_s0/results/e1_surgery.csv",
+      "where": {
+        "k": 6,
+        "variant": "surgery"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.plain.random_k6.top1": {
+    "value": 9.768,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=random_k6",
+    "column": "top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "random_k6"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.plain.random_k6.top5": {
+    "value": 22.256,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=random_k6",
+    "column": "top5",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "random_k6"
+      },
+      "column": "top5"
+    }
+  },
+  "t2.plain.random_k6.drop": {
+    "value": 70.91,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=random_k6",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of random_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.plain.random_k6.wd": {
+    "value": 0.001,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=random_k6",
+    "column": "chosen_wd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "random_k6"
+      },
+      "column": "chosen_wd"
+    }
+  },
+  "t2.plain.random_k6.knn_check": {
+    "value": 3.5280000418424606,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=random_k6",
+    "column": "knn_check_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "random_k6"
+      },
+      "column": "knn_check_top1"
+    }
+  },
+  "t2.plain.random_k6.tier1_knn": {
+    "value": 3.661999851465225,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=random_k6",
+    "column": "tier1_knn_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/x2/perlayer_plain_s0/results/e1_surgery.csv",
+      "where": {
+        "k": 6,
+        "variant": "random"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.plain.svd_mlp_k6.top1": {
+    "value": 69.478,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=svd_mlp_k6",
+    "column": "top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "svd_mlp_k6"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.plain.svd_mlp_k6.top5": {
+    "value": 89.374,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=svd_mlp_k6",
+    "column": "top5",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "svd_mlp_k6"
+      },
+      "column": "top5"
+    }
+  },
+  "t2.plain.svd_mlp_k6.drop": {
+    "value": 11.200000000000003,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=svd_mlp_k6",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of svd_mlp_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.plain.svd_mlp_k6.wd": {
+    "value": 0.00316,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=svd_mlp_k6",
+    "column": "chosen_wd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "svd_mlp_k6"
+      },
+      "column": "chosen_wd"
+    }
+  },
+  "t2.plain.svd_mlp_k6.knn_check": {
+    "value": 66.22799634933472,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=svd_mlp_k6",
+    "column": "knn_check_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14",
+        "variant": "svd_mlp_k6"
+      },
+      "column": "knn_check_top1"
+    }
+  },
+  "t2.plain.svd_mlp_k6.tier1_knn": {
+    "value": 66.22999906539917,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14, variant=svd_mlp_k6",
+    "column": "tier1_knn_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/x2/perlayer_plain_s0/results/e1_surgery.csv",
+      "where": {
+        "k": 6,
+        "variant": "svd"
       },
       "column": "top1"
     }
@@ -6373,6 +9178,452 @@
     "fit_seed": null,
     "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
     "derived": "T_main_zeroshot original (runs/x2/perlayer_reg_s0/results/e1_surgery.csv;runs/x2/perlayer_reg_s1/results/e1_surgery.csv;runs/x2/perlayer_reg_s2/results/e1_surgery.csv)"
+  },
+  "t2.reg.mirror_mlp_k6.top1": {
+    "value": 79.082,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=mirror_mlp_k6",
+    "column": "top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "mirror_mlp_k6"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.reg.mirror_mlp_k6.top5": {
+    "value": 95.07,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=mirror_mlp_k6",
+    "column": "top5",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "mirror_mlp_k6"
+      },
+      "column": "top5"
+    }
+  },
+  "t2.reg.mirror_mlp_k6.drop": {
+    "value": 1.906000000000006,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=mirror_mlp_k6",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "derived": "top1 of original minus top1 of mirror_mlp_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.reg.mirror_mlp_k6.margin_svd": {
+    "value": 58.16,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=mirror_mlp_k6",
+    "column": "margin_svd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "derived": "top1 of mirror_mlp_k6 minus top1 of svd_mlp_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.reg.mirror_mlp_k6.margin_random": {
+    "value": 67.83399999999999,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=mirror_mlp_k6",
+    "column": "margin_random",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "derived": "top1 of mirror_mlp_k6 minus top1 of random_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.reg.mirror_mlp_k6.wd": {
+    "value": 0.00316,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=mirror_mlp_k6",
+    "column": "chosen_wd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "mirror_mlp_k6"
+      },
+      "column": "chosen_wd"
+    }
+  },
+  "t2.reg.mirror_mlp_k6.knn_check": {
+    "value": 77.10999846458435,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=mirror_mlp_k6",
+    "column": "knn_check_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "mirror_mlp_k6"
+      },
+      "column": "knn_check_top1"
+    }
+  },
+  "t2.reg.mirror_mlp_k6.tier1_knn": {
+    "value": 77.09400057792664,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=mirror_mlp_k6",
+    "column": "tier1_knn_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/x2/perlayer_reg_s0/results/e1_surgery.csv",
+      "where": {
+        "k": 6,
+        "variant": "surgery"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.reg.random_k6.top1": {
+    "value": 11.248,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=random_k6",
+    "column": "top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "random_k6"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.reg.random_k6.top5": {
+    "value": 24.616,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=random_k6",
+    "column": "top5",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "random_k6"
+      },
+      "column": "top5"
+    }
+  },
+  "t2.reg.random_k6.drop": {
+    "value": 69.74,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=random_k6",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "derived": "top1 of original minus top1 of random_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.reg.random_k6.wd": {
+    "value": 0.000316,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=random_k6",
+    "column": "chosen_wd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "random_k6"
+      },
+      "column": "chosen_wd"
+    }
+  },
+  "t2.reg.random_k6.knn_check": {
+    "value": 3.639999777078629,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=random_k6",
+    "column": "knn_check_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "random_k6"
+      },
+      "column": "knn_check_top1"
+    }
+  },
+  "t2.reg.random_k6.tier1_knn": {
+    "value": 3.982000052928925,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=random_k6",
+    "column": "tier1_knn_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/x2/perlayer_reg_s0/results/e1_surgery.csv",
+      "where": {
+        "k": 6,
+        "variant": "random"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.reg.svd_mlp_k6.top1": {
+    "value": 20.922,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=svd_mlp_k6",
+    "column": "top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "svd_mlp_k6"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.reg.svd_mlp_k6.top5": {
+    "value": 40.624,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=svd_mlp_k6",
+    "column": "top5",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "svd_mlp_k6"
+      },
+      "column": "top5"
+    }
+  },
+  "t2.reg.svd_mlp_k6.drop": {
+    "value": 60.066,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=svd_mlp_k6",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "derived": "top1 of original minus top1 of svd_mlp_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.reg.svd_mlp_k6.wd": {
+    "value": 0.001,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=svd_mlp_k6",
+    "column": "chosen_wd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "svd_mlp_k6"
+      },
+      "column": "chosen_wd"
+    }
+  },
+  "t2.reg.svd_mlp_k6.knn_check": {
+    "value": 8.767999708652496,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=svd_mlp_k6",
+    "column": "knn_check_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "svd_mlp_k6"
+      },
+      "column": "knn_check_top1"
+    }
+  },
+  "t2.reg.svd_mlp_k6.tier1_knn": {
+    "value": 8.767999708652496,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=svd_mlp_k6",
+    "column": "tier1_knn_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/x2/perlayer_reg_s0/results/e1_surgery.csv",
+      "where": {
+        "k": 6,
+        "variant": "svd"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.reg.vexact_k6.top1": {
+    "value": 79.506,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vexact_k6",
+    "column": "top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "vexact_k6"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.reg.vexact_k6.top5": {
+    "value": 95.244,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vexact_k6",
+    "column": "top5",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "vexact_k6"
+      },
+      "column": "top5"
+    }
+  },
+  "t2.reg.vexact_k6.drop": {
+    "value": 1.4819999999999993,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vexact_k6",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "derived": "top1 of original minus top1 of vexact_k6 (runs/t2/t2_linear.csv)"
+  },
+  "t2.reg.vexact_k6.wd": {
+    "value": 0.00316,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vexact_k6",
+    "column": "chosen_wd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "vexact_k6"
+      },
+      "column": "chosen_wd"
+    }
+  },
+  "t2.reg.vexact_k6.knn_check": {
+    "value": 77.36799716949463,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vexact_k6",
+    "column": "knn_check_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "vexact_k6"
+      },
+      "column": "knn_check_top1"
+    }
+  },
+  "t2.reg.vexact_k6.tier1_knn": {
+    "value": 77.36799716949463,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vexact_k6",
+    "column": "tier1_knn_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m1/m1_knn.csv",
+      "where": {
+        "k": 6,
+        "variant": "vexact"
+      },
+      "column": "top1"
+    }
   },
   "t2.reg.healed_mirror_k9.top5": {
     "value": 95.82,
@@ -6631,6 +9882,756 @@
         "top1"
       ]
     }
+  },
+  "t2.reg.vlocal_k9.top1": {
+    "value": 76.774,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_k9",
+    "column": "top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "vlocal_k9"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.reg.vlocal_k9.top5": {
+    "value": 93.73,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_k9",
+    "column": "top5",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "vlocal_k9"
+      },
+      "column": "top5"
+    }
+  },
+  "t2.reg.vlocal_k9.drop": {
+    "value": 4.213999999999999,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_k9",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "derived": "top1 of original minus top1 of vlocal_k9 (runs/t2/t2_linear.csv)"
+  },
+  "t2.reg.vlocal_k9.wd": {
+    "value": 0.00316,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_k9",
+    "column": "chosen_wd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "vlocal_k9"
+      },
+      "column": "chosen_wd"
+    }
+  },
+  "t2.reg.vlocal_k9.knn_check": {
+    "value": 74.6999979019165,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_k9",
+    "column": "knn_check_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "variant": "vlocal_k9"
+      },
+      "column": "knn_check_top1"
+    }
+  },
+  "t2.reg.vlocal_k9.tier1_knn": {
+    "value": 74.6999979019165,
+    "table": "T_tier2",
+    "row": "model=dinov2_vitb14_reg, variant=vlocal_k9",
+    "column": "tier1_knn_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": 0,
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "locator": {
+      "type": "csv",
+      "file": "runs/m1/m1_knn.csv",
+      "where": {
+        "k": 9,
+        "variant": "vlocal"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.mae.original.top1": {
+    "value": 56.542,
+    "table": "T_tier2",
+    "row": "model=mae_b16, variant=original",
+    "column": "top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "mae_b16",
+        "variant": "original"
+      },
+      "column": "top1"
+    }
+  },
+  "t2.mae.original.top5": {
+    "value": 79.828,
+    "table": "T_tier2",
+    "row": "model=mae_b16, variant=original",
+    "column": "top5",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "mae_b16",
+        "variant": "original"
+      },
+      "column": "top5"
+    }
+  },
+  "t2.mae.original.wd": {
+    "value": 0.001,
+    "table": "T_tier2",
+    "row": "model=mae_b16, variant=original",
+    "column": "chosen_wd",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "mae_b16",
+        "variant": "original"
+      },
+      "column": "chosen_wd"
+    }
+  },
+  "t2.mae.original.knn_check": {
+    "value": 13.72399926185608,
+    "table": "T_tier2",
+    "row": "model=mae_b16, variant=original",
+    "column": "knn_check_top1",
+    "source_file": "runs/t2/t2_linear.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_linear.csv",
+      "where": {
+        "model": "mae_b16",
+        "variant": "original"
+      },
+      "column": "knn_check_top1"
+    }
+  },
+  "t2x.reg.cifar100.original.top1": {
+    "value": 91.4,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=cifar100, variant=original",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "cifar100",
+        "variant": "original"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.cifar100.original.mpc": {
+    "value": 91.4,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=cifar100, variant=original",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "cifar100",
+        "variant": "original"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.cifar100.healed_mirror_k9.top1": {
+    "value": 90.89,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=cifar100, variant=healed_mirror_k9",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "cifar100",
+        "variant": "healed_mirror_k9"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.cifar100.healed_mirror_k9.mpc": {
+    "value": 90.89,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=cifar100, variant=healed_mirror_k9",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "cifar100",
+        "variant": "healed_mirror_k9"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.cifar100.healed_mirror_k9.drop": {
+    "value": 0.5100000000000051,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=cifar100, variant=healed_mirror_k9",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of healed_mirror_k9 (runs/t2/t2_transfer.csv)"
+  },
+  "t2x.reg.cifar100.healed_svd_k9.top1": {
+    "value": 88.67,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=cifar100, variant=healed_svd_k9",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "cifar100",
+        "variant": "healed_svd_k9"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.cifar100.healed_svd_k9.mpc": {
+    "value": 88.67,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=cifar100, variant=healed_svd_k9",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "cifar100",
+        "variant": "healed_svd_k9"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.cifar100.healed_svd_k9.drop": {
+    "value": 2.730000000000004,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=cifar100, variant=healed_svd_k9",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of healed_svd_k9 (runs/t2/t2_transfer.csv)"
+  },
+  "t2x.reg.dtd.original.top1": {
+    "value": 83.56382978723404,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=dtd, variant=original",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "dtd",
+        "variant": "original"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.dtd.original.mpc": {
+    "value": 83.56382978723406,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=dtd, variant=original",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "dtd",
+        "variant": "original"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.dtd.healed_mirror_k9.top1": {
+    "value": 83.35106382978724,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=dtd, variant=healed_mirror_k9",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "dtd",
+        "variant": "healed_mirror_k9"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.dtd.healed_mirror_k9.mpc": {
+    "value": 83.35106382978724,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=dtd, variant=healed_mirror_k9",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "dtd",
+        "variant": "healed_mirror_k9"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.dtd.healed_mirror_k9.drop": {
+    "value": 0.2127659574468055,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=dtd, variant=healed_mirror_k9",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of healed_mirror_k9 (runs/t2/t2_transfer.csv)"
+  },
+  "t2x.reg.dtd.healed_svd_k9.top1": {
+    "value": 80.69148936170212,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=dtd, variant=healed_svd_k9",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "dtd",
+        "variant": "healed_svd_k9"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.dtd.healed_svd_k9.mpc": {
+    "value": 80.69148936170211,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=dtd, variant=healed_svd_k9",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "dtd",
+        "variant": "healed_svd_k9"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.dtd.healed_svd_k9.drop": {
+    "value": 2.8723404255319167,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=dtd, variant=healed_svd_k9",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of healed_svd_k9 (runs/t2/t2_transfer.csv)"
+  },
+  "t2x.reg.flowers102.original.top1": {
+    "value": 99.69100666775086,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=flowers102, variant=original",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "flowers102",
+        "variant": "original"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.flowers102.original.mpc": {
+    "value": 99.72878520154784,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=flowers102, variant=original",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "flowers102",
+        "variant": "original"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.flowers102.healed_mirror_k9.top1": {
+    "value": 99.69100666775086,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=flowers102, variant=healed_mirror_k9",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "flowers102",
+        "variant": "healed_mirror_k9"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.flowers102.healed_mirror_k9.mpc": {
+    "value": 99.72878520154784,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=flowers102, variant=healed_mirror_k9",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "flowers102",
+        "variant": "healed_mirror_k9"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.flowers102.healed_mirror_k9.drop": {
+    "value": 0.0,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=flowers102, variant=healed_mirror_k9",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of healed_mirror_k9 (runs/t2/t2_transfer.csv)"
+  },
+  "t2x.reg.flowers102.healed_svd_k9.top1": {
+    "value": 99.69100666775086,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=flowers102, variant=healed_svd_k9",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "flowers102",
+        "variant": "healed_svd_k9"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.flowers102.healed_svd_k9.mpc": {
+    "value": 99.72878520154784,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=flowers102, variant=healed_svd_k9",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "flowers102",
+        "variant": "healed_svd_k9"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.flowers102.healed_svd_k9.drop": {
+    "value": 0.0,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=flowers102, variant=healed_svd_k9",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of healed_svd_k9 (runs/t2/t2_transfer.csv)"
+  },
+  "t2x.reg.pets.original.top1": {
+    "value": 95.99345870809483,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=pets, variant=original",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "pets",
+        "variant": "original"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.pets.original.mpc": {
+    "value": 95.96443883304931,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=pets, variant=original",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "pets",
+        "variant": "original"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.pets.healed_mirror_k9.top1": {
+    "value": 95.5846279640229,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=pets, variant=healed_mirror_k9",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "pets",
+        "variant": "healed_mirror_k9"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.pets.healed_mirror_k9.mpc": {
+    "value": 95.547613395837,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=pets, variant=healed_mirror_k9",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "pets",
+        "variant": "healed_mirror_k9"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.pets.healed_mirror_k9.drop": {
+    "value": 0.40883074407193476,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=pets, variant=healed_mirror_k9",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of healed_mirror_k9 (runs/t2/t2_transfer.csv)"
+  },
+  "t2x.reg.pets.healed_svd_k9.top1": {
+    "value": 95.5028618152085,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=pets, variant=healed_svd_k9",
+    "column": "top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "pets",
+        "variant": "healed_svd_k9"
+      },
+      "column": "top1"
+    }
+  },
+  "t2x.reg.pets.healed_svd_k9.mpc": {
+    "value": 95.4673795173704,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=pets, variant=healed_svd_k9",
+    "column": "mean_per_class_top1",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "locator": {
+      "type": "csv",
+      "file": "runs/t2/t2_transfer.csv",
+      "where": {
+        "model": "dinov2_vitb14_reg",
+        "dataset": "pets",
+        "variant": "healed_svd_k9"
+      },
+      "column": "mean_per_class_top1"
+    }
+  },
+  "t2x.reg.pets.healed_svd_k9.drop": {
+    "value": 0.49059689288633024,
+    "table": "T_tier2_transfer",
+    "row": "model=dinov2_vitb14_reg, dataset=pets, variant=healed_svd_k9",
+    "column": "drop_vs_original",
+    "source_file": "runs/t2/t2_transfer.csv",
+    "seed": 0,
+    "fit_seed": null,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "derived": "top1 of original minus top1 of healed_svd_k9 (runs/t2/t2_transfer.csv)"
   },
   "main.reg.k9.vlocal.margin_svd": {
     "value": 68.207997828722,

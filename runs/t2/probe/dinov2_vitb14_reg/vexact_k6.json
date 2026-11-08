@@ -1,0 +1,294 @@
+{
+  "row": {
+    "model": "dinov2_vitb14_reg",
+    "variant": "vexact_k6",
+    "label": "Mirror V-exact, MLP + attention, k = 6",
+    "family": "m1",
+    "method": "vexact",
+    "k": 6,
+    "top1": 79.506,
+    "top5": 95.244,
+    "mean_per_class_top1": 79.506,
+    "knn_check_top1": 77.36799716949463,
+    "chosen_wd": 0.00316,
+    "wd_at_grid_edge": false,
+    "holdout_top1_at_chosen": 81.24,
+    "final_hit_iter_limit": false,
+    "final_lbfgs_iters": 94,
+    "feature_dim": 1536,
+    "feature_kind": "cls",
+    "n_bank": 100000,
+    "n_val": 50000,
+    "n_wd_train": 90000,
+    "n_wd_holdout": 10000,
+    "converted_params_kept": 25078176,
+    "converted_params_dense": 42467328,
+    "model_params": 69194400,
+    "t_build_s": 69.2,
+    "t_extract_s": 303.3,
+    "t_probe_s": 579.7,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 14:58:20"
+  },
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 81.24,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 80.99,
+        "holdout_top5": 95.3,
+        "holdout_loss": 1.0110740234375,
+        "train_objective": 1.4840281009674072,
+        "grad_max": 1.2912380043417215e-05,
+        "n_iter": 118,
+        "n_eval": 127,
+        "hit_limit": false,
+        "seconds": 54.64
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 80.72,
+        "holdout_top5": 95.2,
+        "holdout_loss": 0.76858994140625,
+        "train_objective": 0.4367928206920624,
+        "grad_max": 8.988371519080829e-06,
+        "n_iter": 163,
+        "n_eval": 167,
+        "hit_limit": false,
+        "seconds": 71.45
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 80.31,
+        "holdout_top5": 94.83,
+        "holdout_loss": 0.82298203125,
+        "train_objective": 0.09628922492265701,
+        "grad_max": 1.4741158338438254e-06,
+        "n_iter": 301,
+        "n_eval": 316,
+        "hit_limit": false,
+        "seconds": 186.95
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 80.19,
+        "holdout_top5": 94.42,
+        "holdout_loss": 0.9730919921875,
+        "train_objective": 0.018374772742390633,
+        "grad_max": 9.675795809016563e-07,
+        "n_iter": 110,
+        "n_eval": 122,
+        "hit_limit": false,
+        "seconds": 67.46
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 79.9,
+        "holdout_top5": 94.05,
+        "holdout_loss": 1.1871306640625,
+        "train_objective": 0.0035669482313096523,
+        "grad_max": 6.619184205192141e-07,
+        "n_iter": 80,
+        "n_eval": 88,
+        "hit_limit": false,
+        "seconds": 47.1
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 79.9,
+        "holdout_top5": 94.05,
+        "holdout_loss": 1.1871306640625,
+        "train_objective": 0.0014403710374608636,
+        "grad_max": 7.567820716758433e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.48
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 79.64,
+        "holdout_top5": 94.91,
+        "holdout_loss": 1.4876541015625,
+        "train_objective": 2.57844877243042,
+        "grad_max": 2.401141682639718e-05,
+        "n_iter": 51,
+        "n_eval": 55,
+        "hit_limit": false,
+        "seconds": 29.55
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 81.24,
+        "holdout_top5": 95.27,
+        "holdout_loss": 0.82176884765625,
+        "train_objective": 0.8355629444122314,
+        "grad_max": 1.4235285561881028e-05,
+        "n_iter": 99,
+        "n_eval": 106,
+        "hit_limit": false,
+        "seconds": 59.52
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.00316,
+    "train_objective": 0.8538549542427063,
+    "grad_max": 1.5323870684369467e-05,
+    "n_iter": 94,
+    "n_eval": 100,
+    "hit_limit": false,
+    "seconds": 58.08,
+    "train_top1": 92.966
+  },
+  "test": {
+    "top1": 79.506,
+    "top5": 95.244,
+    "mean_per_class_top1": 79.506,
+    "loss": 0.8842800390625,
+    "n": 50000
+  },
+  "variant_info": {
+    "variant": "vexact_k6",
+    "label": "Mirror V-exact, MLP + attention, k = 6",
+    "family": "m1",
+    "method": "vexact",
+    "k": 6,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/m1_attention.make_variant('vexact', k=6)",
+    "mlp_params_kept": 16444608,
+    "attn_params_kept": 8633568,
+    "a_out_offset": 1,
+    "m1_saved": {
+      "fit_seed": 0,
+      "random_seed": 1,
+      "register_margin": 0.0,
+      "ks": [
+        6,
+        9,
+        12
+      ]
+    },
+    "even_head": false,
+    "converted_params_dense": 42467328,
+    "converted_params_kept": 25078176,
+    "model_params": 69194400
+  },
+  "sources": {
+    "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+    "m1_structure": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+    "m1_structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3"
+  },
+  "feature_meta": {
+    "bank": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+        "m1_structure": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+        "m1_structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3"
+      },
+      "img_size": 224,
+      "split": "bank",
+      "n": 100000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+      "seed": 0,
+      "seconds": 202.45,
+      "batch_size": 256
+    },
+    "val": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+        "m1_structure": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+        "m1_structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3"
+      },
+      "img_size": 224,
+      "split": "val",
+      "n": 50000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+      "seed": 0,
+      "seconds": 100.86,
+      "batch_size": 256
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "timing": {
+    "build vexact_k6": 69.17,
+    "extract vexact_k6 bank": 202.45,
+    "extract vexact_k6 val": 100.86,
+    "probe vexact_k6": 579.71
+  },
+  "git": {
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

@@ -1,0 +1,331 @@
+{
+  "row": {
+    "model": "dinov2_vitb14",
+    "variant": "svd_mlp_k6",
+    "label": "SVD at matched parameters, MLP only, k = 6",
+    "family": "mlp",
+    "method": "svd",
+    "k": 6,
+    "top1": 69.478,
+    "top5": 89.374,
+    "mean_per_class_top1": 69.478,
+    "knn_check_top1": 66.22799634933472,
+    "chosen_wd": 0.00316,
+    "wd_at_grid_edge": false,
+    "holdout_top1_at_chosen": 71.04,
+    "final_hit_iter_limit": false,
+    "final_lbfgs_iters": 83,
+    "feature_dim": 1536,
+    "feature_kind": "cls",
+    "n_bank": 100000,
+    "n_val": 50000,
+    "n_wd_train": 90000,
+    "n_wd_holdout": 10000,
+    "converted_params_kept": 30986496,
+    "converted_params_dense": 42467328,
+    "model_params": 75099648,
+    "t_build_s": 4.8,
+    "t_extract_s": 226.1,
+    "t_probe_s": 420.1,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 16:54:20"
+  },
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 71.04,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 70.26,
+        "holdout_top5": 89.39,
+        "holdout_loss": 1.55043857421875,
+        "train_objective": 2.018822193145752,
+        "grad_max": 3.310028841951862e-05,
+        "n_iter": 85,
+        "n_eval": 92,
+        "hit_limit": false,
+        "seconds": 30.64
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 70.56,
+        "holdout_top5": 89.71,
+        "holdout_loss": 1.2310134765625,
+        "train_objective": 0.671372652053833,
+        "grad_max": 5.657127985614352e-06,
+        "n_iter": 202,
+        "n_eval": 209,
+        "hit_limit": false,
+        "seconds": 75.65
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 69.98,
+        "holdout_top5": 89.16,
+        "holdout_loss": 1.3153900390625,
+        "train_objective": 0.1485293209552765,
+        "grad_max": 4.430205535754794e-06,
+        "n_iter": 253,
+        "n_eval": 266,
+        "hit_limit": false,
+        "seconds": 94.42
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 69.47,
+        "holdout_top5": 88.65,
+        "holdout_loss": 1.5283662109375,
+        "train_objective": 0.027597643435001373,
+        "grad_max": 8.817578418529592e-07,
+        "n_iter": 84,
+        "n_eval": 90,
+        "hit_limit": false,
+        "seconds": 30.87
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 69.25,
+        "holdout_top5": 88.18,
+        "holdout_loss": 1.83241328125,
+        "train_objective": 0.005033719819039106,
+        "grad_max": 8.601178365097439e-07,
+        "n_iter": 76,
+        "n_eval": 86,
+        "hit_limit": false,
+        "seconds": 28.09
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 69.2,
+        "holdout_top5": 88.08,
+        "holdout_loss": 2.182250390625,
+        "train_objective": 0.001283822814002633,
+        "grad_max": 9.685552413429832e-07,
+        "n_iter": 62,
+        "n_eval": 68,
+        "hit_limit": false,
+        "seconds": 22.08
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 71.04,
+        "holdout_top5": 89.85,
+        "holdout_loss": 1.2979431640625,
+        "train_objective": 1.2259674072265625,
+        "grad_max": 1.296391201321967e-05,
+        "n_iter": 95,
+        "n_eval": 102,
+        "hit_limit": false,
+        "seconds": 35.67
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 70.25,
+        "holdout_top5": 89.34,
+        "holdout_loss": 1.2519689453125,
+        "train_objective": 0.3266507685184479,
+        "grad_max": 4.340125997259747e-06,
+        "n_iter": 184,
+        "n_eval": 193,
+        "hit_limit": false,
+        "seconds": 67.99
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.00316,
+    "train_objective": 1.2541124820709229,
+    "grad_max": 1.0878482498810627e-05,
+    "n_iter": 83,
+    "n_eval": 88,
+    "hit_limit": false,
+    "seconds": 31.43,
+    "train_top1": 89.449
+  },
+  "test": {
+    "top1": 69.478,
+    "top5": 89.374,
+    "mean_per_class_top1": 69.478,
+    "loss": 1.35266443359375,
+    "n": 50000
+  },
+  "variant_info": {
+    "variant": "svd_mlp_k6",
+    "label": "SVD at matched parameters, MLP only, k = 6",
+    "family": "mlp",
+    "method": "svd",
+    "k": 6,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "model_params_original": 86580480,
+    "builder": "mirror.variants.build_variant('A1', 'svd', k=6, seed=1)",
+    "spec_signature": "d55e38ba83eaf20e25aa",
+    "mlp_params_kept": 16830720,
+    "mlp_params_dense": 28311552,
+    "attn_params_kept": 14155776,
+    "random_seed": null,
+    "fit_run_meta": {
+      "fit_seed": 0,
+      "model": "dinov2_vitb14",
+      "protocol": "v2",
+      "run_git": {
+        "git_hash": "e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd",
+        "git_dirty": true
+      },
+      "operator_mode": "per_layer",
+      "shared_layers": [
+        1,
+        12
+      ],
+      "center": true,
+      "max_abs_change_from_cleaning": 2.9637394760584357e-08,
+      "checks": {
+        "d_plus_matches_e1_layers_csv": true,
+        "n_pairs_matches_e1_mlp_csv": true
+      },
+      "shared_all_refit_agreement_with_stored": 1.0
+    },
+    "svd": {
+      "baseline": "SVD, rank matched per matrix",
+      "ranks": [
+        [
+          309,
+          329
+        ],
+        [
+          330,
+          332
+        ],
+        [
+          329,
+          338
+        ],
+        [
+          359,
+          370
+        ],
+        [
+          386,
+          400
+        ],
+        [
+          437,
+          464
+        ]
+      ],
+      "matched_to_mirror_params": 16852042,
+      "relative_shortfall": 0.0012652472620231503
+    },
+    "converted_params_dense": 42467328,
+    "converted_params_kept": 30986496,
+    "model_params": 75099648
+  },
+  "sources": {
+    "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_plain_s0/results/e1_operators.npz",
+    "operators_sha256": "c7686674f09cf4c9942a249dd068e283aba360edc6717c05c64151d23b6d3b36"
+  },
+  "feature_meta": {
+    "bank": {
+      "model": "dinov2_vitb14",
+      "variant": "svd_mlp_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_plain_s0/results/e1_operators.npz",
+        "operators_sha256": "c7686674f09cf4c9942a249dd068e283aba360edc6717c05c64151d23b6d3b36"
+      },
+      "img_size": 224,
+      "split": "bank",
+      "n": 100000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 151.22,
+      "batch_size": 256
+    },
+    "val": {
+      "model": "dinov2_vitb14",
+      "variant": "svd_mlp_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_plain_s0/results/e1_operators.npz",
+        "operators_sha256": "c7686674f09cf4c9942a249dd068e283aba360edc6717c05c64151d23b6d3b36"
+      },
+      "img_size": 224,
+      "split": "val",
+      "n": 50000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 74.91,
+      "batch_size": 256
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "timing": {
+    "build svd_mlp_k6": 4.77,
+    "extract svd_mlp_k6 bank": 151.22,
+    "extract svd_mlp_k6 val": 74.91,
+    "probe svd_mlp_k6": 420.09
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

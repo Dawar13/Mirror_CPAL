@@ -1,0 +1,632 @@
+{
+  "transfer_row": {
+    "model": "dinov2_vitb14_reg",
+    "dataset": "pets",
+    "variant": "healed_svd_k9",
+    "label": "healed SVD, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "svd",
+    "k": 9,
+    "top1": 95.5028618152085,
+    "top5": 99.83646770237122,
+    "mean_per_class_top1": 95.4673795173704,
+    "chosen_wd": 0.0316,
+    "wd_at_grid_edge": true,
+    "holdout_top1_at_chosen": 96.7479674796748,
+    "final_hit_iter_limit": false,
+    "feature_dim": 1536,
+    "n_train": 3680,
+    "n_test": 3669,
+    "num_classes": 37,
+    "hf_id": "timm/oxford-iiit-pet",
+    "t_extract_s": 8.7,
+    "t_probe_s": 8.8,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 17:30:36"
+  },
+  "selection": {
+    "chosen_wd": 0.0316,
+    "holdout_top1_at_chosen": 96.7479674796748,
+    "wd_at_grid_edge": true,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 95.9349593495935,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.12544567862823403,
+        "train_objective": 0.07260286808013916,
+        "grad_max": 1.0129058864549734e-05,
+        "n_iter": 201,
+        "n_eval": 217,
+        "hit_limit": false,
+        "seconds": 4.64
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 95.9349593495935,
+        "holdout_top5": 99.7289972899729,
+        "holdout_loss": 0.10232103549368013,
+        "train_objective": 0.014220351353287697,
+        "grad_max": 4.005250957561657e-06,
+        "n_iter": 127,
+        "n_eval": 143,
+        "hit_limit": false,
+        "seconds": 1.76
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 95.6639566395664,
+        "holdout_top5": 99.7289972899729,
+        "holdout_loss": 0.10308850296144563,
+        "train_objective": 0.002451527863740921,
+        "grad_max": 9.657894679548917e-07,
+        "n_iter": 82,
+        "n_eval": 90,
+        "hit_limit": false,
+        "seconds": 0.41
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 95.39295392953929,
+        "holdout_top5": 99.7289972899729,
+        "holdout_loss": 0.11351971509979993,
+        "train_objective": 0.0003852458903566003,
+        "grad_max": 3.3058594794965757e-07,
+        "n_iter": 22,
+        "n_eval": 29,
+        "hit_limit": false,
+        "seconds": 0.1
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 95.39295392953929,
+        "holdout_top5": 99.7289972899729,
+        "holdout_loss": 0.1302194155974763,
+        "train_objective": 5.803873864351772e-05,
+        "grad_max": 8.041633918765001e-07,
+        "n_iter": 6,
+        "n_eval": 12,
+        "hit_limit": false,
+        "seconds": 0.03
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 95.39295392953929,
+        "holdout_top5": 99.7289972899729,
+        "holdout_loss": 0.1302194155974763,
+        "train_objective": 1.5325491403928027e-05,
+        "grad_max": 8.065276233537588e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.0
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 96.7479674796748,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.15865616423650808,
+        "train_objective": 0.15414924919605255,
+        "grad_max": 2.8378304705256596e-05,
+        "n_iter": 70,
+        "n_eval": 78,
+        "hit_limit": false,
+        "seconds": 0.7
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 96.2059620596206,
+        "holdout_top5": 100.0,
+        "holdout_loss": 0.10917837251492632,
+        "train_objective": 0.03271957486867905,
+        "grad_max": 6.238487912924029e-06,
+        "n_iter": 96,
+        "n_eval": 109,
+        "hit_limit": false,
+        "seconds": 0.85
+      }
+    ],
+    "n_train": 3311,
+    "n_holdout": 369,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.0316,
+    "train_objective": 0.15750032663345337,
+    "grad_max": 1.9755054381676018e-05,
+    "n_iter": 69,
+    "n_eval": 78,
+    "hit_limit": false,
+    "seconds": 0.31,
+    "train_top1": 99.91847826086956
+  },
+  "test": {
+    "top1": 95.5028618152085,
+    "top5": 99.83646770237122,
+    "mean_per_class_top1": 95.4673795173704,
+    "loss": 0.177072653428642,
+    "n": 3669
+  },
+  "variant_info": {
+    "variant": "healed_svd_k9",
+    "label": "healed SVD, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "svd",
+    "k": 9,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "svd",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mlp_params_dense": 42467328,
+      "structure_source": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "structure_mode": "per_layer",
+      "attention": true,
+      "attn_params_dense": 21233664,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "attn_params_mirror": 14147360,
+      "ranks": [
+        [
+          310,
+          327
+        ],
+        [
+          330,
+          333
+        ],
+        [
+          339,
+          350
+        ],
+        [
+          354,
+          361
+        ],
+        [
+          369,
+          382
+        ],
+        [
+          406,
+          422
+        ],
+        [
+          438,
+          455
+        ],
+        [
+          477,
+          506
+        ],
+        [
+          551,
+          563
+        ]
+      ],
+      "mlp_params_kept": 27928320,
+      "mlp_params_mirror": 27949768,
+      "attn_ranks": [
+        [
+          195,
+          195,
+          194,
+          206
+        ],
+        [
+          213,
+          213,
+          206,
+          208
+        ],
+        [
+          222,
+          222,
+          215,
+          223
+        ],
+        [
+          246,
+          246,
+          242,
+          250
+        ],
+        [
+          248,
+          248,
+          243,
+          254
+        ],
+        [
+          263,
+          263,
+          254,
+          264
+        ],
+        [
+          276,
+          276,
+          271,
+          281
+        ],
+        [
+          290,
+          290,
+          293,
+          311
+        ],
+        [
+          341,
+          341,
+          342,
+          349
+        ]
+      ],
+      "attn_params_kept": 14121984
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 780,
+      "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+      "git_dirty": true
+    },
+    "constraint_checks": {
+      "0:LowRankMLP": {
+        "numerical_ranks": [
+          [
+            310,
+            327
+          ],
+          [
+            330,
+            333
+          ],
+          [
+            339,
+            350
+          ],
+          [
+            354,
+            361
+          ],
+          [
+            369,
+            382
+          ],
+          [
+            406,
+            422
+          ],
+          [
+            438,
+            455
+          ],
+          [
+            477,
+            506
+          ],
+          [
+            551,
+            563
+          ]
+        ],
+        "target_ranks": [
+          [
+            310,
+            327
+          ],
+          [
+            330,
+            333
+          ],
+          [
+            339,
+            350
+          ],
+          [
+            354,
+            361
+          ],
+          [
+            369,
+            382
+          ],
+          [
+            406,
+            422
+          ],
+          [
+            438,
+            455
+          ],
+          [
+            477,
+            506
+          ],
+          [
+            551,
+            563
+          ]
+        ],
+        "note": "ranks of U V formed in float64 from the factors"
+      },
+      "1:LowRankAttention": {
+        "numerical_ranks": [
+          [
+            195,
+            195,
+            194,
+            206
+          ],
+          [
+            213,
+            213,
+            206,
+            208
+          ],
+          [
+            222,
+            222,
+            215,
+            223
+          ],
+          [
+            246,
+            246,
+            242,
+            250
+          ],
+          [
+            248,
+            248,
+            243,
+            254
+          ],
+          [
+            263,
+            263,
+            254,
+            264
+          ],
+          [
+            276,
+            276,
+            271,
+            281
+          ],
+          [
+            290,
+            290,
+            293,
+            311
+          ],
+          [
+            341,
+            341,
+            342,
+            349
+          ]
+        ],
+        "target_ranks": [
+          [
+            195,
+            195,
+            194,
+            206
+          ],
+          [
+            213,
+            213,
+            206,
+            208
+          ],
+          [
+            222,
+            222,
+            215,
+            223
+          ],
+          [
+            246,
+            246,
+            242,
+            250
+          ],
+          [
+            248,
+            248,
+            243,
+            254
+          ],
+          [
+            263,
+            263,
+            254,
+            264
+          ],
+          [
+            276,
+            276,
+            271,
+            281
+          ],
+          [
+            290,
+            290,
+            293,
+            311
+          ],
+          [
+            341,
+            341,
+            342,
+            349
+          ]
+        ]
+      }
+    },
+    "mlp_params_kept": 27928320,
+    "attn_params_kept": 14121984,
+    "converted_params_dense": 63700992,
+    "converted_params_kept": 42050304,
+    "model_params": 64932864
+  },
+  "sources": {
+    "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd",
+    "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/final/trained_blocks.pt",
+    "checkpoint_sha256": "bf7d48aa2a4c282ef1e12378d8524972cba6e909fc7789c5c9b589431bf9d218"
+  },
+  "dataset_meta": {
+    "format": 1,
+    "hf_id": "timm/oxford-iiit-pet",
+    "train_splits": [
+      "train"
+    ],
+    "test_split": "test",
+    "image": "image",
+    "label": "label",
+    "resize": 256,
+    "crop": 224,
+    "complete": true,
+    "counts": {
+      "train": 3680,
+      "test": 3669
+    },
+    "loader": "parquet",
+    "sources": {
+      "train": [
+        "train-00000-of-00001.parquet"
+      ],
+      "test": [
+        "test-00000-of-00001.parquet"
+      ]
+    },
+    "decode": {
+      "train": {
+        "n": 3680,
+        "seconds": 11.8
+      },
+      "test": {
+        "n": 3669,
+        "seconds": 12.1
+      }
+    },
+    "seconds": 30.7,
+    "interpolation": "bicubic",
+    "note": "train = official trainval (verify on VM)"
+  },
+  "feature_meta": {
+    "train": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_svd_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/final/trained_blocks.pt",
+        "checkpoint_sha256": "bf7d48aa2a4c282ef1e12378d8524972cba6e909fc7789c5c9b589431bf9d218"
+      },
+      "img_size": 224,
+      "dataset": "pets",
+      "hf_id": "timm/oxford-iiit-pet",
+      "split": "train",
+      "n": 3680,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 4.23
+    },
+    "test": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_svd_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/final/trained_blocks.pt",
+        "checkpoint_sha256": "bf7d48aa2a4c282ef1e12378d8524972cba6e909fc7789c5c9b589431bf9d218"
+      },
+      "img_size": 224,
+      "dataset": "pets",
+      "hf_id": "timm/oxford-iiit-pet",
+      "split": "test",
+      "n": 3669,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 4.44
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

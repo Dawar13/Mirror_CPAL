@@ -1,0 +1,108 @@
+{
+  "hypothesis": "P2: sign(activation-weighted E_svd - s) predicts the smaller single-block k-NN drop in at least 75% of block and model cases",
+  "threshold": 0.75,
+  "verdict": "FAIL",
+  "primary_prereg_models": {
+    "n_cases": 36,
+    "n_hits": 16,
+    "fraction": 0.4444444444444444
+  },
+  "primary_all_models_run": {
+    "n_cases": 36,
+    "n_hits": 16,
+    "fraction": 0.4444444444444444
+  },
+  "per_model": {
+    "deit3_b16": {
+      "n_cases": 12,
+      "n_hits": 9,
+      "fraction": 0.75
+    },
+    "dinov2_vitb14": {
+      "n_cases": 12,
+      "n_hits": 3,
+      "fraction": 0.25
+    },
+    "dinov2_vitb14_reg": {
+      "n_cases": 12,
+      "n_hits": 4,
+      "fraction": 0.3333333333333333
+    }
+  },
+  "secondary": {
+    "weight_only": {
+      "n_cases": 36,
+      "n_hits": 25,
+      "fraction": 0.6944444444444444
+    },
+    "activation_weighted_plain_svd_error": {
+      "n_cases": 36,
+      "n_hits": 30,
+      "fraction": 0.8333333333333334
+    },
+    "fc1_G_approximation": {
+      "n_cases": 36,
+      "n_hits": 22,
+      "fraction": 0.6111111111111112
+    }
+  },
+  "models_present": [
+    "deit3_b16",
+    "dinov2_vitb14",
+    "dinov2_vitb14_reg"
+  ],
+  "complete": {
+    "dinov2_vitb14_reg": true,
+    "dinov2_vitb14": true,
+    "deit3_b16": true
+  },
+  "act_sources": [
+    "measured (heldout set, 1000 images)"
+  ],
+  "n_query": [
+    50000
+  ],
+  "prereg_commits": [
+    "9804f0670ea630e03b1bde285943f7d735b90ccd"
+  ],
+  "git_hashes": [
+    "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d"
+  ],
+  "tie_rule": "a case with E_svd - s == 0 or SVD drop - mirror drop == 0 counts as a miss",
+  "aggregation": "block value = mean of the fc1 and fc2 fractions",
+  "written_by": {
+    "git": {
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "git_dirty": true
+    },
+    "seed": 0,
+    "args": {
+      "model": "dinov2_vitb14",
+      "fit_run": "runs/x2/perlayer_plain_s0",
+      "out": "runs/f4",
+      "fit_seed": null,
+      "blocks": null,
+      "queries": null,
+      "act_set": "heldout",
+      "prereg_commit": "9804f0670ea630e03b1bde285943f7d735b90ccd",
+      "cache_dir": "/home/dawar/Mirror_CPAL/cache",
+      "batch_size": 128,
+      "stats_batch_size": 16,
+      "num_workers": 4,
+      "top_k": 10,
+      "tiny": false
+    },
+    "env": {
+      "python": "3.12.3",
+      "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+      "torch": "2.11.0+cu128",
+      "numpy": "2.5.4",
+      "device": "cuda",
+      "gpu": "NVIDIA A100-SXM4-80GB",
+      "cuda": "12.8"
+    },
+    "date": "2026-11-08 17:23:47",
+    "elapsed_s": 4545.7
+  },
+  "prereg_commit_this_run": "9804f0670ea630e03b1bde285943f7d735b90ccd"
+}

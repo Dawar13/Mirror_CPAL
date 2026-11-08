@@ -1,0 +1,147 @@
+{
+  "experiment": "M2 efficient implementation and latency",
+  "date": "2026-11-08 16:25:29",
+  "model": "dinov2_vitb14_reg",
+  "tiny": false,
+  "seed": 0,
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  },
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "hub_repo": "facebookresearch/dinov2",
+    "structure": "runs/m1/m1_structure.npz",
+    "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "k": "6,9,12",
+    "variants": "original,dense,vlocal,vlocal_r2,vexact,mlp_only,svd,prune",
+    "batches": null,
+    "modes": null,
+    "compile_mode": "default",
+    "warmup": 20,
+    "iters": 100,
+    "align": 8,
+    "check_images": 8,
+    "cache_dir": "cache",
+    "img_size": 224,
+    "seed": 0,
+    "memory_fraction": 0.3,
+    "out": "runs/m2",
+    "force": false,
+    "device": null,
+    "tiny": false,
+    "ks": [
+      6,
+      9,
+      12
+    ],
+    "batch_list": [
+      1,
+      64,
+      256
+    ],
+    "mode_list": [
+      "compile",
+      "eager"
+    ],
+    "variant_list": [
+      "original",
+      "dense",
+      "vlocal",
+      "vlocal_r2",
+      "vexact",
+      "mlp_only",
+      "svd",
+      "prune"
+    ],
+    "random_seed": 1,
+    "register_margin": 0.0,
+    "img_px": 224
+  },
+  "provenance": {
+    "structure": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+    "structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3",
+    "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+    "structure_ks": [
+      6,
+      9,
+      12
+    ],
+    "a_out_offset": 1,
+    "random_seed": 1,
+    "fit_seed": 0,
+    "structure_git_hash": "ced2c089288d658bb0ce1666c1ec49fd684427f9"
+  },
+  "ks": [
+    6,
+    9,
+    12
+  ],
+  "variants": [
+    "original",
+    "dense",
+    "vlocal",
+    "vlocal_r2",
+    "vexact",
+    "mlp_only",
+    "svd",
+    "prune"
+  ],
+  "batches": [
+    1,
+    64,
+    256
+  ],
+  "modes": [
+    "compile",
+    "eager"
+  ],
+  "warmup": 20,
+  "iters": 100,
+  "align": 8,
+  "compile_mode": "default",
+  "check_images": "validation images [826, 2048, 3761, 13488, 15390, 25554, 31844, 42525] (seed 0)",
+  "thresholds": {
+    "float64": "rel_raw < 1e-06",
+    "float32": "max_abs_unit < 1e-05",
+    "bfloat16": "max_abs_unit < 0.001"
+  },
+  "depth": 12,
+  "embed_dim": 768,
+  "mlp_hidden": 3072,
+  "heads": 12,
+  "head_dim": 64,
+  "n_tokens": 261,
+  "n_patches": 256,
+  "img_size": 224,
+  "params_original": 86583552,
+  "nvidia_smi": {
+    "before": "NVIDIA A100-SXM4-80GB, 100 %, 27921 MiB, 81920 MiB, 1395 MHz",
+    "after": "NVIDIA A100-SXM4-80GB, 100 %, 21854 MiB, 81920 MiB, 1395 MHz"
+  },
+  "skipped": [],
+  "ones_deviation": {
+    "per_layer_max": 3.326224246823487e-07,
+    "span_max": 1.1626549172500524e-11
+  },
+  "checks_pass": false,
+  "tf32": false,
+  "timing_dtype": "bfloat16 weights and inputs",
+  "timing": {
+    "stages": {
+      "load": 370.05,
+      "build, check and time": 4468.54
+    },
+    "total_s": 4838.84
+  }
+}

@@ -1,0 +1,395 @@
+{
+  "transfer_row": {
+    "model": "dinov2_vitb14_reg",
+    "dataset": "cifar100",
+    "variant": "healed_mirror_k9",
+    "label": "healed Mirror V-local, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "mirror",
+    "k": 9,
+    "top1": 90.89,
+    "top5": 98.71,
+    "mean_per_class_top1": 90.88999999999999,
+    "chosen_wd": 0.01,
+    "wd_at_grid_edge": false,
+    "holdout_top1_at_chosen": 91.5,
+    "final_hit_iter_limit": false,
+    "feature_dim": 1536,
+    "n_train": 50000,
+    "n_test": 10000,
+    "num_classes": 100,
+    "hf_id": "uoft-cs/cifar100",
+    "t_extract_s": 39.0,
+    "t_probe_s": 25.0,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 17:26:49"
+  },
+  "selection": {
+    "chosen_wd": 0.01,
+    "holdout_top1_at_chosen": 91.5,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 91.5,
+        "holdout_top5": 98.98,
+        "holdout_loss": 0.3222299560546875,
+        "train_objective": 0.37260735034942627,
+        "grad_max": 1.352809340460226e-05,
+        "n_iter": 123,
+        "n_eval": 133,
+        "hit_limit": false,
+        "seconds": 1.3
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 91.42,
+        "holdout_top5": 98.88,
+        "holdout_loss": 0.29571083984375,
+        "train_objective": 0.1191103458404541,
+        "grad_max": 2.6318884920328856e-06,
+        "n_iter": 258,
+        "n_eval": 280,
+        "hit_limit": false,
+        "seconds": 1.69
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 90.9,
+        "holdout_top5": 98.8,
+        "holdout_loss": 0.353278466796875,
+        "train_objective": 0.028730694204568863,
+        "grad_max": 3.2671596272848547e-06,
+        "n_iter": 327,
+        "n_eval": 356,
+        "hit_limit": false,
+        "seconds": 6.84
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 90.42,
+        "holdout_top5": 98.7,
+        "holdout_loss": 0.450167041015625,
+        "train_objective": 0.005824372172355652,
+        "grad_max": 6.669338290521409e-07,
+        "n_iter": 334,
+        "n_eval": 357,
+        "hit_limit": false,
+        "seconds": 8.45
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 90.28,
+        "holdout_top5": 98.64,
+        "holdout_loss": 0.577267529296875,
+        "train_objective": 0.0012045520124956965,
+        "grad_max": 8.692456958669936e-07,
+        "n_iter": 89,
+        "n_eval": 102,
+        "hit_limit": false,
+        "seconds": 1.86
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 90.28,
+        "holdout_top5": 98.64,
+        "holdout_loss": 0.5772876953125,
+        "train_objective": 0.0005267747910693288,
+        "grad_max": 9.830188218984404e-07,
+        "n_iter": 1,
+        "n_eval": 5,
+        "hit_limit": false,
+        "seconds": 0.03
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 91.18,
+        "holdout_top5": 98.96,
+        "holdout_loss": 0.4042994140625,
+        "train_objective": 0.612409234046936,
+        "grad_max": 3.4988264815183356e-05,
+        "n_iter": 50,
+        "n_eval": 56,
+        "hit_limit": false,
+        "seconds": 1.39
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 91.4,
+        "holdout_top5": 99.04,
+        "holdout_loss": 0.2934137939453125,
+        "train_objective": 0.21864891052246094,
+        "grad_max": 1.6565987607464194e-05,
+        "n_iter": 119,
+        "n_eval": 127,
+        "hit_limit": false,
+        "seconds": 2.42
+      }
+    ],
+    "n_train": 45000,
+    "n_holdout": 5000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.01,
+    "train_objective": 0.377011775970459,
+    "grad_max": 1.7266316717723384e-05,
+    "n_iter": 40,
+    "n_eval": 45,
+    "hit_limit": false,
+    "seconds": 0.76,
+    "train_top1": 95.65
+  },
+  "test": {
+    "top1": 90.89,
+    "top5": 98.71,
+    "mean_per_class_top1": 90.88999999999999,
+    "loss": 0.3410564453125,
+    "n": 10000
+  },
+  "variant_info": {
+    "variant": "healed_mirror_k9",
+    "label": "healed Mirror V-local, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "mirror",
+    "k": 9,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "mirror",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mlp_params_dense": 42467328,
+      "structure_source": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "structure_mode": "per_layer",
+      "attention": true,
+      "attn_params_dense": 21233664,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "attn_params_mirror": 14147360,
+      "mlp_params_kept": 27949768,
+      "structure_used": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "n_pairs": [
+        1168,
+        1116,
+        1013,
+        963,
+        878,
+        672,
+        554,
+        406,
+        155
+      ],
+      "attn_params_kept": 14147360,
+      "n_head_pairs": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 780,
+      "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+      "git_dirty": true
+    },
+    "constraint_checks": {
+      "0:MirrorMLPConstraint": {
+        "max_rel_violation": 2.404312307750846e-08,
+        "per_block": [
+          2.404312307750846e-08,
+          2.3399989156477648e-08,
+          2.3173682462318624e-08,
+          2.224983948279154e-08,
+          2.1448561291780776e-08,
+          1.9451953897060132e-08,
+          1.837470964295732e-08,
+          1.7413706138471668e-08,
+          1.3551132038454496e-08
+        ]
+      },
+      "1:MirrorAttnConstraint": {
+        "max_rel_violation": 9.403491030261782e-09,
+        "per_block": [
+          6.524728436933297e-09,
+          9.403491030261782e-09,
+          9.15545339581436e-09,
+          8.100664939807226e-09,
+          9.126880167413332e-09,
+          8.773974534707577e-09,
+          7.68927528604994e-09,
+          8.039952572880524e-09,
+          5.705862846760097e-09
+        ]
+      }
+    },
+    "mlp_params_kept": 27949768,
+    "attn_params_kept": 14147360,
+    "converted_params_dense": 63700992,
+    "converted_params_kept": 42097128,
+    "model_params": 64979688
+  },
+  "sources": {
+    "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+    "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+    "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+  },
+  "dataset_meta": {
+    "format": 1,
+    "hf_id": "uoft-cs/cifar100",
+    "train_splits": [
+      "train"
+    ],
+    "test_split": "test",
+    "image": "img",
+    "label": "fine_label",
+    "resize": 256,
+    "crop": 224,
+    "complete": true,
+    "counts": {
+      "train": 50000,
+      "test": 10000
+    },
+    "loader": "parquet",
+    "sources": {
+      "train": [
+        "train-00000-of-00001.parquet"
+      ],
+      "test": [
+        "test-00000-of-00001.parquet"
+      ]
+    },
+    "decode": {
+      "train": {
+        "n": 50000,
+        "seconds": 48.4
+      },
+      "test": {
+        "n": 10000,
+        "seconds": 13.7
+      }
+    },
+    "seconds": 64.7,
+    "interpolation": "bicubic",
+    "note": "(verify on VM)"
+  },
+  "feature_meta": {
+    "train": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_mirror_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+        "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+      },
+      "img_size": 224,
+      "dataset": "cifar100",
+      "hf_id": "uoft-cs/cifar100",
+      "split": "train",
+      "n": 50000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 32.05
+    },
+    "test": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_mirror_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+        "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+      },
+      "img_size": 224,
+      "dataset": "cifar100",
+      "hf_id": "uoft-cs/cifar100",
+      "split": "test",
+      "n": 10000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 6.98
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

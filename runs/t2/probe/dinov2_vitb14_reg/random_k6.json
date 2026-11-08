@@ -1,0 +1,300 @@
+{
+  "row": {
+    "model": "dinov2_vitb14_reg",
+    "variant": "random_k6",
+    "label": "matched random structure, MLP only, k = 6",
+    "family": "mlp",
+    "method": "random",
+    "k": 6,
+    "top1": 11.248,
+    "top5": 24.616,
+    "mean_per_class_top1": 11.248000000000003,
+    "knn_check_top1": 3.6399997770786285,
+    "chosen_wd": 0.000316,
+    "wd_at_grid_edge": false,
+    "holdout_top1_at_chosen": 11.98,
+    "final_hit_iter_limit": false,
+    "final_lbfgs_iters": 233,
+    "feature_dim": 1536,
+    "feature_kind": "cls",
+    "n_bank": 100000,
+    "n_val": 50000,
+    "n_wd_train": 90000,
+    "n_wd_holdout": 10000,
+    "converted_params_kept": 30618406,
+    "converted_params_dense": 42467328,
+    "model_params": 74734630,
+    "t_build_s": 107.7,
+    "t_extract_s": 252.7,
+    "t_probe_s": 794.5,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 16:04:50"
+  },
+  "selection": {
+    "chosen_wd": 0.000316,
+    "holdout_top1_at_chosen": 11.98,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 8.9,
+        "holdout_top5": 21.0,
+        "holdout_loss": 5.51337265625,
+        "train_objective": 5.55043363571167,
+        "grad_max": 2.8734666557284072e-05,
+        "n_iter": 134,
+        "n_eval": 142,
+        "hit_limit": false,
+        "seconds": 42.66
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 11.86,
+        "holdout_top5": 25.59,
+        "holdout_loss": 5.15078359375,
+        "train_objective": 4.264824390411377,
+        "grad_max": 2.338196281925775e-05,
+        "n_iter": 277,
+        "n_eval": 285,
+        "hit_limit": false,
+        "seconds": 95.69
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 11.21,
+        "holdout_top5": 24.35,
+        "holdout_loss": 5.7835140625,
+        "train_objective": 2.598480224609375,
+        "grad_max": 7.161309440562036e-06,
+        "n_iter": 462,
+        "n_eval": 475,
+        "hit_limit": false,
+        "seconds": 128.47
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 8.96,
+        "holdout_top5": 21.06,
+        "holdout_loss": 8.30585,
+        "train_objective": 0.9782705307006836,
+        "grad_max": 2.6499124032852706e-06,
+        "n_iter": 869,
+        "n_eval": 887,
+        "hit_limit": false,
+        "seconds": 206.45
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 8.41,
+        "holdout_top5": 19.9,
+        "holdout_loss": 11.68629921875,
+        "train_objective": 0.2200084775686264,
+        "grad_max": 8.787721981207142e-07,
+        "n_iter": 702,
+        "n_eval": 719,
+        "hit_limit": false,
+        "seconds": 156.65
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 8.1,
+        "holdout_top5": 19.52,
+        "holdout_loss": 15.7964859375,
+        "train_objective": 0.04042331501841545,
+        "grad_max": 9.792914852368995e-07,
+        "n_iter": 183,
+        "n_eval": 190,
+        "hit_limit": false,
+        "seconds": 28.27
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 10.91,
+        "holdout_top5": 23.81,
+        "holdout_loss": 5.25120390625,
+        "train_objective": 4.956607818603516,
+        "grad_max": 7.12757755536586e-05,
+        "n_iter": 142,
+        "n_eval": 154,
+        "hit_limit": false,
+        "seconds": 20.65
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 11.98,
+        "holdout_top5": 25.71,
+        "holdout_loss": 5.28854921875,
+        "train_objective": 3.47019100189209,
+        "grad_max": 5.437862637336366e-05,
+        "n_iter": 259,
+        "n_eval": 271,
+        "hit_limit": false,
+        "seconds": 43.99
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.000316,
+    "train_objective": 3.5825347900390625,
+    "grad_max": 7.549177098553628e-06,
+    "n_iter": 233,
+    "n_eval": 243,
+    "hit_limit": false,
+    "seconds": 68.9,
+    "train_top1": 46.76
+  },
+  "test": {
+    "top1": 11.248,
+    "top5": 24.616,
+    "mean_per_class_top1": 11.248000000000003,
+    "loss": 5.33483869140625,
+    "n": 50000
+  },
+  "variant_info": {
+    "variant": "random_k6",
+    "label": "matched random structure, MLP only, k = 6",
+    "family": "mlp",
+    "method": "random",
+    "k": 6,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "model_params_original": 86583552,
+    "builder": "mirror.variants.build_variant('A1', 'random_structure', k=6, seed=1)",
+    "spec_signature": "6c2ec651099c067427f3",
+    "mlp_params_kept": 16462630,
+    "mlp_params_dense": 28311552,
+    "attn_params_kept": 14155776,
+    "random_seed": 1,
+    "fit_run_meta": {
+      "fit_seed": 0,
+      "model": "dinov2_vitb14_reg",
+      "protocol": "v2",
+      "run_git": {
+        "git_hash": "e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd",
+        "git_dirty": true
+      },
+      "operator_mode": "per_layer",
+      "shared_layers": [
+        1,
+        12
+      ],
+      "center": true,
+      "max_abs_change_from_cleaning": 2.965000789334482e-08,
+      "checks": {
+        "d_plus_matches_e1_layers_csv": true,
+        "n_pairs_matches_e1_mlp_csv": true
+      },
+      "shared_all_refit_agreement_with_stored": 0.9999999999999997
+    },
+    "converted_params_dense": 42467328,
+    "converted_params_kept": 30618406,
+    "model_params": 74734630
+  },
+  "sources": {
+    "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6"
+  },
+  "feature_meta": {
+    "bank": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "random_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6"
+      },
+      "img_size": 224,
+      "split": "bank",
+      "n": 100000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+      "seed": 0,
+      "seconds": 183.66,
+      "batch_size": 256
+    },
+    "val": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "random_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6"
+      },
+      "img_size": 224,
+      "split": "val",
+      "n": 50000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+      "seed": 0,
+      "seconds": 69.09,
+      "batch_size": 256
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "timing": {
+    "build random_k6": 107.65,
+    "extract random_k6 bank": 183.66,
+    "extract random_k6 val": 69.09,
+    "probe random_k6": 794.46
+  },
+  "git": {
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

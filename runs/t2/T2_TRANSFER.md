@@ -1,0 +1,14 @@
+# Tier 2: transfer linear probes
+
+Same features and probe as the ImageNet linear probe (T2_LINEAR.md): [CLS (or pooled) after the final norm, mean patch token after the final norm], bf16 forward passes, float16 cache, multinomial logistic regression on standardised features (L-BFGS). Weight decay chosen on a fixed class-stratified 10% split of the training images, never on the test split; refitted on all training images and scored once on the test split. Images: resize 256 (bicubic), centre crop 224.
+
+## dinov2_vitb14_reg: top-1 (mean per-class top-1)
+
+| Variant | cifar100 | flowers102 | pets | dtd |
+|---|---|---|---|---|
+| original | 91.40 (91.40) | 99.69 (99.73) | 95.99 (95.96) | 83.56 (83.56) |
+| healed_mirror_k9 | 90.89 (90.89) | 99.69 (99.73) | 95.58 (95.55) | 83.35 (83.35) |
+| healed_svd_k9 | 88.67 (88.67) | 99.69 (99.73) | 95.50 (95.47) | 80.69 (80.69) |
+
+Datasets (Hugging Face ids, verify on VM): cifar100: uoft-cs/cifar100; flowers102: dpdl-benchmark/oxford_flowers102; pets: timm/oxford-iiit-pet; dtd: tanganke/dtd.
+Source: `t2_transfer.csv` and `probe/<model>/<dataset>/<variant>.json`. Commit(s): 8a7b6c4e42 (dirty); seed(s): 0.

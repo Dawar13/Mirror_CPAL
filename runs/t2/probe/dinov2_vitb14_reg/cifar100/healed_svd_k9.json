@@ -1,0 +1,632 @@
+{
+  "transfer_row": {
+    "model": "dinov2_vitb14_reg",
+    "dataset": "cifar100",
+    "variant": "healed_svd_k9",
+    "label": "healed SVD, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "svd",
+    "k": 9,
+    "top1": 88.67,
+    "top5": 98.28,
+    "mean_per_class_top1": 88.67,
+    "chosen_wd": 0.01,
+    "wd_at_grid_edge": false,
+    "holdout_top1_at_chosen": 89.26,
+    "final_hit_iter_limit": false,
+    "feature_dim": 1536,
+    "n_train": 50000,
+    "n_test": 10000,
+    "num_classes": 100,
+    "hf_id": "uoft-cs/cifar100",
+    "t_extract_s": 58.2,
+    "t_probe_s": 38.7,
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 17:30:23"
+  },
+  "selection": {
+    "chosen_wd": 0.01,
+    "holdout_top1_at_chosen": 89.26,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 89.26,
+        "holdout_top5": 98.52,
+        "holdout_loss": 0.39983017578125,
+        "train_objective": 0.4373841881752014,
+        "grad_max": 1.6193931514862925e-05,
+        "n_iter": 127,
+        "n_eval": 137,
+        "hit_limit": false,
+        "seconds": 3.16
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 88.5,
+        "holdout_top5": 98.42,
+        "holdout_loss": 0.381694091796875,
+        "train_objective": 0.1477717161178589,
+        "grad_max": 1.1688400263665244e-05,
+        "n_iter": 198,
+        "n_eval": 212,
+        "hit_limit": false,
+        "seconds": 5.05
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 88.34,
+        "holdout_top5": 97.84,
+        "holdout_loss": 0.469593359375,
+        "train_objective": 0.036409780383110046,
+        "grad_max": 9.95742084342055e-07,
+        "n_iter": 440,
+        "n_eval": 467,
+        "hit_limit": false,
+        "seconds": 10.54
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 87.82,
+        "holdout_top5": 97.76,
+        "holdout_loss": 0.60759599609375,
+        "train_objective": 0.0073959678411483765,
+        "grad_max": 8.44903979668743e-07,
+        "n_iter": 357,
+        "n_eval": 380,
+        "hit_limit": false,
+        "seconds": 8.9
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 87.58,
+        "holdout_top5": 97.66,
+        "holdout_loss": 0.782207421875,
+        "train_objective": 0.0014803040539845824,
+        "grad_max": 8.428031037510664e-07,
+        "n_iter": 89,
+        "n_eval": 97,
+        "hit_limit": false,
+        "seconds": 1.77
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 87.5,
+        "holdout_top5": 97.44,
+        "holdout_loss": 0.97223544921875,
+        "train_objective": 0.0004424662620294839,
+        "grad_max": 9.913416079143644e-07,
+        "n_iter": 82,
+        "n_eval": 91,
+        "hit_limit": false,
+        "seconds": 2.11
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 88.78,
+        "holdout_top5": 98.38,
+        "holdout_loss": 0.488911669921875,
+        "train_objective": 0.6926758885383606,
+        "grad_max": 3.472858952591196e-05,
+        "n_iter": 51,
+        "n_eval": 58,
+        "hit_limit": false,
+        "seconds": 0.95
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 89.0,
+        "holdout_top5": 98.54,
+        "holdout_loss": 0.371337060546875,
+        "train_objective": 0.2650700807571411,
+        "grad_max": 1.331221210421063e-05,
+        "n_iter": 119,
+        "n_eval": 127,
+        "hit_limit": false,
+        "seconds": 3.31
+      }
+    ],
+    "n_train": 45000,
+    "n_holdout": 5000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.01,
+    "train_objective": 0.4431229829788208,
+    "grad_max": 8.455492206849158e-06,
+    "n_iter": 77,
+    "n_eval": 113,
+    "hit_limit": false,
+    "seconds": 2.68,
+    "train_top1": 94.316
+  },
+  "test": {
+    "top1": 88.67,
+    "top5": 98.28,
+    "mean_per_class_top1": 88.67,
+    "loss": 0.413032373046875,
+    "n": 10000
+  },
+  "variant_info": {
+    "variant": "healed_svd_k9",
+    "label": "healed SVD, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "svd",
+    "k": 9,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "svd",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mlp_params_dense": 42467328,
+      "structure_source": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "structure_mode": "per_layer",
+      "attention": true,
+      "attn_params_dense": 21233664,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "attn_params_mirror": 14147360,
+      "ranks": [
+        [
+          310,
+          327
+        ],
+        [
+          330,
+          333
+        ],
+        [
+          339,
+          350
+        ],
+        [
+          354,
+          361
+        ],
+        [
+          369,
+          382
+        ],
+        [
+          406,
+          422
+        ],
+        [
+          438,
+          455
+        ],
+        [
+          477,
+          506
+        ],
+        [
+          551,
+          563
+        ]
+      ],
+      "mlp_params_kept": 27928320,
+      "mlp_params_mirror": 27949768,
+      "attn_ranks": [
+        [
+          195,
+          195,
+          194,
+          206
+        ],
+        [
+          213,
+          213,
+          206,
+          208
+        ],
+        [
+          222,
+          222,
+          215,
+          223
+        ],
+        [
+          246,
+          246,
+          242,
+          250
+        ],
+        [
+          248,
+          248,
+          243,
+          254
+        ],
+        [
+          263,
+          263,
+          254,
+          264
+        ],
+        [
+          276,
+          276,
+          271,
+          281
+        ],
+        [
+          290,
+          290,
+          293,
+          311
+        ],
+        [
+          341,
+          341,
+          342,
+          349
+        ]
+      ],
+      "attn_params_kept": 14121984
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 780,
+      "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+      "git_dirty": true
+    },
+    "constraint_checks": {
+      "0:LowRankMLP": {
+        "numerical_ranks": [
+          [
+            310,
+            327
+          ],
+          [
+            330,
+            333
+          ],
+          [
+            339,
+            350
+          ],
+          [
+            354,
+            361
+          ],
+          [
+            369,
+            382
+          ],
+          [
+            406,
+            422
+          ],
+          [
+            438,
+            455
+          ],
+          [
+            477,
+            506
+          ],
+          [
+            551,
+            563
+          ]
+        ],
+        "target_ranks": [
+          [
+            310,
+            327
+          ],
+          [
+            330,
+            333
+          ],
+          [
+            339,
+            350
+          ],
+          [
+            354,
+            361
+          ],
+          [
+            369,
+            382
+          ],
+          [
+            406,
+            422
+          ],
+          [
+            438,
+            455
+          ],
+          [
+            477,
+            506
+          ],
+          [
+            551,
+            563
+          ]
+        ],
+        "note": "ranks of U V formed in float64 from the factors"
+      },
+      "1:LowRankAttention": {
+        "numerical_ranks": [
+          [
+            195,
+            195,
+            194,
+            206
+          ],
+          [
+            213,
+            213,
+            206,
+            208
+          ],
+          [
+            222,
+            222,
+            215,
+            223
+          ],
+          [
+            246,
+            246,
+            242,
+            250
+          ],
+          [
+            248,
+            248,
+            243,
+            254
+          ],
+          [
+            263,
+            263,
+            254,
+            264
+          ],
+          [
+            276,
+            276,
+            271,
+            281
+          ],
+          [
+            290,
+            290,
+            293,
+            311
+          ],
+          [
+            341,
+            341,
+            342,
+            349
+          ]
+        ],
+        "target_ranks": [
+          [
+            195,
+            195,
+            194,
+            206
+          ],
+          [
+            213,
+            213,
+            206,
+            208
+          ],
+          [
+            222,
+            222,
+            215,
+            223
+          ],
+          [
+            246,
+            246,
+            242,
+            250
+          ],
+          [
+            248,
+            248,
+            243,
+            254
+          ],
+          [
+            263,
+            263,
+            254,
+            264
+          ],
+          [
+            276,
+            276,
+            271,
+            281
+          ],
+          [
+            290,
+            290,
+            293,
+            311
+          ],
+          [
+            341,
+            341,
+            342,
+            349
+          ]
+        ]
+      }
+    },
+    "mlp_params_kept": 27928320,
+    "attn_params_kept": 14121984,
+    "converted_params_dense": 63700992,
+    "converted_params_kept": 42050304,
+    "model_params": 64932864
+  },
+  "sources": {
+    "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd",
+    "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/final/trained_blocks.pt",
+    "checkpoint_sha256": "bf7d48aa2a4c282ef1e12378d8524972cba6e909fc7789c5c9b589431bf9d218"
+  },
+  "dataset_meta": {
+    "format": 1,
+    "hf_id": "uoft-cs/cifar100",
+    "train_splits": [
+      "train"
+    ],
+    "test_split": "test",
+    "image": "img",
+    "label": "fine_label",
+    "resize": 256,
+    "crop": 224,
+    "complete": true,
+    "counts": {
+      "train": 50000,
+      "test": 10000
+    },
+    "loader": "parquet",
+    "sources": {
+      "train": [
+        "train-00000-of-00001.parquet"
+      ],
+      "test": [
+        "test-00000-of-00001.parquet"
+      ]
+    },
+    "decode": {
+      "train": {
+        "n": 50000,
+        "seconds": 48.4
+      },
+      "test": {
+        "n": 10000,
+        "seconds": 13.7
+      }
+    },
+    "seconds": 64.7,
+    "interpolation": "bicubic",
+    "note": "(verify on VM)"
+  },
+  "feature_meta": {
+    "train": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_svd_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/final/trained_blocks.pt",
+        "checkpoint_sha256": "bf7d48aa2a4c282ef1e12378d8524972cba6e909fc7789c5c9b589431bf9d218"
+      },
+      "img_size": 224,
+      "dataset": "cifar100",
+      "hf_id": "uoft-cs/cifar100",
+      "split": "train",
+      "n": 50000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 47.79
+    },
+    "test": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_svd_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/final/trained_blocks.pt",
+        "checkpoint_sha256": "bf7d48aa2a4c282ef1e12378d8524972cba6e909fc7789c5c9b589431bf9d218"
+      },
+      "img_size": 224,
+      "dataset": "cifar100",
+      "hf_id": "uoft-cs/cifar100",
+      "split": "test",
+      "n": 10000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+      "seed": 0,
+      "seconds": 10.42
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

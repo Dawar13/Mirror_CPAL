@@ -1,0 +1,87 @@
+{
+  "info": {
+    "variant": "svd_mlp_k6",
+    "label": "SVD at matched parameters, MLP only, k = 6",
+    "family": "mlp",
+    "method": "svd",
+    "k": 6,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "model_params_original": 86580480,
+    "builder": "mirror.variants.build_variant('A1', 'svd', k=6, seed=1)",
+    "spec_signature": "d55e38ba83eaf20e25aa",
+    "mlp_params_kept": 16830720,
+    "mlp_params_dense": 28311552,
+    "attn_params_kept": 14155776,
+    "random_seed": null,
+    "fit_run_meta": {
+      "fit_seed": 0,
+      "model": "dinov2_vitb14",
+      "protocol": "v2",
+      "run_git": {
+        "git_hash": "e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd",
+        "git_dirty": true
+      },
+      "operator_mode": "per_layer",
+      "shared_layers": [
+        1,
+        12
+      ],
+      "center": true,
+      "max_abs_change_from_cleaning": 2.9637394760584357e-08,
+      "checks": {
+        "d_plus_matches_e1_layers_csv": true,
+        "n_pairs_matches_e1_mlp_csv": true
+      },
+      "shared_all_refit_agreement_with_stored": 1.0
+    },
+    "svd": {
+      "baseline": "SVD, rank matched per matrix",
+      "ranks": [
+        [
+          309,
+          329
+        ],
+        [
+          330,
+          332
+        ],
+        [
+          329,
+          338
+        ],
+        [
+          359,
+          370
+        ],
+        [
+          386,
+          400
+        ],
+        [
+          437,
+          464
+        ]
+      ],
+      "matched_to_mirror_params": 16852042,
+      "relative_shortfall": 0.0012652472620231503
+    },
+    "converted_params_dense": 42467328,
+    "converted_params_kept": 30986496,
+    "model_params": 75099648
+  },
+  "sources": {
+    "operators": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_plain_s0/results/e1_operators.npz",
+    "operators_sha256": "c7686674f09cf4c9942a249dd068e283aba360edc6717c05c64151d23b6d3b36"
+  },
+  "git": {
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
+  }
+}
