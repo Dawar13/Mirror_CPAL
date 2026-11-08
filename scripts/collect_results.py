@@ -15,9 +15,11 @@ whenever new results arrive:
     python scripts/collect_results.py --out <dir> --skip-scripts
 
 Outputs under --out:
-  tables/      T_main_zeroshot, T_healing, T_generality, T_structure_per_layer, T_prereg,
-               T_x_checks, T_e1_history, T_attention (each as .csv and .md; some .md files hold
-               several related CSVs), plus the outputs of f1_tax.py and f2_drift.py (prefix ext_);
+  tables/      T_main_zeroshot, T_healing (with T_healing_vexact), T_generality, T_structure_per_layer,
+               T_prereg, T_x_checks, T_e1_history, T_attention, T_ablations, T_tier2 (with
+               T_tier2_transfer and T_tier2_seg; per-class IoU in T_tier2_seg_classes.csv), T_latency,
+               T_latency_profile, T_f4 (each as .csv and .md; some .md files hold several related
+               CSVs), plus the outputs of f1_tax.py and f2_drift.py (prefix ext_);
   figures/     PNG figures regenerated from the tables (and the f1/f2 figures, prefix ext_);
   scripts/     raw output folders of f1_tax.py and f2_drift.py;
   INDEX.md     one section per experiment ID; numbers.json (flat); collector_meta.json.
@@ -52,18 +54,25 @@ from mirror.utils import git_info, load_config  # noqa: E402
 NOT_RUN, PENDING = "not run", "pending"
 PASS, FAIL = "PASS", "FAIL"
 
-# Models: display names, fixed colours (colour follows the model) and markers. Slots 1 to 5 of the
+# Models: display names, fixed colours (colour follows the model) and markers. Slots 1 to 7 of the
 # reference categorical palette (light surface); slots 1 to 3 are the ones in mirror/report.py.
-C_YELLOW, C_MAGENTA = "#eda100", "#e87ba4"
+C_YELLOW, C_MAGENTA, C_GREEN, C_VIOLET = "#eda100", "#e87ba4", "#008300", "#6250d6"
 MODEL_LABEL = {"dinov2_vitb14_reg": "DINOv2-reg", "dinov2_vitb14": "DINOv2", "deit3_b16": "DeiT-III",
-               "mae_b16": "MAE", "siglip2_b16": "SigLIP2"}
+               "mae_b16": "MAE", "siglip2_b16": "SigLIP2", "dinov2_vits14_reg": "DINOv2-S/14 reg",
+               "dinov2_vitl14_reg": "DINOv2-L/14 reg"}
 MODEL_SHORT = {"dinov2_vitb14_reg": "reg", "dinov2_vitb14": "plain", "deit3_b16": "deit3", "mae_b16": "mae",
-               "siglip2_b16": "siglip2"}
+               "siglip2_b16": "siglip2", "dinov2_vits14_reg": "reg_s", "dinov2_vitl14_reg": "reg_l"}
 MODEL_COLOUR = {"dinov2_vitb14_reg": C_BLUE, "dinov2_vitb14": C_ORANGE, "deit3_b16": C_AQUA, "mae_b16": C_YELLOW,
-                "siglip2_b16": C_MAGENTA}
-MODEL_MARKER = {"dinov2_vitb14_reg": "o", "dinov2_vitb14": "s", "deit3_b16": "^", "mae_b16": "D", "siglip2_b16": "v"}
+                "siglip2_b16": C_MAGENTA, "dinov2_vits14_reg": C_GREEN, "dinov2_vitl14_reg": C_VIOLET}
+MODEL_MARKER = {"dinov2_vitb14_reg": "o", "dinov2_vitb14": "s", "deit3_b16": "^", "mae_b16": "D", "siglip2_b16": "v",
+                "dinov2_vits14_reg": "P", "dinov2_vitl14_reg": "X"}
 MODEL_ORDER = list(MODEL_LABEL)
 MAIN_MODELS = ["dinov2_vitb14_reg", "dinov2_vitb14"]
+# G models with their own run folders under runs/g/ (generality); the DINOv2 size pair (S and L, the plan's
+# nice-to-have) is kept apart from DeiT-III, MAE and SigLIP2 in the F1 and F2 groups (f2_drift.py draws at
+# most three models per figure). DINOv2-L has 24 blocks, so its L/2 is k = 12.
+G_MODELS = ["deit3_b16", "mae_b16", "siglip2_b16", "dinov2_vits14_reg", "dinov2_vitl14_reg"]
+G_SIZE_PAIR = {"dinov2_vits14_reg": "dinov2_s_reg", "dinov2_vitl14_reg": "dinov2_l_reg"}   # model -> runs/g arm
 MAIN_KS = [3, 6, 9, 12]
 BG = "#fcfcfb"
 
@@ -1107,6 +1116,187 @@ def add_linear_to_healing(Th: Table, T2: Table) -> None:
             r["_derived"]["mirror_minus_linear"] = "healed linear top1 of mirror minus this method's (T_tier2)"
 
 
+VEXACT_JOB_RE = re.compile(r"scripts/heal_vexact\.py[^\n']*?--k\s+(\d+)")
+
+
+def vexact_planned_ks(P: Paths) -> tuple[list[int], str]:
+    """k values of the V-exact healing jobs (jobs/*.txt), else the k of configs/m3_vexact.yaml."""
+    ks, src = [], ""
+    if P.jobs.is_dir():
+        for f in sorted(P.jobs.glob("*.txt")):
+            for line in f.read_text(encoding="utf-8").splitlines():
+                if line.lstrip().startswith("#"):
+                    continue
+                for m in VEXACT_JOB_RE.finditer(line):
+                    if int(m[1]) not in ks:
+                        ks.append(int(m[1]))
+                        src = P.rel(f)
+    if not ks:
+        cfg = load_cfg(P, "configs/m3_vexact.yaml")
+        if cfg.get("k") is not None:
+            ks, src = [int(cfg["k"])], "configs/m3_vexact.yaml"
+    return ks, src
+
+
+def build_healing_vexact(P, m1: dict, depths: dict | None = None) -> tuple[Table, dict]:
+    """V-exact healing (scripts/heal_vexact.py): one row per k, from runs/m3_vexact/k<k>/ (knn.json,
+    exactness.json, flipcheck.json for k = depth, final/metrics.json, lr_selection/lr_selection.json, summary.json;
+    each part read from its own file, else from summary.json). Planned k without files: "not run"."""
+    T = Table("T_healing_vexact", "V-exact healing (runs/m3_vexact/k<k>/; companion of T_healing)", ["k"],
+              [("k", "k", "d"), ("status", "status", ""), ("original", "original_top1", ".2f"),
+               ("zero-shot", "zero_shot_top1", ".2f"), ("healed", "healed_top1", ".2f"),
+               ("flip: zero-shot (k-NN)", "zero_shot_flip", ".2f"), ("flip: healed (k-NN)", "healed_flip", ".2f"),
+               ("flip: fp32 check", lambda r: (f"{fmt(r.get('flip_fp32'), '.2f')} ({'pass' if r.get('flip_fp32_pass') else 'FAIL'})"
+                                               if r.get("flip_fp32") is not None else ""), ""),
+               ("exactness (tol)", lambda r: (f"{fmt(r.get('exact_max_rel'), '.1e')} ({fmt(r.get('exact_tol'), 'g')}, "
+                                              f"{'pass' if r.get('exact_pass') else 'FAIL'})"
+                                              if r.get("exact_max_rel") is not None else ""), ""),
+               ("chosen LR", "chosen_lr", "g"), ("held-out loss before", "heldout_loss_before", ".4f"),
+               ("after", "heldout_loss_after", ".4f"), ("kept (converted)", "kept_frac_converted", ".3f"),
+               ("model params kept", "model_params_frac", ".3f"), ("M1 zero-shot (same k)", "m1_zero_shot_top1", ".2f"),
+               ("git", lambda r: short(r.get("git_hash")), "")])
+    T.notes = ["V-exact student: one operator A* over blocks 1 to k, MLP and attention, exactly mirror-equivariant over "
+               "the span (k = depth is the full conversion, with the even head), healed by distillation with the M3 "
+               "pilot's recipe (scripts/heal_vexact.py). Top-1 and flip consistency in percent from the k-NN after "
+               "healing (protocol v2; feature precision in the knn_precision column). fp32 check: flip consistency of the "
+               "fp32 flip check after healing (k = depth only; it must be 100%). Exactness: largest relative error "
+               "inside the span after healing (exactness.json), with the tolerance. Kept: matrix parameters of the "
+               "converted blocks over dense; model params kept: whole model over the original (summary.json "
+               "method_info). M1 zero-shot: the vexact row of runs/m1/m1_knn.csv at the same k (a cross-check).",
+               "Held-out losses: the targets here are symmetrised (teacher block outputs centred and "
+               "mirror-symmetrised with A*; at k = depth the final features mirror-averaged; columns block_targets and "
+               "final_target), so these held-out losses are not comparable with the M3 pilot's in T_healing."]
+    base = P.runs / "m3_vexact"
+    planned, plan_src = vexact_planned_ks(P)
+    found = {}
+    for d in sorted(base.glob("k*")) if base.is_dir() else []:
+        m = re.fullmatch(r"k(\d+)", d.name)
+        if m and d.is_dir() and any(d.iterdir()):
+            found[int(m[1])] = d
+    info = {"dir": P.rel(base), "planned": planned, "plan_source": plan_src, "found": sorted(found)}
+    cfg_model = ((load_cfg(P, "configs/m3_vexact.yaml").get("model") or {}).get("name"))
+    for k in sorted(set(planned) | set(found)):
+        d = found.get(k, base / f"k{k}")
+        row = {"k": k, "dir": P.rel(d), "_loc": {}, "_derived": {}}
+        if k not in found:
+            row.update({"status": NOT_RUN, "note": f"no files under `{P.rel(d)}/`; planned in `{plan_src}`", "_src": P.rel(d),
+                        "model": cfg_model, "depth": (depths or {}).get(cfg_model)})
+            if row["depth"] is not None:
+                row["full_conversion"] = k == row["depth"]
+            T.add(row)
+            continue
+        sf = P.rel(d / "summary.json")
+        summ = read_json(d / "summary.json")
+
+        def part(name, key):
+            j = read_json(d / name)
+            if j is not None:
+                return j, P.rel(d / name), []
+            if summ and isinstance(summ.get(key), dict):
+                return summ[key], sf, [key]
+            return None, None, []
+
+        knn, kf, kp = part("knn.json", "knn")
+        ex, ef, ep = part("exactness.json", "exactness")
+        fl, ff, fp = part("flipcheck.json", "flipcheck")
+        met, mf, mp = part("final/metrics.json", "final")
+        sel, lf, lp = part("lr_selection/lr_selection.json", "lr_selection")
+        cfg = (summ or {}).get("config") or (met or {}).get("config") or {}
+        tiny = bool(cfg.get("tiny_mode")) or (knn or {}).get("protocol") == "tiny synthetic"
+        row["tiny"] = tiny
+        row["model"] = "tiny random ViT (smoke test)" if tiny else (cfg.get("model") or {}).get("name")
+        row["depth"] = py((summ or {}).get("depth"))
+        if row["depth"] is not None:
+            row["full_conversion"] = k == row["depth"]
+        knn = knn or {}
+        for part_, col in (("original", "original"), ("zero_shot", "zero_shot"), ("healed", "healed")):
+            if isinstance(knn.get(part_), dict):
+                for c, s in (("top1", "top1"), ("flip", "flip_consistency"), ("drop", "drop_points")):
+                    if knn[part_].get(s) is not None:
+                        row[f"{col}_{c}"] = py(knn[part_][s])
+                        row["_loc"][f"{col}_{c}"] = json_loc(kf, kp + [part_, s])
+        row["knn_amp"], row["knn_protocol"] = knn.get("amp"), knn.get("protocol")
+        dev = str(((summ or {}).get("env") or {}).get("device") or "")
+        # as scripts/heal_vexact.py's SUMMARY.md: the bf16 autocast applies on CUDA only
+        row["knn_precision"] = (knn.get("amp") or "fp32") if (dev.startswith("cuda") or not dev) else "fp32"
+        if ex:
+            for c, s in (("exact_max_rel", "max_rel_inside"), ("exact_tol", "tol"), ("exact_pass", "pass"),
+                         ("exact_n_images", "n_images")):
+                if s in ex:
+                    row[c] = py(ex[s])
+                    row["_loc"][c] = json_loc(ef, ep + [s])
+            row["exact_dtype"] = str(ex.get("dtype", "")).replace("torch.", "")
+        if fl:
+            for c, s in (("flip_fp32", "flip_consistency"), ("flip_fp32_pass", "pass"),
+                         ("flip_fp32_cls_rel_max", "cls_feature_rel_max"), ("flip_fp32_n_query", "n_query")):
+                if s in fl:
+                    row[c] = py(fl[s])
+                    row["_loc"][c] = json_loc(ff, fp + [s])
+            row["flip_fp32_dtype"] = str(fl.get("dtype", "")).replace("torch.", "")
+        if sel:
+            row["chosen_lr"] = py(sel.get("best_lr"))
+            row["_loc"]["chosen_lr"] = json_loc(lf, lp + ["best_lr"])
+            row["lr_trials"] = "; ".join(f"{t['lr']:g}: {t['heldout_loss']:.4f}" for t in sel.get("trials", []))
+            row["lr_budget_steps"] = sel.get("budget_steps")
+            row["lr_skipped"] = bool(sel.get("skipped"))
+        if met:
+            for c, path in (("heldout_loss_before", ["heldout_initial", "total"]),
+                            ("heldout_loss_after", ["heldout_final", "total"])):
+                v = met
+                for p_ in path:
+                    v = (v or {}).get(p_)
+                if v is not None:
+                    row[c] = py(v)
+                    row["_loc"][c] = json_loc(mf, mp + path)
+            for c in ("steps_done", "total_steps", "images_seen", "n_trainable", "heldout_images", "seconds_train"):
+                if met.get(c) is not None:
+                    row[c] = py(met[c])
+                    row["_loc"][c] = json_loc(mf, mp + [c])
+            row["diverged"] = py(met.get("diverged"))
+            viol = [v.get("max_rel_violation") for v in (met.get("constraint_checks") or {}).values()
+                    if isinstance(v, dict) and "max_rel_violation" in v]
+            row["max_constraint_violation"] = max(viol) if viol else None
+        mi = (summ or {}).get("method_info") or {}
+        for c, s in (("kept_frac_converted", "converted_kept_frac"), ("model_params_frac", "model_params_frac"),
+                     ("model_params", "model_params"), ("converted_params_kept", "converted_params_kept"),
+                     ("converted_params_dense", "converted_params_dense"), ("d_plus", "d_plus"), ("d_minus", "d_minus")):
+            if mi.get(s) is not None:
+                row[c] = py(mi[s])
+                row["_loc"][c] = json_loc(sf, ["method_info", s])
+        tch = (summ or {}).get("teacher") or {}
+        row["block_targets"], row["final_target"] = tch.get("block_targets"), tch.get("final_target")
+        row["embeddings"] = (summ or {}).get("embeddings")
+        st = (summ or {}).get("structure") or {}
+        row["span_source"], row["operators_source"] = st.get("span_source"), st.get("operators_source")
+        ops = ((cfg.get("structure") or {}).get("operators"))
+        row["fit_seed"] = None if tiny else fit_seed_from_path(ops)
+        row["_fit_seed"] = row["fit_seed"]
+        row["seed"] = py(next((x.get("seed") for x in (summ, knn, met, sel) if x and x.get("seed") is not None), None))
+        row["git_hash"] = next((x.get("git_hash") for x in (knn, summ, met, sel, ex) if x and x.get("git_hash")), None)
+        row["git_dirty"] = py((summ or met or sel or {}).get("git_dirty"))
+        row["_seed"], row["_git"] = row["seed"], row["git_hash"]
+        if row.get("healed_top1") is not None and ex:
+            need_flip = row.get("full_conversion") and (cfg.get("checks") or {}).get("flip_check", True)
+            row["status"] = "complete" if (fl or not need_flip) else "complete except the fp32 flip check"
+        elif met:
+            row["status"] = "healed; final k-NN not yet available" if row.get("healed_top1") is None else "healed; checks pending"
+        elif sel:
+            row["status"] = "learning-rate selection only"
+        else:
+            row["status"] = "started (no result files yet)"
+        if tiny:
+            row["status"] += " (TINY smoke test, not a result)"
+        row["source"] = "; ".join(x for x in dict.fromkeys((kf, ef, ff, mf, lf, sf if summ else None)) if x)
+        row["_src"] = row["source"] or P.rel(d)
+        if m1.get("knn") is not None and m1.get("model") == ((cfg.get("model") or {}).get("name")) and not tiny:
+            sel_ = m1["knn"][(m1["knn"]["k"] == k) & (m1["knn"]["variant"] == "vexact")]
+            if len(sel_) == 1:
+                row["m1_zero_shot_top1"] = float(sel_["top1"].iloc[0])
+                row["_loc"]["m1_zero_shot_top1"] = csv_loc(m1["knn_file"], {"k": k, "variant": "vexact"}, "top1")
+        T.add(row)
+    return T, info
+
+
 # ================================================================================================
 # T_generality and P4
 # ================================================================================================
@@ -1118,7 +1308,8 @@ def first_half(run):
 def build_generality(P, gen_runs, th, prereg_commit, plan_text):
     T = Table("T_generality", "G: generality across models (protocol v2, per-layer operators, zero-shot)",
               ["model", "fit_seed"],
-              [("model", "model_label", ""), ("fit seed", "fit_seed", "d"), ("outcome", "outcome", ""),
+              [("model", "model_label", ""), ("fit seed", "fit_seed", "d"), ("blocks", "depth", "d"),
+               ("k = L/2", "k_half", "d"), ("outcome", "outcome", ""),
                ("1: e(null)/e(A)", lambda r: f"{fmt(r.get('row1_value'), '.2f')} {r.get('row1_cell', '')}", ""),
                ("2: e(A)/e(I)", lambda r: f"{fmt(r.get('row2_value'), '.3f')} {r.get('row2_cell', '')}", ""),
                ("3: d-/d", lambda r: f"{fmt(r.get('row3_value'), '.3f')} {r.get('row3_cell', '')}", ""),
@@ -1135,7 +1326,8 @@ def build_generality(P, gen_runs, th, prereg_commit, plan_text):
     T.notes = ["Rows 1 to 5 are the E1b decision table (blocks 1 to L/2; GO limits: row 1 >= 5, row 2 <= 0.5, row 3 "
                ">= 0.2, row 4 <= 0.2 with evidence, row 5 drop <= 10 and margin over SVD >= 5). d+ / d-: mean over "
                "layers 1 to L/2. Twin fraction, s1, s2 (matched nulls) and MLP saving (param_saving_frac): means "
-               "over blocks 1 to L/2. Surgery, SVD and margin: zero-shot k-NN top-1 (%) at k = L/2."]
+               "over blocks 1 to L/2. Surgery, SVD and margin: zero-shot k-NN top-1 (%) at k = L/2. L is each "
+               "model's own depth (blocks column), so k = L/2 is 12 for a 24-block model."]
     mae_note = ""
     m = re.search(r"\*\*MAE:\*\*\s*([^\n]+)", plan_text or "")
     if m:
@@ -1183,7 +1375,8 @@ def build_generality(P, gen_runs, th, prereg_commit, plan_text):
         row["_derived"]["p4_share"] = f"max(mean s1, mean s2) over blocks {lo} to {hi} ({run['mlp_file']})"
         row["_derived"]["p4_ratio"] = (f"mean rel_e_null_used / mean rel_e_A_used over layers {lo} to {hi} "
                                        f"({run['layers_file']})")
-        kh = hi
+        kh = hi                     # k = L/2 for every model (6 for the 12-block models, 12 for DINOv2-L)
+        row["depth"] = int(run["mlp"]["block"].max())
         if run["surgery"] is not None:
             s = run["surgery"]
             for name, var, kk in (("original", "original", 0), ("surgery_half", "surgery", kh),
@@ -1824,13 +2017,16 @@ def build_ablations(P):
                "Reused from: the variant is the same model as the named cell (identical content signature in "
                "scripts/stage1_ablate.py), so its result was reused, not evaluated again. A fit seed of -1 marks a row "
                "fitted on pooled fit images (see the row's info)."]
-    S = Table("T_ablations_seeds", "A1 to A5: mean over fit seeds", ["model", "ablation", "variant", "k"],
+    S = Table("T_ablations_seeds", "A1 to A5: mean over fit seeds, every k present", ["model", "ablation", "variant", "k"],
               [("model", "model_label", ""), ("ablation", "ablation", ""), ("variant", "variant", ""), ("k", "k", "d"),
                ("n", "n_seeds", "d"), ("fit seeds", "fit_seeds", ""),
                ("top-1", lambda r: pm(r.get("top1_mean"), r.get("top1_std")), ""),
+               ("top-1 per seed", "top1_per_seed", ""),
                ("drop", lambda r: pm(r.get("drop_mean"), r.get("drop_std")), ""),
                ("flip consistency", lambda r: pm(r.get("flip_mean"), r.get("flip_std")), ""), ("note", "note", "")])
-    S.notes = ["Mean and sample standard deviation (n - 1) over the fit seeds present; with one seed none is shown."]
+    S.notes = ["One row per model, ablation, variant and k (every k present in the CSVs). Mean and sample standard "
+               "deviation (n - 1) over the fit seeds present, with n the number of seeds; with one seed no deviation "
+               "is shown. Top-1 per seed lists the per-seed values (also one row each in T_ablations)."]
     X = Table("T_ablations_a2_extra", "A2 pairings hungarian, hungarian_cycle and generic: pairing and projection as recorded",
               ["model", "variant", "k", "fit_seed"],
               [("variant", "variant", ""), ("k", "k", "d"), ("fit seed", "fit_seed", "d"), ("top-1", "top1", ".2f"),
@@ -1838,12 +2034,20 @@ def build_ablations(P):
     X.notes = ["Pairing and projection are the descriptions each row records in its info column (scripts/stage1_ablate.py)."]
     base = P.runs / "a"
     files = sorted(base.glob("*/A*_s*.csv")) if base.is_dir() else []
+    seen: dict = {}
+    dups: list[str] = []
     for f in files:
         df = read_csv(f)
         if df is None:
             continue
         model = str(df["model"].iloc[0]) if "model" in df else f.parent.name
         for _, r in df.iterrows():
+            # the CSVs are keyed by (ablation, variant, k, fit seed); a key met twice (in two files) is kept once
+            key = (model, str(r["ablation"]), str(r["variant"]), int(r["k"]), int(r["fit_seed"]))
+            if key in seen:
+                dups.append(f"{'/'.join(map(str, key[1:]))} in {P.rel(f)} (kept {seen[key]})")
+                continue
+            seen[key] = P.rel(f)
             info = _info(r.get("info"))
             row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "ablation": r.get("ablation"),
                    "variant": r.get("variant"), "k": py(r.get("k")), "fit_seed": py(r.get("fit_seed")),
@@ -1860,9 +2064,23 @@ def build_ablations(P):
             row["pairing"], row["projection"] = info.get("pairing", ""), info.get("projection", "")
             row["fit_rows"] = info.get("fit_rows", "")
             T.add(row)
-            if row["ablation"] == "A2" and row["variant"] in A2_EXTRA:
-                X.add({**{k: v for k, v in row.items() if not k.startswith("_")}, "_src": row["_src"], "_git": row["_git"],
-                       "_seed": row["_seed"], "_fit_seed": row["_fit_seed"], "_loc": dict(row["_loc"]), "_derived": {}})
+    # Stable order for reading: model, ablation, k, the variant order of the CSVs, fit seed.
+    vorder: dict = {}
+    for r in T.rows:
+        vorder.setdefault((r["model"], r["ablation"]), [])
+        if r["variant"] not in vorder[(r["model"], r["ablation"])]:
+            vorder[(r["model"], r["ablation"])].append(r["variant"])
+
+    def order(r):
+        return (MODEL_ORDER.index(r["model"]) if r["model"] in MODEL_ORDER else 99, str(r["model"]), str(r["ablation"]),
+                r["k"] if r["k"] is not None else -1, vorder[(r["model"], r["ablation"])].index(r["variant"]),
+                r["fit_seed"] if r["fit_seed"] is not None else 99)
+
+    T.rows.sort(key=order)
+    for r in T.rows:
+        if r["ablation"] == "A2" and r["variant"] in A2_EXTRA:
+            X.add({**{k: v for k, v in r.items() if not k.startswith("_")}, "_src": r["_src"], "_git": r["_git"],
+                   "_seed": r["_seed"], "_fit_seed": r["_fit_seed"], "_loc": dict(r["_loc"]), "_derived": {}})
     groups: dict = {}
     for r in T.rows:
         groups.setdefault((r["model"], r["ablation"], r["variant"], r["k"]), []).append(r)
@@ -1870,6 +2088,7 @@ def build_ablations(P):
         rs = sorted(rs, key=lambda x: x["fit_seed"])
         out = {"model": model, "model_label": MODEL_LABEL.get(model, model), "ablation": abl, "variant": var, "k": k,
                "n_seeds": len(rs), "fit_seeds": ",".join(str(x["fit_seed"]) for x in rs),
+               "top1_per_seed": "; ".join(f"s{x['fit_seed']}: {fmt(x.get('top1'), '.2f')}" for x in rs),
                "_src": ";".join(sorted({x["_src"] for x in rs})), "_git": ";".join(sorted({str(x["_git"]) for x in rs})),
                "_seed": rs[0]["_seed"] if len({x["_seed"] for x in rs}) == 1 else None,
                "_fit_seed": ",".join(str(x["fit_seed"]) for x in rs), "_loc": {}, "_derived": {}}
@@ -1890,7 +2109,7 @@ def build_ablations(P):
             notes.append("projection not exact (params_exact = False)")
         out["note"] = "; ".join(notes)
         S.add(out)
-    return T, S, X, files
+    return T, S, X, files, dups
 
 
 def _runs_path_in(obj):
@@ -2022,7 +2241,137 @@ def build_tier2(P, Tm: Table, Th: Table, m1: dict, x2: dict):
     return T, X
 
 
-M2_TO_MAIN = {"vlocal": "vlocal", "vexact": "vexact", "mlp_only": "mirror_mlp_m1", "svd": "svd_attn",
+def build_tier2_seg(P, plan_text: str = ""):
+    """Tier 2 ADE20K linear segmentation: runs/t2_seg/ written by scripts/tier2_ade20k.py (t2_ade20k.csv, one row
+    per model and variant; seg/<model>/<variant>.json with per-class IoU; t2_ade20k_meta_<model>.json). Only
+    runs/t2_seg is read (smoke-test folders such as runs/t2_seg_smoke are never read)."""
+    T = Table("T_tier2_seg", "Tier 2: ADE20K linear segmentation (runs/t2_seg/t2_ade20k.csv)", ["model", "variant"],
+              [("model", "model_label", ""), ("variant", "variant", ""), ("k", "k", "d"), ("mIoU", "mIoU", ".2f"),
+               ("aAcc", "aAcc", ".2f"), ("mAcc", "mAcc", ".2f"),
+               ("change vs original (mIoU)", "delta_miou_vs_original", "+.2f"),
+               ("vs SVD (mIoU)", "margin_svd_miou", "+.2f"), ("vs random (mIoU)", "margin_random_miou", "+.2f"),
+               ("params", "model_params", ",d"), ("kept (converted)", "kept_frac_converted", ".3f"),
+               ("iterations", "iterations", ",d"),
+               ("val images", lambda r: f"{fmt(r.get('n_val'), ',d')} / {fmt(r.get('n_val_total'), ',d')}"
+                if r.get("n_val") is not None else "", ""),
+               ("V-exact error (bar)", lambda r: f"{fmt(r.get('vexact_max_rel_err'), '.1e')} ({fmt(r.get('vexact_bar'), 'g')})"
+                if r.get("vexact_max_rel_err") is not None else "", ""),
+               ("git", lambda r: short(r.get("git_hash")), ""), ("note", "note", "")])
+    T.notes = ["Frozen backbone, linear head (BatchNorm when the bn column is true, then a 1 x 1 convolution) on the "
+               "last-layer patch tokens; one recipe and seed for every variant (scripts/tier2_ade20k.py; crop, "
+               "iterations, batch and optimiser settings are columns of the CSV and of t2_ade20k_meta_<model>.json). "
+               "mIoU, aAcc (pixel accuracy) and mAcc (mean class accuracy) in % on ADE20K validation.",
+               "Change vs original: mIoU of the variant minus that of the original model (points; negative is worse). "
+               "vs SVD and vs random: mIoU of a Mirror variant minus that of the SVD or random variant of the same "
+               "family and k (empty where that baseline was not run). Params: whole-model parameters as recorded; "
+               "kept: kept over dense matrix parameters of the converted blocks.",
+               "V-exact rows: the model is rebuilt at the segmentation crop; the error is the largest relative error "
+               "inside the span measured by the script on training crops (fp32), with its bar in brackets. Per-class "
+               "IoU and accuracy: T_tier2_seg_classes.csv."]
+    C = Table("T_tier2_seg_classes", "Tier 2 ADE20K: per-class IoU and accuracy (seg/<model>/<variant>.json)",
+              ["model", "variant", "class_index"],
+              [("model", "model", ""), ("variant", "variant", ""), ("class", "class_index", "d"),
+               ("ADE20K label", "ade20k_label", "d"), ("IoU", "iou", ".4f"), ("accuracy", "acc", ".4f")])
+    C.notes = ["IoU and accuracy as fractions (0 to 1), as stored in metrics.per_class_iou and per_class_acc; empty "
+               "where the class was not scored. Class index c is ADE20K label c + 1 (label 0, other objects, is "
+               "ignored); class names are not in the result files."]
+    base = P.runs / "t2_seg"
+    info = {"dir": P.rel(base), "csv": P.rel(base / "t2_ade20k.csv"), "meta": {}, "missing": {}, "plan_iters": None}
+    m = re.search(r"ADE20K linear segmentation[^\n]*?([\d,]+) iterations", plan_text or "")
+    if m:
+        info["plan_iters"] = int(m[1].replace(",", ""))
+    for mf in sorted(base.glob("t2_ade20k_meta_*.json")) if base.is_dir() else []:
+        mj = read_json(mf)
+        if mj:
+            info["meta"][str(mj.get("model") or mf.stem.replace("t2_ade20k_meta_", ""))] = {"file": P.rel(mf), "json": mj}
+    df = read_csv(base / "t2_ade20k.csv")
+    if df is None:
+        return T, C, info
+    f = P.rel(base / "t2_ade20k.csv")
+    for _, r in df.iterrows():
+        model, var = str(r["model"]), str(r["variant"])
+        where = {"model": model, "variant": var}
+        vpath = base / "seg" / model / f"{var}.json"
+        vj = read_json(vpath) or {}
+        ops, fs = _runs_path_in(vj.get("sources") or {})
+        row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "variant": var, "label": r.get("label"),
+               "family": r.get("family"), "method": r.get("method"), "k": py(r.get("k")), "fit_seed": fs,
+               "structure_source": ops, "source": f, "per_class_source": P.rel(vpath) if vj else None,
+               "git_hash": r.get("git_hash"), "git_dirty": py(r.get("git_dirty")), "seed": py(r.get("seed")),
+               "date": r.get("date"), "_src": f, "_git": r.get("git_hash"), "_seed": py(r.get("seed")), "_fit_seed": fs,
+               "_loc": {}, "_derived": {}}
+        for c in ("mIoU", "aAcc", "mAcc", "iterations", "batch_size", "crop", "lr", "weight_decay", "warmup_iters", "bn",
+                  "eval_stride", "n_train", "n_val", "n_val_total", "final_train_loss", "vexact_built_px",
+                  "vexact_max_rel_err", "vexact_224_build_rel_err_at_seg", "converted_params_kept",
+                  "converted_params_dense", "model_params", "t_build_s", "t_check_s", "t_train_s", "t_eval_s",
+                  "t_total_s", "train_img_per_s", "resumed_from_iter", "peak_mem_gb", "amp", "hf_id", "hf_revision"):
+            if c in r:
+                row[c] = py(r[c])
+                if c not in ("bn", "amp", "hf_id", "hf_revision") and row[c] is not None:
+                    row["_loc"][c] = csv_loc(f, where, c)
+        dense = row.get("converted_params_dense")
+        if dense and row.get("converted_params_kept") is not None:
+            row["kept_frac_converted"] = row["converted_params_kept"] / dense
+            row["_derived"]["kept_frac_converted"] = "converted_params_kept / converted_params_dense (t2_ade20k.csv)"
+        vc = (vj.get("vexact_checks") or {}).get("at_build_resolution") or {}
+        if vc:
+            row["vexact_bar"], row["vexact_pass"] = py(vc.get("bar")), py(vc.get("pass"))
+            row["_loc"]["vexact_bar"] = json_loc(P.rel(vpath), ["vexact_checks", "at_build_resolution", "bar"])
+        met = vj.get("metrics") or {}
+        iou = met.get("per_class_iou")
+        if isinstance(iou, list):
+            row["n_classes_scored"] = py(met.get("n_classes_scored"))
+            row["_loc"]["n_classes_scored"] = json_loc(P.rel(vpath), ["metrics", "n_classes_scored"])
+            vals = [float(x) for x in iou if x is not None]
+            if vals:
+                row["miou_from_per_class"] = 100.0 * float(np.mean(vals))
+                row["_derived"]["miou_from_per_class"] = "100 x mean of the non-empty per_class_iou values (variant JSON)"
+                if row.get("mIoU") is not None:
+                    row["per_class_matches_miou"] = abs(row["miou_from_per_class"] - row["mIoU"]) <= 1e-6 * max(1.0, row["mIoU"])
+            acc = met.get("per_class_acc") if isinstance(met.get("per_class_acc"), list) else []
+            for i, x in enumerate(iou):
+                cr = C.add({"model": model, "variant": var, "class_index": i, "ade20k_label": i + 1, "iou": py(x),
+                            "acc": py(acc[i]) if i < len(acc) else None, "_src": P.rel(vpath), "_git": row["_git"],
+                            "_seed": row["_seed"], "_fit_seed": fs})
+                cr["_loc"]["iou"] = json_loc(P.rel(vpath), ["metrics", "per_class_iou", i])
+                if i < len(acc):
+                    cr["_loc"]["acc"] = json_loc(P.rel(vpath), ["metrics", "per_class_acc", i])
+        notes = []
+        if row.get("n_val") is not None and row.get("n_val_total") and row["n_val"] < row["n_val_total"]:
+            notes.append(f"partial validation ({fmt(row['n_val'], ',d')} of {fmt(row['n_val_total'], ',d')} images)")
+        if info["plan_iters"] and row.get("iterations") is not None and int(row["iterations"]) != info["plan_iters"]:
+            notes.append(f"{fmt(row['iterations'], ',d')} iterations (plan {info['plan_iters']:,})")
+        if row.get("vexact_pass") is False:
+            notes.append("V-exact error above its bar")
+        if row.get("family") == "healed":
+            notes.append("healed at 224 px")
+        if row.get("resumed_from_iter"):
+            notes.append(f"training resumed at iteration {fmt(row['resumed_from_iter'], 'd')}")
+        row["note"] = "; ".join(notes)
+        T.add(row)
+    # change against the original and margins of Mirror variants over SVD and random (same model, family and k)
+    for r in T.rows:
+        same = [x for x in T.rows if x["model"] == r["model"]]
+        orig = next((x for x in same if x.get("family") == "original"), None)
+        if orig is not None and r is not orig and r.get("mIoU") is not None and orig.get("mIoU") is not None:
+            r["delta_miou_vs_original"] = r["mIoU"] - orig["mIoU"]
+            r["_derived"]["delta_miou_vs_original"] = f"mIoU of {r['variant']} minus mIoU of {orig['variant']} ({r['_src']})"
+        if (r.get("family"), r.get("method")) in T2_MIRROR and r.get("mIoU") is not None:
+            for b in ("svd", "random"):
+                x = next((x for x in same if x.get("family") == r["family"] and x.get("method") == b
+                          and x.get("k") == r.get("k") and x.get("mIoU") is not None), None)
+                if x is not None:
+                    r[f"margin_{b}_miou"] = r["mIoU"] - x["mIoU"]
+                    r["_derived"][f"margin_{b}_miou"] = f"mIoU of {r['variant']} minus mIoU of {x['variant']} ({r['_src']})"
+    for model, mm in info["meta"].items():
+        have = {r["variant"] for r in T.rows if r["model"] == model}
+        miss = [v for v in (mm["json"].get("variants") or []) if v not in have]
+        if miss:
+            info["missing"][model] = miss
+    return T, C, info
+
+
+M2_TO_MAIN ={"vlocal": "vlocal", "vexact": "vexact", "mlp_only": "mirror_mlp_m1", "svd": "svd_attn",
               "random": "random_attn", "dense": "original", "original": "original"}
 
 
@@ -2095,6 +2444,134 @@ def build_latency(P, Tm: Table, archs: dict):
                 row["checks"] = " / ".join(f"{d}: {'pass' if p else 'FAIL'}" for d, p in st)
             L.add(row)
     return L, C, meta
+
+
+PROFILE_CATS = ("gemm", "attention", "triton", "elementwise", "norm", "memory", "other")   # scripts/m2_profile.py
+PROFILE_CAT_LABEL = {"gemm": "GEMM", "attention": "attention", "triton": "fused Triton", "elementwise": "elementwise",
+                     "norm": "normalisation", "memory": "memory movement", "other": "other"}
+PROFILE_PARTS = ("mlp", "attention", "rotation")
+
+
+def build_latency_profile(P):
+    """M2 profile (scripts/m2_profile.py, runs/m2_profile/): one row per model, variant, k, mode and batch with
+    the kernel-time breakdown by category (ms per forward and share of kernel time), the latency gap to dense
+    split into category changes plus the idle change, and the sub-module split (MLP, attention, rotations) summed
+    over the timed converted blocks; plus the fused Triton time by operation (m2_triton.csv)."""
+    cat_cols = []
+    for c in PROFILE_CATS:
+        cat_cols.append((PROFILE_CAT_LABEL[c], lambda r, c=c: (f"{fmt(r.get('ms_' + c), '.3f')} "
+                                                              f"({fmt(100 * r['share_' + c] if r.get('share_' + c) is not None else None, '.0f')}%)"
+                                                              if r.get("ms_" + c) is not None else ""), ""))
+    T = Table("T_latency_profile", "M2 profile: where the time goes (runs/m2_profile/m2_profile.csv, m2_submodules.csv)",
+              ["model", "variant", "k", "mode", "batch"],
+              [("variant", "variant", ""), ("k", "k", "d"), ("mode", "mode_used", ""), ("median ms", "latency_ms_median", ".3f"),
+               ("kernel ms", "kernel_ms", ".3f"), ("idle ms", "idle_ms", ".3f")] + cat_cols)
+    T.notes = ["Kernel time per forward by category, ms and share of the kernel time (scripts/m2_profile.py sorts every "
+               "GPU activity into a category by its name; time_source says whether these are CUDA kernel times or, in "
+               "the CPU smoke test, operator self times). Idle = median latency minus kernel time. Gap = median latency "
+               "minus the dense model's (same model, mode and batch; dense is the folded original in the same "
+               "implementation). The category changes plus the idle change add up to the gap (gap_check in the CSV). "
+               "Sub-modules: each converted block's MLP, attention and stream rotations timed alone against the same "
+               "block of dense, summed over the timed blocks (sub_blocks, 0-based block indices as in "
+               "m2_submodules.csv); remainder = gap minus the summed sub-module changes (norms, residual adds, launch "
+               "overheads)."]
+    X = Table("T_latency_profile_triton", "M2 profile: fused Triton kernel time by operation (runs/m2_profile/m2_triton.csv)",
+              ["variant", "k", "mode", "triton_tag"],
+              [("variant", "variant", ""), ("k", "k", "d"), ("mode", "mode", ""), ("operations", "triton_tag", ""),
+               ("ms per forward", "ms_per_forward", ".3f"), ("kernels", "kernel_count", ".0f")])
+    base = P.runs / "m2_profile"
+    prof, sub, tri = read_csv(base / "m2_profile.csv"), read_csv(base / "m2_submodules.csv"), read_csv(base / "m2_triton.csv")
+    meta = read_json(base / "m2_profile_meta.json")
+    if prof is None:
+        return T, X, meta
+    f = P.rel(base / "m2_profile.csv")
+    keys = ["model", "variant", "k", "mode", "batch"]
+    for key, g in prof.groupby(keys, sort=False):
+        model, v, k, mode, b = str(key[0]), str(key[1]), int(key[2]), str(key[3]), int(key[4])
+        w = {"model": model, "variant": v, "k": k, "mode": mode, "batch": b}
+        r0 = g.iloc[0]
+        row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "variant": v, "label": r0.get("label"),
+               "k": k, "mode": mode, "mode_used": r0.get("mode_used"), "batch": b, "time_source": r0.get("time_source"),
+               "device": r0.get("device"), "source": f, "git_hash": r0.get("git_hash"), "seed": py(r0.get("seed")),
+               "_src": f, "_git": r0.get("git_hash"), "_seed": py(r0.get("seed")), "_loc": {}, "_derived": {}}
+        for c in ("latency_ms_median", "kernel_ms", "idle_ms", "launches", "speedup_vs_dense", "flop_speedup_vs_dense",
+                  "gemm_tflops", "macs_per_image", "n_rotations", "ref_m2_clean_ms"):
+            if c in g and py(r0.get(c)) is not None:
+                row[c] = py(r0[c])
+                row["_loc"][c] = csv_loc(f, {**w, "category": str(r0["category"])}, c)
+        for _, cr in g.iterrows():
+            c = str(cr["category"])
+            for col, src in (("ms", "ms_per_forward"), ("share", "share"), ("n", "kernel_count"), ("d", "delta_ms_vs_dense")):
+                if src in cr and py(cr[src]) is not None:
+                    row[f"{col}_{c}"] = py(cr[src])
+                    row["_loc"][f"{col}_{c}"] = csv_loc(f, {**w, "category": c}, src)
+        T.add(row)
+    for r in T.rows:
+        d = T.find(model=r["model"], variant="dense", k=0, mode=r["mode"], batch=r["batch"])
+        if d is None or r.get("latency_ms_median") is None or d.get("latency_ms_median") is None:
+            continue
+        r["gap_ms"] = r["latency_ms_median"] - d["latency_ms_median"]
+        r["_derived"]["gap_ms"] = "latency_ms_median minus that of dense (same model, mode and batch; m2_profile.csv)"
+        if r.get("idle_ms") is not None and d.get("idle_ms") is not None:
+            r["d_idle"] = r["idle_ms"] - d["idle_ms"]
+            r["_derived"]["d_idle"] = "idle_ms minus that of dense (m2_profile.csv)"
+            ds = [r.get(f"d_{c}") for c in PROFILE_CATS]
+            if all(x is not None for x in ds):
+                r["gap_check"] = r["gap_ms"] - (sum(ds) + r["d_idle"])
+                r["_derived"]["gap_check"] = "gap minus (sum of category changes + idle change); 0 up to rounding"
+    if sub is not None:
+        fs = P.rel(base / "m2_submodules.csv")
+        sub = sub.copy()
+        if "model" not in sub:
+            sub["model"] = T.rows[0]["model"] if T.rows else ""
+        for key, g in sub.groupby(["model", "variant", "k", "mode"], sort=False):
+            hits = [r for r in T.rows if r["model"] == str(key[0]) and r["variant"] == str(key[1]) and r["k"] == int(key[2])
+                    and r["mode"] == str(key[3])]
+            if len(hits) != 1:
+                continue
+            r = hits[0]
+            r["sub_blocks"] = ",".join(str(int(x)) for x in sorted(g["block"].unique()))
+            r["sub_source"] = fs
+            tot = 0.0
+            for p_ in PROFILE_PARTS:
+                gp = g[g["part"] == p_]
+                if not len(gp):
+                    continue
+                r[f"{p_}_ms"] = float(gp["ms_median"].sum())
+                r[f"{p_}_dense_ms"] = float(gp["dense_ms_median"].sum())
+                r[f"{p_}_delta_ms"] = float(gp["delta_ms"].sum())
+                r[f"{p_}_n"] = int(len(gp))
+                tot += r[f"{p_}_delta_ms"]
+                for c, s in (("ms", "ms_median"), ("dense_ms", "dense_ms_median"), ("delta_ms", "delta_ms")):
+                    r["_derived"][f"{p_}_{c}"] = f"sum over blocks {r['sub_blocks']} of {s} for part {p_} ({fs})"
+            r["sub_sum_delta_ms"] = tot
+            r["_derived"]["sub_sum_delta_ms"] = f"sum of the MLP, attention and rotation changes ({fs})"
+            if r.get("gap_ms") is not None:
+                r["sub_remainder_ms"] = r["gap_ms"] - tot
+                r["_derived"]["sub_remainder_ms"] = "gap_ms minus sub_sum_delta_ms"
+    if tri is not None:
+        ft = P.rel(base / "m2_triton.csv")
+        for _, r in tri.iterrows():
+            w = {"variant": r["variant"], "k": int(r["k"]), "mode": r["mode"], "triton_tag": r["triton_tag"]}
+            row = {**w, "ms_per_forward": py(r.get("ms_per_forward")), "kernel_count": py(r.get("kernel_count")),
+                   "_src": ft, "_git": r.get("git_hash"), "_seed": py(r.get("seed")), "_loc": {}, "_derived": {}}
+            for c in ("ms_per_forward", "kernel_count"):
+                row["_loc"][c] = csv_loc(ft, w, c)
+            X.add(row)
+    return T, X, meta
+
+
+def profile_views(T: Table) -> list[Table]:
+    """Three Markdown views of T_latency_profile's rows: the gap split into categories, and the sub-module split."""
+    gap = Table("x", "Gap to dense split into categories (ms per forward; the columns add up to the gap)", [],
+                [("variant", "variant", ""), ("k", "k", "d"), ("mode", "mode_used", ""), ("gap", "gap_ms", "+.3f")]
+                + [(PROFILE_CAT_LABEL[c], f"d_{c}", "+.3f") for c in PROFILE_CATS] + [("idle", "d_idle", "+.3f")])
+    sub = Table("x", "Sub-module split: change against the same dense blocks, summed over the timed converted blocks (ms)", [],
+                [("variant", "variant", ""), ("k", "k", "d"), ("mode", "mode_used", ""), ("blocks (0-based)", "sub_blocks", ""),
+                 ("MLP", "mlp_delta_ms", "+.3f"), ("attention", "attention_delta_ms", "+.3f"),
+                 ("rotations", "rotation_delta_ms", "+.3f"), ("sum", "sub_sum_delta_ms", "+.3f"),
+                 ("end-to-end gap", "gap_ms", "+.3f"), ("remainder", "sub_remainder_ms", "+.3f")])
+    return [gap, sub]
 
 
 def build_f4(P):
@@ -2757,14 +3234,23 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                if r.get("value") is not None else "")
         L.append(f"- {r['check']}: {r['statement']}; {val}**{c('p4.' + r['check'].lower().replace('p4.', '') + '.verdict', 'T_generality_p4', {'check': r['check']}, 'verdict')}**"
                  f"{(' (' + r['note'] + ')') if r.get('note') else ''}.")
-    gm = [m for m in ("dinov2_vitb14_reg", "dinov2_vitb14", "deit3_b16", "mae_b16", "siglip2_b16")
-          if not any(r["model"] == m for r in tg.rows)]
+    gm = [m for m in MAIN_MODELS + G_MODELS if not any(r["model"] == m for r in tg.rows)]
     if gm:
-        L.append(f"- {NOT_RUN}: {', '.join(MODEL_LABEL[m] for m in gm)}.")
-    rs = reasons(["DINOv2-S/L"])
-    if rs:
-        L.append("- DINOv2-S and L (nice-to-have): " + " | ".join(rs) + ".")
-    L.append("- Tables: `T_generality`, `T_generality_p4`; figures `fig_eA_vs_depth.png`, `fig_structure_summary.png`.")
+        planned = {r["model"]: r["dir"] for r in ctx["g"].values() if r["model"]}
+        L.append(f"- {NOT_RUN}: " + ", ".join(MODEL_LABEL[m] + (f" (planned: `{planned[m]}`)" if m in planned else "")
+                                              for m in gm) + ".")
+    if any(m in gm for m in G_SIZE_PAIR):
+        rs = reasons(["DINOv2-S/L", "DINOv2-S", "DINOv2-L"])
+        if rs:
+            L.append("- DINOv2-S and L (nice-to-have): " + " | ".join(rs) + ".")
+    sl = [r for r in tg.rows if r["model"] in G_SIZE_PAIR]
+    if sl:
+        L.append("- DINOv2 size pair (registers models, configs `configs/g_dinov2_s_reg.yaml` and `configs/g_dinov2_l_reg.yaml`): "
+                 "every column is taken over the model's own first half, blocks 1 to L/2, with zero-shot surgery at "
+                 "k = L/2 ("
+                 + "; ".join(f"{r['model_label']}: {r['depth']} blocks, k = {r['k_half']}" for r in sl) + ").")
+    L.append("- Tables: `T_generality`, `T_generality_p4`, `T_structure_per_layer`, `T_structure_summary`; figures "
+             "`fig_eA_vs_depth.png`, `fig_structure_summary.png`.")
     L.append("")
     # ---------------------------------------------------------------- M1
     L += ["## M1: attention conversion (V-local, V-exact)", ""]
@@ -2875,9 +3361,59 @@ def build_index(P, ctx, R: Registry) -> list[str]:
         L.append("- Second measure, Tier-2 ImageNet linear probe of the healed students (information only; the P3 "
                  "verdict above stays on k-NN, as pre-registered): top-1 " + ", ".join(bits) + extra
                  + ". Columns `linear_*` and `mirror_minus_*` in `T_healing`; rows in `T_tier2`.")
+    # V-exact healing (scripts/heal_vexact.py), companion table T_healing_vexact
+    tv, vxi = T["T_healing_vexact"], ctx["vx_info"]
+    if tv.rows:
+        L.append(f"- V-exact healing (scripts/heal_vexact.py, configs/m3_vexact.yaml; `{vxi['dir']}/k<k>/`; planned k = "
+                 f"{', '.join(map(str, vxi['planned'])) or 'none found'}"
+                 + (f" in `{vxi['plan_source']}`" if vxi["plan_source"] else "") + "). Table `T_healing_vexact`. Its "
+                 "targets are symmetrised, so its held-out losses are not comparable with the pilot's.")
+    for r in tv.rows:
+        k = r["k"]
+        wh = {"k": k}
+        key = f"m3vx.k{k}"
+        lab = f"k = {k}" + (" (full conversion)" if r.get("full_conversion") else "")
+        if r["status"] == NOT_RUN:
+            rs = reasons(["V-exact healing"])
+            L.append(f"  - {lab}: {NOT_RUN} ({r.get('note', '')})" + (" | " + " | ".join(rs) if rs else "") + ".")
+            continue
+        bits = [f"status {r['status']}"]
+        if r.get("healed_top1") is not None:
+            hl = None if r.get("tiny") else f"V-exact healed top-1, k = {k}"
+            bits.append(f"top-1 zero-shot {c(key + '.zero_shot', 'T_healing_vexact', wh, 'zero_shot_top1')} to healed "
+                        f"{c(key + '.healed', 'T_healing_vexact', wh, 'healed_top1', headline=hl)} (original "
+                        f"{c(key + '.original', 'T_healing_vexact', wh, 'original_top1')}); flip consistency (k-NN, "
+                        f"{r.get('knn_precision') or 'fp32'}) {c(key + '.healed_flip', 'T_healing_vexact', wh, 'healed_flip')}")
+        if r.get("flip_fp32") is not None:
+            hl = None if r.get("tiny") else f"V-exact healed fp32 flip check, k = {k}"
+            bits.append(f"fp32 flip check {c(key + '.flip_fp32', 'T_healing_vexact', wh, 'flip_fp32', headline=hl)}% "
+                        f"(pass: {c(key + '.flip_fp32_pass', 'T_healing_vexact', wh, 'flip_fp32_pass', '')})")
+        elif r.get("full_conversion"):
+            bits.append("fp32 flip check: " + PENDING)
+        if r.get("exact_max_rel") is not None:
+            bits.append(f"exactness after healing {c(key + '.exact', 'T_healing_vexact', wh, 'exact_max_rel', '.1e')} "
+                        f"(tolerance {c(key + '.exact_tol', 'T_healing_vexact', wh, 'exact_tol', 'g')}; pass: "
+                        f"{c(key + '.exact_pass', 'T_healing_vexact', wh, 'exact_pass', '')})")
+        if r.get("chosen_lr") is not None:
+            bits.append(f"chosen LR {c(key + '.lr', 'T_healing_vexact', wh, 'chosen_lr', 'g')}")
+        if r.get("heldout_loss_before") is not None:
+            bits.append(f"held-out loss (symmetrised targets) {c(key + '.heldout_before', 'T_healing_vexact', wh, 'heldout_loss_before', '.4f')} "
+                        f"to {c(key + '.heldout_after', 'T_healing_vexact', wh, 'heldout_loss_after', '.4f')}")
+        if r.get("kept_frac_converted") is not None:
+            bits.append(f"kept {c(key + '.kept', 'T_healing_vexact', wh, 'kept_frac_converted', '.3f')} of the converted "
+                        f"matrix parameters ({c(key + '.model_params_frac', 'T_healing_vexact', wh, 'model_params_frac', '.3f')} "
+                        "of the whole model)")
+        if r.get("m1_zero_shot_top1") is not None:
+            bits.append(f"M1 zero-shot at the same k {c(key + '.m1_zero_shot', 'T_healing_vexact', wh, 'm1_zero_shot_top1')}")
+        L.append(f"  - {lab}: " + "; ".join(bits) + f". Seed {r.get('seed')}, git {short(r.get('git_hash'))}"
+                 f"{' (dirty)' if r.get('git_dirty') else ''}; files `{r['source']}`.")
+    if not tv.rows:
+        rs = reasons(["V-exact healing"])
+        L.append(f"- V-exact healing: {NOT_RUN} (no `runs/m3_vexact/k<k>/` and no planned job found)"
+                 + (" | " + " | ".join(rs) if rs else "") + ".")
     rs = reasons(["M3 grid"])
-    L.append("- M3 grid: " + NOT_RUN + (" (" + " | ".join(rs) + ")" if rs else "") + ". Tables `T_healing`, `T_healing_p3`; "
-             "figure `fig_healing_curves.png`.")
+    L.append("- M3 grid: " + NOT_RUN + (" (" + " | ".join(rs) + ")" if rs else "") + ". Tables `T_healing`, `T_healing_p3`, "
+             "`T_healing_vexact`; figure `fig_healing_curves.png`.")
     L.append("")
     # ---------------------------------------------------------------- D
     L += ["## D: data-free readout (P5, gate G4)", ""]
@@ -2907,28 +3443,29 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                  f"git {', '.join(hashes)}; run seed(s) {', '.join(sorted({str(r['_seed']) for r in ta.rows}))}. "
                  "Tables `T_ablations_seeds` (mean over fit seeds), `T_ablations` (per seed), `T_ablations_a2_extra`.")
         for abl in sorted({r["ablation"] for r in tas.rows}):
-            rows = [r for r in tas.rows if r["ablation"] == abl]
-            bits = []
-            for r in rows:
-                ms = MODEL_SHORT.get(r["model"], r["model"])
-                key = f"a.{ms}.{abl}.{r['variant']}.k{r['k']}"
-                wh = {"model": r["model"], "ablation": abl, "variant": r["variant"], "k": r["k"]}
-                b = f"{r['variant']} {c(key + '.top1', 'T_ablations_seeds', wh, 'top1_mean')}"
-                if r.get("top1_std") is not None:
-                    b += f" ± {c(key + '.top1_std', 'T_ablations_seeds', wh, 'top1_std')}"
-                bits.append(b + f" (fit seeds {r['fit_seeds']})")
-            ks = sorted({r["k"] for r in rows})
-            models = sorted({r["model_label"] for r in rows})
-            L.append(f"- {abl} ({', '.join(models)}, k = {', '.join(map(str, ks))}), k-NN top-1 (%), mean over fit seeds: "
-                     + "; ".join(bits) + ".")
+            for model in sorted({r["model"] for r in tas.rows if r["ablation"] == abl},
+                                key=lambda m_: MODEL_ORDER.index(m_) if m_ in MODEL_ORDER else 99):
+                for k in sorted({r["k"] for r in tas.rows if r["ablation"] == abl and r["model"] == model}):
+                    rows = [r for r in tas.rows if r["ablation"] == abl and r["model"] == model and r["k"] == k]
+                    bits = []
+                    for r in rows:
+                        ms = MODEL_SHORT.get(r["model"], r["model"])
+                        key = f"a.{ms}.{abl}.{r['variant']}.k{r['k']}"
+                        wh = {"model": r["model"], "ablation": abl, "variant": r["variant"], "k": r["k"]}
+                        b = f"{r['variant']} {c(key + '.top1', 'T_ablations_seeds', wh, 'top1_mean')}"
+                        if r.get("top1_std") is not None:
+                            b += f" ± {c(key + '.top1_std', 'T_ablations_seeds', wh, 'top1_std')}"
+                        bits.append(b + f" (n = {r['n_seeds']}, fit seeds {r['fit_seeds']})")
+                    L.append(f"- {abl} ({MODEL_LABEL.get(model, model)}, k = {k}), k-NN top-1 (%), mean ± standard "
+                             "deviation over fit seeds: " + "; ".join(bits) + ".")
         if tax.rows:
             bits = []
             for r in tax.rows:
-                rv, rf = r["variant"], r["fit_seed"]
+                rv, rf, rk = r["variant"], r["fit_seed"], r["k"]
                 ms = MODEL_SHORT.get(r["model"], r["model"])
                 wh = {"model": r["model"], "variant": r["variant"], "k": r["k"], "fit_seed": r["fit_seed"]}
-                bits.append(f"{r['variant']} (fit seed {r['fit_seed']}) "
-                            f"{c(f'a.{ms}.A2x.{rv}.s{rf}.top1', 'T_ablations_a2_extra', wh, 'top1')}"
+                bits.append(f"{r['variant']} (k = {rk}, fit seed {r['fit_seed']}) "
+                            f"{c(f'a.{ms}.A2x.{rv}.k{rk}.s{rf}.top1', 'T_ablations_a2_extra', wh, 'top1')}"
                             f" [{r['pairing']}{'; projection: ' + r['projection'] if r.get('projection') else ''}; exact "
                             f"projection: {fmt(r.get('params_exact'))}]")
             L.append("- A2 pairings hungarian, hungarian_cycle and generic, with the pairing and projection each row records: " + "; ".join(bits) + ".")
@@ -2947,10 +3484,11 @@ def build_index(P, ctx, R: Registry) -> list[str]:
             for abl in sorted({r["ablation"] for r in ta.rows}):
                 rr = [r for r in ta.rows if r["ablation"] == abl]
                 ks = {r["k"] for r in rr}
-                seeds = {r["fit_seed"] for r in rr if r["fit_seed"] is not None and r["fit_seed"] >= 0}
-                if not want_k <= ks or len(seeds) < want_n:
-                    gaps.append(f"{abl} has k = {', '.join(map(str, sorted(ks)))} and fit seeds "
-                                f"{', '.join(map(str, sorted(seeds)))}")
+                per_k = {k: sorted({r["fit_seed"] for r in rr if r["k"] == k and r["fit_seed"] is not None
+                                    and r["fit_seed"] >= 0}) for k in sorted(ks | want_k)}
+                if not want_k <= ks or any(len(per_k[k]) < want_n for k in want_k):
+                    gaps.append(f"{abl} has " + "; ".join(f"k = {k}: fit seeds {', '.join(map(str, s)) or 'none'}"
+                                                          for k, s in per_k.items()))
             if gaps:
                 L.append(f"- Not yet run against the plan (k = {m[1]} and {m[2]}, {m[3]} seeds): " + "; ".join(gaps) + ".")
     else:
@@ -3038,6 +3576,47 @@ def build_index(P, ctx, R: Registry) -> list[str]:
         L.append(f"- {NOT_RUN}: no `runs/{P.m2}/m2_latency.csv`." + (" " + " | ".join(rs) + "." if rs else "")
                  + " The cost columns of `T_main_zeroshot` are analytic counts from `tables/cost_model.md`, not measured "
                  "latency.")
+    # M2 profile (scripts/m2_profile.py): where the time goes
+    tpf = T["T_latency_profile"]
+    pm_ = ctx.get("prof_meta") or {}
+    if tpf.rows:
+        tiny = bool(pm_.get("tiny")) or pm_.get("device_type") == "cpu"
+        src = sorted({str(r.get("time_source")) for r in tpf.rows if r.get("time_source")})
+        L.append(f"- Profile (why the converted models are slower than dense): `runs/m2_profile/` (scripts/m2_profile.py), "
+                 f"model {pm_.get('model')}, seed {pm_.get('seed')}, git {short((pm_.get('git') or {}).get('git_hash'))}"
+                 f"{' (dirty)' if (pm_.get('git') or {}).get('git_dirty') else ''}, {pm_.get('date')}, device "
+                 f"{(pm_.get('env') or {}).get('gpu') or (pm_.get('env') or {}).get('device') or pm_.get('device_type')}; "
+                 f"batch {pm_.get('batch')}, modes {', '.join(pm_.get('modes') or [])}; time source: {'; '.join(src)}. "
+                 "Report `runs/m2_profile/M2_PROFILE.md`; tables `T_latency_profile` (category breakdown, gap to dense by "
+                 "category, sub-module split) and `T_latency_profile_triton`."
+                 + (" TINY smoke test on CPU: operator self times, not a measurement." if tiny else ""))
+        modes = sorted({r["mode"] for r in tpf.rows})
+        mode = "compile" if "compile" in modes else modes[0]
+        for r in [r for r in tpf.rows if r["mode"] == mode and r["variant"] not in ("dense", "original")]:
+            if r.get("gap_ms") is None:
+                continue
+            ms = MODEL_SHORT.get(r["model"], r["model"])
+            key = f"m2p.{ms}.{r['variant']}.k{r['k']}.b{r['batch']}.{mode}"
+            wh = {"model": r["model"], "variant": r["variant"], "k": r["k"], "mode": mode, "batch": r["batch"]}
+            parts = [f"{PROFILE_CAT_LABEL[cc]} {c(key + '.d_' + cc, 'T_latency_profile', wh, 'd_' + cc, '+.3f')}"
+                     for cc in PROFILE_CATS if r.get(f"d_{cc}") is not None]
+            if r.get("d_idle") is not None:
+                parts.append(f"idle {c(key + '.d_idle', 'T_latency_profile', wh, 'd_idle', '+.3f')}")
+            hl = None if tiny else f"M2 profile {r['variant']} k = {r['k']} ({mode}): latency gap to dense (ms)"
+            b = (f"- {r['variant']} k = {r['k']} ({mode}): median {c(key + '.latency', 'T_latency_profile', wh, 'latency_ms_median', '.3f')} ms, "
+                 f"gap to dense {c(key + '.gap', 'T_latency_profile', wh, 'gap_ms', '+.3f', headline=hl)} ms = "
+                 + ", ".join(parts))
+            if r.get("sub_sum_delta_ms") is not None:
+                sp = [f"{lab} {c(key + '.' + p_ + '_delta', 'T_latency_profile', wh, p_ + '_delta_ms', '+.3f')}"
+                      for p_, lab in (("mlp", "MLP"), ("attention", "attention"), ("rotation", "rotations"))
+                      if r.get(f"{p_}_delta_ms") is not None]
+                b += (f"; sub-modules (0-based blocks {r.get('sub_blocks')}): " + ", ".join(sp)
+                      + f" (remainder {c(key + '.sub_remainder', 'T_latency_profile', wh, 'sub_remainder_ms', '+.3f')})")
+            L.append(b + ".")
+    else:
+        rs = reasons(["M2 profile", "m2_profile"])
+        L.append(f"- Profile (scripts/m2_profile.py): {NOT_RUN} (no `runs/m2_profile/m2_profile.csv`)."
+                 + (" " + " | ".join(rs) + "." if rs else ""))
     L.append("")
     L += ["## Tier 2: linear probes, transfer, segmentation", ""]
     t2, t2x = T["T_tier2"], T["T_tier2_transfer"]
@@ -3080,7 +3659,45 @@ def build_index(P, ctx, R: Registry) -> list[str]:
             L.append(b + ".")
     else:
         L.append(f"- Transfer probes (CIFAR-100, Flowers-102, Pets, DTD): {NOT_RUN} (no `runs/t2/t2_transfer.csv`).")
-    L.append(f"- ADE20K linear segmentation: {NOT_RUN} (no result files in the repo).")
+    tsg, si = T["T_tier2_seg"], ctx["seg_info"]
+    if tsg.rows:
+        rr0 = tsg.rows[0]
+        L.append(f"- ADE20K linear segmentation: `{si['csv']}` and `{si['dir']}/seg/<model>/<variant>.json` "
+                 f"(scripts/tier2_ade20k.py), git {', '.join(sorted({short(r['_git']) for r in tsg.rows}))}"
+                 f"{' (dirty)' if any(r.get('git_dirty') for r in tsg.rows) else ''}, seed(s) "
+                 f"{', '.join(sorted({str(r['_seed']) for r in tsg.rows}))}; crop {fmt(rr0.get('crop'), 'd')} px, "
+                 f"{', '.join(sorted({fmt(r.get('iterations'), ',d') for r in tsg.rows}))} iterations, batch "
+                 f"{fmt(rr0.get('batch_size'), 'd')}; run meta "
+                 + (", ".join(f"`{mm['file']}`" for mm in si["meta"].values()) or "not found") + ". Tables "
+                 "`T_tier2_seg` and `T_tier2_seg_classes` (per-class IoU).")
+        for r in tsg.rows:
+            ms = MODEL_SHORT.get(r["model"], r["model"])
+            wh = {"model": r["model"], "variant": r["variant"]}
+            key = f"t2seg.{ms}.{r['variant']}"
+            hl = (f"ADE20K mIoU, {r['model_label']} {r['variant']}"
+                  if r.get("family") == "original" or (r.get("family"), r.get("method")) in T2_MIRROR else None)
+            b = (f"- ADE20K, {r['model_label']} {r['variant']}: mIoU {c(key + '.miou', 'T_tier2_seg', wh, 'mIoU', headline=hl)}, "
+                 f"aAcc {c(key + '.aacc', 'T_tier2_seg', wh, 'aAcc')}, mAcc {c(key + '.macc', 'T_tier2_seg', wh, 'mAcc')}")
+            if r.get("delta_miou_vs_original") is not None:
+                b += f", change vs original {c(key + '.delta', 'T_tier2_seg', wh, 'delta_miou_vs_original', '+.2f')}"
+            for base in ("svd", "random"):
+                if r.get(f"margin_{base}_miou") is not None:
+                    b += f", vs {base.upper() if base == 'svd' else base} {c(key + '.margin_' + base, 'T_tier2_seg', wh, f'margin_{base}_miou', '+.2f')}"
+            if r.get("model_params") is not None:
+                b += f"; params {c(key + '.params', 'T_tier2_seg', wh, 'model_params', ',d')}"
+            if r.get("vexact_max_rel_err") is not None:
+                b += (f"; V-exact rebuilt at {fmt(r.get('vexact_built_px'), 'd')} px, largest relative error in the span "
+                      f"{c(key + '.vexact_err', 'T_tier2_seg', wh, 'vexact_max_rel_err', '.1e')} (bar "
+                      f"{c(key + '.vexact_bar', 'T_tier2_seg', wh, 'vexact_bar', 'g')})")
+            if r.get("note"):
+                b += f" ({r['note']})"
+            L.append(b + ".")
+        for model, miss in si["missing"].items():
+            L.append(f"- ADE20K, {MODEL_LABEL.get(model, model)}: variants named in `{si['meta'][model]['file']}` without a "
+                     f"row: {', '.join(miss)} ({NOT_RUN}).")
+    else:
+        rs = reasons(["ADE20K"])
+        L.append(f"- ADE20K linear segmentation: {NOT_RUN} (no `{si['csv']}`)." + (" " + " | ".join(rs) + "." if rs else ""))
     L.append("")
     # ---------------------------------------------------------------- inputs
     L += ["## Inputs found and missing", ""]
@@ -3249,28 +3866,43 @@ def main(argv=None) -> dict:
     T["T_e1_history"] = build_e1_history(P, e1, e1b, diag, commits)
     T["T_x_checks"] = build_x_checks(P, x1, x1b, x4, m1, plan_text)
     T["T_attention"], T["T_attention_vexact"], T["T_attention_conversion"] = build_attention(P, m1)
-    T["T_ablations"], T["T_ablations_seeds"], T["T_ablations_a2_extra"], a_files = build_ablations(P)
+    T["T_ablations"], T["T_ablations_seeds"], T["T_ablations_a2_extra"], a_files, a_dups = build_ablations(P)
     T["T_tier2"], T["T_tier2_transfer"] = build_tier2(P, T["T_main_zeroshot"], T["T_healing"], m1, x2)
+    T["T_tier2_seg"], T["T_tier2_seg_classes"], seg_info = build_tier2_seg(P, plan_text)
     add_linear_to_healing(T["T_healing"], T["T_tier2"])
+    T["T_healing_vexact"], vx_info = build_healing_vexact(P, m1, {m_: a_["depth"] for m_, a_ in archs.items()})
     T["T_latency"], T["T_latency_checks"], m2_meta = build_latency(P, T["T_main_zeroshot"], archs)
+    T["T_latency_profile"], T["T_latency_profile_triton"], prof_meta = build_latency_profile(P)
     T["T_f4"], T["T_f4_p2"], f4_files, _ = build_f4(P)
     T["T_prereg"] = build_prereg(P, e1, e1b, f3, d_free, T["T_healing_p3"], T["T_generality_p4"], x1, status, th,
                                  commits, f4)
 
     # ------------------------------------------------------------- external scripts (F1, F2)
     f1res, f2res = [], []
+    # The DINOv2 size pair has one F1 group per model, so f1_tax.py's default histogram blocks (first half of the
+    # deepest model in the group) are each model's own first half (DINOv2-L has 24 blocks).
     f1_groups = (("f1_dinov2", "x2", ["perlayer_reg", "perlayer_plain"]),
-                 ("f1_g", "g", ["deit3_b16", "mae_b16", "siglip2_b16"]))
-    # f2_drift.py draws at most three models per figure: the paper pair (both DINOv2 models), then G.
+                 ("f1_g", "g", ["deit3_b16", "mae_b16", "siglip2_b16"]),
+                 ("f1_g_dinov2_s", "g", [G_SIZE_PAIR["dinov2_vits14_reg"]]),
+                 ("f1_g_dinov2_l", "g", [G_SIZE_PAIR["dinov2_vitl14_reg"]]))
+    # f2_drift.py draws at most three models per figure: the paper pair (both DINOv2 models), then G (DeiT-III, MAE,
+    # SigLIP2), then the DINOv2 size pair (S and L).
     f2_groups = (("f2_dinov2", [r for r in gen_runs if r["model"] in MAIN_MODELS]),
-                 ("f2_g", [r for r in gen_runs if r["model"] not in MAIN_MODELS]))
+                 ("f2_g", [r for r in gen_runs if r["model"] not in MAIN_MODELS and r["model"] not in G_SIZE_PAIR]),
+                 ("f2_g_dinov2_sl", [r for r in gen_runs if r["model"] in G_SIZE_PAIR]))
     # Skipped scripts: reuse outputs of an earlier collection (marked "reused"), so the package keeps F1 and F2,
     # and flag them as stale when runs or operator files are present now that they did not read.
     if not a.skip_scripts:
         for tag, sub, arms in f1_groups:
             runs_dir = P.runs / sub
-            fr = run_f1(P, sdir / tag, runs_dir, arms) if runs_dir.is_dir() else {"status": NOT_RUN, "arms": arms,
-                                                                                  "error": f"no {runs_dir}"}
+            have = [r for r in (x2 if sub == "x2" else g).values() if r["arm"] in arms
+                    and r["layers"] is not None and r["mlp"] is not None]
+            if not runs_dir.is_dir():
+                fr = {"status": NOT_RUN, "arms": arms, "error": f"no {runs_dir}"}
+            elif not have:
+                fr = {"status": NOT_RUN, "arms": arms, "error": f"no completed runs for arm(s) {', '.join(arms)}"}
+            else:
+                fr = run_f1(P, sdir / tag, runs_dir, arms)
             fr.update({"tag": tag, "runs_dir": runs_dir, "out": sdir / tag})
             fr["hist"] = bool(fr.get("status") == "ok" and any(
                 npz_for(P, r) is not None for r in (x2 if sub == "x2" else g).values() if r["arm"] in arms))
@@ -3335,7 +3967,7 @@ def main(argv=None) -> dict:
     # ------------------------------------------------------------- write tables
     groups = [
         ("T_main_zeroshot", "Main zero-shot table", ["T_main_zeroshot"]),
-        ("T_healing", "Healing pilot (M3)", ["T_healing", "T_healing_p3"]),
+        ("T_healing", "Healing (M3 pilot and V-exact healing)", ["T_healing", "T_healing_p3", "T_healing_vexact"]),
         ("T_generality", "Generality (G)", ["T_generality", "T_generality_p4"]),
         ("T_structure_per_layer", "Structure per layer (F1 style)", ["T_structure_summary"]),
         ("T_prereg", "Pre-registered checks", ["T_prereg"]),
@@ -3343,8 +3975,9 @@ def main(argv=None) -> dict:
         ("T_e1_history", "E1 and E1b (earlier protocol)", ["T_e1_history"]),
         ("T_attention", "Attention conversion (M1)", ["T_attention", "T_attention_vexact", "T_attention_conversion"]),
         ("T_ablations", "Ablations (A1 to A5)", ["T_ablations_seeds", "T_ablations", "T_ablations_a2_extra"]),
-        ("T_tier2", "Tier 2: linear probes", ["T_tier2", "T_tier2_transfer"]),
+        ("T_tier2", "Tier 2: linear probes, transfer and ADE20K segmentation", ["T_tier2", "T_tier2_transfer", "T_tier2_seg"]),
         ("T_latency", "M2: latency and analytic cost", ["T_latency", "T_latency_checks"]),
+        ("T_latency_profile", "M2 profile: where the time goes", ["T_latency_profile", "T_latency_profile_triton"]),
         ("T_f4", "F4: symmetry against low rank (P2)", ["T_f4_p2", "T_f4"]),
         ("T_f1_ranges", "F1 ranges (scripts/f1_tax.py)", ["T_f1_ranges"]),
         ("T_f2_drift", "F2 drift summary (scripts/f2_drift.py)", ["T_f2_drift"]),
@@ -3367,6 +4000,18 @@ def main(argv=None) -> dict:
                 lines += sub.md_lines(rr, heading_level="###")
             if not struct_runs:
                 lines += ["No rows (inputs not run).", ""]
+        elif name == "T_latency_profile":
+            tp, tt = T["T_latency_profile"], T["T_latency_profile_triton"]
+            lines += tp.md_lines()
+            conv = [r for r in tp.rows if r["variant"] not in ("dense", "original")]
+            if tp.rows:
+                for view in profile_views(tp):
+                    lines += view.md_lines(conv, heading_level="###")
+            if tp.rows and not tt.rows and (P.runs / "m2_profile" / "m2_triton.csv").is_file():
+                lines += [f"## {tt.title}", "", "No fused Triton kernels in this run (they appear only in compiled "
+                          "runs; m2_triton.csv has no rows).", ""]
+            else:
+                lines += tt.md_lines()
         elif name == "T_main_zeroshot":
             lines += T["T_main_zeroshot"].md_lines()
             notrun = [r for r in T["T_main_zeroshot"].rows if r["status"] == NOT_RUN]
@@ -3454,6 +4099,21 @@ def main(argv=None) -> dict:
     p2r = T["T_prereg"].find(id="P2")
     if p2r is not None and str(p2r.get("verdict", "")).startswith("INCOMPLETE"):
         dev.append(f"P2: {p2r['verdict']} (runs/f4/f4_p2.json).")
+    for d_ in a_dups:
+        dev.append(f"A: the key ablation/variant/k/fit seed {d_} appears in more than one CSV; the first was kept.")
+    for r in T["T_tier2_seg"].rows:
+        if r.get("note"):
+            dev.append(f"Tier 2 ADE20K: {r['model_label']} {r['variant']}: {r['note']}.")
+    for r in T["T_healing_vexact"].rows:
+        if r.get("tiny"):
+            dev.append(f"V-exact healing k = {r['k']}: `{r['dir']}` holds a TINY smoke-test run, not a result.")
+        if r.get("exact_pass") is False:
+            dev.append(f"V-exact healing k = {r['k']}: exactness after healing fails its tolerance "
+                       f"({fmt(r.get('exact_max_rel'), '.2e')} against {fmt(r.get('exact_tol'), 'g')}).")
+        if r.get("flip_fp32_pass") is False:
+            dev.append(f"V-exact healing k = {r['k']}: the fp32 flip check is not 100% ({fmt(r.get('flip_fp32'), '.2f')}%).")
+    if prof_meta and (prof_meta.get("tiny") or prof_meta.get("device_type") == "cpu"):
+        dev.append("M2 profile: `runs/m2_profile/` holds a CPU smoke test (operator self times), not a GPU measurement.")
     inv = []
 
     def inv_add(path, what):
@@ -3468,15 +4128,24 @@ def main(argv=None) -> dict:
     for n in sorted(x2):
         inv_add(f"runs/x2/{n}/results/e1_meta.json", "X2/X3 run (meta)")
         inv_add(f"runs/x2/{n}/results/e1_surgery.csv", "X2/X3 run (surgery)")
-    for n in sorted(g):
-        inv_add(f"runs/g/{n}/results/e1_meta.json", "G run (meta)")
-        inv_add(f"runs/g/{n}/results/e1_surgery.csv", "G run (surgery)")
+    for n in sorted(set(g) | {f"{arm}_s0" for arm in G_SIZE_PAIR.values()}):
+        what = "G run, DINOv2 size pair" if re.sub(r"_s\d+$", "", n) in G_SIZE_PAIR.values() else "G run"
+        inv_add(f"runs/g/{n}/results/e1_meta.json", f"{what} (meta)")
+        inv_add(f"runs/g/{n}/results/e1_surgery.csv", f"{what} (surgery)")
     for f in ("m1_knn.csv", "m1_meta.json", "m1_ranks.csv", "m1_heads.csv", "m1_vexact.csv", "m1_vexact_blocks.csv",
               "m1_exactness.csv", "m1_flipcheck.json"):
         inv_add(f"runs/m1/{f}", "M1")
     for mth in ("mirror", "svd", "random"):
         inv_add(f"runs/m3_pilot/{mth}/knn.json", f"M3 pilot {mth}: final k-NN")
         inv_add(f"runs/m3_pilot/{mth}/final/metrics.json", f"M3 pilot {mth}: healing metrics")
+    for r in T["T_healing_vexact"].rows:
+        kk = r["k"]
+        files = ["summary.json", "knn.json", "exactness.json", "final/metrics.json", "lr_selection/lr_selection.json",
+                 "SUMMARY.md"]
+        if r.get("full_conversion"):
+            files.insert(3, "flipcheck.json")
+        for fn in files:
+            inv_add(f"runs/m3_vexact/k{kk}/{fn}", f"V-exact healing k = {kk}")
     inv_add("runs/d/d_datafree.json", "D (P5)")
     inv_add("runs/f3/f3_gate_G3.json", "F3 (P1, G3)")
     inv_add("runs/f4/f4_p2.json", "F4 (P2)")
@@ -3485,10 +4154,22 @@ def main(argv=None) -> dict:
     for m_ in re.findall(r'"([^"]+)"', mm_[1]) if mm_ else []:
         inv_add(f"runs/f4/f4_{m_}.csv", "F4 per-block rows (P2 model)")
     inv_add("runs/a", "A1 to A5 ablations")
+    for f in a_files:
+        inv_add(P.rel(f), "ablation rows (every k and fit seed in the file)")
     for f in ("m2_latency.csv", "m2_checks.csv", "m2_meta.json"):
         inv_add(f"runs/{P.m2}/{f}", "M2 latency")
+    for f in ("m2_profile.csv", "m2_submodules.csv", "m2_triton.csv", "m2_top_kernels.csv", "M2_PROFILE.md",
+              "m2_profile_meta.json"):
+        inv_add(f"runs/m2_profile/{f}", "M2 profile (scripts/m2_profile.py)")
     inv_add("runs/t2/t2_linear.csv", "Tier 2 ImageNet linear probe")
     inv_add("runs/t2/t2_transfer.csv", "Tier 2 transfer probes")
+    inv_add("runs/t2_seg/t2_ade20k.csv", "Tier 2 ADE20K linear segmentation (scripts/tier2_ade20k.py)")
+    seg_models = sorted({r["model"] for r in T["T_tier2_seg"].rows} | set(seg_info["meta"]))
+    for m_ in seg_models:
+        inv_add(f"runs/t2_seg/seg/{m_}", f"Tier 2 ADE20K per-variant JSON with per-class IoU ({m_})")
+        inv_add(f"runs/t2_seg/t2_ade20k_meta_{m_}.json", f"Tier 2 ADE20K run meta ({m_})")
+    if not seg_models:
+        inv_add("runs/t2_seg/seg", "Tier 2 ADE20K per-variant JSON with per-class IoU")
     for r in list(x2.values()) + list(g.values()):
         if r["operator_mode"] == "per_layer" and r["status"] != NOT_RUN:
             inv_add(P.rel(P.artifacts / r["res_rel"] / "e1_operators.npz") if npz_for(P, r) is None or
@@ -3498,7 +4179,8 @@ def main(argv=None) -> dict:
     ctx = {"tables": T, "status": status, "date": time.strftime("%Y-%m-%d %H:%M:%S"), "git": git, "commits": commits,
            "e1": e1, "e1b": e1b, "x1": x1, "x1b": x1b, "x2": x2, "g": g, "x4": x4, "m1": m1, "m3": m3, "d": d_free,
            "f4": f4, "f1": f1res, "f2": f2res, "a_files": a_files, "inventory": inv, "deviations": dev,
-           "plan_text": plan_text, "m2_meta": m2_meta, "f4_files": f4_files, "figs_dir": fdir}
+           "plan_text": plan_text, "m2_meta": m2_meta, "f4_files": f4_files, "figs_dir": fdir, "seg_info": seg_info,
+           "vx_info": vx_info, "prof_meta": prof_meta}
 
     # ------------------------------------------------------------- INDEX and numbers
     R = Registry()

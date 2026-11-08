@@ -1,0 +1,187 @@
+{
+  "experiment": "M2 profile (why the converted models are slower than dense)",
+  "date": "2026-11-09 00:51:18",
+  "model": "tiny random timm ViT",
+  "tiny": true,
+  "seed": 0,
+  "git": {
+    "git_hash": "53c8aada92650ead0259f15a3aafc7cb3e67b8ff",
+    "git_dirty": false
+  },
+  "env": {
+    "python": "3.12.4",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.11.0+cpu",
+    "numpy": "2.4.4",
+    "device": "cpu"
+  },
+  "device_type": "cpu",
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "hub_repo": "facebookresearch/dinov2",
+    "structure": "runs/m1/m1_structure.npz",
+    "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "variants": "dense,vexact,vlocal,mlp_only,svd,prune",
+    "k": "2,4",
+    "batch": 2,
+    "modes": null,
+    "compile_mode": "default",
+    "warmup": 1,
+    "iters": 2,
+    "prof_iters": 2,
+    "sub_warmup": 1,
+    "sub_iters": 2,
+    "sub_blocks": "all",
+    "no_submodules": false,
+    "top": 30,
+    "align": 8,
+    "img_size": 224,
+    "seed": 0,
+    "memory_fraction": 0.25,
+    "reference": "runs/m2_clean/m2_latency.csv",
+    "out": "C:/Users/djtde/AppData/Local/Temp/claude/bdc5aa6c939b2c1f/22365ec8-1f21-4943-8670-9b1e949949de/scratchpad/m2_profile_tiny",
+    "device": null,
+    "tiny": true,
+    "ks": [
+      2,
+      4
+    ],
+    "mode_list": [
+      "eager"
+    ],
+    "variant_list": [
+      "dense",
+      "vexact",
+      "vlocal",
+      "mlp_only",
+      "svd",
+      "prune"
+    ],
+    "img_px": 56
+  },
+  "m2_args": {
+    "model": "dinov2_vitb14_reg",
+    "hub_repo": "facebookresearch/dinov2",
+    "structure": "runs/m1/m1_structure.npz",
+    "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "k": "2,4",
+    "variants": "dense,vexact,vlocal,mlp_only,svd,prune",
+    "batches": null,
+    "modes": null,
+    "compile_mode": "default",
+    "warmup": 2,
+    "iters": 5,
+    "align": 8,
+    "check_images": 8,
+    "cache_dir": "cache",
+    "img_size": 224,
+    "seed": 0,
+    "memory_fraction": 0.25,
+    "out": null,
+    "force": false,
+    "device": null,
+    "tiny": true,
+    "ks": [
+      2,
+      4
+    ],
+    "batch_list": [
+      1,
+      4
+    ],
+    "mode_list": [
+      "eager"
+    ],
+    "variant_list": [
+      "dense",
+      "vexact",
+      "vlocal",
+      "mlp_only",
+      "svd",
+      "prune"
+    ],
+    "random_seed": 1,
+    "register_margin": 0.0,
+    "img_px": 56
+  },
+  "provenance": {
+    "structure": "tiny planted structure",
+    "a_out_offset": 1
+  },
+  "ks": [
+    2,
+    4
+  ],
+  "variants": [
+    "dense",
+    "vexact",
+    "vlocal",
+    "mlp_only",
+    "svd",
+    "prune",
+    "vexact",
+    "vlocal",
+    "mlp_only",
+    "svd",
+    "prune"
+  ],
+  "batch": 2,
+  "modes": [
+    "eager"
+  ],
+  "warmup": 1,
+  "iters": 2,
+  "prof_iters": 2,
+  "sub_warmup": 1,
+  "sub_iters": 2,
+  "sub_blocks": "all",
+  "align": 8,
+  "compile_mode": "default",
+  "depth": 4,
+  "embed_dim": 64,
+  "heads": 4,
+  "head_dim": 16,
+  "n_tokens": 17,
+  "n_patches": 16,
+  "img_size": 56,
+  "memory_fraction": 0.25,
+  "nvidia_smi": {
+    "before": "cpu",
+    "after": "cpu"
+  },
+  "skipped": [],
+  "errors": [],
+  "reference": null,
+  "profiler": {
+    "activities": "CPU",
+    "time_source": "cpu operator self time",
+    "excluded": "record_function annotations (gpu_user_annotation, '## ... ##', compiled-region markers)"
+  },
+  "categories": {
+    "gemm": "GEMM (cuBLAS, CUTLASS, convolution)",
+    "attention": "attention (flash or memory-efficient SDPA)",
+    "triton": "fused Triton kernels (compile)",
+    "elementwise": "elementwise and activation",
+    "norm": "normalisation",
+    "memory": "memory movement (copy, cat, gather, index, permute, pad, fill)",
+    "other": "other"
+  },
+  "timing_dtype": "bfloat16 weights and inputs",
+  "tf32": false,
+  "timing": {
+    "stages": {
+      "load": 14.26,
+      "build, time and profile": 15.34
+    },
+    "total_s": 29.92
+  },
+  "files": [
+    "m2_profile.csv",
+    "m2_submodules.csv",
+    "m2_triton.csv",
+    "m2_top_kernels.csv",
+    "top_kernels/",
+    "M2_PROFILE.md",
+    "m2_profile_meta.json"
+  ]
+}

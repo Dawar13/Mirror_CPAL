@@ -1,0 +1,213 @@
+{
+  "config": {
+    "blocks": [
+      0,
+      1
+    ],
+    "seed": 0,
+    "lr": 0.001,
+    "epochs": 1.0,
+    "max_steps": null,
+    "batch_size": 8,
+    "micro_batch": 4,
+    "weight_decay": 0.05,
+    "decay_1d": false,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "warmup_frac": 0.05,
+    "warmup_steps": null,
+    "min_lr_ratio": 0.0,
+    "grad_clip": null,
+    "crop_size": 56,
+    "crop_scale": [
+      0.35,
+      1.0
+    ],
+    "crop_ratio": [
+      0.75,
+      1.3333333333333333
+    ],
+    "hflip_p": 0.5,
+    "w_cls": 1.0,
+    "w_patch": 1.0,
+    "w_block": 1.0,
+    "normaliser": "fixed",
+    "calib_images": 8,
+    "train_scope": "all",
+    "grad_checkpoint": false,
+    "amp": "auto",
+    "share_prefix": true,
+    "eval_every": 0,
+    "eval_batch": null,
+    "max_heldout": null,
+    "log_every": 0,
+    "prefetch": 0,
+    "save_checkpoint": true,
+    "checkpoint_path": null
+  },
+  "seed": 0,
+  "git_hash": "53c8aada92650ead0259f15a3aafc7cb3e67b8ff",
+  "git_dirty": false,
+  "env": {
+    "python": "3.12.4",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.11.0+cpu",
+    "numpy": "2.4.4",
+    "device": "cpu"
+  },
+  "constraints": [
+    {
+      "type": "MirrorMLPConstraint",
+      "blocks": [
+        0,
+        1
+      ],
+      "n_pairs": [
+        85,
+        85
+      ],
+      "n_self": [
+        86,
+        86
+      ],
+      "d_plus_in": [
+        36,
+        36
+      ],
+      "d_plus_out": [
+        36,
+        36
+      ]
+    },
+    {
+      "type": "MirrorAttnConstraint",
+      "blocks": [
+        0,
+        1
+      ],
+      "n_head_pairs": [
+        1,
+        2
+      ],
+      "n_self_heads": [
+        2,
+        0
+      ],
+      "d_plus_in": [
+        36,
+        36
+      ],
+      "d_plus_out": [
+        36,
+        36
+      ]
+    },
+    {
+      "type": "VExactEmbeddings",
+      "blocks": [
+        0,
+        1
+      ],
+      "d_plus": 36,
+      "embeddings": "trained, re-projected every step",
+      "reg_perm": []
+    }
+  ],
+  "constraint_checks": {
+    "0:MirrorMLPConstraint": {
+      "max_rel_violation": 3.52546206311194e-08,
+      "per_block": [
+        3.512127167210927e-08,
+        3.52546206311194e-08
+      ]
+    },
+    "1:MirrorAttnConstraint": {
+      "max_rel_violation": 1.8041957493909183e-08,
+      "per_block": [
+        1.8036040061322373e-08,
+        1.8041957493909183e-08
+      ]
+    },
+    "2:VExactEmbeddings": {
+      "max_share": 3.7692765850045536e-16,
+      "shares": {
+        "patch_embed.weight": 3.187322155853813e-16,
+        "patch_embed.bias": 1.8269312807218647e-16,
+        "pos_embed.patches": 2.9668065135344397e-16,
+        "pos_embed.cls": 3.7692765850045536e-16,
+        "cls_token": 1.6156868030643245e-16
+      },
+      "embeddings_train": true
+    }
+  },
+  "n_trainable": 138304,
+  "n_trainable_tensors": 20,
+  "trainable_names": [
+    "cls_token",
+    "pos_embed",
+    "patch_embed.proj.weight",
+    "patch_embed.proj.bias",
+    "blocks.0.attn.qkv.weight",
+    "blocks.0.attn.qkv.bias",
+    "blocks.0.attn.proj.weight",
+    "blocks.0.attn.proj.bias",
+    "blocks.0.mlp.fc1.weight",
+    "blocks.0.mlp.fc1.bias",
+    "blocks.0.mlp.fc2.weight",
+    "blocks.0.mlp.fc2.bias",
+    "blocks.1.attn.qkv.weight",
+    "blocks.1.attn.qkv.bias",
+    "blocks.1.attn.proj.weight",
+    "blocks.1.attn.proj.bias",
+    "blocks.1.mlp.fc1.weight",
+    "blocks.1.mlp.fc1.bias",
+    "blocks.1.mlp.fc2.weight",
+    "blocks.1.mlp.fc2.bias"
+  ],
+  "amp": "none",
+  "share_prefix_used": false,
+  "first_grad_block": 0,
+  "normalisers": {
+    "block0": 0.21701092630046792,
+    "block1": 0.21731192472715577,
+    "cls": 1.0237083904582822,
+    "patch": 1.1156657056336026
+  },
+  "weights": {
+    "cls": 1.0,
+    "patch": 1.0,
+    "block0": 1.0,
+    "block1": 1.0
+  },
+  "total_steps": 4,
+  "steps_done": 4,
+  "warmup_steps": 0,
+  "steps_per_epoch": 4,
+  "images_seen": 32,
+  "diverged": false,
+  "heldout_images": 8,
+  "heldout_initial": {
+    "total": 1.1908330940863405,
+    "block0": 0.0018075589363485728,
+    "block1": 0.0037212092983174346,
+    "cls": 0.6087408994741289,
+    "patch": 0.5765634263775455
+  },
+  "heldout_final": {
+    "total": 0.9532538756119762,
+    "block0": 0.02422992829948696,
+    "block1": 0.026616684055146417,
+    "cls": 0.3163425667984246,
+    "patch": 0.5860646964589182
+  },
+  "train_loss_first": 1.2407349827117287,
+  "train_loss_last": 0.9752790555357933,
+  "train_loss_last10_mean": 1.0793820895341923,
+  "seconds_total": 0.91,
+  "seconds_train": 0.79,
+  "peak_memory_gb": null,
+  "checkpoint": "C:\\Users\\djtde\\AppData\\Local\\Temp\\claude\\bdc5aa6c939b2c1f\\22365ec8-1f21-4943-8670-9b1e949949de\\scratchpad\\vexact_tiny\\k2\\final\\trained_blocks.pt"
+}
