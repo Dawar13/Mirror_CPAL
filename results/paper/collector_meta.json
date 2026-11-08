@@ -1,8 +1,8 @@
 {
   "written_by": "scripts/collect_results.py",
-  "date": "2026-11-08 23:04:00",
+  "date": "2026-11-09 00:09:30",
   "git": {
-    "git_hash": "b15a83447af90af7fcc56dded4c4686621efa9e1",
+    "git_hash": "ced98c85c96c87aa8e5847586e1acf3a51b95474",
     "git_dirty": true
   },
   "args": {
@@ -60,9 +60,9 @@
     "T_ablations_seeds": 25,
     "T_ablations_a2_extra": 9,
     "T_tier2": 14,
-    "T_tier2_transfer": 12,
-    "T_latency": 120,
-    "T_latency_checks": 57,
+    "T_tier2_transfer": 24,
+    "T_latency": 102,
+    "T_latency_checks": 48,
     "T_f4": 36,
     "T_f4_p2": 8,
     "T_prereg": 46,
@@ -253,6 +253,26 @@
       "present": true
     },
     {
+      "path": "runs/g/dinov2_l_reg_s0/results/e1_meta.json",
+      "what": "G run (meta)",
+      "present": false
+    },
+    {
+      "path": "runs/g/dinov2_l_reg_s0/results/e1_surgery.csv",
+      "what": "G run (surgery)",
+      "present": false
+    },
+    {
+      "path": "runs/g/dinov2_s_reg_s0/results/e1_meta.json",
+      "what": "G run (meta)",
+      "present": false
+    },
+    {
+      "path": "runs/g/dinov2_s_reg_s0/results/e1_surgery.csv",
+      "what": "G run (surgery)",
+      "present": false
+    },
+    {
       "path": "runs/g/mae_b16_s0/results/e1_meta.json",
       "what": "G run (meta)",
       "present": false
@@ -378,17 +398,17 @@
       "present": true
     },
     {
-      "path": "runs/m2/m2_latency.csv",
+      "path": "runs/m2_clean/m2_latency.csv",
       "what": "M2 latency",
       "present": true
     },
     {
-      "path": "runs/m2/m2_checks.csv",
+      "path": "runs/m2_clean/m2_checks.csv",
       "what": "M2 latency",
       "present": true
     },
     {
-      "path": "runs/m2/m2_meta.json",
+      "path": "runs/m2_clean/m2_meta.json",
       "what": "M2 latency",
       "present": true
     },
@@ -464,32 +484,34 @@
     "G4: FAIL (runs/d/d_datafree.json).",
     "G: the MAE run has no e1_meta.json (its k-NN run was stopped); its decision rows are recomputed with mirror.report.decide and its git hash is not recorded.",
     "X2: `runs/x2/shared16_plain_s0` is partial (missing e1_meta.json).",
+    "Tier 2: DINOv2-reg dtd vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg dtd healed_svd_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg flowers102 original: the chosen weight decay 0.0316 is at the edge of the grid.",
+    "Tier 2: DINOv2-reg flowers102 vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg flowers102 healed_mirror_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
+    "Tier 2: DINOv2-reg flowers102 healed_random_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg flowers102 healed_svd_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
+    "Tier 2: DINOv2-reg flowers102 vlocal_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
+    "Tier 2: DINOv2-reg pets vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg pets healed_mirror_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg pets healed_svd_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
     "M2 check failed: dense k = 0 bfloat16 (max_abs_unit < 0.001, value 4.22e-03).",
     "M2 check failed: vlocal k = 6 bfloat16 (max_abs_unit < 0.001, value 9.04e-03).",
-    "M2 check failed: vlocal_r2 k = 6 bfloat16 (max_abs_unit < 0.001, value 1.01e-02).",
     "M2 check failed: vexact k = 6 bfloat16 (max_abs_unit < 0.001, value 1.22e-02).",
     "M2 check failed: mlp_only k = 6 bfloat16 (max_abs_unit < 0.001, value 7.50e-03).",
     "M2 check failed: svd k = 6 bfloat16 (max_abs_unit < 0.001, value 9.99e-03).",
     "M2 check failed: prune k = 6 bfloat16 (max_abs_unit < 0.001, value 2.01e-03).",
     "M2 check failed: vlocal k = 9 bfloat16 (max_abs_unit < 0.001, value 9.31e-03).",
-    "M2 check failed: vlocal_r2 k = 9 bfloat16 (max_abs_unit < 0.001, value 8.25e-03).",
     "M2 check failed: vexact k = 9 bfloat16 (max_abs_unit < 0.001, value 5.40e-03).",
     "M2 check failed: mlp_only k = 9 bfloat16 (max_abs_unit < 0.001, value 5.18e-03).",
     "M2 check failed: svd k = 9 bfloat16 (max_abs_unit < 0.001, value 1.84e-03).",
     "M2 check failed: prune k = 9 bfloat16 (max_abs_unit < 0.001, value 3.55e-03).",
     "M2 check failed: vlocal k = 12 bfloat16 (max_abs_unit < 0.001, value 7.36e-03).",
-    "M2 check failed: vlocal_r2 k = 12 bfloat16 (max_abs_unit < 0.001, value 9.55e-03).",
     "M2 check failed: vexact k = 12 bfloat16 (max_abs_unit < 0.001, value 1.37e-02).",
     "M2 check failed: mlp_only k = 12 bfloat16 (max_abs_unit < 0.001, value 7.09e-03).",
     "M2 check failed: svd k = 12 bfloat16 (max_abs_unit < 0.001, value 3.94e-03).",
     "M2 check failed: prune k = 12 bfloat16 (max_abs_unit < 0.001, value 2.12e-03)."
   ],
-  "n_numbers": 643,
-  "elapsed_s": 27.5
+  "n_numbers": 667,
+  "elapsed_s": 25.2
 }

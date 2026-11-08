@@ -223,6 +223,8 @@ class Paths:
     def __init__(self, root, artifacts=None):
         self.root = Path(root).resolve()
         self.runs = self.root / "runs"
+        # M2: the clean (uncontended) timing run supersedes the first, contended one in runs/m2
+        self.m2 = "m2_clean" if (self.runs / "m2_clean" / "m2_latency.csv").is_file() else "m2"
         self.results = self.root / "results"
         self.artifacts = Path(artifacts).resolve() if artifacts else self.root / "artifacts" / "a100"
         self.configs = self.root / "configs"
@@ -2025,7 +2027,7 @@ M2_TO_MAIN = {"vlocal": "vlocal", "vexact": "vexact", "mlp_only": "mirror_mlp_m1
 
 
 def build_latency(P, Tm: Table, archs: dict):
-    L = Table("T_latency", "M2: measured latency against analytic cost (runs/m2/m2_latency.csv)",
+    L = Table("T_latency", f"M2: measured latency against analytic cost (runs/{P.m2}/m2_latency.csv)",
               ["model", "variant", "k", "batch", "mode"],
               [("variant", "variant", ""), ("k", "k", "d"), ("batch", "batch", "d"), ("mode", "mode_used", ""),
                ("median ms", "latency_ms_median", ".3f"), ("img/s", "throughput_img_s", ",.0f"),
@@ -2044,7 +2046,7 @@ def build_latency(P, Tm: Table, archs: dict):
               ["variant", "k", "dtype"],
               [("variant", "variant", ""), ("k", "k", "d"), ("dtype", "dtype", ""), ("criterion", "criterion", ""),
                ("value", "value", ".2e"), ("pass", "pass", ""), ("noise floor", "noise_floor_unit", ".2e")])
-    base = P.runs / "m2"
+    base = P.runs / P.m2
     lat, chk, meta = read_csv(base / "m2_latency.csv"), read_csv(base / "m2_checks.csv"), read_json(base / "m2_meta.json")
     mgit = ((meta or {}).get("git") or {}).get("git_hash")
     status: dict = {}
@@ -2987,12 +2989,14 @@ def build_index(P, ctx, R: Registry) -> list[str]:
     tl, tck = T["T_latency"], T["T_latency_checks"]
     if tl.rows:
         mm = ctx.get("m2_meta") or {}
-        L.append(f"- Run: `runs/m2/` (scripts/m2_latency.py): model {mm.get('model')}, seed {mm.get('seed')}, git "
+        L.append(f"- Run: `runs/{P.m2}/` (scripts/m2_latency.py): model {mm.get('model')}, seed {mm.get('seed')}, git "
                  f"{short((mm.get('git') or {}).get('git_hash'))}, {mm.get('date')}, device "
                  f"{(mm.get('env') or {}).get('gpu') or (mm.get('env') or {}).get('device')}; timing settings in "
-                 "`runs/m2/m2_meta.json` (warm-up and timed runs, compile mode). Summary `runs/m2/M2_SUMMARY.md`.")
+                 f"`runs/{P.m2}/m2_meta.json` (warm-up and timed runs, compile mode). Summary `runs/{P.m2}/M2_SUMMARY.md`."
+                 + (" The first M2 run (`runs/m2/`) was timed while other jobs shared the GPU and is kept for the "
+                    "record only." if P.m2 != "m2" else ""))
         if tck.rows:
-            n_ok = R.put("m2.checks.n_pass", sum(1 for r in tck.rows if r.get("pass")), "d", source="runs/m2/m2_checks.csv",
+            n_ok = R.put("m2.checks.n_pass", sum(1 for r in tck.rows if r.get("pass")), "d", source=f"runs/{P.m2}/m2_checks.csv",
                          git_hash=tck.rows[0].get("_git"), seed=tck.rows[0].get("_seed"),
                          derived="number of rows with pass = True in m2_checks.csv")
             fails = [f"{r['variant']} k = {r['k']} {r['dtype']}" for r in tck.rows if not r.get("pass")]
@@ -3031,7 +3035,7 @@ def build_index(P, ctx, R: Registry) -> list[str]:
         L.append("- Table `T_latency` (every variant, k, batch and mode, with measured / analytic).")
     else:
         rs = reasons(["M2"])
-        L.append(f"- {NOT_RUN}: no `runs/m2/m2_latency.csv`." + (" " + " | ".join(rs) + "." if rs else "")
+        L.append(f"- {NOT_RUN}: no `runs/{P.m2}/m2_latency.csv`." + (" " + " | ".join(rs) + "." if rs else "")
                  + " The cost columns of `T_main_zeroshot` are analytic counts from `tables/cost_model.md`, not measured "
                  "latency.")
     L.append("")
@@ -3316,7 +3320,7 @@ def main(argv=None) -> dict:
             for f in (Path(fr["out"]) / "plots").glob("*.png"):
                 shutil.copy2(f, fdir / f"ext_{fr['tag']}_{f.name}")
 
-    for sub, tag in (("f4", "f4"), ("m2", "m2")):
+    for sub, tag in (("f4", "f4"), (P.m2, "m2")):
         for f in sorted((P.runs / sub / "plots").glob("*.png")) if (P.runs / sub / "plots").is_dir() else []:
             shutil.copy2(f, fdir / f"ext_{tag}_{f.name}")
 
@@ -3482,7 +3486,7 @@ def main(argv=None) -> dict:
         inv_add(f"runs/f4/f4_{m_}.csv", "F4 per-block rows (P2 model)")
     inv_add("runs/a", "A1 to A5 ablations")
     for f in ("m2_latency.csv", "m2_checks.csv", "m2_meta.json"):
-        inv_add(f"runs/m2/{f}", "M2 latency")
+        inv_add(f"runs/{P.m2}/{f}", "M2 latency")
     inv_add("runs/t2/t2_linear.csv", "Tier 2 ImageNet linear probe")
     inv_add("runs/t2/t2_transfer.csv", "Tier 2 transfer probes")
     for r in list(x2.values()) + list(g.values()):
