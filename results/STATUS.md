@@ -1,54 +1,51 @@
 # STATUS (paper experiments)
 
-Updated 2026-11-08 about 10:50 UTC. Plan: `PAPER_EXPERIMENTS.md`; context: `PROJECT_CONTEXT.md` v2;
-pre-registration `PREREG_E2.md` committed as 9804f06 before any gated run. A100 available until about
-13:00 UTC, shared with another project. All numbers below come from the files named; k-NN under the
-paper protocol (operators fitted on ImageNet train, 100k train bank, all 50k validation queries, bf16 features).
+Updated 2026-11-08 about 17:40 UTC (23:10 IST), end of the A100 session. Pre-registration `PREREG_E2.md`
+committed as 9804f06 before any gated run. Every number below is in `results/paper/` (tables, `numbers.json`
+with source file, seed and commit for each value); raw outputs in `runs/`; large artefacts (operators,
+statistics, healed checkpoints, 2 GB) in `artifacts/a100/` on the laptop only. Protocol: operators fitted on
+ImageNet train (fit seeds 0, 1, 2), k-NN with a 100k train bank and 50k validation queries, bf16 features.
 
-## Stage 0
-| Item | Result | Where |
-|---|---|---|
-| X1 SVD-collapse check, gate G1 | Passed: no bug (full rank exact, folding exact, ranks match, fp32). Registers model has a genuine cliff when SVD covers 4 or more blocks; mechanism open (verify) | `runs/x1/` |
-| X2 data | 106k train images at 224 px (fit0..2, bank), 105k at 256 px (heal, healval) | VM `cache/` |
-| X4 full LayerNorm folding | Algebra correct (float64 on the registers model 5.7e-6); fp32 bar of 1e-4 missed through rounding (registers 9.8e-4, plain 1.05e-2 absolute). In practice harmless: folded registers model k-NN 78.98 vs 78.94 | `results/x4_fold_*.json`, `runs/m1/m1_knn.csv` |
-| X5 PREREG_E2.md | Committed 9804f06 | `PREREG_E2.md` |
+## Pre-registered checks
+| Check | Value | Bar | Verdict |
+|---|---|---|---|
+| G1 SVD collapse is not a bug (X1, X1b) | four checks clean | | PASS |
+| P1 plain: masking top 1% tokens cuts late-layer error | 2.27x | >= 2x | PASS |
+| P1 registers: late-layer error vs early | 1.30x | <= 2x | PASS |
+| G3 | | one P1 bullet passes | PASS |
+| P2 energy rule predicts single-block winner (F4, 3 models x 12 blocks) | 16 of 36 (0.44) | >= 0.75 | FAIL |
+| P3.a healed mirror minus healed random (k-NN) | +5.54 | >= 2.0 | PASS |
+| P3.b healed mirror minus healed SVD (k-NN) | +1.24 | >= 3.0 | FAIL |
+| P3.c original minus healed mirror | 0.12 | <= 2.0 | PASS |
+| G2 (P3.a and P3.b) | | both | FAIL: healing grid not started; framing goes to Dawar |
+| P4 DeiT-III, MAE | pass | | PASS |
+| P4 SigLIP2 breaking share above DINOv2-reg | 0.137 vs 0.223 | higher | FAIL (structure near trivial; rows 1 to 3 much weaker) |
+| P5 part 1 layer-0 operator from weights | 0.90 | >= 0.8 | PASS (chance about 0.65 to 0.73) |
+| P5 part 2 weight-only twin pairing | 46.6% | >= 70% | FAIL |
 
-## X2: E1b arms under the paper protocol (fit seed 0)
-| Arm | Outcome | Original | Surgery k = 3 / 6 / 9 | SVD k = 3 / 6 / 9 | Random k = 6 |
-|---|---|---|---|---|---|
-| Plain DINOv2, per-layer (E1b primary) | **GO** | 78.71 | see csv / 74.68 / 73.26 | see csv / 66.23 / 36.63 | 3.66 |
-| DINOv2-reg, per-layer (main model) | AMBER (row 4: 0.223 vs 0.2) | 78.94 | 78.35 / 77.09 / 76.36 | see csv / 8.77 / 5.83 | 3.98 |
-| Plain, shared operator layers 1 to 6 | stopped after k = 6 and k = 3 (time) | 78.71 | see csv / 73.58 / - | 77.00 / 67.34 / - | 3.97 |
-Seeds: registers model seed 2 running; seed 1 must be rerun (both copies stopped while freeing GPU memory).
+## Headline results (registers model unless stated; original k-NN 78.94, linear probe 80.99)
+- E1b decision table under the paper protocol: plain DINOv2 GO on all 3 seeds; registers model AMBER on all 3 seeds (row 4 only).
+- Zero-shot surgery, 6 blocks, MLP: mirror 77.11 / 77.04 / 77.10 (3 seeds); SVD 8.8; random 3 to 4. Linear probe: mirror 79.08, SVD 20.92, random 11.25.
+- V-exact (exactly mirror-equivariant over the span), 6 blocks MLP plus attention: k-NN 77.37, linear 79.51; full conversion (12 blocks) 100% flip consistency, k-NN 53.9.
+- Healing, 9 blocks, MLP plus attention: mirror 78.81 k-NN / 80.71 linear; SVD 77.57 / 79.30; random 73.28 / 74.99.
+- Plain DINOv2, 6 blocks: mirror 74.68 vs SVD 66.23 (k-NN); linear 76.80 vs 69.48.
+- Generality: DeiT-III AMBER (mirror 81.55 vs SVD 80.67); MAE strongest structure (fit ratio 40.8); SigLIP2 KILL (weak structure, as predicted).
+- Ablations (k = 6): wrong operator collapses (shared over all layers 20.5, identity 24.5, random 3 to 4); wrong pairing collapses (random 25 to 32, self-twins 13.7, generic weight-cosine 24.7); Hungarian without the involution constraint matches mirror (77.2 to 77.3); 100 fit images suffice (77.03).
+- X4 folding: algebra exact in float64 on the registers model; fp32 bar missed through rounding; folded model k-NN 78.98.
 
-## Findings and gates
-- **P1 / gate G3: PASS, both bullets.** Registers model: late-layer error 1.30x early (limit 2). Plain model: masking the top 1% highest-norm tokens cuts late-layer error 2.27x (limit 2). `runs/f3/`
-- **G generality (k = 6):** DeiT-III AMBER (rows 1 to 4 GO; surgery 81.55 vs SVD 80.67, margin 0.9); MAE strongest structure (row 1 = 40.8; k-NN baseline only 13.7%, not meaningful); SigLIP2 KILL (row 1 = 2.4; surgery 13.8 vs original 75.5). **P4:** DeiT-III and MAE bullets pass; the SigLIP2 bullet fails as worded (its raw breaking share 0.137 is below DINOv2-reg's 0.223 because its structure is near trivial; rows 1 to 3 show much weaker symmetry). `runs/g/`
-- **M1 V-exact:** one operator for layers 0 to 6 has 216 odd directions (28%); exactness inside the span passes (relative about 2e-6); **full conversion (k = 12) gives 100.00% flip consistency in fp32**. k-NN of the attention variants running. `runs/m1/`
+## Not reliable or not done on the A100 (needs a dedicated GPU)
+- M2 latency: implementation verified (matches projected dense to about 1e-10 in float64), but all timings were taken on a shared, changing GPU load and must be re-measured on a dedicated GPU before use.
+- Transfer probes: partial at the end of the session (`runs/t2/t2_transfer.csv`).
+- M3 grid (on hold after G2), ADE20K segmentation, A3 to A5 extra seeds, A1/A2 at k = 9, DINOv2-S/L, V-exact full conversion healed, M4.
 
-## M3 healing pilot (gate G2, P3): FAIL on the SVD condition
-k = 9, MLP plus attention, V-local, registers model. Healed k-NN: mirror 78.81, SVD 77.57, random 73.28 (original 78.94).
-Mirror beats random by 5.54 (PASS, bar 2.0), beats SVD by 1.24 (FAIL, bar 3.0; at most 1.36 was possible), and is within
-0.12 of the original (PASS). Held-out distillation loss after healing: mirror 0.86, SVD 2.13, random 3.88.
-Per the plan, the healing grid is not started; framing goes back to Dawar. Full table: `results/M3_PILOT_G2.md`.
-
-## D data-free (P5): FAIL overall
-Part 1 (layer-0 operator from weights): 0.90, PASS (bar 0.8; random involutions with matched d+ reach about 0.65 to 0.73).
-Part 2 (weight-only twin pairing, block 1): 46.6% of data-driven pairs, FAIL (bar 70%); strict reading 44.1%. Gate G4 is worded
-on the layer-0 agreement, which passes. `runs/d/`
-
-## M1 attention conversion (k-NN, registers model, original 78.94)
-k = 6: V-exact 77.37 (exactly equivariant over the span), V-local 76.02, MLP only 77.11, SVD 5.27, random 4.19; k = 9 V-local 74.70;
-full conversion k = 12: 100% flip consistency in fp32. `runs/m1/m1_knn.csv`
-
-## Running now
-- X3: registers model seed 1 rerun (seed 2 done: AMBER, same row 4 as seed 0).
-- Paper data package (`results/paper/`) being built.
-
-## Will not fit on this A100 (needs another GPU)
-X3 seed 1 rerun and plain-model seeds; A1 to A5; F4; M3 grid; M2 latency (not implemented); Tier-2 evaluations; DINOv2-S/L; V-exact healed; M4.
+## Decisions waiting for Dawar
+1. Framing after G2 (report as is; a new pre-registered healing test where the ceiling does not bind; or recentre on the symmetry tax, exact conversion and zero-shot results).
+2. P2 failed: the energy rule underrates mirror projection in early DINOv2 blocks; decide how C4 is stated.
+3. Next GPU and its job list.
 
 ## Deviations from the plan
 - k-NN features in bf16 for every variant alike; fits in fp32 and float64.
-- GPU shared: memory caps 6 to 20% per job; jobs stopped or paused to keep healing within the A100 window (MAE k-NN, shared 1 to 6 arm at k = 9, X3 seed 1, A1/A2).
-- X3 seeds 1 and 2 at k = 6 only.
+- GPU shared with another project: memory caps 6 to 20% per job; some jobs paused or reordered.
+- X3 seeds at k = 6 only; A3 to A5 seed 0 only; ablations at k = 6 only.
+- A3 largest fit set is 6,000 images (all fit seeds pooled), not 10,000.
+- M2 timings contended (see above).
