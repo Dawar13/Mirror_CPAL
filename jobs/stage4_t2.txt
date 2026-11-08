@@ -1,0 +1,5 @@
+# Tier 2 (linear probes) on the A100, priority order.
+python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants original,healed_mirror_k9,healed_svd_k9,healed_random_k9,vexact_k6,vlocal_k9,mirror_mlp_k6,svd_mlp_k6,random_k6 --out runs/t2
+python scripts/tier2_linear.py --model mae_b16 --variants original --out runs/t2
+python scripts/tier2_linear.py --model dinov2_vitb14 --variants original,mirror_mlp_k6,svd_mlp_k6,random_k6 --out runs/t2
+python scripts/tier2_transfer.py --model dinov2_vitb14_reg --variants original,healed_mirror_k9,healed_svd_k9,healed_random_k9,vexact_k6,vlocal_k9 --out runs/t2
