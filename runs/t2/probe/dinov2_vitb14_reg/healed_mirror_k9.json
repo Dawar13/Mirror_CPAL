@@ -1,0 +1,369 @@
+{
+  "row": {
+    "model": "dinov2_vitb14_reg",
+    "variant": "healed_mirror_k9",
+    "label": "healed Mirror V-local, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "mirror",
+    "k": 9,
+    "top1": 80.708,
+    "top5": 95.82,
+    "mean_per_class_top1": 80.70800000000001,
+    "knn_check_top1": 78.81199717521667,
+    "chosen_wd": 0.00316,
+    "wd_at_grid_edge": false,
+    "holdout_top1_at_chosen": 82.44,
+    "final_hit_iter_limit": false,
+    "final_lbfgs_iters": 97,
+    "feature_dim": 1536,
+    "feature_kind": "cls",
+    "n_bank": 100000,
+    "n_val": 50000,
+    "n_wd_train": 90000,
+    "n_wd_holdout": 10000,
+    "converted_params_kept": 42097128,
+    "converted_params_dense": 63700992,
+    "model_params": 64979688,
+    "t_build_s": 227.6,
+    "t_extract_s": 284.9,
+    "t_probe_s": 351.2,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 14:27:49"
+  },
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 82.44,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 81.91,
+        "holdout_top5": 96.15,
+        "holdout_loss": 0.940861328125,
+        "train_objective": 1.4062201976776123,
+        "grad_max": 5.65337722946424e-06,
+        "n_iter": 123,
+        "n_eval": 131,
+        "hit_limit": false,
+        "seconds": 44.63
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 82.23,
+        "holdout_top5": 95.99,
+        "holdout_loss": 0.708825537109375,
+        "train_objective": 0.4102417230606079,
+        "grad_max": 3.0918292850401485e-06,
+        "n_iter": 233,
+        "n_eval": 246,
+        "hit_limit": false,
+        "seconds": 82.24
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 81.7,
+        "holdout_top5": 95.67,
+        "holdout_loss": 0.758995703125,
+        "train_objective": 0.09138932824134827,
+        "grad_max": 5.178343599254731e-06,
+        "n_iter": 288,
+        "n_eval": 303,
+        "hit_limit": false,
+        "seconds": 137.94
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 81.49,
+        "holdout_top5": 95.23,
+        "holdout_loss": 0.9014748046875,
+        "train_objective": 0.017620228230953217,
+        "grad_max": 9.69690177043958e-07,
+        "n_iter": 113,
+        "n_eval": 120,
+        "hit_limit": false,
+        "seconds": 31.81
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 81.19,
+        "holdout_top5": 94.9,
+        "holdout_loss": 1.10175234375,
+        "train_objective": 0.003457500133663416,
+        "grad_max": 8.099748924905725e-07,
+        "n_iter": 90,
+        "n_eval": 97,
+        "hit_limit": false,
+        "seconds": 15.92
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 81.19,
+        "holdout_top5": 94.9,
+        "holdout_loss": 1.10175234375,
+        "train_objective": 0.0014163028681650758,
+        "grad_max": 8.813448175715166e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.07
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 82.44,
+        "holdout_top5": 96.11,
+        "holdout_loss": 0.7605794921875,
+        "train_objective": 0.7851495742797852,
+        "grad_max": 5.815927579533309e-06,
+        "n_iter": 96,
+        "n_eval": 105,
+        "hit_limit": false,
+        "seconds": 8.13
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 81.91,
+        "holdout_top5": 95.84,
+        "holdout_loss": 0.717481201171875,
+        "train_objective": 0.19863271713256836,
+        "grad_max": 2.3347292881226167e-06,
+        "n_iter": 214,
+        "n_eval": 233,
+        "hit_limit": false,
+        "seconds": 18.84
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.00316,
+    "train_objective": 0.8020288944244385,
+    "grad_max": 5.362534011510434e-06,
+    "n_iter": 97,
+    "n_eval": 104,
+    "hit_limit": false,
+    "seconds": 9.63,
+    "train_top1": 93.291
+  },
+  "test": {
+    "top1": 80.708,
+    "top5": 95.82,
+    "mean_per_class_top1": 80.70800000000001,
+    "loss": 0.8228647106933594,
+    "n": 50000
+  },
+  "variant_info": {
+    "variant": "healed_mirror_k9",
+    "label": "healed Mirror V-local, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "mirror",
+    "k": 9,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "mirror",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mlp_params_dense": 42467328,
+      "structure_source": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "structure_mode": "per_layer",
+      "attention": true,
+      "attn_params_dense": 21233664,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "attn_params_mirror": 14147360,
+      "mlp_params_kept": 27949768,
+      "structure_used": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "n_pairs": [
+        1168,
+        1116,
+        1013,
+        963,
+        878,
+        672,
+        554,
+        406,
+        155
+      ],
+      "attn_params_kept": 14147360,
+      "n_head_pairs": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 780,
+      "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+      "git_dirty": true
+    },
+    "constraint_checks": {
+      "0:MirrorMLPConstraint": {
+        "max_rel_violation": 2.404312307750846e-08,
+        "per_block": [
+          2.404312307750846e-08,
+          2.3399989156477648e-08,
+          2.3173682462318624e-08,
+          2.224983948279154e-08,
+          2.1448561291780776e-08,
+          1.9451953897060132e-08,
+          1.837470964295732e-08,
+          1.7413706138471668e-08,
+          1.3551132038454496e-08
+        ]
+      },
+      "1:MirrorAttnConstraint": {
+        "max_rel_violation": 9.403491030261782e-09,
+        "per_block": [
+          6.524728436933297e-09,
+          9.403491030261782e-09,
+          9.15545339581436e-09,
+          8.100664939807226e-09,
+          9.126880167413332e-09,
+          8.773974534707577e-09,
+          7.68927528604994e-09,
+          8.039952572880524e-09,
+          5.705862846760097e-09
+        ]
+      }
+    },
+    "mlp_params_kept": 27949768,
+    "attn_params_kept": 14147360,
+    "converted_params_dense": 63700992,
+    "converted_params_kept": 42097128,
+    "model_params": 64979688
+  },
+  "sources": {
+    "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+    "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+    "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+  },
+  "feature_meta": {
+    "bank": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_mirror_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+        "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+      },
+      "img_size": 224,
+      "split": "bank",
+      "n": 100000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+      "seed": 0,
+      "seconds": 201.6,
+      "batch_size": 256
+    },
+    "val": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_mirror_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/mirror/final/trained_blocks.pt",
+        "checkpoint_sha256": "e42b87a0a92628adaa73c6239078dff90c685797a375f0663874d82a127f4f0b"
+      },
+      "img_size": 224,
+      "split": "val",
+      "n": 50000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+      "seed": 0,
+      "seconds": 83.32,
+      "batch_size": 256
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "timing": {
+    "build healed_mirror_k9": 227.61,
+    "extract healed_mirror_k9 bank": 201.6,
+    "extract healed_mirror_k9 val": 83.32,
+    "probe healed_mirror_k9": 351.25
+  },
+  "git": {
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

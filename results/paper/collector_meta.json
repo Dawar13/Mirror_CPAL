@@ -1,15 +1,15 @@
 {
   "written_by": "scripts/collect_results.py",
-  "date": "2026-11-08 18:20:37",
+  "date": "2026-11-08 20:21:38",
   "git": {
-    "git_hash": "8f294b9831e1faa97bbde1db3448988dedc21364",
-    "git_dirty": false
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "git_dirty": true
   },
   "args": {
     "root": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL",
     "out": null,
     "artifacts": null,
-    "skip_scripts": false
+    "skip_scripts": true
   },
   "root": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL",
   "artifacts": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\artifacts\\a100",
@@ -46,67 +46,22 @@
     "T_main_zeroshot": 67,
     "T_healing": 3,
     "T_healing_p3": 5,
-    "T_generality": 6,
+    "T_generality": 9,
     "T_generality_p4": 7,
-    "T_structure_per_layer": 78,
+    "T_structure_per_layer": 117,
     "T_structure_summary": 10,
     "T_e1_history": 5,
     "T_x_checks": 44,
     "T_attention": 12,
     "T_attention_vexact": 3,
     "T_attention_conversion": 7,
-    "T_ablations": 0,
+    "T_ablations": 47,
     "T_prereg": 46,
-    "T_f1_ranges": 10,
-    "T_f2_drift": 6
+    "T_f1_ranges": 0,
+    "T_f2_drift": 0
   },
-  "f1": [
-    {
-      "status": "ok",
-      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f1_dinov2",
-      "arms": [
-        "perlayer_reg",
-        "perlayer_plain"
-      ],
-      "tag": "f1_dinov2",
-      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\x2",
-      "hist": true
-    },
-    {
-      "status": "ok",
-      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f1_g",
-      "arms": [
-        "deit3_b16",
-        "mae_b16",
-        "siglip2_b16"
-      ],
-      "tag": "f1_g",
-      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\g",
-      "hist": true
-    }
-  ],
-  "f2": [
-    {
-      "status": "ok",
-      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f2_dinov2",
-      "inputs": [
-        "artifacts/a100/runs/x2/perlayer_plain_s0/results/e1_operators.npz",
-        "artifacts/a100/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
-        "artifacts/a100/runs/x2/perlayer_reg_s2/results/e1_operators.npz"
-      ],
-      "tag": "f2_dinov2"
-    },
-    {
-      "status": "ok",
-      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f2_g",
-      "inputs": [
-        "artifacts/a100/runs/g/deit3_b16_s0/results/e1_operators.npz",
-        "artifacts/a100/runs/g/mae_b16_s0/results/e1_operators.npz",
-        "artifacts/a100/runs/g/siglip2_b16_s0/results/e1_operators.npz"
-      ],
-      "tag": "f2_g"
-    }
-  ],
+  "f1": [],
+  "f2": [],
   "inventory": [
     {
       "path": "results/e1_meta.json",
@@ -151,22 +106,22 @@
     {
       "path": "runs/x2/perlayer_plain_s1/results/e1_meta.json",
       "what": "X2/X3 run (meta)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/x2/perlayer_plain_s1/results/e1_surgery.csv",
       "what": "X2/X3 run (surgery)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/x2/perlayer_plain_s2/results/e1_meta.json",
       "what": "X2/X3 run (meta)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/x2/perlayer_plain_s2/results/e1_surgery.csv",
       "what": "X2/X3 run (surgery)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/x2/perlayer_reg_s0/results/e1_meta.json",
@@ -181,12 +136,12 @@
     {
       "path": "runs/x2/perlayer_reg_s1/results/e1_meta.json",
       "what": "X2/X3 run (meta)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/x2/perlayer_reg_s1/results/e1_surgery.csv",
       "what": "X2/X3 run (surgery)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/x2/perlayer_reg_s2/results/e1_meta.json",
@@ -346,7 +301,7 @@
     {
       "path": "runs/a",
       "what": "A1 to A5 ablations",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/m2",
@@ -359,9 +314,24 @@
       "present": true
     },
     {
+      "path": "artifacts/a100/runs/x2/perlayer_plain_s1/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": false
+    },
+    {
+      "path": "artifacts/a100/runs/x2/perlayer_plain_s2/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": false
+    },
+    {
       "path": "artifacts/a100/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
       "what": "operators npz (F1 histograms, F2)",
       "present": true
+    },
+    {
+      "path": "artifacts/a100/runs/x2/perlayer_reg_s1/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": false
     },
     {
       "path": "artifacts/a100/runs/x2/perlayer_reg_s2/results/e1_operators.npz",
@@ -390,8 +360,6 @@
     }
   ],
   "deviations": [
-    "X3: DINOv2-reg has fit seeds 0, 2 (plan: 3 seeds for every headline number).",
-    "X3: DINOv2 has fit seeds 0 (plan: 3 seeds for every headline number).",
     "Budget: DINOv2-reg k = 9 vexact keeps +1.91% parameters relative to its SVD baseline (plan: within 1%; SVD and random are matched to V-local).",
     "Budget: DINOv2-reg k = 12 vexact keeps +3.49% parameters relative to its SVD baseline (plan: within 1%; SVD and random are matched to V-local).",
     "X4: dinov2_vitb14 folded vs original, max abs difference (float32, 256 images) = 1.05e-02 misses <= 0.0001 (the plan's bar, set for fp32).",
@@ -403,6 +371,6 @@
     "G: the MAE run has no e1_meta.json (its k-NN run was stopped); its decision rows are recomputed with mirror.report.decide and its git hash is not recorded.",
     "X2: `runs/x2/shared16_plain_s0` is partial (missing e1_meta.json)."
   ],
-  "n_numbers": 318,
-  "elapsed_s": 501.1
+  "n_numbers": 316,
+  "elapsed_s": 11.8
 }

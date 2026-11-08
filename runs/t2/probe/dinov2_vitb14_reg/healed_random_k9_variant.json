@@ -1,0 +1,123 @@
+{
+  "info": {
+    "variant": "healed_random_k9",
+    "label": "healed random structure, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "random",
+    "k": 9,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "/home/dawar/Mirror_CPAL/runs/m3_pilot/random/summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "random",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mlp_params_dense": 42467328,
+      "structure_source": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "structure_mode": "per_layer",
+      "attention": true,
+      "attn_params_dense": 21233664,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "attn_params_mirror": 14147360,
+      "mlp_params_kept": 27949768,
+      "structure_used": "matched random (seed 1, fix_ones True)",
+      "n_pairs": [
+        1168,
+        1116,
+        1013,
+        963,
+        878,
+        672,
+        554,
+        406,
+        155
+      ],
+      "attn_params_kept": 14147360,
+      "n_head_pairs": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 780,
+      "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+      "git_dirty": true
+    },
+    "constraint_checks": {
+      "0:MirrorMLPConstraint": {
+        "max_rel_violation": 2.5312378544252924e-08,
+        "per_block": [
+          2.5312378544252924e-08,
+          2.491579797649243e-08,
+          2.3864333129743975e-08,
+          2.287121926458528e-08,
+          2.1674184431819976e-08,
+          1.9514867425203813e-08,
+          1.7877829439129195e-08,
+          1.6220882674742772e-08,
+          1.2037999529468891e-08
+        ]
+      },
+      "1:MirrorAttnConstraint": {
+        "max_rel_violation": 9.075463270449152e-09,
+        "per_block": [
+          6.71755780433582e-09,
+          9.075463270449152e-09,
+          7.98520931835361e-09,
+          7.573270951269913e-09,
+          7.453558975910848e-09,
+          7.1206424515180095e-09,
+          6.431002213849584e-09,
+          6.168157308785491e-09,
+          4.502128917995167e-09
+        ]
+      }
+    },
+    "mlp_params_kept": 27949768,
+    "attn_params_kept": 14147360,
+    "converted_params_dense": 63700992,
+    "converted_params_kept": 42097128,
+    "model_params": 64979688
+  },
+  "sources": {
+    "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/random",
+    "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/random/final/trained_blocks.pt",
+    "checkpoint_sha256": "9b8d6e49cda3f65fbdb52466f65ad6c13fa7ed20028a462b3c4384bac5f944b1"
+  },
+  "git": {
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "git_dirty": true
+  }
+}

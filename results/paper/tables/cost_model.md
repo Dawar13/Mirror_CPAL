@@ -33,6 +33,6 @@ Function `analytic_cost` in `scripts/collect_results.py`. These are analytic cou
 
 ## Checks against counts recorded by the runs
 
-- 66 parameter counts recomputed from the per-block CSVs and compared with the totals the runs recorded (mlp_params_kept_frac of e1_surgery.csv; mlp_params_kept, attn_params_kept, model_params of m1_knn.csv): largest relative difference 0.00e+00 (`cost_model_checks.csv`).
+- 75 parameter counts recomputed from the per-block CSVs and compared with the totals the runs recorded (mlp_params_kept_frac of e1_surgery.csv; mlp_params_kept, attn_params_kept, model_params of m1_knn.csv): largest relative difference 0.00e+00 (`cost_model_checks.csv`).
 - DINOv2-reg dense: 47.08 GFLOPs per image (analytic).
 - DINOv2 dense: 46.32 GFLOPs per image (analytic).

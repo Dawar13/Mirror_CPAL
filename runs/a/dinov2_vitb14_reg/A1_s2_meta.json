@@ -1,0 +1,97 @@
+{
+  "ablation": "A1",
+  "model": "dinov2_vitb14_reg",
+  "ks": [
+    6
+  ],
+  "variants": [
+    "per_layer",
+    "shared_span",
+    "shared_all",
+    "identity",
+    "random_operator",
+    "svd",
+    "random_structure"
+  ],
+  "fit_seed": 2,
+  "seed": 0,
+  "git": {
+    "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  },
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "fit_run": "runs/x2/perlayer_reg_s2",
+    "ablation": "A1,A2",
+    "ks": "6",
+    "out": "runs/a/dinov2_vitb14_reg",
+    "fit_seed": 2,
+    "variants": null,
+    "a3_sizes": null,
+    "a3_order": "spread",
+    "queries": null,
+    "cache_dir": "/home/dawar/Mirror_CPAL/cache",
+    "workers": 4,
+    "top_k": 10,
+    "no_fix_ones": false,
+    "batch_size": 128,
+    "stats_batch_size": 16,
+    "num_workers": 4,
+    "tiny": false
+  },
+  "fit_run": "runs/x2/perlayer_reg_s2/results/e1_operators.npz",
+  "structure_meta": {
+    "fit_seed": 2,
+    "model": "dinov2_vitb14_reg",
+    "protocol": "v2",
+    "run_git": {
+      "git_hash": "ced2c089288d658bb0ce1666c1ec49fd684427f9",
+      "git_dirty": true
+    },
+    "operator_mode": "per_layer",
+    "shared_layers": [
+      1,
+      12
+    ],
+    "center": true,
+    "max_abs_change_from_cleaning": 3.0610529999641756e-08,
+    "checks": {
+      "d_plus_matches_e1_layers_csv": true,
+      "n_pairs_matches_e1_mlp_csv": true
+    },
+    "shared_all_refit_agreement_with_stored": 1.0
+  },
+  "original_knn": {
+    "top1": 78.9359986782074,
+    "flip_consistency": 96.28199934959412,
+    "source": "/home/dawar/Mirror_CPAL/cache/knn_original/dinov2_vitb14_reg_v2_bf16.json"
+  },
+  "knn": {
+    "k": 20,
+    "temperature": 0.07,
+    "amp": "bf16"
+  },
+  "random_variant_seed": 3000,
+  "fix_ones": true,
+  "a3_sizes": [
+    100,
+    500,
+    2000,
+    6000
+  ],
+  "a3_order": "spread",
+  "rows_added": 7,
+  "rows_total": 7,
+  "notes": {},
+  "elapsed_s": 2598.2,
+  "date": "2026-11-08 14:16:04"
+}

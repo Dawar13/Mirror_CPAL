@@ -1,0 +1,369 @@
+{
+  "row": {
+    "model": "dinov2_vitb14_reg",
+    "variant": "healed_random_k9",
+    "label": "healed random structure, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "random",
+    "k": 9,
+    "top1": 74.994,
+    "top5": 92.79,
+    "mean_per_class_top1": 74.994,
+    "knn_check_top1": 73.28000068664551,
+    "chosen_wd": 0.00316,
+    "wd_at_grid_edge": false,
+    "holdout_top1_at_chosen": 77.18,
+    "final_hit_iter_limit": false,
+    "final_lbfgs_iters": 96,
+    "feature_dim": 1536,
+    "feature_kind": "cls",
+    "n_bank": 100000,
+    "n_val": 50000,
+    "n_wd_train": 90000,
+    "n_wd_holdout": 10000,
+    "converted_params_kept": 42097128,
+    "converted_params_dense": 63700992,
+    "model_params": 64979688,
+    "t_build_s": 329.3,
+    "t_extract_s": 118.2,
+    "t_probe_s": 111.4,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-08 14:42:26"
+  },
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 77.18,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 76.88,
+        "holdout_top5": 93.14,
+        "holdout_loss": 1.1912392578125,
+        "train_objective": 1.6315524578094482,
+        "grad_max": 5.576206604018807e-06,
+        "n_iter": 122,
+        "n_eval": 139,
+        "hit_limit": false,
+        "seconds": 10.77
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 76.56,
+        "holdout_top5": 93.02,
+        "holdout_loss": 0.96651796875,
+        "train_objective": 0.520915150642395,
+        "grad_max": 1.1780841305153444e-05,
+        "n_iter": 163,
+        "n_eval": 170,
+        "hit_limit": false,
+        "seconds": 16.04
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 75.92,
+        "holdout_top5": 92.31,
+        "holdout_loss": 1.0670740234375,
+        "train_objective": 0.11780259758234024,
+        "grad_max": 1.3773787941318005e-06,
+        "n_iter": 300,
+        "n_eval": 325,
+        "hit_limit": false,
+        "seconds": 27.15
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 75.66,
+        "holdout_top5": 91.73,
+        "holdout_loss": 1.2770072265625,
+        "train_objective": 0.02254568226635456,
+        "grad_max": 9.749688842930482e-07,
+        "n_iter": 115,
+        "n_eval": 126,
+        "hit_limit": false,
+        "seconds": 11.31
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 75.28,
+        "holdout_top5": 91.34,
+        "holdout_loss": 1.5671943359375,
+        "train_objective": 0.004277834668755531,
+        "grad_max": 9.368094993078557e-07,
+        "n_iter": 73,
+        "n_eval": 79,
+        "hit_limit": false,
+        "seconds": 6.91
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 75.28,
+        "holdout_top5": 91.34,
+        "holdout_loss": 1.5671943359375,
+        "train_objective": 0.0016479974146932364,
+        "grad_max": 9.409025665263471e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.07
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 75.53,
+        "holdout_top5": 92.57,
+        "holdout_loss": 1.668221484375,
+        "train_objective": 2.7179830074310303,
+        "grad_max": 2.0292121917009354e-05,
+        "n_iter": 55,
+        "n_eval": 67,
+        "hit_limit": false,
+        "seconds": 5.53
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 77.18,
+        "holdout_top5": 93.25,
+        "holdout_loss": 1.0050826171875,
+        "train_objective": 0.961754560470581,
+        "grad_max": 1.600717041583266e-05,
+        "n_iter": 101,
+        "n_eval": 109,
+        "hit_limit": false,
+        "seconds": 8.95
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.00316,
+    "train_objective": 0.9844386577606201,
+    "grad_max": 1.21107223094441e-05,
+    "n_iter": 96,
+    "n_eval": 103,
+    "hit_limit": false,
+    "seconds": 22.22,
+    "train_top1": 90.636
+  },
+  "test": {
+    "top1": 74.994,
+    "top5": 92.79,
+    "mean_per_class_top1": 74.994,
+    "loss": 1.0733970471191405,
+    "n": 50000
+  },
+  "variant_info": {
+    "variant": "healed_random_k9",
+    "label": "healed random structure, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "random",
+    "k": 9,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "/home/dawar/Mirror_CPAL/runs/m3_pilot/random/summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "random",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mlp_params_dense": 42467328,
+      "structure_source": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "structure_mode": "per_layer",
+      "attention": true,
+      "attn_params_dense": 21233664,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "attn_params_mirror": 14147360,
+      "mlp_params_kept": 27949768,
+      "structure_used": "matched random (seed 1, fix_ones True)",
+      "n_pairs": [
+        1168,
+        1116,
+        1013,
+        963,
+        878,
+        672,
+        554,
+        406,
+        155
+      ],
+      "attn_params_kept": 14147360,
+      "n_head_pairs": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 780,
+      "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+      "git_dirty": true
+    },
+    "constraint_checks": {
+      "0:MirrorMLPConstraint": {
+        "max_rel_violation": 2.5312378544252924e-08,
+        "per_block": [
+          2.5312378544252924e-08,
+          2.491579797649243e-08,
+          2.3864333129743975e-08,
+          2.287121926458528e-08,
+          2.1674184431819976e-08,
+          1.9514867425203813e-08,
+          1.7877829439129195e-08,
+          1.6220882674742772e-08,
+          1.2037999529468891e-08
+        ]
+      },
+      "1:MirrorAttnConstraint": {
+        "max_rel_violation": 9.075463270449152e-09,
+        "per_block": [
+          6.71755780433582e-09,
+          9.075463270449152e-09,
+          7.98520931835361e-09,
+          7.573270951269913e-09,
+          7.453558975910848e-09,
+          7.1206424515180095e-09,
+          6.431002213849584e-09,
+          6.168157308785491e-09,
+          4.502128917995167e-09
+        ]
+      }
+    },
+    "mlp_params_kept": 27949768,
+    "attn_params_kept": 14147360,
+    "converted_params_dense": 63700992,
+    "converted_params_kept": 42097128,
+    "model_params": 64979688
+  },
+  "sources": {
+    "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/random",
+    "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/random/final/trained_blocks.pt",
+    "checkpoint_sha256": "9b8d6e49cda3f65fbdb52466f65ad6c13fa7ed20028a462b3c4384bac5f944b1"
+  },
+  "feature_meta": {
+    "bank": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_random_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/random",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/random/final/trained_blocks.pt",
+        "checkpoint_sha256": "9b8d6e49cda3f65fbdb52466f65ad6c13fa7ed20028a462b3c4384bac5f944b1"
+      },
+      "img_size": 224,
+      "split": "bank",
+      "n": 100000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+      "seed": 0,
+      "seconds": 79.17,
+      "batch_size": 256
+    },
+    "val": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_random_k9",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/random",
+        "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/random/final/trained_blocks.pt",
+        "checkpoint_sha256": "9b8d6e49cda3f65fbdb52466f65ad6c13fa7ed20028a462b3c4384bac5f944b1"
+      },
+      "img_size": 224,
+      "split": "val",
+      "n": 50000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+      "seed": 0,
+      "seconds": 39.03,
+      "batch_size": 256
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "timing": {
+    "build healed_random_k9": 329.28,
+    "extract healed_random_k9 bank": 79.17,
+    "extract healed_random_k9 val": 39.03,
+    "probe healed_random_k9": 111.4
+  },
+  "git": {
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  }
+}

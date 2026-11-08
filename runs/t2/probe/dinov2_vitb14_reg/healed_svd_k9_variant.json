@@ -1,0 +1,360 @@
+{
+  "info": {
+    "variant": "healed_svd_k9",
+    "label": "healed SVD, MLP + attention, k = 9 (M3)",
+    "family": "healed",
+    "method": "svd",
+    "k": 9,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "svd",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mlp_params_dense": 42467328,
+      "structure_source": "/home/dawar/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "structure_mode": "per_layer",
+      "attention": true,
+      "attn_params_dense": 21233664,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "/home/dawar/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "attn_params_mirror": 14147360,
+      "ranks": [
+        [
+          310,
+          327
+        ],
+        [
+          330,
+          333
+        ],
+        [
+          339,
+          350
+        ],
+        [
+          354,
+          361
+        ],
+        [
+          369,
+          382
+        ],
+        [
+          406,
+          422
+        ],
+        [
+          438,
+          455
+        ],
+        [
+          477,
+          506
+        ],
+        [
+          551,
+          563
+        ]
+      ],
+      "mlp_params_kept": 27928320,
+      "mlp_params_mirror": 27949768,
+      "attn_ranks": [
+        [
+          195,
+          195,
+          194,
+          206
+        ],
+        [
+          213,
+          213,
+          206,
+          208
+        ],
+        [
+          222,
+          222,
+          215,
+          223
+        ],
+        [
+          246,
+          246,
+          242,
+          250
+        ],
+        [
+          248,
+          248,
+          243,
+          254
+        ],
+        [
+          263,
+          263,
+          254,
+          264
+        ],
+        [
+          276,
+          276,
+          271,
+          281
+        ],
+        [
+          290,
+          290,
+          293,
+          311
+        ],
+        [
+          341,
+          341,
+          342,
+          349
+        ]
+      ],
+      "attn_params_kept": 14121984
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 780,
+      "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+      "git_dirty": true
+    },
+    "constraint_checks": {
+      "0:LowRankMLP": {
+        "numerical_ranks": [
+          [
+            310,
+            327
+          ],
+          [
+            330,
+            333
+          ],
+          [
+            339,
+            350
+          ],
+          [
+            354,
+            361
+          ],
+          [
+            369,
+            382
+          ],
+          [
+            406,
+            422
+          ],
+          [
+            438,
+            455
+          ],
+          [
+            477,
+            506
+          ],
+          [
+            551,
+            563
+          ]
+        ],
+        "target_ranks": [
+          [
+            310,
+            327
+          ],
+          [
+            330,
+            333
+          ],
+          [
+            339,
+            350
+          ],
+          [
+            354,
+            361
+          ],
+          [
+            369,
+            382
+          ],
+          [
+            406,
+            422
+          ],
+          [
+            438,
+            455
+          ],
+          [
+            477,
+            506
+          ],
+          [
+            551,
+            563
+          ]
+        ],
+        "note": "ranks of U V formed in float64 from the factors"
+      },
+      "1:LowRankAttention": {
+        "numerical_ranks": [
+          [
+            195,
+            195,
+            194,
+            206
+          ],
+          [
+            213,
+            213,
+            206,
+            208
+          ],
+          [
+            222,
+            222,
+            215,
+            223
+          ],
+          [
+            246,
+            246,
+            242,
+            250
+          ],
+          [
+            248,
+            248,
+            243,
+            254
+          ],
+          [
+            263,
+            263,
+            254,
+            264
+          ],
+          [
+            276,
+            276,
+            271,
+            281
+          ],
+          [
+            290,
+            290,
+            293,
+            311
+          ],
+          [
+            341,
+            341,
+            342,
+            349
+          ]
+        ],
+        "target_ranks": [
+          [
+            195,
+            195,
+            194,
+            206
+          ],
+          [
+            213,
+            213,
+            206,
+            208
+          ],
+          [
+            222,
+            222,
+            215,
+            223
+          ],
+          [
+            246,
+            246,
+            242,
+            250
+          ],
+          [
+            248,
+            248,
+            243,
+            254
+          ],
+          [
+            263,
+            263,
+            254,
+            264
+          ],
+          [
+            276,
+            276,
+            271,
+            281
+          ],
+          [
+            290,
+            290,
+            293,
+            311
+          ],
+          [
+            341,
+            341,
+            342,
+            349
+          ]
+        ]
+      }
+    },
+    "mlp_params_kept": 27928320,
+    "attn_params_kept": 14121984,
+    "converted_params_dense": 63700992,
+    "converted_params_kept": 42050304,
+    "model_params": 64932864
+  },
+  "sources": {
+    "heal_run": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd",
+    "checkpoint": "/home/dawar/Mirror_CPAL/runs/m3_pilot/svd/final/trained_blocks.pt",
+    "checkpoint_sha256": "bf7d48aa2a4c282ef1e12378d8524972cba6e909fc7789c5c9b589431bf9d218"
+  },
+  "git": {
+    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
+    "git_dirty": true
+  }
+}
