@@ -1,0 +1,3 @@
+# Stage 1b: F3 artefacts (P1, gate G3) for both models, once the X2 seed-0 operators exist.
+bash -c 'while [ ! -f runs/x2/perlayer_reg_s0/results/e1_operators.npz ]; do sleep 60; done; sleep 20; python scripts/f3_artefacts.py --model dinov2_vitb14_reg --operators runs/x2/perlayer_reg_s0 --out runs/f3'
+bash -c 'while [ ! -f runs/x2/perlayer_plain_s0/results/e1_operators.npz ]; do sleep 60; done; sleep 20; python scripts/f3_artefacts.py --model dinov2_vitb14 --operators runs/x2/perlayer_plain_s0 --out runs/f3'
