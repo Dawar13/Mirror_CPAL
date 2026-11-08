@@ -1,0 +1,249 @@
+{
+  "experiment": "F3",
+  "model": "dinov2_vitb14",
+  "tiny": false,
+  "seed": 0,
+  "date": "2026-11-08 10:00:14",
+  "git": {
+    "git_hash": "ced2c089288d658bb0ce1666c1ec49fd684427f9",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "cuda": "12.8"
+  },
+  "args": {
+    "model": "dinov2_vitb14",
+    "operators": "runs/x2/perlayer_plain_s0",
+    "out": "runs/f3",
+    "cache_dir": "/home/dawar/Mirror_CPAL/cache",
+    "hub_repo": "facebookresearch/dinov2",
+    "device": "cuda",
+    "batch_size": 16,
+    "num_workers": 4,
+    "seed": 0,
+    "no_save_tokens": false,
+    "allow_model_mismatch": false,
+    "allow_uncommitted_prereg": false,
+    "tiny": false,
+    "tiny_registers": 0
+  },
+  "prereg": {
+    "file": "PREREG_E2.md",
+    "sha256": "8c30d76dc75227e7d75d13577d916f73894192e9b6804eb5f9ddcacfbc6b6d9f",
+    "git_available": true,
+    "commit": "9804f0670ea630e03b1bde285943f7d735b90ccd",
+    "committed_and_clean": true
+  },
+  "prereg_override": false,
+  "operators": {
+    "path": "runs/x2/perlayer_plain_s0/results/e1_operators.npz",
+    "sha256": "c7686674f09cf4c9942a249dd068e283aba360edc6717c05c64151d23b6d3b36",
+    "source_model": null,
+    "source_fit_seed": null,
+    "source_git_hash": null,
+    "source_operator_mode": null,
+    "source_protocol": null,
+    "center": true,
+    "cleaning_max_eig_dev": 4.6083392879481266e-08,
+    "cleaning_max_rel_change": 2.132869935663251e-08,
+    "d_plus": [
+      393,
+      490,
+      501,
+      551,
+      584,
+      620,
+      670,
+      686,
+      712,
+      743,
+      757,
+      757,
+      761
+    ]
+  },
+  "data": {
+    "source": "ImageNet validation, first image of each class (Protocol.heldout_loader)",
+    "images": 1000,
+    "tokens_per_image": 257,
+    "n_prefix_tokens": 1,
+    "n_registers": 0,
+    "grid_hw": [
+      16,
+      16
+    ]
+  },
+  "definitions": {
+    "e": "sum over tokens of ||x~ - x A_l||^2 / sum ||x~||^2, after channel centring (E1 definition); x~ = mirrored image's token at the mirrored position",
+    "token_norm": "L2 norm of the raw residual-stream token (before centring)",
+    "top1": "norm >= the round(0.01 n)-th largest norm of the layer, original and mirror tokens pooled, all token types (CLS, registers, patches)",
+    "3xmed": "norm > 3 x the median norm of the layer (same pool)",
+    "excluded": "token positions that are high-norm in the original or in the (un-flipped) mirror",
+    "layers": "layer l = output of block l; layer 0 = tokens entering block 1",
+    "p1_late_layers": [
+      9,
+      10,
+      11
+    ],
+    "p1_early_layers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  "p1": {
+    "bullet": "plain",
+    "statement": "Plain DINOv2: excluding the top 1% highest-norm tokens cuts the mean e(A_l) over layers 9 to 11 by at least 2x.",
+    "value": 2.2722933297201893,
+    "threshold": 2.0,
+    "comparison": ">=",
+    "pass": true,
+    "result": "PASS",
+    "late_layers": [
+      9,
+      10,
+      11
+    ],
+    "early_layers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "mean_e_all_late": 1.3149610208703821,
+    "mean_e_excl_top1_late": 0.5786933419517218,
+    "mean_e_all_early": 0.1327104973725459,
+    "masking_cut_late": 2.2722933297201893,
+    "late_over_early": 9.908492899239265
+  },
+  "p1_other_bullet_info": {
+    "bullet": "registers",
+    "statement": "Registers model: the mean e(A_l) over layers 9 to 11 is at most 2x its mean over layers 1 to 6.",
+    "value": 9.908492899239265,
+    "threshold": 2.0,
+    "comparison": "<=",
+    "pass": false,
+    "result": "FAIL",
+    "late_layers": [
+      9,
+      10,
+      11
+    ],
+    "early_layers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "mean_e_all_late": 1.3149610208703821,
+    "mean_e_excl_top1_late": 0.5786933419517218,
+    "mean_e_all_early": 0.1327104973725459,
+    "masking_cut_late": 2.2722933297201893,
+    "late_over_early": 9.908492899239265,
+    "note": "not pre-registered for this model; information only"
+  },
+  "p1_patch_only_reading_info": {
+    "bullet": "plain",
+    "statement": "Plain DINOv2: excluding the top 1% highest-norm tokens cuts the mean e(A_l) over layers 9 to 11 by at least 2x.",
+    "value": 2.253871376248143,
+    "threshold": 2.0,
+    "comparison": ">=",
+    "pass": true,
+    "result": "PASS",
+    "late_layers": [
+      9,
+      10,
+      11
+    ],
+    "early_layers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "mean_e_all_late": 1.3149610208703821,
+    "mean_e_excl_top1_late": 0.5834232754929001,
+    "mean_e_all_early": 0.1327104973725459,
+    "masking_cut_late": 2.253871376248143,
+    "late_over_early": 9.908492899239265,
+    "note": "top 1% among patch tokens only; information only"
+  },
+  "per_layer": {
+    "e_all": [
+      0.004798490684795198,
+      0.03721117456248461,
+      0.08721664230823388,
+      0.12154231379968826,
+      0.16344355486811715,
+      0.1917393820936059,
+      0.19510991660314572,
+      0.18986259283656834,
+      0.22146754004024158,
+      1.4377656147636309,
+      1.3469398241158221,
+      1.1601776237316932,
+      0.16898309084167076
+    ],
+    "e_excl_top1": [
+      0.004689671508066048,
+      0.03630282464241948,
+      0.08626476854394081,
+      0.11958441931959951,
+      0.16286129947044828,
+      0.19563018474763041,
+      0.1934134597022672,
+      0.17830581123031172,
+      0.184682809723189,
+      0.7789232978558075,
+      0.5860610806085893,
+      0.37109564739076867,
+      0.1132768649995442
+    ],
+    "e_excl_3xmed": [
+      0.004736396104810917,
+      0.03715242953958158,
+      0.08727166006798616,
+      0.12009203740174934,
+      0.16264110181341992,
+      0.1917393820936059,
+      0.19510991660314572,
+      0.1896061590993715,
+      0.20912529851014727,
+      0.1843274565806822,
+      0.16895066699728128,
+      0.17224755032566927,
+      0.13639787880060655
+    ],
+    "coincide_mirrored_top1": [
+      0.975800156128025,
+      0.8855799373040752,
+      0.871875,
+      0.8334401024983985,
+      0.7442159383033419,
+      0.7246653919694073,
+      0.4590065828845003,
+      0.3630094043887147,
+      0.37537091988130566,
+      0.21461897356143078,
+      0.2147024504084014,
+      0.2141469102215313,
+      0.42238689547581904
+    ]
+  },
+  "timing_s": 1226.4
+}
