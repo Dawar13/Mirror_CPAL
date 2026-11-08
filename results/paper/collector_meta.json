@@ -1,15 +1,15 @@
 {
   "written_by": "scripts/collect_results.py",
-  "date": "2026-11-08 20:40:13",
+  "date": "2026-11-08 21:48:33",
   "git": {
-    "git_hash": "66d8ef9e22058ba123bef807090f493502fde742",
+    "git_hash": "f9879964770dc1ef029119087755b38742320390",
     "git_dirty": true
   },
   "args": {
     "root": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL",
     "out": null,
     "artifacts": null,
-    "skip_scripts": true,
+    "skip_scripts": false,
     "skip_f2": false
   },
   "root": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL",
@@ -67,61 +67,56 @@
     "T_f4_p2": 0,
     "T_prereg": 46,
     "T_f1_ranges": 10,
-    "T_f2_drift": 6
+    "T_f2_drift": 9
   },
   "f1": [
     {
-      "status": "reused",
-      "tag": "f1_dinov2",
-      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\x2",
+      "status": "ok",
       "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f1_dinov2",
       "arms": [
         "perlayer_reg",
         "perlayer_plain"
       ],
-      "stale": [
-        "perlayer_plain_s1",
-        "perlayer_plain_s2",
-        "perlayer_reg_s1"
-      ],
+      "tag": "f1_dinov2",
+      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\x2",
       "hist": true
     },
     {
-      "status": "reused",
-      "tag": "f1_g",
-      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\g",
+      "status": "ok",
       "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f1_g",
       "arms": [
         "deit3_b16",
         "mae_b16",
         "siglip2_b16"
       ],
-      "stale": [],
+      "tag": "f1_g",
+      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\g",
       "hist": true
     }
   ],
   "f2": [
     {
-      "status": "reused",
-      "tag": "f2_dinov2",
+      "status": "ok",
       "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f2_dinov2",
       "inputs": [
         "artifacts/a100/runs/x2/perlayer_plain_s0/results/e1_operators.npz",
+        "artifacts/a100/runs/x2/perlayer_plain_s1/results/e1_operators.npz",
+        "artifacts/a100/runs/x2/perlayer_plain_s2/results/e1_operators.npz",
         "artifacts/a100/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "artifacts/a100/runs/x2/perlayer_reg_s1/results/e1_operators.npz",
         "artifacts/a100/runs/x2/perlayer_reg_s2/results/e1_operators.npz"
       ],
-      "stale": []
+      "tag": "f2_dinov2"
     },
     {
-      "status": "reused",
-      "tag": "f2_g",
+      "status": "ok",
       "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f2_g",
       "inputs": [
         "artifacts/a100/runs/g/deit3_b16_s0/results/e1_operators.npz",
         "artifacts/a100/runs/g/mae_b16_s0/results/e1_operators.npz",
         "artifacts/a100/runs/g/siglip2_b16_s0/results/e1_operators.npz"
       ],
-      "stale": []
+      "tag": "f2_g"
     }
   ],
   "inventory": [
@@ -413,12 +408,12 @@
     {
       "path": "artifacts/a100/runs/x2/perlayer_plain_s1/results/e1_operators.npz",
       "what": "operators npz (F1 histograms, F2)",
-      "present": false
+      "present": true
     },
     {
       "path": "artifacts/a100/runs/x2/perlayer_plain_s2/results/e1_operators.npz",
       "what": "operators npz (F1 histograms, F2)",
-      "present": false
+      "present": true
     },
     {
       "path": "artifacts/a100/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
@@ -428,7 +423,7 @@
     {
       "path": "artifacts/a100/runs/x2/perlayer_reg_s1/results/e1_operators.npz",
       "what": "operators npz (F1 histograms, F2)",
-      "present": false
+      "present": true
     },
     {
       "path": "artifacts/a100/runs/x2/perlayer_reg_s2/results/e1_operators.npz",
@@ -468,6 +463,6 @@
     "G: the MAE run has no e1_meta.json (its k-NN run was stopped); its decision rows are recomputed with mirror.report.decide and its git hash is not recorded.",
     "X2: `runs/x2/shared16_plain_s0` is partial (missing e1_meta.json)."
   ],
-  "n_numbers": 408,
-  "elapsed_s": 10.1
+  "n_numbers": 420,
+  "elapsed_s": 883.5
 }
