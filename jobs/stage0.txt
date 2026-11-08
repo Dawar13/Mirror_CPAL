@@ -1,0 +1,12 @@
+# Stage 0 on the A100: X4 folding checks, then X2 (protocol v2 reruns of the E1b arms) with X3 seeds.
+python scripts/check_fold_x4.py --name dinov2_vitb14_reg
+python scripts/check_fold_x4.py --name dinov2_vitb14
+python scripts/run_e1.py --config configs/x2_perlayer_reg.yaml --fit-seed 0 --ks 6,3,9 --out-root runs/x2/perlayer_reg_s0
+python scripts/run_e1.py --config configs/x2_perlayer_plain.yaml --fit-seed 0 --ks 6,3,9 --out-root runs/x2/perlayer_plain_s0
+python scripts/run_e1.py --config configs/x2_shared16_plain.yaml --fit-seed 0 --ks 6,3,9 --out-root runs/x2/shared16_plain_s0
+python scripts/run_e1.py --config configs/x2_perlayer_reg.yaml --fit-seed 1 --ks 6,9 --out-root runs/x2/perlayer_reg_s1
+python scripts/run_e1.py --config configs/x2_perlayer_reg.yaml --fit-seed 2 --ks 6,9 --out-root runs/x2/perlayer_reg_s2
+python scripts/run_e1.py --config configs/x2_perlayer_plain.yaml --fit-seed 1 --ks 6,9 --out-root runs/x2/perlayer_plain_s1
+python scripts/run_e1.py --config configs/x2_perlayer_plain.yaml --fit-seed 2 --ks 6,9 --out-root runs/x2/perlayer_plain_s2
+python scripts/run_e1.py --config configs/x2_shared16_plain.yaml --fit-seed 1 --ks 6,9 --out-root runs/x2/shared16_plain_s1
+python scripts/run_e1.py --config configs/x2_shared16_plain.yaml --fit-seed 2 --ks 6,9 --out-root runs/x2/shared16_plain_s2

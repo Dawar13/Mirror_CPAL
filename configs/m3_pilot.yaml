@@ -1,0 +1,87 @@
+# M3-pilot healing distillation (PAPER_EXPERIMENTS.md, M3-pilot; tests P3 / gate G2).
+# One method per run, one healing job at a time on the shared GPU:
+#   python scripts/heal.py --config configs/m3_pilot.yaml --method mirror
+#   python scripts/heal.py --config configs/m3_pilot.yaml --method svd
+#   python scripts/heal.py --config configs/m3_pilot.yaml --method random
+# CPU smoke test: add --tiny.
+seed: 0
+method: mirror                 # mirror | svd | random (random-structure control)
+
+model:
+  hub_repo: facebookresearch/dinov2
+  name: dinov2_vitb14_reg      # main model (PROJECT_CONTEXT.md, Section 7)
+  img_size: 224
+
+blocks: [0, 1, 2, 3, 4, 5, 6, 7, 8]   # k = 9, 0-based (blocks 1 to 9 in the reports)
+
+structure:
+  operators: null              # TODO (X2): path to the X2-protocol operator file (A_layers, A_shared, perms)
+  mode: per_layer              # per_layer = V-local; shared = one operator over the span (V-exact)
+  shared_key: A_shared         # operator used when mode is shared
+  attention: true              # pilot is MLP plus attention; TODO (M1) until the attention projector exists
+  random_seed: 1               # random-structure control
+  random_fix_ones: true        # random involutions keep A 1 = 1, like the fitted operators
+
+data:
+  images: cache/heal256_uint8.npy   # uint8 [105000, 256, 256, 3], train images, resize 256 + centre crop 256
+  index: cache/train_index.npz
+  meta: cache/train_meta.json
+  train_key: heal_rows              # 100k distillation images
+  heldout_key: healval_rows         # 5k held-out train images, used only for learning-rate selection
+
+heal:                          # mirror/heal.py HealConfig; the same recipe for every method
+  epochs: 2
+  batch_size: 256
+  micro_batch: 64
+  weight_decay: 0.05
+  warmup_frac: 0.05
+  min_lr_ratio: 0.0
+  crop_size: 224
+  crop_scale: [0.35, 1.0]
+  hflip_p: 0.5
+  w_cls: 1.0
+  w_patch: 1.0
+  w_block: 1.0
+  normaliser: fixed
+  calib_images: 1024
+  train_scope: converted
+  grad_checkpoint: false
+  amp: auto
+  eval_every: 200
+  log_every: 20
+  prefetch: 2
+
+lr_selection:
+  lrs: [1.0e-5, 5.0e-5, 1.0e-4]
+  budget_steps: 100            # short budget per rate (a choice; check that it separates the rates)
+
+compute:
+  device: cuda
+  gpu_memory_fraction: 0.2     # GPU is shared
+  tf32: false
+
+out_dir: runs/m3_pilot
+
+tiny:
+  blocks: [0, 1, 2]
+  structure:
+    attention: false
+  data:
+    image_size: 64
+    n_train: 32
+    n_heldout: 8
+  heal:
+    epochs: 1
+    batch_size: 8
+    micro_batch: 4
+    crop_size: 56
+    calib_images: 8
+    eval_every: 0
+    log_every: 0
+    prefetch: 0
+  lr_selection:
+    lrs: [1.0e-4, 1.0e-3]
+    budget_steps: 2
+  compute:
+    device: cpu
+  out_dir: tiny_out/m3_pilot

@@ -320,7 +320,11 @@ def write_report(path: Path, ctx: dict) -> None:
         + f" Data split: {'cached order of appearance' if ctx.get('split_seed') is None else 'shuffled within class, seed ' + str(ctx['split_seed'])}.")
     lines.append(f"- Data: fit {meta['split_sizes']['fit']}, held-out {meta['split_sizes']['heldout']}, "
                  f"k-NN bank {meta['split_sizes']['bank']}, queries {meta['split_sizes']['query']} images "
-                 "(each with its mirror).")
+                 "(each with its mirror)"
+                 + (f"; protocol v2: operators fitted on ImageNet train (fit seed {meta.get('fit_seed')}), held-out "
+                    "errors and k-NN queries on validation, k-NN bank from train"
+                    + (f", k-NN features in {meta.get('knn_amp')}" if meta.get("knn_amp") else "")
+                    if meta.get("protocol") == "v2" else "") + ".")
     lines.append(f"- Total time {meta['timing']['total_s'] / 60:.1f} min. Stages (s): "
                  + ", ".join(f"{k} {v:.0f}" for k, v in meta["timing"]["stages"].items()) + ".")
     lines.append("")

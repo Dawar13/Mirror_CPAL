@@ -170,7 +170,11 @@ def _randomise_affine(model: nn.Module, seed: int) -> None:
 def build_adapter(cfg: dict, device: torch.device) -> ViTAdapter:
     if cfg.get("tiny_mode"):
         adapter = TimmTinyAdapter(img_size=int(cfg["data"]["crop"]), seed=int(cfg["seed"]))
-    else:
+    elif cfg["model"]["name"].startswith("dinov2"):
         m = cfg["model"]
         adapter = Dinov2Adapter(hub_repo=m["hub_repo"], name=m["name"], img_size=int(cfg["data"]["crop"]))
+    else:  # DeiT-III, MAE, SigLIP2 and other timm ViTs (track G)
+        from .adapters_timm import build_model_adapter
+
+        adapter = build_model_adapter(cfg["model"]["name"], img_size=int(cfg["data"]["crop"]))
     return adapter.to(device=device)

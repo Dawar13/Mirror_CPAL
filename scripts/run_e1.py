@@ -49,6 +49,8 @@ def parse_args(argv=None):
     p.add_argument("--tiny", action="store_true", help="tiny random ViT + synthetic data on CPU")
     p.add_argument("--out-root", default=None,
                    help="directory that receives results/ and plots/ (default: repo root, or tiny_out/ with --tiny)")
+    p.add_argument("--fit-seed", type=int, default=None, help="override data.fit_seed (protocol v2)")
+    p.add_argument("--ks", default=None, help="override surgery.ks, e.g. 6,9")
     return p.parse_args(argv)
 
 
@@ -94,6 +96,10 @@ def position_check(adapter, ops: dict) -> dict:
 def main(argv=None) -> dict:
     args = parse_args(argv)
     cfg = load_config(args.config, tiny=args.tiny)
+    if args.fit_seed is not None:
+        cfg["data"]["fit_seed"] = args.fit_seed
+    if args.ks:
+        cfg["surgery"]["ks"] = [int(k) for k in args.ks.split(",")]
     tiny = cfg["tiny_mode"]
     out_root = Path(args.out_root) if args.out_root else (REPO_ROOT / "tiny_out" if tiny else REPO_ROOT)
     res_dir, plot_dir = out_root / "results", out_root / "plots"
@@ -111,17 +117,30 @@ def main(argv=None) -> dict:
     # ---------------------------------------------------------------- model and data
     with timer.stage("load"):
         adapter = build_adapter(cfg, device)
-        images, labels, splits, num_classes = get_data(cfg)
         comp = cfg["compute"]
         pin = device.type == "cuda"
         nw = int(comp.get("num_workers", 0))
-        stats_loaders = {s: make_loader(images, labels, splits[s], int(comp["stats_batch_size"]), nw, pin)
-                         for s in ("fit", "heldout")}
-        knn_loaders = {s: make_loader(images, labels, splits[s], int(comp["batch_size"]), nw, pin)
-                       for s in ("bank", "query")}
+        protocol = cfg["data"].get("protocol", "v1")
+        if protocol == "v2" and not tiny:
+            # Paper protocol: fit on ImageNet train (fit seed), held-out errors and k-NN queries on val,
+            # k-NN bank of 100 train images per class (PAPER_EXPERIMENTS.md Section 1).
+            from mirror.protocol import Protocol
+
+            fit_seed = int(cfg["data"].get("fit_seed", 0))
+            proto = Protocol(cfg["data"]["cache_dir"], int(comp["batch_size"]), int(comp["stats_batch_size"]), nw, pin)
+            stats_loaders = {"fit": proto.fit_loader(fit_seed), "heldout": proto.heldout_loader()}
+            knn_loaders = {"bank": proto.bank_loader(), "query": proto.query_loader()}
+            num_classes, split_sizes = 1000, proto.sizes(fit_seed)
+        else:
+            images, labels, splits, num_classes = get_data(cfg)
+            stats_loaders = {s: make_loader(images, labels, splits[s], int(comp["stats_batch_size"]), nw, pin)
+                             for s in ("fit", "heldout")}
+            knn_loaders = {s: make_loader(images, labels, splits[s], int(comp["batch_size"]), nw, pin)
+                           for s in ("bank", "query")}
+            split_sizes = {s: int(len(splits[s])) for s in SPLIT_NAMES}
     L, d, h = adapter.depth, adapter.embed_dim, adapter.mlp_hidden
     log(f"model depth {L}, d {d}, h {h}, grid {adapter.grid_hw}, prefix tokens {adapter.n_prefix_tokens}; "
-        + ", ".join(f"{s} {len(splits[s])}" for s in SPLIT_NAMES))
+        f"protocol {protocol}; " + ", ".join(f"{s} {n}" for s, n in split_sizes.items()))
 
     with timer.stage("sanity"):
         sanity = in_run_sanity(adapter, stats_loaders["fit"], device)
@@ -262,7 +281,7 @@ def main(argv=None) -> dict:
         res_dir / "e1_operators.npz",
         A_layers=np.stack(fit["A_layers"]).astype(np.float32), A_shared=A_s.astype(np.float32),
         A_shared_norm=A_sn.astype(np.float32), eigvals=np.stack(fit["eigvals"]),
-        eigvals_shared=fit["eigvals_shared"], C=res["C"].astype(np.float32),
+        eigvals_shared=fit["eigvals_shared"], C=res["C"].astype(np.float32), G=res["G"].astype(np.float32),
         perms=np.stack([m.perm for m in matches]).astype(np.int32),
         match_scores=np.stack([m.score for m in matches]).astype(np.float32),
         self_corr=np.stack(diag_scores).astype(np.float32),
@@ -272,12 +291,25 @@ def main(argv=None) -> dict:
     # ---------------------------------------------------------------- 5. zero-shot surgery
     kc = cfg["knn"]
     with timer.stage("surgery_knn"):
+        amp = comp.get("knn_amp")  # "bf16" in the paper protocol, identical for every variant
+
         def knn(model=None):
             out = evaluate_knn(adapter, knn_loaders["bank"], knn_loaders["query"], device, num_classes,
-                               k=int(kc["k"]), temperature=float(kc["temperature"]), model=model)
+                               k=int(kc["k"]), temperature=float(kc["temperature"]), model=model, amp=amp)
             return out["top1"], out["flip_consistency"]
 
-        top1_0, flip_0 = knn()
+        # The original model's k-NN does not depend on the fit seed: cache it per model and protocol.
+        knn_cache = Path(cfg["data"].get("cache_dir", "cache")) / "knn_original" / \
+            f"{cfg['model']['name']}_{protocol}_{amp}.json"
+        if protocol == "v2" and not tiny and knn_cache.exists():
+            cached = json.loads(knn_cache.read_text())
+            top1_0, flip_0 = cached["top1"], cached["flip_consistency"]
+            log(f"original k-NN from cache {knn_cache}")
+        else:
+            top1_0, flip_0 = knn()
+            if protocol == "v2" and not tiny:
+                knn_cache.parent.mkdir(parents=True, exist_ok=True)
+                knn_cache.write_text(json.dumps({"top1": top1_0, "flip_consistency": flip_0, "git": git["git_hash"]}))
         log(f"original: top-1 {top1_0:.2f}, flip consistency {flip_0:.2f}")
         surg_rows = [{"k": 0, "variant": "original", "top1": top1_0, "flip_consistency": flip_0,
                       "drop_points": 0.0, "mlp_params_kept_frac": 1.0}]
@@ -323,7 +355,8 @@ def main(argv=None) -> dict:
     meta = {
         "date": time.strftime("%Y-%m-%d %H:%M:%S"), "seed": seed, "git": git, "env": env_info(device),
         "config_path": cfg["config_path"], "config": cfg, "tiny": tiny,
-        "split_sizes": {s: int(len(splits[s])) for s in SPLIT_NAMES},
+        "split_sizes": split_sizes, "protocol": protocol, "fit_seed": cfg["data"].get("fit_seed"),
+        "knn_amp": comp.get("knn_amp"),
         "timing": {"stages": timer.stages, "total_s": timer.total()},
         "shared": {"d_plus": fit["d_plus_shared"], "d_minus": fit["d_minus_shared"],
                    "n_zero": fit["n_zero_shared"], "layers": list(shared_layers),

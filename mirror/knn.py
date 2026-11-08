@@ -9,17 +9,23 @@ from __future__ import annotations
 import torch
 import torch.nn.functional as F
 
-from .data import mirror, normalize
+from .data import mirror, normalize_for
 
 
 @torch.no_grad()
-def extract_features(adapter, loader, device, model=None, flip: bool = False):
+def extract_features(adapter, loader, device, model=None, flip: bool = False, amp: str | None = None):
+    """CLS features; `amp="bf16"` runs the forward under bf16 autocast on CUDA (paper protocol)."""
+    import contextlib
+
+    ctx = (torch.autocast("cuda", dtype=torch.bfloat16) if amp == "bf16" and torch.device(device).type == "cuda"
+           else contextlib.nullcontext())
     feats, labels = [], []
     for imgs, y in loader:
-        x = normalize(imgs.to(device, non_blocking=True), adapter.dtype)
+        x = normalize_for(adapter, imgs.to(device, non_blocking=True))
         if flip:
             x = mirror(x)
-        f = adapter.cls_feature(x, model)
+        with ctx:
+            f = adapter.cls_feature(x, model)
         feats.append(F.normalize(f.float(), dim=-1))
         labels.append(torch.as_tensor(y))
     return torch.cat(feats), torch.cat(labels).to(device)
@@ -42,11 +48,11 @@ def knn_predict(bank_feats: torch.Tensor, bank_labels: torch.Tensor, query_feats
 
 @torch.no_grad()
 def evaluate_knn(adapter, bank_loader, query_loader, device, num_classes: int, k: int = 20,
-                 temperature: float = 0.07, model=None) -> dict:
+                 temperature: float = 0.07, model=None, amp: str | None = None) -> dict:
     """Top-1 (%) and flip consistency (%) for `model` (default: the adapter's own model)."""
-    bf, by = extract_features(adapter, bank_loader, device, model)
-    qf, qy = extract_features(adapter, query_loader, device, model)
-    qf_flip, _ = extract_features(adapter, query_loader, device, model, flip=True)
+    bf, by = extract_features(adapter, bank_loader, device, model, amp=amp)
+    qf, qy = extract_features(adapter, query_loader, device, model, amp=amp)
+    qf_flip, _ = extract_features(adapter, query_loader, device, model, flip=True, amp=amp)
     pred = knn_predict(bf, by, qf, num_classes, k, temperature)
     pred_flip = knn_predict(bf, by, qf_flip, num_classes, k, temperature)
     return {

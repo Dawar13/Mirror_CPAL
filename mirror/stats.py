@@ -14,7 +14,7 @@ from dataclasses import dataclass
 import numpy as np
 import torch
 
-from .data import mirror, normalize
+from .data import mirror, normalize_for
 
 
 def unflip_tokens(t: torch.Tensor, grid_hw: tuple[int, int], n_prefix: int) -> torch.Tensor:
@@ -87,7 +87,7 @@ def run_paired(adapter, loader, device, residual_cb=None, fc1_cb=None, model=Non
     m = adapter.model if model is None else model
     with PairedHooks(adapter, m, residual_cb, fc1_cb):
         for imgs, _ in tqdm(loader, desc=desc, leave=False):
-            x = normalize(imgs.to(device, non_blocking=True), adapter.dtype)
+            x = normalize_for(adapter, imgs.to(device, non_blocking=True))
             adapter.forward_tokens(torch.cat([x, mirror(x)], dim=0), m)
 
 
@@ -104,6 +104,7 @@ class ResidualStats:
     def __init__(self, n_layers: int, d: int, device, center: bool = True):
         self.center = center
         self.C = torch.zeros(n_layers, d, d, dtype=torch.float64, device=device)
+        self.G = torch.zeros(n_layers, d, d, dtype=torch.float64, device=device)  # X^T X (F2: energy subspace)
         self.sq_x = torch.zeros(n_layers, dtype=torch.float64, device=device)
         self.sq_xt = torch.zeros(n_layers, dtype=torch.float64, device=device)
         self.n = torch.zeros(n_layers, dtype=torch.float64, device=device)
@@ -113,12 +114,13 @@ class ResidualStats:
         if self.center:
             X, Xt = center_channels(X), center_channels(Xt)
         self.C[layer] += X.T @ Xt
+        self.G[layer] += X.T @ X
         self.sq_x[layer] += (X * X).sum()
         self.sq_xt[layer] += (Xt * Xt).sum()
         self.n[layer] += X.shape[0]
 
     def numpy(self) -> dict:
-        return {"C": self.C.cpu().numpy(), "sq_x": self.sq_x.cpu().numpy(),
+        return {"C": self.C.cpu().numpy(), "G": self.G.cpu().numpy(), "sq_x": self.sq_x.cpu().numpy(),
                 "sq_xt": self.sq_xt.cpu().numpy(), "n": self.n.cpu().numpy()}
 
 

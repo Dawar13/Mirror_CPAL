@@ -56,11 +56,18 @@ def make_splits(labels: np.ndarray, per_class: dict[str, int], seed: int | None 
 # ----------------------------------------------------------------------------------------------
 # Tensors
 # ----------------------------------------------------------------------------------------------
-def normalize(x_uint8: torch.Tensor, dtype: torch.dtype = torch.float32) -> torch.Tensor:
-    """[B, 3, H, W] uint8 -> ImageNet-normalised float."""
-    mean = torch.tensor(IMAGENET_MEAN, dtype=dtype, device=x_uint8.device).view(1, 3, 1, 1)
-    std = torch.tensor(IMAGENET_STD, dtype=dtype, device=x_uint8.device).view(1, 3, 1, 1)
+def normalize(x_uint8: torch.Tensor, dtype: torch.dtype = torch.float32, mean=IMAGENET_MEAN,
+              std=IMAGENET_STD) -> torch.Tensor:
+    """[B, 3, H, W] uint8 -> normalised float (ImageNet statistics unless the model says otherwise)."""
+    mean = torch.tensor(mean, dtype=dtype, device=x_uint8.device).view(1, 3, 1, 1)
+    std = torch.tensor(std, dtype=dtype, device=x_uint8.device).view(1, 3, 1, 1)
     return (x_uint8.to(dtype) / 255.0 - mean) / std
+
+
+def normalize_for(adapter, x_uint8: torch.Tensor) -> torch.Tensor:
+    """Normalise with the adapter's own statistics (SigLIP2 uses 0.5 / 0.5)."""
+    return normalize(x_uint8, adapter.dtype, getattr(adapter, "mean", IMAGENET_MEAN),
+                     getattr(adapter, "std", IMAGENET_STD))
 
 
 def mirror(x: torch.Tensor) -> torch.Tensor:
