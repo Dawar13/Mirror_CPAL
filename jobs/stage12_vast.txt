@@ -1,0 +1,22 @@
+# Rented RTX 5090 (vast.ai, 2026-11-09), after the A100 went offline. Most important first. Launch with
+#   export HF_HOME=$HOME/hf MIRROR_MEM_SCALE=2.5; PAR=4 NEED_MB=7000 bash scripts/vm_queue.sh jobs/stage12_vast.txt
+# One healing job at a time (V-exact k = 6, then k = 12 again: the A100 checkpoint was not copied before the VM
+# went offline; the rerun goes to runs/m3_vexact_5090/ so the committed A100 result in runs/m3_vexact/k12/ is
+# untouched, and it doubles as a second-device check). M2 runs last, alone.
+# ADE20K (Tier 2), two processes over the same variant list from opposite ends; a finished variant is skipped.
+python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants original,healed_mirror_k9,healed_svd_k9,healed_random_k9,vexact_k6,mirror_mlp_k6,svd_mlp_k6 --num-workers 4 --out runs/t2_seg
+python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants svd_mlp_k6,mirror_mlp_k6,vexact_k6 --num-workers 4 --out runs/t2_seg
+# V-exact healing, k = 6 then k = 12.
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4; python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 6 && python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 12 --out-dir runs/m3_vexact_5090'
+# Generality: DINOv2-L (k = 12 of 24) and DINOv2-S (k = 6 of 12; the A100 run's files were not copied).
+python scripts/run_e1.py --config configs/g_dinov2_l_reg.yaml --fit-seed 0 --ks 12 --out-root runs/g/dinov2_l_reg_s0
+python scripts/run_e1.py --config configs/g_dinov2_s_reg.yaml --fit-seed 0 --ks 6 --out-root runs/g/dinov2_s_reg_s0
+# Ablations: A1/A2 at k = 9 (seeds 0, 1, 2) and A4/A5 for seeds 1 and 2 (A100 rows were not copied).
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s0 --fit-seed 0 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg'
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s1 --fit-seed 1 --ablation A4,A5 --ks 6 --out runs/a/dinov2_vitb14_reg'
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A4,A5 --ks 6 --out runs/a/dinov2_vitb14_reg'
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s1 --fit-seed 1 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg'
+bash -c 'export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg'
+# Tier 2 for the healed V-exact models, once each checkpoint exists.
+bash -c 'while [ ! -f runs/m3_vexact/k6/SUMMARY.md ]; do sleep 120; done; python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_vexact_k6 --out runs/t2 && python scripts/tier2_transfer.py --model dinov2_vitb14_reg --variants healed_vexact_k6 --out runs/t2'
+bash -c 'while [ ! -f runs/m3_vexact_5090/k12/SUMMARY.md ]; do sleep 120; done; python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --out runs/t2 && python scripts/tier2_transfer.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --out runs/t2'
