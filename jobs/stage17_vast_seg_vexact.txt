@@ -1,0 +1,4 @@
+# Rented RTX 5090: ADE20K for the healed V-exact models (grid interpolated to 448 px and re-projected, a recorded
+# deviation), each once its healing run has finished. Run with PAR=1 NEED_MB=10000 bash scripts/vm_sched.sh jobs/stage17_vast_seg_vexact.txt
+runs/m3_vexact/k6/SUMMARY.md | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_vexact_k6 --vexact-dir runs/m3_vexact --num-workers 4 --out runs/t2_seg
+runs/m3_vexact_5090/k12/SUMMARY.md | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --num-workers 4 --out runs/t2_seg
