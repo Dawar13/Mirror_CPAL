@@ -1,0 +1,102 @@
+{
+  "script": "scripts/make_figures.py",
+  "date": "2026-11-09T13:06:16",
+  "git_hash": "a6ecfbcff2511b29431efa740999ed6bf50d44f1",
+  "git_dirty": true,
+  "seed": null,
+  "seed_note": "no randomness: the figures depend only on the input tables",
+  "tables_dir": "results\\paper\\tables",
+  "inputs_sha256": {
+    "T_ablations.csv": "bb0941fffe1c8e08a4f9d7ebe8498e75f696cd9cd07ce8da542eefc275971091",
+    "T_ablations_seeds.csv": "368443d55cd1fd4097f28283a467d4212b1c9cf568fbe01cd5c199c0151d96db",
+    "T_generality.csv": "70ecec54450981349d9308d732cdf2b2e5ed2feff8357e0a4dec64c66be0764b",
+    "T_generality_p4.csv": "eedd06b0daeb90e0cd63f250967bc531dba933aa49a84cede6676fe3bfd9a865",
+    "T_healing.csv": "3cd07c3bdc0a8e0a45410174cd5f5983b2b382532ee8bd016358cef30ef102ba",
+    "T_latency.csv": "eb5fc1c1105a7854a547a6c3a3e03cdf8463271a401e54875a8b9cd91675d97e",
+    "T_main_zeroshot.csv": "529faea8b76f4d60a5d494673d40dca1382a485522c816161622db3f6685c117",
+    "T_tier2.csv": "cd7ab6ff047308fbc1735938cb0b60e0c5dc290bf747f73698959dc3e04f6ec0",
+    "T_tier2_transfer.csv": "6f03ba95112af561e851dc6b8431b70f1d530f402e164676b311ff7e87270981",
+    "ext_f1_dinov2_f1_blocks_by_seed.csv": "2dc43c2417590a30d74345db0a8767b494d84d17b494fe00006a6a68712a6063",
+    "ext_f1_dinov2_f1_blocks_summary.csv": "fab3da37fd200b0042c429686d3928e85b407653feb05523a39462dcd62be1c1",
+    "ext_f1_g_f1_blocks_by_seed.csv": "0e99fc7c542f2715720a1bb1746b7de70025a5e513fbda85721f82feae79ab60",
+    "ext_f1_g_f1_blocks_summary.csv": "609781560470e25056c9ac9eb90904d98dd424e765a4b9509b13b22d9d9c312f"
+  },
+  "inputs_missing": [
+    "T_healing_vexact.csv",
+    "T_tier2_seg.csv"
+  ],
+  "figures": [
+    {
+      "title": "Figure 1. Main result: zero-shot k-NN top-1 against converted blocks",
+      "files": [
+        "fig1_main_knn_vs_k.pdf",
+        "fig1_main_knn_vs_k.png"
+      ]
+    },
+    {
+      "title": "Figure 2. Healing: zero-shot and healed k-NN top-1",
+      "files": [
+        "fig2_healing.pdf",
+        "fig2_healing.png"
+      ]
+    },
+    {
+      "title": "Figure 3. Zero-shot ablations (A1, A2, A4, A5)",
+      "files": [
+        "fig3_ablations.pdf",
+        "fig3_ablations.png"
+      ]
+    },
+    {
+      "title": "Figure 4. Symmetry tax (F1): predicted against realised",
+      "files": [
+        "fig4_symmetry_tax.pdf",
+        "fig4_symmetry_tax.png"
+      ]
+    },
+    {
+      "title": "Figure 5. Generality across vision transformers",
+      "files": [
+        "fig5_generality.pdf",
+        "fig5_generality.png"
+      ]
+    },
+    {
+      "title": "Figure 6. Cost: measured against analytic speed-up (M2)",
+      "files": [
+        "fig6_cost.pdf",
+        "fig6_cost.png"
+      ]
+    },
+    {
+      "title": "Figure 7. Tier-2 linear probes: ImageNet and transfer",
+      "files": [
+        "fig7_tier2_probes.pdf",
+        "fig7_tier2_probes.png"
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "what": "Figure 2 (healing), V-exact full conversion healed point",
+      "why": "T_healing_vexact.csv not in the tables yet (rerun scripts/collect_results.py once runs/m3_vexact/ is collected)"
+    },
+    {
+      "what": "Figure 5 (generality), DINOv2-S reg",
+      "why": "no row in T_generality yet"
+    },
+    {
+      "what": "Figure 5 (generality), DINOv2-L reg",
+      "why": "no row in T_generality yet"
+    },
+    {
+      "what": "Figure 7 (Tier-2 probes), ADE20K segmentation panel",
+      "why": "T_tier2_seg.csv not in the tables yet"
+    }
+  ],
+  "versions": {
+    "python": "3.12.4",
+    "matplotlib": "3.10.0",
+    "numpy": "2.4.4"
+  }
+}
