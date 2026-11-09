@@ -325,12 +325,15 @@ def probe_feature(adapter, x: torch.Tensor, model=None) -> torch.Tensor:
 
 @torch.no_grad()
 def extract_features(adapter, loader, device, model=None, amp: str | None = "bf16", dtype=np.float16,
-                     log_every: int = 50, tag: str = "") -> tuple:
+                     log_every: int = 50, tag: str = "", feature_fn=None) -> tuple:
     """Features and labels for every image of `loader`, in loader order: (X [N, D] `dtype`, y [N] int64).
-    bf16 autocast on CUDA only (CPU runs stay in float32), as mirror.knn.extract_features."""
+    bf16 autocast on CUDA only (CPU runs stay in float32), as mirror.knn.extract_features.
+    `feature_fn(adapter, x, model)` replaces probe_feature when given (scripts/flip_avg_baseline.py passes
+    the flip-averaged probe feature); everything else is unchanged."""
     device = torch.device(device)
     ctx = (torch.autocast("cuda", dtype=torch.bfloat16) if amp == "bf16" and device.type == "cuda"
            else contextlib.nullcontext())
+    fn = probe_feature if feature_fn is None else feature_fn
     m = adapter.model if model is None else model
     m.eval()
     n = len(loader.dataset)
@@ -340,7 +343,7 @@ def extract_features(adapter, loader, device, model=None, amp: str | None = "bf1
     for i, (imgs, lab) in enumerate(loader):
         x = normalize_for(adapter, imgs.to(device, non_blocking=True))
         with ctx:
-            f = probe_feature(adapter, x, m)
+            f = fn(adapter, x, m)
         f = f.float().cpu().numpy()
         if finfo is not None and np.abs(f).max() > finfo.max:
             raise OverflowError(f"feature values exceed the {np.dtype(dtype).name} range; rerun with "

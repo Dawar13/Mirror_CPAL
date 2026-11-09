@@ -1,0 +1,4 @@
+# Rented RTX 5090: flip-averaging baseline (exact invariance by averaging an image and its mirror, 2 passes) against
+# healed V-exact k = 12 (exact by construction, 1 pass). Essential rows first; the other variants later if time allows.
+#   PAR=1 NEED_MB=6000 bash scripts/vm_sched.sh jobs/stage19_vast_flipavg.txt
+@6000 runs/m3_vexact_5090/k12/SUMMARY.md | export OMP_NUM_THREADS=4; python scripts/flip_avg_baseline.py --model dinov2_vitb14_reg --variants original --vexact-dir runs/m3_vexact_5090 --vexact-fp32 --out runs/t1_flipavg
