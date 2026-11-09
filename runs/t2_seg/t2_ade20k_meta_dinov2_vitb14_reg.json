@@ -3,11 +3,13 @@
   "recipe": "t2seg-v1",
   "model": "dinov2_vitb14_reg",
   "variants": [
-    "original"
+    "vexact_k6",
+    "mirror_mlp_k6",
+    "svd_mlp_k6"
   ],
   "args": {
     "model": "dinov2_vitb14_reg",
-    "variants": "original",
+    "variants": "vexact_k6,mirror_mlp_k6,svd_mlp_k6",
     "out": "runs/t2_seg",
     "cache_dir": "cache",
     "hf_id": "merve/scene_parse_150",
@@ -137,16 +139,27 @@
   "seed": 0,
   "timing": {
     "stages": {
-      "data": 126.48,
-      "load": 9.02
+      "data": 0.01,
+      "load": 3.43
     },
     "variants": {
-      "original": {
-        "build original": 0.02,
-        "train original": 914.26,
-        "evaluate original": 23.19
+      "vexact_k6": {
+        "build vexact_k6": 25.93,
+        "V-exact checks vexact_k6": 1.72,
+        "train vexact_k6": 3883.35,
+        "evaluate vexact_k6": 146.05
+      },
+      "mirror_mlp_k6": {
+        "build mirror_mlp_k6": 11.79,
+        "train mirror_mlp_k6": 3676.98,
+        "evaluate mirror_mlp_k6": 102.13
+      },
+      "svd_mlp_k6": {
+        "build svd_mlp_k6": 15.97,
+        "train svd_mlp_k6": 2771.0,
+        "evaluate svd_mlp_k6": 53.26
       }
     },
-    "total_s": 1073.65
+    "total_s": 10692.79
   }
 }
