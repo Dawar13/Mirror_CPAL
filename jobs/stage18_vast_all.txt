@@ -1,0 +1,19 @@
+# Rented RTX 5090, one scheduler for all pending work (2026-11-09 08:15 UTC), replacing the pending parts of stage13
+# (its started jobs had all finished) and stage16 (V-exact k = 12 re-heal ran out of GPU memory twice). "@<MiB>" is
+# each job's free-memory requirement (ADE20K about 10 GB, healing up to about 8 GB). Run with
+#   PAR=3 NEED_MB=6000 bash scripts/vm_sched.sh jobs/stage18_vast_all.txt
+# Healing (one healing job at a time: the only one in this list).
+@12000 | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4; python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 12 --out-dir runs/m3_vexact_5090
+# Ablations, fit seeds 1 and 2 (A4/A5 at k = 6, A1/A2 at k = 9).
+@5000 runs/x2/perlayer_reg_s1/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s1 --fit-seed 1 --ablation A4,A5 --ks 6 --out runs/a/dinov2_vitb14_reg
+@5000 runs/x2/perlayer_reg_s2/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A4,A5 --ks 6 --out runs/a/dinov2_vitb14_reg
+@5000 runs/x2/perlayer_reg_s1/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s1 --fit-seed 1 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg
+@5000 runs/x2/perlayer_reg_s2/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg
+# ADE20K, healed M3-pilot variants (checkpoints arrive from the laptop).
+@12000 runs/m3_pilot/svd/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_svd_k9 --num-workers 4 --out runs/t2_seg
+@12000 runs/m3_pilot/mirror/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_mirror_k9 --num-workers 4 --out runs/t2_seg
+@12000 runs/m3_pilot/random/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_random_k9 --num-workers 4 --out runs/t2_seg
+# Tier 2 probes for healed V-exact k = 12 (5090 re-heal).
+@6000 runs/m3_vexact_5090/k12/SUMMARY.md | python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --out runs/t2 && python scripts/tier2_transfer.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --out runs/t2
+# Last: ADE20K original rerun (GPU run-to-run spread), after the re-heal.
+@12000 runs/m3_vexact_5090/k12/SUMMARY.md | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants original --num-workers 4 --out runs/t2_seg_rerun
