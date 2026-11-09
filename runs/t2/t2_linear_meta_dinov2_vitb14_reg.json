@@ -2,24 +2,19 @@
   "experiment": "Tier 2 ImageNet linear probe",
   "model": "dinov2_vitb14_reg",
   "variants": [
-    "original",
-    "healed_mirror_k9",
-    "healed_svd_k9",
-    "healed_random_k9",
-    "vexact_k6",
-    "vlocal_k9",
-    "mirror_mlp_k6",
-    "svd_mlp_k6",
-    "random_k6"
+    "healed_vexact_k6"
   ],
   "args": {
     "model": "dinov2_vitb14_reg",
-    "variants": "original,healed_mirror_k9,healed_svd_k9,healed_random_k9,vexact_k6,vlocal_k9,mirror_mlp_k6,svd_mlp_k6,random_k6",
+    "variants": "healed_vexact_k6",
     "out": "runs/t2",
     "operators": null,
     "m1_structure": null,
     "heal_dir": null,
     "heal_config": null,
+    "vexact_dir": null,
+    "vexact_checkpoint": null,
+    "vexact_config": null,
     "random_seed": 1,
     "seed": 0,
     "cache_dir": "cache",
@@ -48,83 +43,38 @@
   "paths": {
     "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
     "m1_structure": "runs/m1/m1_structure.npz",
-    "heal_dir": "runs/m3_pilot"
+    "heal_dir": "runs/m3_pilot",
+    "vexact_dir": "runs/m3_vexact",
+    "vexact_checkpoint": null,
+    "vexact_config": null
   },
   "git": {
-    "git_hash": "edc3bbc98b48665763a0c67cfb3d3ebe18297b0e",
-    "git_dirty": true
+    "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+    "git_dirty": null
   },
   "env": {
     "python": "3.12.3",
-    "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+    "platform": "Linux-5.15.0-181-generic-x86_64-with-glibc2.39",
     "torch": "2.11.0+cu128",
     "numpy": "2.5.4",
     "device": "cuda",
-    "gpu": "NVIDIA A100-SXM4-80GB",
+    "gpu": "NVIDIA GeForce RTX 5090",
     "cuda": "12.8"
   },
   "seed": 0,
   "feature_recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
   "timing": {
     "stages": {
-      "load": 5.69
+      "load": 6.18
     },
     "variants": {
-      "original": {
-        "build original": 0.02,
-        "extract original bank": 231.16,
-        "extract original val": 115.33,
-        "probe original": 605.82
-      },
-      "healed_mirror_k9": {
-        "build healed_mirror_k9": 227.61,
-        "extract healed_mirror_k9 bank": 201.6,
-        "extract healed_mirror_k9 val": 83.32,
-        "probe healed_mirror_k9": 351.25
-      },
-      "healed_svd_k9": {
-        "build healed_svd_k9": 66.6,
-        "extract healed_svd_k9 bank": 109.8,
-        "extract healed_svd_k9 val": 54.39,
-        "probe healed_svd_k9": 82.48
-      },
-      "healed_random_k9": {
-        "build healed_random_k9": 329.28,
-        "extract healed_random_k9 bank": 79.17,
-        "extract healed_random_k9 val": 39.03,
-        "probe healed_random_k9": 111.4
-      },
-      "vexact_k6": {
-        "build vexact_k6": 69.17,
-        "extract vexact_k6 bank": 202.45,
-        "extract vexact_k6 val": 100.86,
-        "probe vexact_k6": 579.71
-      },
-      "vlocal_k9": {
-        "build vlocal_k9": 2.79,
-        "extract vlocal_k9 bank": 231.32,
-        "extract vlocal_k9 val": 100.35,
-        "probe vlocal_k9": 202.5
-      },
-      "mirror_mlp_k6": {
-        "build mirror_mlp_k6": 213.67,
-        "extract mirror_mlp_k6 bank": 167.96,
-        "extract mirror_mlp_k6 val": 84.13,
-        "probe mirror_mlp_k6": 448.98
-      },
-      "svd_mlp_k6": {
-        "build svd_mlp_k6": 3.95,
-        "extract svd_mlp_k6 bank": 158.58,
-        "extract svd_mlp_k6 val": 95.77,
-        "probe svd_mlp_k6": 1120.87
-      },
-      "random_k6": {
-        "build random_k6": 107.65,
-        "extract random_k6 bank": 183.66,
-        "extract random_k6 val": 69.09,
-        "probe random_k6": 794.46
+      "healed_vexact_k6": {
+        "build healed_vexact_k6": 38.5,
+        "extract healed_vexact_k6 bank": 261.56,
+        "extract healed_vexact_k6 val": 127.7,
+        "probe healed_vexact_k6": 441.52
       }
     },
-    "total_s": 7645.73
+    "total_s": 877.0
   }
 }

@@ -4,6 +4,8 @@ Protocol (PAPER_EXPERIMENTS.md, Section 1, Tier 2): multinomial logistic regress
 
 The k-NN check column is k-NN top-1 (k = 20, T = 0.07) on the CLS (or pooled) half of the same cached features: it should sit close to the Tier-1 k-NN number of the same variant.
 
+Healed V-exact rows (healed_vexact_k<K>, scripts/heal_vexact.py): the same feature through the student's own final norm, which at full conversion holds the even head, so the feature of an image and of its mirror are equal in fp32 (bf16 forward passes round the mirrored computation differently). The loaded student is checked before probing (span exactness and image vs mirror feature, fp32); values and the feature statement are in the CSV columns vexact_* and notes.
+
 ## dinov2_vitb14
 
 | Variant | What it is | Top-1 | Top-5 | Change vs original (top-1) | k-NN check | Chosen wd | Model params | Notes |
@@ -18,6 +20,7 @@ The k-NN check column is k-NN top-1 (k = 20, T = 0.07) on the CLS (or pooled) ha
 | Variant | What it is | Top-1 | Top-5 | Change vs original (top-1) | k-NN check | Chosen wd | Model params | Notes |
 |---|---|---|---|---|---|---|---|---|
 | original | original | 80.99 | 95.97 | - | 78.94 | 0.00316 | 86,583,552 | - |
+| healed_vexact_k6 | healed Mirror V-exact, MLP + attention, k = 6 (scripts/heal_vexact.py) | 80.86 | 95.86 | -0.13 | 78.79 | 0.00316 | 69,194,400 | loaded student checked: span exactness 4.6e-06, image vs mirror feature 4.2e-01, PASS; no even head (k < depth) |
 | mirror_mlp_k6 | Mirror Surgery, MLP only, V-local, k = 6 | 79.08 | 95.07 | -1.91 | 77.11 | 0.00316 | 74,734,630 | - |
 | random_k6 | matched random structure, MLP only, k = 6 | 11.25 | 24.62 | -69.74 | 3.64 | 0.000316 | 74,734,630 | - |
 | svd_mlp_k6 | SVD at matched parameters, MLP only, k = 6 | 20.92 | 40.62 | -60.07 | 8.77 | 0.001 | 74,718,720 | - |
@@ -33,4 +36,4 @@ The k-NN check column is k-NN top-1 (k = 20, T = 0.07) on the CLS (or pooled) ha
 |---|---|---|---|---|---|---|---|---|
 | original | original | 56.54 | 79.83 | - | 13.72 | 0.001 | 85,798,656 | - |
 
-Source: `t2_linear.csv` and `probe/<model>/<variant>.json` in this folder. Commit(s): 8a7b6c4e42 (dirty), edc3bbc98b (dirty); seed(s): 0. Feature extraction and probe timings are in the CSV.
+Source: `t2_linear.csv` and `probe/<model>/<variant>.json` in this folder. Commit(s): 8a7b6c4e42 (dirty), b95ccd5886, edc3bbc98b (dirty); seed(s): 0. Feature extraction and probe timings are in the CSV.
