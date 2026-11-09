@@ -1,0 +1,256 @@
+{
+  "date": "2026-11-09 06:49:33",
+  "seed": 0,
+  "git": {
+    "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+    "git_dirty": null
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-5.15.0-181-generic-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "cuda": "12.8"
+  },
+  "config_path": "configs/g_dinov2_s_reg.yaml",
+  "config": {
+    "seed": 0,
+    "model": {
+      "hub_repo": "facebookresearch/dinov2",
+      "name": "dinov2_vits14_reg"
+    },
+    "data": {
+      "hf_repo": "ILSVRC/imagenet-1k",
+      "parquet_pattern": "data/validation-*.parquet",
+      "cache_dir": "cache",
+      "resize": 256,
+      "crop": 224,
+      "decode_workers": 16,
+      "per_class": {
+        "fit": 2,
+        "heldout": 1,
+        "bank": 39,
+        "query": 8
+      },
+      "split_seed": null,
+      "protocol": "v2",
+      "fit_seed": 0
+    },
+    "compute": {
+      "device": "cuda",
+      "gpu_memory_fraction": 0.08,
+      "tf32": false,
+      "batch_size": 128,
+      "stats_batch_size": 16,
+      "num_workers": 4,
+      "knn_amp": "bf16"
+    },
+    "stats": {
+      "center": true,
+      "shared_layers": [
+        1,
+        12
+      ],
+      "n_null": 3,
+      "operator_mode": "per_layer"
+    },
+    "matching": {
+      "top_k": 10,
+      "workers": 4
+    },
+    "surgery": {
+      "ks": [
+        6
+      ]
+    },
+    "knn": {
+      "k": 20,
+      "temperature": 0.07
+    },
+    "decision": {
+      "blocks": [
+        1,
+        6
+      ],
+      "e_null_ratio_go": 5.0,
+      "e_null_ratio_kill": 3.0,
+      "e_identity_ratio_go": 0.5,
+      "dminus_go": 0.2,
+      "dminus_kill": 0.1,
+      "share_go": 0.2,
+      "share_kill": 0.3,
+      "evidence_dminus": 0.2,
+      "evidence_twin_frac": 0.2,
+      "surgery_k": 6,
+      "surgery_drop_go": 10.0,
+      "surgery_margin_go": 5.0
+    },
+    "tiny_mode": false,
+    "config_path": "configs/g_dinov2_s_reg.yaml"
+  },
+  "tiny": false,
+  "split_sizes": {
+    "fit": 2000,
+    "heldout": 1000,
+    "bank": 100000,
+    "query": 50000
+  },
+  "protocol": "v2",
+  "fit_seed": 0,
+  "knn_amp": "bf16",
+  "timing": {
+    "stages": {
+      "load": 20.57,
+      "sanity": 1.17,
+      "fit_stats": 167.28,
+      "fit_operators": 6.51,
+      "heldout_errors": 48.24,
+      "position_check": 0.09,
+      "mlp_matching": 35.7,
+      "breaking_share": 6.6,
+      "surgery_knn": 869.7
+    },
+    "total_s": 1157.78
+  },
+  "shared": {
+    "d_plus": 376,
+    "d_minus": 8,
+    "n_zero": 1,
+    "layers": [
+      1,
+      12
+    ],
+    "d_plus_norm": 355,
+    "d_minus_norm": 29
+  },
+  "operator_mode": "per_layer",
+  "dminus_frac_decision": 0.2703993055555555,
+  "matching_workers": 4,
+  "position_check": {
+    "channel_centred": {
+      "A_shared": 0.6483210444217502,
+      "A_0 (layer 0)": 0.23330002888489593,
+      "identity": 0.9444704185242895,
+      "null": 0.9566042670217775
+    },
+    "grid_centred": {
+      "A_shared": 0.6731157940691551,
+      "A_0 (layer 0)": 0.17893477940314495,
+      "identity": 0.9820041004811124,
+      "null": 0.9920779066290137
+    }
+  },
+  "sanity": {
+    "fold_max_abs_diff": 2.86102294921875e-06,
+    "identity_surgery_max_abs_diff": 1.0013580322265625e-05
+  },
+  "decision": {
+    "rows": [
+      {
+        "row": 1,
+        "check": "e(null) / e(A_l (per layer)), mean over layers; worst layer 4: 10.7",
+        "value": 20.32189110315654,
+        "go": ">= 5",
+        "kill": "< 3",
+        "cell": "GO"
+      },
+      {
+        "row": 2,
+        "check": "e(A_l (per layer)) / e(I), mean over layers; worst layer 6: 0.306",
+        "value": 0.116270984317366,
+        "go": "<= 0.5",
+        "kill": "informative only",
+        "cell": "GO"
+      },
+      {
+        "row": 3,
+        "check": "d- / d (mean of per-layer A_l over layers 1 to 6)",
+        "value": 0.2703993055555555,
+        "go": ">= 0.2",
+        "kill": "< 0.1: blocks GO, no KILL (PIVOT: little to save)",
+        "cell": "GO"
+      },
+      {
+        "row": 4,
+        "check": "MLP breaking share, max(mean s1, mean s2) [s1 0.198, s2 0.165; matched null s1 0.407, s2 0.391; twin fraction 0.575, d-/d 0.270]",
+        "value": 0.19798055447188548,
+        "go": "<= 0.2, and d-/d >= 0.2 or twin fraction >= 0.2",
+        "kill": "> 0.3",
+        "cell": "GO"
+      },
+      {
+        "row": 5,
+        "check": "Zero-shot surgery at k = 6: k-NN drop [original 74.46, surgery 56.03, SVD 10.24; margin over SVD 45.79]",
+        "value": 18.422001600265503,
+        "go": "drop <= 10 and margin >= 5",
+        "kill": "no better than SVD (margin <= 0)",
+        "cell": "AMBER"
+      }
+    ],
+    "outcome": "PIVOT",
+    "reason": "structure checks pass but the surgery drop is 18.42 points (above 10); run the 1-hour healing check",
+    "per_layer": [
+      {
+        "layer": 1,
+        "r1": 33.13353385383944,
+        "r2": 0.0506331102585032
+      },
+      {
+        "layer": 2,
+        "r1": 23.685051541431523,
+        "r2": 0.08620204377565217
+      },
+      {
+        "layer": 3,
+        "r1": 13.355074771017145,
+        "r2": 0.1701417496307581
+      },
+      {
+        "layer": 4,
+        "r1": 10.675273252342775,
+        "r2": 0.17544873263231636
+      },
+      {
+        "layer": 5,
+        "r1": 70.71639043845835,
+        "r2": 0.25749154913598676
+      },
+      {
+        "layer": 6,
+        "r1": 42.827397541048214,
+        "r2": 0.30603825683208163
+      }
+    ],
+    "worst": {
+      "row1": {
+        "layer": 4,
+        "r1": 10.675273252342775,
+        "r2": 0.17544873263231636
+      },
+      "row2": {
+        "layer": 6,
+        "r1": 42.827397541048214,
+        "r2": 0.30603825683208163
+      }
+    },
+    "numbers": {
+      "e_A_shared": 0.0638674293415089,
+      "e_null_shared": 1.2979069441166884,
+      "e_I": 0.5492980877084549,
+      "s1": 0.19798055447188548,
+      "s2": 0.16545681663898107,
+      "s1_null": 0.4069006279617231,
+      "s2_null": 0.3913319276408085,
+      "twin_frac": 0.5753038194444444,
+      "evidence": true,
+      "top1_original": 74.45600032806396,
+      "top1_surgery": 56.03399872779846,
+      "top1_svd": 10.24399995803833,
+      "drop": 18.422001600265503,
+      "margin_over_svd": 45.78999876976013,
+      "d_minus_frac": 0.2703993055555555
+    }
+  }
+}
