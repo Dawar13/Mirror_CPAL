@@ -1,0 +1,4 @@
+# Rented RTX 5090, extra checks (2026-11-09). Run with PAR=1 NEED_MB=10000 bash scripts/vm_sched.sh jobs/stage14_vast_extra.txt
+# ADE20K run-to-run spread on the GPU (bilinear-upsampling backward uses atomic adds): the original model again, same
+# seed and settings, into a separate folder; the difference to runs/t2_seg/ original measures the spread.
+- | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants original --num-workers 4 --out runs/t2_seg_rerun
