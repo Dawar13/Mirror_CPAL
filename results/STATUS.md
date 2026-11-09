@@ -43,6 +43,7 @@ ImageNet train (fit seeds 0, 1, 2), k-NN with a 100k train bank and 50k validati
 
 ## Not done yet
 - M3 grid (on hold after G2), M4.
+- Strong baselines, zero-shot (asvd, slicegpt, prune_act at the Mirror V-local MLP-only budget, k = 6 and 9): code and CPU tests ready (`scripts/strong_baselines.py`, `mirror/baselines.py`, `tests/test_strong_baselines.py`), not run; waits for approval to use the 5090.
 - Running on the 5090 (07:30 UTC): ADE20K (MLP-only mirror and SVD at k = 6), V-exact k = 12 healed again (second device; the A100 checkpoint was lost with that VM), linear and transfer probes of healed V-exact k = 6, A1/A2 k = 9 seed 0 (A1 done, matches the A100 log to 0.03), ADE20K original rerun (GPU run-to-run spread). Waiting for uploads from the laptop (slow uplink, about 60 KB/s): fit seed 1 and 2 operators (A4/A5 and A1/A2 k = 9 for seeds 1 and 2), then the M3-pilot checkpoints (ADE20K healed variants). Not yet possible on the 5090: ADE20K of healed V-exact (code being added), M2 profile (needs a quiet GPU; another project's job runs on the rented instance).
 
 ## Decisions waiting for Dawar
