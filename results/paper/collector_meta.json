@@ -1,8 +1,8 @@
 {
   "written_by": "scripts/collect_results.py",
-  "date": "2026-11-09 00:09:30",
+  "date": "2026-11-09 13:52:17",
   "git": {
-    "git_hash": "ced98c85c96c87aa8e5847586e1acf3a51b95474",
+    "git_hash": "9742d391ee50a5d80223bb743d3a79906291d446",
     "git_dirty": true
   },
   "args": {
@@ -47,26 +47,31 @@
     "T_main_zeroshot": 67,
     "T_healing": 3,
     "T_healing_p3": 5,
-    "T_generality": 9,
+    "T_generality": 11,
     "T_generality_p4": 7,
-    "T_structure_per_layer": 117,
-    "T_structure_summary": 10,
+    "T_structure_per_layer": 155,
+    "T_structure_summary": 14,
     "T_e1_history": 5,
     "T_x_checks": 44,
     "T_attention": 12,
     "T_attention_vexact": 3,
     "T_attention_conversion": 7,
-    "T_ablations": 51,
-    "T_ablations_seeds": 25,
-    "T_ablations_a2_extra": 9,
-    "T_tier2": 14,
-    "T_tier2_transfer": 24,
+    "T_ablations": 64,
+    "T_ablations_seeds": 38,
+    "T_ablations_a2_extra": 12,
+    "T_healing_vexact": 2,
+    "T_tier2": 15,
+    "T_tier2_transfer": 28,
+    "T_tier2_seg": 3,
+    "T_tier2_seg_classes": 450,
     "T_latency": 102,
     "T_latency_checks": 48,
+    "T_latency_profile": 0,
+    "T_latency_profile_triton": 0,
     "T_f4": 36,
     "T_f4_p2": 8,
     "T_prereg": 46,
-    "T_f1_ranges": 10,
+    "T_f1_ranges": 14,
     "T_f2_drift": 9
   },
   "f1": [
@@ -92,6 +97,26 @@
       "tag": "f1_g",
       "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\g",
       "hist": true
+    },
+    {
+      "status": "ok",
+      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f1_g_dinov2_s",
+      "arms": [
+        "dinov2_s_reg"
+      ],
+      "tag": "f1_g_dinov2_s",
+      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\g",
+      "hist": false
+    },
+    {
+      "status": "ok",
+      "out": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\results\\paper\\scripts\\f1_g_dinov2_l",
+      "arms": [
+        "dinov2_l_reg"
+      ],
+      "tag": "f1_g_dinov2_l",
+      "runs_dir": "C:\\Users\\djtde\\Downloads\\Mirror_CPAL\\runs\\g",
+      "hist": false
     }
   ],
   "f2": [
@@ -254,23 +279,23 @@
     },
     {
       "path": "runs/g/dinov2_l_reg_s0/results/e1_meta.json",
-      "what": "G run (meta)",
-      "present": false
+      "what": "G run, DINOv2 size pair (meta)",
+      "present": true
     },
     {
       "path": "runs/g/dinov2_l_reg_s0/results/e1_surgery.csv",
-      "what": "G run (surgery)",
-      "present": false
+      "what": "G run, DINOv2 size pair (surgery)",
+      "present": true
     },
     {
       "path": "runs/g/dinov2_s_reg_s0/results/e1_meta.json",
-      "what": "G run (meta)",
-      "present": false
+      "what": "G run, DINOv2 size pair (meta)",
+      "present": true
     },
     {
       "path": "runs/g/dinov2_s_reg_s0/results/e1_surgery.csv",
-      "what": "G run (surgery)",
-      "present": false
+      "what": "G run, DINOv2 size pair (surgery)",
+      "present": true
     },
     {
       "path": "runs/g/mae_b16_s0/results/e1_meta.json",
@@ -363,6 +388,71 @@
       "present": true
     },
     {
+      "path": "runs/m3_vexact/k6/summary.json",
+      "what": "V-exact healing k = 6",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k6/knn.json",
+      "what": "V-exact healing k = 6",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k6/exactness.json",
+      "what": "V-exact healing k = 6",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k6/final/metrics.json",
+      "what": "V-exact healing k = 6",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k6/lr_selection/lr_selection.json",
+      "what": "V-exact healing k = 6",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k6/SUMMARY.md",
+      "what": "V-exact healing k = 6",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/summary.json",
+      "what": "V-exact healing k = 12",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/knn.json",
+      "what": "V-exact healing k = 12",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/exactness.json",
+      "what": "V-exact healing k = 12",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/flipcheck.json",
+      "what": "V-exact healing k = 12",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/final/metrics.json",
+      "what": "V-exact healing k = 12",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/lr_selection/lr_selection.json",
+      "what": "V-exact healing k = 12",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/SUMMARY.md",
+      "what": "V-exact healing k = 12",
+      "present": true
+    },
+    {
       "path": "runs/d/d_datafree.json",
       "what": "D (P5)",
       "present": true
@@ -398,6 +488,51 @@
       "present": true
     },
     {
+      "path": "runs/a/dinov2_vitb14_reg/A1_s0.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
+      "path": "runs/a/dinov2_vitb14_reg/A1_s1.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
+      "path": "runs/a/dinov2_vitb14_reg/A1_s2.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
+      "path": "runs/a/dinov2_vitb14_reg/A2_s0.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
+      "path": "runs/a/dinov2_vitb14_reg/A2_s1.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
+      "path": "runs/a/dinov2_vitb14_reg/A2_s2.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
+      "path": "runs/a/dinov2_vitb14_reg/A3_s0.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
+      "path": "runs/a/dinov2_vitb14_reg/A4_s0.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
+      "path": "runs/a/dinov2_vitb14_reg/A5_s0.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
       "path": "runs/m2_clean/m2_latency.csv",
       "what": "M2 latency",
       "present": true
@@ -413,6 +548,36 @@
       "present": true
     },
     {
+      "path": "runs/m2_profile/m2_profile.csv",
+      "what": "M2 profile (scripts/m2_profile.py)",
+      "present": false
+    },
+    {
+      "path": "runs/m2_profile/m2_submodules.csv",
+      "what": "M2 profile (scripts/m2_profile.py)",
+      "present": false
+    },
+    {
+      "path": "runs/m2_profile/m2_triton.csv",
+      "what": "M2 profile (scripts/m2_profile.py)",
+      "present": false
+    },
+    {
+      "path": "runs/m2_profile/m2_top_kernels.csv",
+      "what": "M2 profile (scripts/m2_profile.py)",
+      "present": false
+    },
+    {
+      "path": "runs/m2_profile/M2_PROFILE.md",
+      "what": "M2 profile (scripts/m2_profile.py)",
+      "present": false
+    },
+    {
+      "path": "runs/m2_profile/m2_profile_meta.json",
+      "what": "M2 profile (scripts/m2_profile.py)",
+      "present": false
+    },
+    {
       "path": "runs/t2/t2_linear.csv",
       "what": "Tier 2 ImageNet linear probe",
       "present": true
@@ -420,6 +585,21 @@
     {
       "path": "runs/t2/t2_transfer.csv",
       "what": "Tier 2 transfer probes",
+      "present": true
+    },
+    {
+      "path": "runs/t2_seg/t2_ade20k.csv",
+      "what": "Tier 2 ADE20K linear segmentation (scripts/tier2_ade20k.py)",
+      "present": true
+    },
+    {
+      "path": "runs/t2_seg/seg/dinov2_vitb14_reg",
+      "what": "Tier 2 ADE20K per-variant JSON with per-class IoU (dinov2_vitb14_reg)",
+      "present": true
+    },
+    {
+      "path": "runs/t2_seg/t2_ade20k_meta_dinov2_vitb14_reg.json",
+      "what": "Tier 2 ADE20K run meta (dinov2_vitb14_reg)",
       "present": true
     },
     {
@@ -458,6 +638,16 @@
       "present": true
     },
     {
+      "path": "artifacts/a100/runs/g/dinov2_l_reg_s0/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": false
+    },
+    {
+      "path": "artifacts/a100/runs/g/dinov2_s_reg_s0/results/e1_operators.npz",
+      "what": "operators npz (F1 histograms, F2)",
+      "present": false
+    },
+    {
       "path": "artifacts/a100/runs/g/mae_b16_s0/results/e1_operators.npz",
       "what": "operators npz (F1 histograms, F2)",
       "present": true
@@ -484,14 +674,17 @@
     "G4: FAIL (runs/d/d_datafree.json).",
     "G: the MAE run has no e1_meta.json (its k-NN run was stopped); its decision rows are recomputed with mirror.report.decide and its git hash is not recorded.",
     "X2: `runs/x2/shared16_plain_s0` is partial (missing e1_meta.json).",
+    "Tier 2: DINOv2-reg dtd healed_vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg dtd vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg dtd healed_svd_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg flowers102 original: the chosen weight decay 0.0316 is at the edge of the grid.",
+    "Tier 2: DINOv2-reg flowers102 healed_vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg flowers102 vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg flowers102 healed_mirror_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg flowers102 healed_random_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg flowers102 healed_svd_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg flowers102 vlocal_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
+    "Tier 2: DINOv2-reg pets healed_vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg pets vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg pets healed_mirror_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg pets healed_svd_k9: the chosen weight decay 0.0316 is at the edge of the grid.",
@@ -510,8 +703,19 @@
     "M2 check failed: vexact k = 12 bfloat16 (max_abs_unit < 0.001, value 1.37e-02).",
     "M2 check failed: mlp_only k = 12 bfloat16 (max_abs_unit < 0.001, value 7.09e-03).",
     "M2 check failed: svd k = 12 bfloat16 (max_abs_unit < 0.001, value 3.94e-03).",
-    "M2 check failed: prune k = 12 bfloat16 (max_abs_unit < 0.001, value 2.12e-03)."
+    "M2 check failed: prune k = 12 bfloat16 (max_abs_unit < 0.001, value 2.12e-03).",
+    "Duplicate setting: DINOv2-reg k = 6 Mirror V-local, MLP only has an M1 row next to the canonical X2 row; the M1 row is kept and marked not canonical (operator file round trip, a numerical difference; T_main_zeroshot row notes).",
+    "Duplicate setting: DINOv2-reg k = 9 Mirror V-local, MLP only has an M1 row next to the canonical X2 row; the M1 row is kept and marked not canonical (operator file round trip, a numerical difference; T_main_zeroshot row notes).",
+    "A: not parameter-matched to the default (DINOv2-reg, k = 6): A1 shared_all, A1 identity, A2 self_twins, A2 hungarian, A2 hungarian_cycle, A4 last, A4 lowest_share; ratios in T_ablations_seeds (params vs default).",
+    "A: not parameter-matched to the default (DINOv2-reg, k = 9): A1 shared_all, A1 identity, A2 self_twins, A2 hungarian, A2 hungarian_cycle; ratios in T_ablations_seeds (params vs default).",
+    "M2: Mirror V-local, MLP only k = 6, batch 64, compile is a probable timing outlier (measured speed-up above its analytic one); kept and flagged in T_latency.",
+    "Tier 2: flowers102 is at ceiling and does not separate the methods (T_tier2_transfer notes).",
+    "Tier 2: DINOv2 mirror_mlp_k6: the probed model is not the model behind its Tier-1 number (rebuilt from the float32 operator file, a numerical difference; T_tier2 notes).",
+    "Tier 2: DINOv2 random_k6: the probed model is not the model behind its Tier-1 number (a different random draw; T_tier2 notes).",
+    "Tier 2: DINOv2-reg mirror_mlp_k6: the probed model is not the model behind its Tier-1 number (rebuilt from the float32 operator file, a numerical difference; T_tier2 notes).",
+    "Tier 2: DINOv2-reg random_k6: the probed model is not the model behind its Tier-1 number (a different random draw; T_tier2 notes).",
+    "V-exact healing k = 6: run on NVIDIA GeForce RTX 5090, which measures its own original; compare within the row (T_healing_vexact notes)."
   ],
-  "n_numbers": 667,
-  "elapsed_s": 25.2
+  "n_numbers": 814,
+  "elapsed_s": 23.2
 }

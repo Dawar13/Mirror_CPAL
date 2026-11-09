@@ -9,5 +9,9 @@ Data: Hugging Face `merve/scene_parse_150` at revision `b83d71b405b3` (parquet c
 | Variant | What it is | mIoU | aAcc | mAcc | Change vs original (mIoU) | Notes |
 |---|---|---|---|---|---|---|
 | original | original | 47.59 | 80.98 | 59.47 | - | - |
+| mirror_mlp_k6 | Mirror Surgery, MLP only, V-local, k = 6 | 46.88 | 80.67 | 58.41 | -0.72 | - |
+| vexact_k6 | Mirror V-exact, MLP + attention, k = 6 | 47.19 | 80.83 | 58.89 | -0.40 | rebuilt at 448 px; max relative error inside the span 4.8e-06 (224 px build run at 448 px: 4.3e-06) |
+
+V-exact: `mirror.m1.build_vexact` projects the position embedding on the grid in use, and DINOv2 re-interpolates its position embedding when the input grid changes (bicubic with an offset, not flip-symmetric). The model built at 224 px for M1 is therefore not exactly equivariant at 448 px. Here V-exact is rebuilt with the same recipe at the segmentation resolution (same A*, pairings, head maps and register pairing; the position grid of 448 px inputs materialised and projected), and every forward pass is exactly one 448 x 448 window. The relative errors in the notes are measured on two training crops in fp32 (M1 bar 0.0001).
 
 Source: `t2_ade20k.csv` and `seg/<model>/<variant>.json` in this folder. Commit(s): b95ccd5886; seed(s): 0. Timings and peak GPU memory are in the CSV.

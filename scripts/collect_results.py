@@ -76,18 +76,65 @@ G_SIZE_PAIR = {"dinov2_vits14_reg": "dinov2_s_reg", "dinov2_vitl14_reg": "dinov2
 MAIN_KS = [3, 6, 9, 12]
 BG = "#fcfcfb"
 
+# One display label per method, used in every table and in INDEX.md (the producing scripts record their own wording,
+# kept in label_recorded where a table carries it). The MLP-only Mirror variant uses per-layer operators, so it is
+# the V-local design applied to the MLPs alone.
+LABEL_MIRROR_MLP = "Mirror V-local, MLP only"
+LABEL_VLOCAL = "Mirror V-local, MLP + attention"
+LABEL_VEXACT = "Mirror V-exact, MLP + attention"
+LABEL_SVD_MLP = "SVD at matched parameters, MLP only"
+LABEL_SVD_ATTN = "SVD at matched parameters, MLP + attention"
+LABEL_RANDOM_MLP = "Random structure, MLP only"
+LABEL_RANDOM_ATTN = "Random structure, MLP + attention"
+METHOD_LABEL = {   # (family, method) of scripts/tier2_*.py rows -> display label
+    ("original", "original"): "Original model",
+    ("mlp", "mirror"): LABEL_MIRROR_MLP, ("mlp", "svd"): LABEL_SVD_MLP, ("mlp", "random"): LABEL_RANDOM_MLP,
+    ("m1", "mlp_only"): LABEL_MIRROR_MLP, ("m1", "vlocal"): LABEL_VLOCAL, ("m1", "vexact"): LABEL_VEXACT,
+    ("m1", "svd"): LABEL_SVD_ATTN, ("m1", "random"): LABEL_RANDOM_ATTN,
+    ("healed", "mirror"): LABEL_VLOCAL + ", healed", ("healed", "svd"): LABEL_SVD_ATTN + ", healed",
+    ("healed", "random"): LABEL_RANDOM_ATTN + ", healed", ("healed_vexact", "vexact"): LABEL_VEXACT + ", healed",
+}
+M2_LABEL = {"original": "Original model (hub)", "dense": "Dense reference (folded original, same implementation)",
+            "vlocal": LABEL_VLOCAL, "vexact": LABEL_VEXACT, "mlp_only": LABEL_MIRROR_MLP, "svd": LABEL_SVD_ATTN,
+            "random": LABEL_RANDOM_ATTN, "prune": "MLP width pruning at matched parameters",
+            "vlocal_r2": LABEL_VLOCAL + " (Wo structured, second rotation)"}
+
+
+def method_label(family, method, recorded=None) -> str:
+    """Display label of a Tier-2 row from its (family, method); the recorded label when the pair is unknown."""
+    return METHOD_LABEL.get((str(family), str(method)), recorded if isinstance(recorded, str) else f"{family} {method}")
+
+
 # Zero-shot variants of T_main_zeroshot: key, label, budget, experiment, variant name in the source CSV.
 VARIANTS = [
-    ("mirror_mlp", "Mirror per-layer, MLP only", "MLP only", "X2", "surgery"),
-    ("svd_mlp", "SVD at the MLP-only budget", "MLP only", "X2", "svd"),
-    ("random_mlp", "Random structure, MLP only", "MLP only", "X2", "random"),
-    ("mirror_mlp_m1", "Mirror per-layer, MLP only (M1 run, A6)", "MLP only", "M1", "mlp_only"),
-    ("vlocal", "Mirror V-local, MLP + attention", "MLP + attention", "M1", "vlocal"),
-    ("vexact", "Mirror V-exact, MLP + attention", "MLP + attention", "M1", "vexact"),
-    ("svd_attn", "SVD at the V-local budget", "MLP + attention", "M1", "svd"),
-    ("random_attn", "Random structure, MLP + attention", "MLP + attention", "M1", "random"),
+    ("mirror_mlp", LABEL_MIRROR_MLP, "MLP only", "X2", "surgery"),
+    ("svd_mlp", LABEL_SVD_MLP, "MLP only", "X2", "svd"),
+    ("random_mlp", LABEL_RANDOM_MLP, "MLP only", "X2", "random"),
+    ("mirror_mlp_m1", LABEL_MIRROR_MLP, "MLP only", "M1", "mlp_only"),
+    ("vlocal", LABEL_VLOCAL, "MLP + attention", "M1", "vlocal"),
+    ("vexact", LABEL_VEXACT, "MLP + attention", "M1", "vexact"),
+    ("svd_attn", LABEL_SVD_ATTN, "MLP + attention", "M1", "svd"),
+    ("random_attn", LABEL_RANDOM_ATTN, "MLP + attention", "M1", "random"),
 ]
 VARIANT_INFO = {v[0]: v for v in VARIANTS}
+
+# Canonical source of every MLP-only number (the paper's zero-shot headline is the k = 6 row): the main-protocol
+# runs X2 (scripts/run_e1.py), which project with the operators as fitted, in float64 memory. Every other script
+# (stage1_ablate.py for A1 to A5, m1_attention.py, tier2_linear.py and the healing scripts) reloads the operators
+# from e1_operators.npz, where they are stored in float32 and cleaned back to exact involutions (a change of about
+# 3e-8). Same pairing, same parameter count, same evaluation code; the projected weights differ at the 1e-8 level,
+# and that moves a handful of the 50,000 bf16 k-NN queries (0.02 to 0.07 points). Rows of the same setting from
+# those scripts are kept, marked, and compared with the X2 value of the same fit seed.
+CANONICAL_RUN = "X2"
+CANONICAL_KEYS = {"mirror": "mirror_mlp", "svd": "svd_mlp", "random": "random_mlp"}   # method -> T_main_zeroshot key
+# Ablation cells that are the canonical setting itself (per-layer operators, mirror pairing, blocks 1..k, alpha 1,
+# the run's own 2,000 fit images); A3 rows qualify when their fit set is the default one (checked per row).
+SAME_AS_CANONICAL = {("A1", "per_layer"): "mirror", ("A2", "mirror"): "mirror", ("A4", "first"): "mirror",
+                     ("A5", "alpha1.00"): "mirror", ("A1", "svd"): "svd"}
+OPERATOR_ROUNDTRIP = ("projects with the operators reloaded from the float32 operator file (cleaned to exact "
+                      "involutions), whereas X2 projects with the float64 operators as fitted; same pairing, parameter "
+                      "count and evaluation code, so the difference is numerical")
+PARAM_MATCH_TOL = 0.01      # the plan's matched-budget rule: within 1%
 BASELINES = {"mirror_mlp": ("svd_mlp", "random_mlp"), "vlocal": ("svd_attn", "random_attn"),
              "vexact": ("svd_attn", "random_attn")}
 ROTATING = {"mirror_mlp", "random_mlp", "mirror_mlp_m1", "vlocal", "random_attn"}   # per-layer operators
@@ -632,19 +679,25 @@ COST_ASSUMPTIONS = [
     "mixing 2 T^2 d (q k^T and attention times v), which surgery does not change.",
     "Not counted: biases, norms, softmax, GELU, LayerScale, residual additions, the twin butterfly "
     "additions (u + v, u - v) and the k-NN head.",
-    "Mirror MLP: each matrix costs its equivariant free-parameter count (h d + tr(P) tr(A)) / 2 per token "
+    "Mirror V-local, MLP only (and the MLPs of V-local and V-exact): each matrix costs its equivariant free-parameter count (h d + tr(P) tr(A)) / 2 per token "
     "(eq_params_fc1, eq_params_fc2 of e1_mlp.csv; mlp_eq_fc1, mlp_eq_fc2 of m1_ranks.csv), i.e. every "
     "free parameter is used once per token in even/odd coordinates.",
     "Mirror attention (M1): the free-parameter counts of Wq, Wk, Wv, Wo per block (attn_free_q/k/v/o of "
     "m1_ranks.csv for V-local; attn_free_matrices and mlp_free of m1_vexact_blocks.csv for V-exact, "
     "which depend on the span k).",
-    "Basis rotations: every variant with per-layer operators (Mirror MLP only, V-local, and the random "
+    "Basis rotations: every variant with per-layer operators (Mirror V-local MLP only, V-local, and the random "
     "controls, which use random per-layer involutions) pays one d x d rotation per converted block "
     "(d^2 MACs per token): the stream is rotated from the basis of A_(l-1) to that of A_l at each "
     "converted block, the rotation into the first basis is folded into the linear patch embedding and the "
     "one after the last converted block into the next dense block. V-exact (one operator for the span) "
     "and SVD need none. Rotation matrices are d^2 stored parameters each; they are reported in "
     "rotation_params and are not included in model_params (which follows m1_knn.csv).",
+    "V-local attention is counted with Wo at its free-parameter count (structured). The implementation timed in M2 "
+    "stores Wo dense in the block's basis instead (M1 projected Wo with A_(l+1), not the block's input operator, and "
+    "keeping it structured would need a second rotation per block), so the M2 count of the same variant is higher by "
+    "T (d H dh - attn_free_o) multiply-adds per converted block (T_latency, columns analytic (M2) and "
+    "wo_dense_extra_gflops). The two counts agree for every other variant up to one d x d rotation of the CLS "
+    "feature that M2 also counts.",
     "SVD: r (in + out) per matrix (ranks svd_rank and svd_rank_fc2 of e1_mlp.csv; svd_r_* of m1_ranks.csv).",
     "Whole-model parameters: the dense model's total minus the dense matrix parameters of the converted "
     "matrices plus the kept ones (biases stay dense), as in m1_knn.csv.",
@@ -789,17 +842,17 @@ def build_main(P, runs_x2, m1, archs, checks) -> Table:
     T = Table("T_main_zeroshot", "Zero-shot k-NN (protocol v2): registers model and plain model",
               ["model", "k", "variant"],
               [("model", "model_label", ""), ("k", "k", "d"), ("variant", "variant_label", ""),
-               ("budget", "budget", ""), ("n", "n_seeds", "d"),
+               ("budget", "budget", ""), ("run", "experiment", ""), ("canonical", "canonical", ""), ("n", "n_seeds", "d"),
                ("top-1", lambda r: pm(r.get("top1_mean"), r.get("top1_std")), ""),
                ("drop", lambda r: pm(r.get("drop_mean"), r.get("drop_std")), ""),
                ("vs SVD", lambda r: pm(r.get("margin_svd_mean"), r.get("margin_svd_std")), ""),
                ("vs random", lambda r: pm(r.get("margin_random_mean"), r.get("margin_random_std")), ""),
                ("flip consistency", lambda r: pm(r.get("flip_mean"), r.get("flip_std")), ""),
                ("kept (converted)", "kept_frac_converted", ".3f"), ("MLP kept", "mlp_kept_frac", ".3f"),
-               ("model params", "model_params", ",d"), ("GFLOPs", "gflops_model", ".2f"),
+               ("model params", "model_params", ",.0f"), ("GFLOPs", "gflops_model", ".2f"),
                ("saved, model %", "gflops_saved_model_pct", ".1f"),
                ("saved, converted %", "gflops_saved_converted_pct", ".1f"),
-               ("status", "status", "")])
+               ("status", "status", ""), ("row note", lambda r: f"[{r['remark_id']}]" if r.get("remark_id") else "", "")])
     T.notes = [
         "Top-1 and flip consistency in percent (k-NN, k = 20, T = 0.07, bf16 features; bank of 100 train images "
         "per class, all 50k validation queries). Plus or minus is the sample standard deviation over fit seeds "
@@ -810,7 +863,13 @@ def build_main(P, runs_x2, m1, archs, checks) -> Table:
         "cost model (tables/cost_model.md): analytic counts, not measured latency.",
         "Budgets: X2 variants convert the MLP only (SVD and random matched to the Mirror MLP count); M1 variants "
         "convert MLP and attention (SVD and random matched to V-local). budget_gap_vs_svd_pct in the CSV shows "
-        "how far a Mirror variant's kept parameters are from its SVD baseline (the plan asks for within 1%).",
+        "how far a Mirror variant's kept parameters are from its SVD baseline (the plan asks for within 1%). "
+        "Model params: a mean over fit seeds where the seeds keep slightly different counts.",
+        f"Canonical: the one number to quote for a setting. Every MLP-only row comes from the {CANONICAL_RUN} runs "
+        "(scripts/run_e1.py, the main protocol, 3 fit seeds) where they exist. The M1 re-run of Mirror V-local, MLP only "
+        "(run M1) is the same setting at fit seed 0 and is marked not canonical wherever an X2 row exists: it "
+        + OPERATOR_ROUNDTRIP + ". Row notes [n] are listed under the table; top1_per_seed in the CSV gives the "
+        "per-seed values.",
     ]
     recs: dict = {}
 
@@ -904,7 +963,15 @@ def build_main(P, runs_x2, m1, archs, checks) -> Table:
                 f_m, f_s, _ = agg([x["flip"] for x in rs])
                 row.update({"status": "ok", "n_seeds": n, "fit_seeds": ",".join(str(x["fit_seed"]) for x in rs),
                             "top1_mean": t_m, "top1_std": t_s, "drop_mean": d_m, "drop_std": d_s,
-                            "flip_mean": f_m, "flip_std": f_s})
+                            "flip_mean": f_m, "flip_std": f_s,
+                            "top1_per_seed": "; ".join(f"s{x['fit_seed']}: {x['top1']:.3f}" for x in rs)})
+                row["_per_seed"] = {x["fit_seed"]: x for x in rs}
+                if key == "original" and n > 1 and len({x["top1"] for x in rs}) == 1 and len({x["flip"] for x in rs}) == 1:
+                    # one evaluation of the unmodified model, repeated in every fit-seed run's CSV (run_e1.py reads it
+                    # from cache/knn_original when present): no spread to report
+                    row.update({"top1_std": None, "drop_std": None, "flip_std": None,
+                                "remark": f"the original model's k-NN is identical in all {n} runs' CSVs (one evaluation; "
+                                          "run_e1.py reuses cache/knn_original), so no spread is shown"})
                 for bname, bkey in zip(("svd", "random"), BASELINES.get(key, (None, None))):
                     if bkey is None:
                         continue
@@ -945,7 +1012,46 @@ def build_main(P, runs_x2, m1, archs, checks) -> Table:
                     for c in ("top1_mean", "flip_mean", "drop_mean"):
                         row["_derived"][c] = f"mean over fit seeds {row['fit_seeds']} of the per-run values"
                 T.add(row)
+    mark_canonical_main(T)
     return T
+
+
+def mark_canonical_main(T: Table) -> None:
+    """Canonical flag and row remarks of T_main_zeroshot (rule: CANONICAL_RUN for every MLP-only setting it covers)."""
+    for r in T.rows:
+        if r["status"] != "ok":
+            r["canonical"] = ""
+            continue
+        r["canonical"] = "yes"
+        if r["variant"] == "mirror_mlp_m1":
+            x2 = T.find(model=r["model"], k=r["k"], variant="mirror_mlp")
+            if x2 is not None and x2["status"] == "ok":
+                r["canonical"] = "no"
+                same = [(fs, x) for fs, x in r["_per_seed"].items() if fs in x2["_per_seed"]]
+                diffs = "; ".join(f"fit seed {fs}: {x['top1']:.3f} against {x2['_per_seed'][fs]['top1']:.3f} "
+                                  f"({x['top1'] - x2['_per_seed'][fs]['top1']:+.3f})" for fs, x in same)
+                r["minus_canonical"] = (float(np.mean([x["top1"] - x2["_per_seed"][fs]["top1"] for fs, x in same]))
+                                        if same else None)
+                r["_derived"]["minus_canonical"] = f"top1 minus the {CANONICAL_RUN} mirror_mlp top1 at the same k and fit seed"
+                r["remark"] = (f"same setting as the {CANONICAL_RUN} row {LABEL_MIRROR_MLP} at k = {r['k']} (canonical, "
+                               f"n = {x2['n_seeds']}, {x2['top1_mean']:.2f}); {diffs}. This M1 run " + OPERATOR_ROUNDTRIP + ".")
+            else:
+                r["remark"] = (f"only source of {LABEL_MIRROR_MLP} at k = {r['k']} (the {CANONICAL_RUN} runs did not "
+                               "convert this many blocks), so canonical here; one fit seed")
+        elif r["variant"] == "random_mlp" and r["n_seeds"] > 1:
+            # run_e1.py draws its random control with the run seed (0 in every fit-seed run): the random eigenbasis is
+            # the same draw in every run, only the d+ counts and pair counts follow the fit seed
+            seeds = sorted({x["seed"] for x in r["_per_seed"].values()})
+            if len(seeds) == 1:
+                r["remark"] = (f"the {r['n_seeds']} runs draw the random control with the same run seed ({seeds[0]}): the "
+                               "random operators share one random eigenbasis and the pairings one seed, only the d+ and "
+                               "pair counts follow the fit seed, so the spread is not a spread over independent random "
+                               "draws (A1 random_structure in T_ablations uses three independent draws)")
+    n = 0
+    for r in T.rows:
+        if r.get("remark"):
+            n += 1
+            r["remark_id"] = n
 
 
 # ================================================================================================
@@ -961,18 +1067,23 @@ def build_healing(P, m3, m1, th, prereg_commit):
                ("held-out loss before", "heldout_loss_before", ".3f"), ("after", "heldout_loss_after", ".3f"),
                ("steps", lambda r: f"{fmt(r.get('steps_done'), 'd')} / {fmt(r.get('total_steps'), 'd')}"
                 if r.get("steps_done") is not None else "", ""),
-               ("trainable params", "n_trainable", ",d")])
+               ("trainable params", "n_trainable", ",d"), ("free matrix params", "free_matrix_params", ",d")])
     T.notes = ["Top-1 and flip consistency in percent (protocol v2 k-NN). Held-out loss: the distillation loss "
                "on the 5k held-out train images (normalised by fixed teacher mean squares, the same for every "
                "method). Chosen LR: lowest held-out loss after the short selection budget, from "
                "{1e-5, 5e-5, 1e-4}. M1 zero-shot: the matching variant of runs/m1/m1_knn.csv at the same k, as a "
                "cross-check of the zero-shot column."]
+    trainable_note = ("Trainable params: entries of the tensors the optimiser updates (biases included). Mirror and random "
+                      "train the dense weight tensors of the converted blocks and re-project them onto their structured "
+                      "form after every step (mirror/heal.py), while SVD trains its factors, so this column is not the "
+                      "budget. Free matrix params (summary.json method_info, MLP plus attention kept) is the matched "
+                      "quantity.")
     m1map = {"mirror": "vlocal", "svd": "svd", "random": "random"}
     default_cfg = load_cfg(P, "configs/m3_pilot.yaml")
     lrs = next((m3[m]["lrsel"].get("lrs") for m in m3 if m3[m]["lrsel"]), None) or \
         ((default_cfg.get("lr_selection") or {}).get("lrs"))
     T.notes = [T.notes[0].replace("{1e-5, 5e-5, 1e-4}", "{" + ", ".join(f"{x:g}" for x in (lrs or [])) + "} "
-                                  "(lr_selection.json)")]
+                                  "(lr_selection.json)"), trainable_note]
     for method in ("mirror", "svd", "random"):
         r = m3[method]
         cfg = (r["summary"] or {}).get("config")
@@ -1010,6 +1121,11 @@ def build_healing(P, m3, m1, th, prereg_commit):
         row["_seed"] = (met or r["lrsel"] or {}).get("seed")
         row["_git"] = (met or r["lrsel"] or {}).get("git_hash") or (knn.get("git_hash") if knn else None)
         row["seed"], row["git_hash"] = row["_seed"], row["_git"]
+        mi = (r["summary"] or {}).get("method_info") or {}
+        if mi.get("mlp_params_kept") is not None and mi.get("attn_params_kept") is not None:
+            row["free_matrix_params"] = int(mi["mlp_params_kept"]) + int(mi["attn_params_kept"])
+            row["_derived"]["free_matrix_params"] = (f"method_info mlp_params_kept + attn_params_kept "
+                                                     f"({r['dir']}/summary.json)")
         ops = ((cfg or default_cfg or {}).get("structure") or {}).get("operators")
         row["operators"] = ops
         row["fit_seed"] = row["_fit_seed"] = fit_seed_from_path(ops) if r["status"] != NOT_RUN else None
@@ -1154,7 +1270,7 @@ def build_healing_vexact(P, m1: dict, depths: dict | None = None) -> tuple[Table
                ("chosen LR", "chosen_lr", "g"), ("held-out loss before", "heldout_loss_before", ".4f"),
                ("after", "heldout_loss_after", ".4f"), ("kept (converted)", "kept_frac_converted", ".3f"),
                ("model params kept", "model_params_frac", ".3f"), ("M1 zero-shot (same k)", "m1_zero_shot_top1", ".2f"),
-               ("git", lambda r: short(r.get("git_hash")), "")])
+               ("GPU", "gpu", ""), ("git", lambda r: short(r.get("git_hash")), "")])
     T.notes = ["V-exact student: one operator A* over blocks 1 to k, MLP and attention, exactly mirror-equivariant over "
                "the span (k = depth is the full conversion, with the even head), healed by distillation with the M3 "
                "pilot's recipe (scripts/heal_vexact.py). Top-1 and flip consistency in percent from the k-NN after "
@@ -1216,6 +1332,7 @@ def build_healing_vexact(P, m1: dict, depths: dict | None = None) -> tuple[Table
                         row[f"{col}_{c}"] = py(knn[part_][s])
                         row["_loc"][f"{col}_{c}"] = json_loc(kf, kp + [part_, s])
         row["knn_amp"], row["knn_protocol"] = knn.get("amp"), knn.get("protocol")
+        row["gpu"] = (((summ or {}).get("env") or {}).get("gpu")) or (((met or {}).get("env") or {}).get("gpu"))
         dev = str(((summ or {}).get("env") or {}).get("device") or "")
         # as scripts/heal_vexact.py's SUMMARY.md: the bf16 autocast applies on CUDA only
         row["knn_precision"] = (knn.get("amp") or "fp32") if (dev.startswith("cuda") or not dev) else "fp32"
@@ -1300,6 +1417,22 @@ def build_healing_vexact(P, m1: dict, depths: dict | None = None) -> tuple[Table
 # ================================================================================================
 # T_generality and P4
 # ================================================================================================
+def vexact_device_notes(Tv: Table, Tm: Table) -> None:
+    """A V-exact healing row run on another GPU than the main runs measures its own original; compare within the row."""
+    for r in Tv.rows:
+        o = Tm.find(model=r.get("model"), k=0, variant="original") if r.get("model") else None
+        if o is None or o.get("status") != "ok" or r.get("original_top1") is None or o.get("top1_mean") is None:
+            continue
+        if abs(r["original_top1"] - o["top1_mean"]) > 1e-9:
+            r["note"] = (f"run on {r.get('gpu') or 'another GPU'}: its original measures {r['original_top1']:.3f} there "
+                         f"against {o['top1_mean']:.3f} in the main runs, so compare its healed and zero-shot values with "
+                         "its own original")
+            Tv.notes.append(f"k = {r['k']}: {r['note']} (run-to-run spread between GPUs; zero-shot "
+                            + (f"{r['zero_shot_top1']:.3f} against M1 {r['m1_zero_shot_top1']:.3f}"
+                               if r.get("zero_shot_top1") is not None and r.get("m1_zero_shot_top1") is not None else "")
+                            + ").")
+
+
 def first_half(run):
     L = int(run["mlp"]["block"].max())
     return 1, L // 2
@@ -1976,14 +2109,18 @@ def build_prereg(P, e1, e1b, f3, d_free, Tp3, Tp4, x1, status, th, commits, f4):
                    "prereg_commit": th.get("commit"), "_src": ""})
     # G1 (gate in the plan; no numeric pre-registered bar)
     quote = [s for s in status_mentions(status, ["X1 SVD-collapse check"])]
-    cell = ""
+    cell, g1 = "", None
     for line in status["lines"]:
-        if line.startswith("| X1"):
-            parts = [x.strip() for x in line.strip("|").split("|")]
+        parts = [x.strip() for x in line.strip().strip("|").split("|")]
+        if line.startswith("| X1"):          # older STATUS layout: | X1 ... | passed ... |
             cell = parts[1] if len(parts) > 1 else ""
+            g1 = PASS if cell.lower().startswith("passed") else None
+        elif line.startswith("| G1"):        # current layout: | G1 <check> | <value> | <bar> | <verdict> |
+            cell = " ".join(x for x in parts[:2] if x)
+            g1 = PASS if parts[-1].upper().startswith("PASS") else (FAIL if parts[-1].upper().startswith("FAIL") else None)
     T.add({"id": "G1", "experiment": "X1", "statement": "gate G1: if the SVD collapse on the registers model is a bug, fix "
-           "it and rerun every SVD number", "verdict": PASS if cell.lower().startswith("passed") else
-           ("see note" if cell else NOT_RUN), "threshold": "no bug found (X1 checks 1 to 4; no numeric bar)",
+           "it and rerun every SVD number", "verdict": g1 if g1 else ("see note" if cell else NOT_RUN),
+           "threshold": "no bug found (X1 checks 1 to 4; no numeric bar)",
            "source_file": (x1 or {}).get("file", ""), "note": ("STATUS.md: " + cell) if cell else " | ".join(quote),
            "prereg_file": "PAPER_EXPERIMENTS.md", "prereg_commit": commits.get("PAPER_EXPERIMENTS.md"),
            "_src": (x1 or {}).get("file", ""), "_git": (((x1 or {}).get("json") or {}).get("git") or {}).get("git_hash"),
@@ -2005,28 +2142,43 @@ def _info(text) -> dict:
         return {}
 
 
-def build_ablations(P):
-    """Per-seed rows of runs/a/<model>/A*_s*.csv, the mean over fit seeds, and the A2 extra pairings."""
+def build_ablations(P, Tm: Table | None = None):
+    """Per-seed rows of runs/a/<model>/A*_s*.csv, the mean over fit seeds, and the A2 extra pairings. With Tm
+    (T_main_zeroshot), cells that are the canonical setting are compared with the canonical X2 value of the same fit
+    seed (ablation_vs_canonical)."""
     T = Table("T_ablations", "A1 to A5: zero-shot ablations, one row per fit seed",
               ["model", "ablation", "variant", "k", "fit_seed"],
               [("model", "model_label", ""), ("ablation", "ablation", ""), ("variant", "variant", ""), ("k", "k", "d"),
-               ("fit seed", "fit_seed", "d"), ("top-1", "top1", ".2f"), ("drop", "drop_points", ".2f"),
-               ("flip consistency", "flip_consistency", ".2f"), ("MLP kept", "mlp_params_kept_frac", ".3f"),
-               ("exact projection", "params_exact", ""), ("reused from", "reused_from", "")])
+               ("fit seed", "fit_seed", "d"), ("blocks", "blocks", ""), ("top-1", "top1", ".3f"),
+               ("drop", "drop_points", ".2f"), ("flip consistency", "flip_consistency", ".2f"),
+               ("MLP kept", "mlp_params_kept_frac", ".3f"), ("params vs default", "params_vs_mirror_first_k", ".3f"),
+               ("matched (1%)", "params_matched", ""), ("exact projection", "params_exact", ""),
+               ("X2 (canonical)", "canonical_top1", ".3f"), ("minus X2", "minus_canonical", "+.3f"),
+               ("reused from", "reused_from", "")])
     T.notes = ["Zero-shot k-NN top-1 and flip consistency (%), paper protocol; drop = original minus variant. "
                "Reused from: the variant is the same model as the named cell (identical content signature in "
                "scripts/stage1_ablate.py), so its result was reused, not evaluated again. A fit seed of -1 marks a row "
-               "fitted on pooled fit images (see the row's info)."]
+               "fitted on pooled fit images (see the row's info).",
+               "MLP kept: MLP weights kept in the converted blocks over dense. Params vs default "
+               "(params_vs_mirror_first_k of the CSV): MLP weights kept by the variant over those kept by the default "
+               "setting (per-layer operators, mirror pairing, blocks 1 to k, alpha 1) at the same k and fit seed. "
+               "Matched: within 1% of the default, the plan's matched-budget rule; rows marked no are not "
+               "parameter-matched comparisons."]
     S = Table("T_ablations_seeds", "A1 to A5: mean over fit seeds, every k present", ["model", "ablation", "variant", "k"],
               [("model", "model_label", ""), ("ablation", "ablation", ""), ("variant", "variant", ""), ("k", "k", "d"),
                ("n", "n_seeds", "d"), ("fit seeds", "fit_seeds", ""),
                ("top-1", lambda r: pm(r.get("top1_mean"), r.get("top1_std")), ""),
                ("top-1 per seed", "top1_per_seed", ""),
                ("drop", lambda r: pm(r.get("drop_mean"), r.get("drop_std")), ""),
-               ("flip consistency", lambda r: pm(r.get("flip_mean"), r.get("flip_std")), ""), ("note", "note", "")])
+               ("flip consistency", lambda r: pm(r.get("flip_mean"), r.get("flip_std")), ""),
+               ("MLP kept", "mlp_kept_frac_mean", ".3f"), ("params vs default", "params_vs_first_k_mean", ".3f"),
+               ("matched (1%)", "params_matched", ""), ("X2 (canonical)", "canonical_top1_mean", ".2f"),
+               ("note", "note", "")])
     S.notes = ["One row per model, ablation, variant and k (every k present in the CSVs). Mean and sample standard "
                "deviation (n - 1) over the fit seeds present, with n the number of seeds; with one seed no deviation "
-               "is shown. Top-1 per seed lists the per-seed values (also one row each in T_ablations)."]
+               "is shown. Top-1 per seed lists the per-seed values (also one row each in T_ablations). MLP kept and "
+               "params vs default: means over the same fit seeds (see T_ablations); matched: within 1% of the default "
+               "for every seed."]
     X = Table("T_ablations_a2_extra", "A2 pairings hungarian, hungarian_cycle and generic: pairing and projection as recorded",
               ["model", "variant", "k", "fit_seed"],
               [("variant", "variant", ""), ("k", "k", "d"), ("fit seed", "fit_seed", "d"), ("top-1", "top1", ".2f"),
@@ -2061,8 +2213,14 @@ def build_ablations(P):
                 if c in r and py(r[c]) is not None:
                     row[c] = py(r[c])
                     row["_loc"][c] = csv_loc(P.rel(f), where, c)
+            if row.get("params_vs_mirror_first_k") is not None:
+                row["params_matched"] = abs(row["params_vs_mirror_first_k"] - 1.0) <= PARAM_MATCH_TOL
+            row["blocks"] = "" if pd.isna(r.get("blocks")) else str(r.get("blocks"))
             row["pairing"], row["projection"] = info.get("pairing", ""), info.get("projection", "")
             row["fit_rows"] = info.get("fit_rows", "")
+            row["agreement_with_fit_run"] = info.get("agreement_with_fit_run")
+            row["variant_seed"] = py(r.get("variant_seed")) if "variant_seed" in r else None
+            row["n_query"] = py(r.get("n_query")) if "n_query" in r else None
             T.add(row)
     # Stable order for reading: model, ablation, k, the variant order of the CSVs, fit seed.
     vorder: dict = {}
@@ -2088,17 +2246,22 @@ def build_ablations(P):
         rs = sorted(rs, key=lambda x: x["fit_seed"])
         out = {"model": model, "model_label": MODEL_LABEL.get(model, model), "ablation": abl, "variant": var, "k": k,
                "n_seeds": len(rs), "fit_seeds": ",".join(str(x["fit_seed"]) for x in rs),
-               "top1_per_seed": "; ".join(f"s{x['fit_seed']}: {fmt(x.get('top1'), '.2f')}" for x in rs),
+               "top1_per_seed": "; ".join(f"s{x['fit_seed']}: {fmt(x.get('top1'), '.3f')}" for x in rs),
                "_src": ";".join(sorted({x["_src"] for x in rs})), "_git": ";".join(sorted({str(x["_git"]) for x in rs})),
                "_seed": rs[0]["_seed"] if len({x["_seed"] for x in rs}) == 1 else None,
                "_fit_seed": ",".join(str(x["fit_seed"]) for x in rs), "_loc": {}, "_derived": {}}
-        for name, col in (("top1", "top1"), ("drop", "drop_points"), ("flip", "flip_consistency")):
+        for name, col in (("top1", "top1"), ("drop", "drop_points"), ("flip", "flip_consistency"),
+                          ("mlp_kept_frac", "mlp_params_kept_frac"), ("params_vs_first_k", "params_vs_mirror_first_k")):
             m_, s_, n_ = agg([x.get(col) for x in rs])
-            out[f"{name}_mean"], out[f"{name}_std"] = m_, s_
+            out[f"{name}_mean"] = m_
+            if name in ("top1", "drop", "flip"):
+                out[f"{name}_std"] = s_
             if len(rs) == 1 and col in rs[0]["_loc"]:
                 out["_loc"][f"{name}_mean"] = rs[0]["_loc"][col]
-            else:
+            elif m_ is not None:
                 out["_derived"][f"{name}_mean"] = f"mean of {col} over fit seeds {out['fit_seeds']}"
+        pm_ = [x.get("params_matched") for x in rs if x.get("params_matched") is not None]
+        out["params_matched"] = all(pm_) if pm_ else None
         notes = []
         if any(x["fit_seed"] == -1 for x in rs):
             notes.append("fit seed -1: " + (rs[0].get("fit_rows") or "pooled fit images"))
@@ -2107,9 +2270,153 @@ def build_ablations(P):
             notes.append("same model as " + ", ".join(reused) + " (result reused)")
         if any(x.get("params_exact") is False for x in rs):
             notes.append("projection not exact (params_exact = False)")
+        if out["params_matched"] is False and out.get("params_vs_first_k_mean") is not None:
+            notes.append(f"not parameter-matched ({out['params_vs_first_k_mean']:.2f} of the default's MLP weights)")
+        out["_notes"] = notes
         out["note"] = "; ".join(notes)
         S.add(out)
+    if Tm is not None:
+        ablation_vs_canonical(T, S, Tm)
+    ablation_budget_notes(T, S)
+    for r in S.rows:
+        r["note"] = "; ".join(r.pop("_notes", []))
     return T, S, X, files, dups
+
+
+def canonical_seed_value(Tm: Table, model: str, k: int, method: str, fit_seed):
+    """(top1, record) of the canonical X2 row (T_main_zeroshot) for `method` at `model`, k and fit seed, else (None, None)."""
+    key = CANONICAL_KEYS.get(method)
+    r = Tm.find(model=model, k=k, variant=key) if key else None
+    if r is None or r.get("status") != "ok" or r.get("experiment") != CANONICAL_RUN:
+        return None, None
+    x = (r.get("_per_seed") or {}).get(fit_seed)
+    return (x["top1"], x) if x else (None, None)
+
+
+def ablation_vs_canonical(T: Table, S: Table, Tm: Table) -> None:
+    """Every ablation cell that is the canonical setting itself gets the canonical X2 value of the same fit seed, the
+    difference and a note; T_main_zeroshot stays the number to quote."""
+    default_n = {}
+    for r in T.rows:
+        if (r["ablation"], r["variant"]) == ("A1", "per_layer") and r.get("n_fit_images") is not None:
+            default_n[(r["model"], r["fit_seed"])] = r["n_fit_images"]
+    for r in T.rows:
+        method = SAME_AS_CANONICAL.get((r["ablation"], r["variant"]))
+        if method is None and r["ablation"] == "A3" and r["fit_seed"] is not None and r["fit_seed"] >= 0 \
+                and r.get("n_fit_images") is not None and r["n_fit_images"] == default_n.get((r["model"], r["fit_seed"])):
+            method = "mirror"           # refit from the run's own fit images: the canonical setting, refitted
+        if method is None or r.get("top1") is None:
+            continue
+        v, x = canonical_seed_value(Tm, r["model"], r["k"], method, r["fit_seed"])
+        if v is None:
+            continue
+        r["canonical_top1"], r["minus_canonical"] = v, r["top1"] - v
+        r["canonical_source"] = x["src"]
+        r["_loc"]["canonical_top1"] = csv_loc(x["src"], x["where"], "top1")
+        r["_derived"]["minus_canonical"] = f"top1 minus canonical_top1 ({x['src']})"
+        if method == "svd":
+            r["canonical_note"] = ("identical model to the X2 SVD row (SVD does not use the operators)" if r["top1"] == v
+                                   else "same SVD setting as X2 but a different value")
+        elif r["ablation"] == "A3":
+            ag = r.get("agreement_with_fit_run") or {}
+            r["canonical_note"] = (f"refit from the run's own {r['n_fit_images']} fit images (operator agreement "
+                                   f"{fmt(ag.get('mean_operator_agreement'), '.6f')}, pair recovery "
+                                   f"{fmt(ag.get('mean_pair_recovery'), '.3f')} with the fit run): the canonical setting "
+                                   "refitted, so the difference to X2 is numerical")
+        else:
+            r["canonical_note"] = "the canonical setting; this script " + OPERATOR_ROUNDTRIP
+    for r in S.rows:
+        rs = [x for x in T.rows if (x["model"], x["ablation"], x["variant"], x["k"]) ==
+              (r["model"], r["ablation"], r["variant"], r["k"]) and x.get("canonical_top1") is not None]
+        if not rs:
+            continue
+        r["canonical_top1_mean"] = float(np.mean([x["canonical_top1"] for x in rs]))
+        r["minus_canonical_mean"] = float(np.mean([x["minus_canonical"] for x in rs]))
+        r["_derived"]["canonical_top1_mean"] = (f"mean of the {CANONICAL_RUN} values (T_main_zeroshot per seed) over fit "
+                                                f"seeds {', '.join(str(x['fit_seed']) for x in rs)}")
+        r["_derived"]["minus_canonical_mean"] = "mean of minus_canonical over the same fit seeds"
+        diffs = ", ".join(f"s{x['fit_seed']} {x['minus_canonical']:+.3f}" for x in rs)
+        if all(x["minus_canonical"] == 0 for x in rs):
+            r["_notes"].append(f"identical to {CANONICAL_RUN} at every fit seed")
+        elif r["ablation"] == "A3":
+            r["_notes"].append(f"{rs[0]['canonical_note']}; quote {CANONICAL_RUN} ({r['canonical_top1_mean']:.2f}); "
+                               f"minus X2: {diffs}")
+        else:
+            r["_notes"].append(f"canonical setting; quote {CANONICAL_RUN} ({r['canonical_top1_mean']:.2f}); minus X2: {diffs} "
+                               "(numerical, see the notes)")
+    same = [x for x in T.rows if x.get("minus_canonical") is not None and x.get("canonical_note", "").startswith("the canonical")]
+    svd_rows = [x for x in T.rows if x.get("minus_canonical") is not None and (x["ablation"], x["variant"]) == ("A1", "svd")]
+    svd_same = bool(svd_rows) and all(x["minus_canonical"] == 0 for x in svd_rows)
+    if same:
+        lo, hi = min(abs(x["minus_canonical"]) for x in same), max(abs(x["minus_canonical"]) for x in same)
+        nq = int(same[0].get("n_query") or 0)
+        note = (f"Canonical number: the default cell (A1 per_layer = A2 mirror = A4 first = A5 alpha1.00, and A3 at the "
+                f"run's own fit set) is the same setting as {LABEL_MIRROR_MLP} in T_main_zeroshot, whose {CANONICAL_RUN} "
+                f"value is the one to quote (column X2 (canonical)). stage1_ablate.py " + OPERATOR_ROUNDTRIP +
+                f": the two differ by {lo:.3f} to {hi:.3f} points per fit seed"
+                + (f" ({round(lo * nq / 100)} to {round(hi * nq / 100)} of the {nq:,} queries). " if nq else ". ")
+                + ("A1 svd, which does not use the operators, is the identical model in both scripts and gives the "
+                   "identical number at every fit seed. " if svd_same else "")
+                + "Ablation rows are compared with each other, so they keep their own values.")
+        T.notes.append(note)
+        S.notes.append(note)
+
+
+def ablation_budget_notes(T: Table, S: Table) -> None:
+    """Data-driven notes on unmatched parameter budgets (A1, A2 alternatives; A4 block choices; A5 interpolation)."""
+    for model in sorted({r["model"] for r in S.rows}):
+        lab = MODEL_LABEL.get(model, model)
+        for k in sorted({r["k"] for r in S.rows if r["model"] == model}):
+            rows = {(r["ablation"], r["variant"]): r for r in S.rows if r["model"] == model and r["k"] == k}
+            first = rows.get(("A4", "first")) or rows.get(("A1", "per_layer"))
+            a4 = [rows[("A4", v)] for v in ("last", "lowest_share") if ("A4", v) in rows]
+            if a4 and first is not None:
+                per = {(x["variant"]): x for x in T.rows if x["model"] == model and x["k"] == k and x["ablation"] == "A4"}
+                bl = {v: per[v]["blocks"] for v in per}
+                last = rows.get(("A4", "last"))
+                bits = []
+                if last is not None and last.get("params_vs_first_k_mean") is not None:
+                    bits.append(f"last {k} keeps {last['mlp_kept_frac_mean']:.2f} of the MLP weights of its blocks against "
+                                f"{first['mlp_kept_frac_mean']:.2f} for first {k} ({last['params_vs_first_k_mean']:.2f} "
+                                f"times the first-k count), so \"last k beats first k\" ({last['top1_mean']:.2f} against "
+                                f"{first['top1_mean']:.2f}) partly reflects more weights kept, as well as the late blocks "
+                                "being closer to equivariant")
+                if "lowest_share" in bl and "last" in bl and bl["lowest_share"] == bl["last"]:
+                    bits.append(f"lowest breaking share selects the same blocks as last ({bl['last']}), so it is the "
+                                "same model")
+                if bits:
+                    note = f"A4 ({lab}, k = {k}) is not parameter-matched: " + "; ".join(bits) + "."
+                    T.notes.append(note)
+                    S.notes.append(note)
+            more = [r for (abl, v), r in rows.items() if abl in ("A1", "A2") and r.get("params_vs_first_k_mean") is not None
+                    and r["params_vs_first_k_mean"] > 1 + PARAM_MATCH_TOL]
+            less = [r for (abl, v), r in rows.items() if abl in ("A1", "A2") and r.get("params_vs_first_k_mean") is not None
+                    and r["params_vs_first_k_mean"] < 1 - PARAM_MATCH_TOL]
+            if more or less:
+                parts = []
+                if more:
+                    parts.append("alternatives that keep more MLP weights than the default and still collapse: " + ", ".join(
+                        f"{r['ablation']} {r['variant']} {r['params_vs_first_k_mean']:.2f}x ({r['top1_mean']:.2f})"
+                        for r in sorted(more, key=lambda r: -r["params_vs_first_k_mean"])))
+                if less:
+                    parts.append("fewer: " + ", ".join(
+                        f"{r['ablation']} {r['variant']} {r['params_vs_first_k_mean']:.2f}x ({r['top1_mean']:.2f})"
+                        for r in sorted(less, key=lambda r: r["params_vs_first_k_mean"])))
+                d = rows.get(("A1", "per_layer"))
+                note = (f"A1 and A2 ({lab}, k = {k}): not every alternative keeps the default's parameter count "
+                        f"(default {d['top1_mean']:.2f} at 1.00x); " if d else
+                        f"A1 and A2 ({lab}, k = {k}): not every alternative keeps the default's parameter count; ") + \
+                    "; ".join(parts) + ". Extra weights do not rescue a wrong operator or pairing."
+                T.notes.append(note)
+                S.notes.append(note)
+            a5 = [r for (abl, v), r in rows.items() if abl == "A5" and r.get("params_vs_first_k_mean") is not None
+                  and r["params_vs_first_k_mean"] > 1 + PARAM_MATCH_TOL]
+            if a5:
+                note = (f"A5 ({lab}, k = {k}): alpha below 1 interpolates between the original and the projected weights, "
+                        "which has no exact structure, so those rows keep the dense count "
+                        f"({a5[0]['params_vs_first_k_mean']:.2f}x the default); only alpha = 1 is at the Mirror budget.")
+                T.notes.append(note)
+                S.notes.append(note)
 
 
 def _runs_path_in(obj):
@@ -2147,24 +2454,30 @@ def _t2_margins(T: Table, keys: tuple) -> None:
                     r["_derived"][f"margin_{base}"] = f"top1 of {r['variant']} minus top1 of {b['variant']} ({r['_src']})"
 
 
-def build_tier2(P, Tm: Table, Th: Table, m1: dict, x2: dict):
+def build_tier2(P, Tm: Table, Th: Table, m1: dict, x2: dict, Ta: Table | None = None, Tv: Table | None = None):
     T = Table("T_tier2", "Tier 2: ImageNet linear probe (runs/t2/t2_linear.csv)", ["model", "variant"],
-              [("model", "model_label", ""), ("variant", "variant", ""), ("k", "k", "d"), ("top-1", "top1", ".2f"),
+              [("model", "model_label", ""), ("variant", "variant", ""), ("method", "label", ""), ("k", "k", "d"),
+               ("top-1", "top1", ".2f"),
                ("top-5", "top5", ".2f"), ("drop", "drop_vs_original", ".2f"), ("vs SVD", "margin_svd", ".2f"),
                ("vs random", "margin_random", ".2f"), ("chosen wd", "chosen_wd", "g"), ("wd at grid edge", "wd_at_grid_edge", ""),
                ("k-NN check", "knn_check_top1", ".2f"), ("Tier-1 k-NN", "tier1_knn_top1", ".2f"),
-               ("model params", "model_params", ",d")])
+               ("same model as Tier 1", "tier1_same_model", ""), ("model params", "model_params", ",d")])
     T.notes = ["Logistic regression on [CLS, mean patch token] trained on the 100k bank, tested on all 50k validation "
                "images; weight decay chosen on a 10% split of the bank (scripts/tier2_linear.py). Drop: original minus "
                "variant; vs SVD and vs random: Mirror variant minus the SVD or random variant of the same family and k "
                "(empty where that baseline was not probed). k-NN check: k-NN on the probe's own cached CLS features; "
-               "Tier-1 k-NN: the same variant's number from the k-NN tables (source in tier1_source)."]
+               "Tier-1 k-NN: the same setting's canonical number from the k-NN tables (source in tier1_source). Same "
+               "model as Tier 1: whether the probe built the model behind the Tier-1 number, decided from how each was "
+               "built (tier1_note in the CSV and the notes below say why not). Method: one label per method in every "
+               "table (the label the probe script recorded is in label_recorded)."]
     X = Table("T_tier2_transfer", "Tier 2: transfer linear probes (runs/t2/t2_transfer.csv)", ["model", "dataset", "variant"],
-              [("model", "model_label", ""), ("dataset", "dataset", ""), ("variant", "variant", ""), ("k", "k", "d"),
+              [("model", "model_label", ""), ("dataset", "dataset", ""), ("variant", "variant", ""), ("method", "label", ""),
+               ("k", "k", "d"),
                ("top-1", "top1", ".2f"), ("top-5", "top5", ".2f"), ("mean per-class", "mean_per_class_top1", ".2f"),
                ("drop", "drop_vs_original", ".2f"), ("vs SVD", "margin_svd", ".2f"), ("vs random", "margin_random", ".2f"),
                ("chosen wd", "chosen_wd", "g"), ("train / test", lambda r: f"{fmt(r.get('n_train'), ',d')} / "
-                                                                         f"{fmt(r.get('n_test'), ',d')}", "")])
+                                                                         f"{fmt(r.get('n_test'), ',d')}", ""),
+               ("at ceiling", lambda r: "yes" if r.get("dataset_at_ceiling") else "", "")])
     X.notes = ["Same probe recipe as the ImageNet probe, trained on each dataset's training split and scored once on "
                "its test split (scripts/tier2_transfer.py; dataset splits marked (verify on VM) in that script)."]
     f = P.runs / "t2" / "t2_linear.csv"
@@ -2176,16 +2489,18 @@ def build_tier2(P, Tm: Table, Th: Table, m1: dict, x2: dict):
                 read_json(P.runs / "t2" / "probe" / model / f"{var}.json") or {}
             ops, fs = _runs_path_in(vj)
             row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "variant": var,
-                   "label": r.get("label"), "family": r.get("family"), "method": r.get("method"), "k": py(r.get("k")),
+                   "label": method_label(r.get("family"), r.get("method"), r.get("label")), "label_recorded": r.get("label"),
+                   "family": r.get("family"), "method": r.get("method"), "k": py(r.get("k")),
+                   "builder": ((vj.get("info") or {}).get("builder")), "variant_seed": (vj.get("info") or {}).get("random_seed"),
                    "fit_seed": fs, "structure_source": ops, "source": P.rel(f), "git_hash": r.get("git_hash"),
                    "seed": py(r.get("seed")), "date": r.get("date"), "_src": P.rel(f), "_git": r.get("git_hash"),
                    "_seed": py(r.get("seed")), "_fit_seed": fs, "_loc": {}, "_derived": {}}
             for c in ("top1", "top5", "mean_per_class_top1", "knn_check_top1", "chosen_wd", "wd_at_grid_edge",
                       "holdout_top1_at_chosen", "final_hit_iter_limit", "model_params", "converted_params_kept",
-                      "converted_params_dense", "n_bank", "n_val", "feature_dim", "feature_kind"):
+                      "converted_params_dense", "n_bank", "n_val", "feature_dim", "feature_kind", "feature_dtype", "amp"):
                 if c in r:
                     row[c] = py(r[c])
-                    if c not in ("wd_at_grid_edge", "final_hit_iter_limit", "feature_kind"):
+                    if c not in ("wd_at_grid_edge", "final_hit_iter_limit", "feature_kind", "feature_dtype", "amp"):
                         row["_loc"][c] = csv_loc(P.rel(f), {"model": model, "variant": var}, c)
             # the same variant's Tier-1 k-NN number
             fam, meth, k = row["family"], row["method"], row["k"]
@@ -2199,6 +2514,11 @@ def build_tier2(P, Tm: Table, Th: Table, m1: dict, x2: dict):
                 h = Th.find(method=meth)
                 if h is not None and h.get("k") == k and h.get("healed_top1") is not None:
                     t1, t1src, t1loc = h["healed_top1"], f"T_healing healed ({h.get('source')})", h["_loc"].get("healed_top1")
+            elif fam == "healed_vexact" and Tv is not None:
+                h = Tv.find(k=k)
+                if h is not None and h.get("healed_top1") is not None and not h.get("tiny"):
+                    t1, t1src = h["healed_top1"], f"T_healing_vexact healed ({h.get('source')})"
+                    t1loc = h["_loc"].get("healed_top1")
             elif fam == "m1" and m1.get("knn") is not None and m1.get("model") == model:
                 sel = m1["knn"][(m1["knn"]["k"] == k) & (m1["knn"]["variant"] == meth)]
                 if len(sel) == 1:
@@ -2219,15 +2539,46 @@ def build_tier2(P, Tm: Table, Th: Table, m1: dict, x2: dict):
                 row["_loc"]["tier1_knn_top1"] = t1loc
             elif t1 is not None:
                 row["_derived"]["tier1_knn_top1"] = t1src
+            tier1_note(row, Ta)
             T.add(row)
         _t2_margins(T, ("model",))
+    # each t2_*_meta_<model>.json describes the last run for that model only; earlier rows keep their own git hash and date
+    for mf in sorted((P.runs / "t2").glob("t2_linear_meta_*.json")):
+        mj = read_json(mf) or {}
+        mm, mv = mj.get("model"), list(mj.get("variants") or [])
+        rows_m = [r for r in T.rows if r["model"] == mm]
+        if not rows_m or not mv:
+            continue
+        gpu = (mj.get("env") or {}).get("gpu")
+        for r in rows_m:
+            if r["variant"] in mv:
+                r["run_gpu"] = gpu
+        older = sorted({r["variant"] for r in rows_m if r["variant"] not in mv})
+        if older:
+            T.notes.append(
+                f"{MODEL_LABEL.get(mm, mm)}: `{P.rel(mf)}` records only its last run ({', '.join(mv)}; git "
+                f"{short((mj.get('git') or {}).get('git_hash'))}, {gpu or 'GPU not recorded'}). The other rows "
+                f"({', '.join(older)}) come from earlier runs: their git hash and date are in the CSV, their run meta in "
+                "git history. Comparisons across runs (for example a drop against the original) include the run-to-run "
+                "spread between GPUs.")
+        for r in [r for r in T.rows if r.get("tier1_note")]:
+            T.notes.append(f"{r['model_label']} {r['variant']} ({r['label']}): {r['tier1_note']}")
+        gaps = [r for r in T.rows if r.get("tier1_check_gap") is not None]
+        if gaps:
+            g = max(gaps, key=lambda r: abs(r["tier1_check_gap"]))
+            T.notes.append("Where the probe and Tier 1 use the same model, the k-NN check is computed on the probe's own "
+                           f"stored features (feature_dtype {g.get('feature_dtype') or 'as recorded'}) and differs from the "
+                           f"Tier-1 value by at most {abs(g['tier1_check_gap']):.3f} points ({g['model_label']} "
+                           f"{g['variant']}); {len(gaps)} of {sum(1 for r in T.rows if r.get('tier1_same_model') == 'yes')} "
+                           "such rows differ at all. Quote the Tier-1 value for k-NN.")
     f2 = P.runs / "t2" / "t2_transfer.csv"
     dx = read_csv(f2)
     if dx is not None:
         for _, r in dx.iterrows():
             model, var, ds = str(r["model"]), str(r["variant"]), str(r["dataset"])
             row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "dataset": ds, "variant": var,
-                   "label": r.get("label"), "family": r.get("family"), "method": r.get("method"), "k": py(r.get("k")),
+                   "label": method_label(r.get("family"), r.get("method"), r.get("label")), "label_recorded": r.get("label"),
+                   "family": r.get("family"), "method": r.get("method"), "k": py(r.get("k")),
                    "source": P.rel(f2), "git_hash": r.get("git_hash"), "seed": py(r.get("seed")), "_src": P.rel(f2),
                    "_git": r.get("git_hash"), "_seed": py(r.get("seed")), "_loc": {}, "_derived": {}}
             for c in ("top1", "top5", "mean_per_class_top1", "chosen_wd", "wd_at_grid_edge", "n_train", "n_test",
@@ -2238,7 +2589,88 @@ def build_tier2(P, Tm: Table, Th: Table, m1: dict, x2: dict):
                         row["_loc"][c] = csv_loc(P.rel(f2), {"model": model, "dataset": ds, "variant": var}, c)
             X.add(row)
         _t2_margins(X, ("model", "dataset"))
+        transfer_ceiling(X)
+    # each t2_*_meta_<model>.json describes the last run for that model only; earlier rows keep their own git hash and date
+    for mf in sorted((P.runs / "t2").glob("t2_transfer_meta_*.json")):
+        mj = read_json(mf) or {}
+        mm, mv = mj.get("model"), list(mj.get("variants") or [])
+        rows_m = [r for r in X.rows if r["model"] == mm]
+        if not rows_m or not mv:
+            continue
+        gpu = (mj.get("env") or {}).get("gpu")
+        for r in rows_m:
+            if r["variant"] in mv:
+                r["run_gpu"] = gpu
+        older = sorted({r["variant"] for r in rows_m if r["variant"] not in mv})
+        if older:
+            X.notes.append(
+                f"{MODEL_LABEL.get(mm, mm)}: `{P.rel(mf)}` records only its last run ({', '.join(mv)}; git "
+                f"{short((mj.get('git') or {}).get('git_hash'))}, {gpu or 'GPU not recorded'}). The other rows "
+                f"({', '.join(older)}) come from earlier runs: their git hash and date are in the CSV, their run meta in "
+                "git history. Comparisons across runs (for example a drop against the original) include the run-to-run "
+                "spread between GPUs.")
     return T, X
+
+
+def tier1_note(row: dict, Ta: Table | None) -> None:
+    """Whether the probed model is the model behind the Tier-1 number, decided from how each was built (not from the
+    values): the probe script rebuilds the MLP-only variants with mirror.variants from the float32 operator file (the
+    Mirror row is then numerically different from X2's, the random row is another draw); every other row probes the
+    same model (original, M1 structures, healed checkpoints). The k-NN check itself runs on the probe's own stored
+    features, so it can differ from the Tier-1 value by a few queries even for the same model."""
+    chk, t1 = row.get("knn_check_top1"), row.get("tier1_knn_top1")
+    if chk is None or t1 is None:
+        return
+    fam, meth, fs, k = row.get("family"), row.get("method"), row.get("fit_seed"), row.get("k")
+    built = f"built by {row['builder']}" if row.get("builder") else "built by mirror.variants"
+    if fam == "mlp" and meth == "mirror":
+        row["tier1_same_model"] = "no (numerical)"
+        a1 = Ta.find(model=row["model"], ablation="A1", variant="per_layer", k=k, fit_seed=fs) if Ta is not None else None
+        same_a1 = a1 is not None and a1.get("top1") is not None and abs(a1["top1"] - chk) <= 1e-9
+        row["tier1_note"] = (f"the probed model was {built} from the float32 operator file"
+                             + (f", the same model as A1 per_layer at fit seed {fs} (k-NN {a1['top1']:.3f})" if same_a1 else "")
+                             + f"; the Tier-1 column is the canonical {CANONICAL_RUN} value ({t1:.3f}), {chk - t1:+.3f} "
+                             "points away. The difference is numerical: the probe script projects with the operators "
+                             f"reloaded from the float32 operator file ({CANONICAL_RUN} uses the float64 operators as "
+                             "fitted; same pairing and parameter count), and its k-NN check runs on its own stored "
+                             "features.")
+    elif fam == "mlp" and meth == "random":
+        row["tier1_same_model"] = "no (other draw)"
+        sd = f" (variant seed {row['variant_seed']})" if row.get("variant_seed") is not None else ""
+        row["tier1_note"] = (f"different random draw: the probed control was {built}{sd}, with random involutions that fix "
+                             f"the all-ones direction; the Tier-1 column is the {CANONICAL_RUN} control of run_e1.py, another "
+                             f"draw ({t1:.2f} against {chk:.2f}; both at chance). The probe's margins over random use "
+                             "its own draw.")
+    else:
+        row["tier1_same_model"] = "yes"
+        if abs(chk - t1) > 1e-9:
+            row["tier1_check_gap"] = chk - t1
+            row["_derived"]["tier1_check_gap"] = "knn_check_top1 minus tier1_knn_top1"
+
+
+def transfer_ceiling(X: Table) -> None:
+    """Flag transfer datasets where the original is at ceiling and variants tie with it, so they do not separate the
+    methods (rule: original top-1 >= 99%, or at least two other variants with exactly the original's top-1)."""
+    for ds in sorted({r["dataset"] for r in X.rows}):
+        for model in sorted({r["model"] for r in X.rows if r["dataset"] == ds}):
+            rows = [r for r in X.rows if r["dataset"] == ds and r["model"] == model and r.get("top1") is not None]
+            o = next((r for r in rows if r.get("family") == "original"), None)
+            if o is None:
+                continue
+            others = [r for r in rows if r is not o]
+            ties = [r for r in others if r["top1"] == o["top1"]]
+            if not (o["top1"] >= 99.0 or len(ties) >= 2):
+                continue
+            span = max([abs(r["top1"] - o["top1"]) for r in others] + [0.0])
+            n = o.get("n_test")
+            imgs = f" ({round(span * n / 100):,} of {n:,} test images)" if isinstance(n, (int, float)) and n else ""
+            for r in rows:
+                r["dataset_at_ceiling"] = True
+            X.notes.append(f"{ds} ({o['model_label']}) does not separate the methods: the original is at "
+                           f"{o['top1']:.2f}%, " + (f"{', '.join(r['variant'] for r in ties)} give exactly the same top-1, "
+                                                     if ties else "")
+                           + f"and no variant differs from the original by more than {span:.2f} points{imgs}. Its "
+                           "margins are not evidence for or against any method.")
 
 
 def build_tier2_seg(P, plan_text: str = ""):
@@ -2294,7 +2726,8 @@ def build_tier2_seg(P, plan_text: str = ""):
         vpath = base / "seg" / model / f"{var}.json"
         vj = read_json(vpath) or {}
         ops, fs = _runs_path_in(vj.get("sources") or {})
-        row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "variant": var, "label": r.get("label"),
+        row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "variant": var,
+               "label": method_label(r.get("family"), r.get("method"), r.get("label")), "label_recorded": r.get("label"),
                "family": r.get("family"), "method": r.get("method"), "k": py(r.get("k")), "fit_seed": fs,
                "structure_source": ops, "source": f, "per_class_source": P.rel(vpath) if vj else None,
                "git_hash": r.get("git_hash"), "git_dirty": py(r.get("git_dirty")), "seed": py(r.get("seed")),
@@ -2375,22 +2808,38 @@ M2_TO_MAIN ={"vlocal": "vlocal", "vexact": "vexact", "mlp_only": "mirror_mlp_m1"
               "random": "random_attn", "dense": "original", "original": "original"}
 
 
-def build_latency(P, Tm: Table, archs: dict):
+def build_latency(P, Tm: Table, archs: dict, m1: dict | None = None):
     L = Table("T_latency", f"M2: measured latency against analytic cost (runs/{P.m2}/m2_latency.csv)",
               ["model", "variant", "k", "batch", "mode"],
-              [("variant", "variant", ""), ("k", "k", "d"), ("batch", "batch", "d"), ("mode", "mode_used", ""),
+              [("variant", "variant", ""), ("method", "label", ""), ("k", "k", "d"), ("batch", "batch", "d"),
+               ("mode", "mode_used", ""),
                ("median ms", "latency_ms_median", ".3f"), ("img/s", "throughput_img_s", ",.0f"),
                ("speed-up vs dense", "speedup_vs_dense", ".3f"), ("vs original", "speedup_vs_original", ".3f"),
                ("analytic (M2)", "flop_speedup_vs_dense", ".3f"), ("analytic (collector)", "collector_flop_speedup", ".3f"),
                ("measured / analytic", "measured_over_analytic", ".3f"), ("GFLOPs", "gflops", ".2f"),
-               ("params", "params_model", ",d"), ("checks", "checks", "")])
+               ("params", "params_model", ",d"), ("checks", "checks", ""),
+               ("timing flag", lambda r: "probable outlier" if r.get("timing_flag") else "", "")])
     L.notes = ["Median of the timed forwards (bf16, CUDA events; scripts/m2_latency.py). Speed-up vs dense: dense "
                "latency over the variant's, same batch and mode; dense is the folded original in the same efficient "
                "implementation, original the hub model as released. Analytic (M2): dense multiply-adds over the "
                "variant's, counted by m2_latency.py; analytic (collector): the same ratio from tables/cost_model.md "
                "(whole model); measured / analytic: measured speed-up over the M2 analytic one. Checks: float64, float32 "
                "and bfloat16 agreement of the efficient model with the dense model it was built from "
-               "(T_latency_checks)."]
+               "(T_latency_checks).",
+               "Which analytic speed-up: measured / analytic uses analytic (M2), the timing script's count of the "
+               "implementation it timed, so numerator and denominator describe the same model. Analytic (collector) is the "
+               "structured count of tables/cost_model.md that T_main_zeroshot reports. The two agree for every variant "
+               "except V-local (M2 also counts one d x d rotation of the CLS feature, below 0.01%). For V-local the timed "
+               "implementation stores Wo dense in the block's basis, because M1 projected Wo with A_(l+1) rather than the "
+               "block's input operator (keeping it structured would need a second rotation per block, vlocal_r2, not run): "
+               "Wo then costs d x H dh multiply-adds per token instead of its free-parameter count. Column "
+               "wo_dense_extra_gflops (CSV) recomputes that extra cost from runs/m1/m1_ranks.csv; with the CLS rotation it "
+               "accounts for the whole gap between the two GFLOPs counts (column analytic_gap_unexplained_gflops). The "
+               "same choice is why V-local's params here (the stored dense Wo) exceed its count in T_main_zeroshot. "
+               "Basis rotations are counted the same way in both (one d x d per converted block).",
+               "Timing flag: a converted variant whose measured speed-up exceeds its analytic one (measured / analytic "
+               "above 1) cannot be explained by its FLOPs; such rows are kept but marked as probable timing outliers "
+               "(listed below with the same variant's other batch sizes)."]
     C = Table("T_latency_checks", "M2 checks: efficient model against the dense model it was built from",
               ["variant", "k", "dtype"],
               [("variant", "variant", ""), ("k", "k", "d"), ("dtype", "dtype", ""), ("criterion", "criterion", ""),
@@ -2431,6 +2880,8 @@ def build_latency(P, Tm: Table, archs: dict):
             if row.get("speedup_vs_dense") is not None and row.get("flop_speedup_vs_dense"):
                 row["measured_over_analytic"] = row["speedup_vs_dense"] / row["flop_speedup_vs_dense"]
                 row["_derived"]["measured_over_analytic"] = "speedup_vs_dense / flop_speedup_vs_dense (m2_latency.csv)"
+            row["label_recorded"] = row.get("label")
+            row["label"] = M2_LABEL.get(var, row.get("label"))
             mk = M2_TO_MAIN.get(var)
             arch = archs.get(model)
             tm = Tm.find(model=model, k=0 if var in ("dense", "original") else k, variant=mk) if mk else None
@@ -2438,11 +2889,45 @@ def build_latency(P, Tm: Table, archs: dict):
                 row["collector_flop_speedup"] = analytic_cost(arch, [])["gflops_model_dense"] / tm["gflops_model"]
                 row["_derived"]["collector_flop_speedup"] = (f"dense GFLOPs / GFLOPs of T_main_zeroshot {mk} at k = {tm['k']} "
                                                              "(analytic_cost)")
+                row["gflops_collector"] = tm["gflops_model"]
+                row["_derived"]["gflops_collector"] = f"gflops_model of T_main_zeroshot {mk} at k = {tm['k']}"
+                rk = (m1 or {}).get("ranks")
+                d_, T_ = arch["d"], arch["T"]
+                if var.startswith("vlocal") and rk is not None and k and int(rk["block"].max()) >= k \
+                        and str(r.get("wo_mode", "dense")) != "structured" and row.get("gflops") is not None:
+                    sub = rk[rk["block"] <= k]
+                    row["wo_dense_extra_gflops"] = 2.0 * T_ * float((d_ * d_ - sub["attn_free_o"]).sum()) / 1e9
+                    row["_derived"]["wo_dense_extra_gflops"] = ("2 T sum over converted blocks of (d^2 - attn_free_o) / 1e9 "
+                                                                "(runs/m1/m1_ranks.csv; Wo stored dense)")
+                if row.get("gflops") is not None:
+                    # M2's rotation work beyond the per-token rotations the collector also counts: the CLS feature
+                    cls_rot = float(py(r.get("rotation_macs")) or 0) - int(py(r.get("n_rotations")) or 0) * T_ * d_ * d_
+                    row["cls_rotation_gflops"] = 2.0 * cls_rot / 1e9
+                    row["_derived"]["cls_rotation_gflops"] = "2 (rotation_macs - n_rotations T d^2) / 1e9 (m2_latency.csv)"
+                    row["analytic_gap_unexplained_gflops"] = (row["gflops"] - tm["gflops_model"]
+                                                              - row.get("wo_dense_extra_gflops", 0.0) - row["cls_rotation_gflops"])
+                    row["_derived"]["analytic_gap_unexplained_gflops"] = (
+                        "gflops (M2) minus gflops_collector minus wo_dense_extra_gflops minus cls_rotation_gflops")
+            if "wo_mode" in r:
+                row["wo_mode"] = r.get("wo_mode")
             st = status.get((var, k))
             if st:
                 row["checks_pass"] = all(p for _, p in st)
                 row["checks"] = " / ".join(f"{d}: {'pass' if p else 'FAIL'}" for d, p in st)
             L.add(row)
+    # probable timing outliers: a converted variant measured faster than its FLOPs allow
+    for r in L.rows:
+        if r["k"] and r.get("measured_over_analytic") is not None and r["measured_over_analytic"] > 1.0:
+            others = sorted((x for x in L.rows if x["variant"] == r["variant"] and x["k"] == r["k"]
+                             and x["mode"] == r["mode"] and x is not r and x.get("speedup_vs_dense") is not None),
+                            key=lambda x: x["batch"])
+            r["timing_flag"] = True
+            r["timing_note"] = (f"{r['label']} k = {r['k']}, batch {r['batch']}, {r['mode']}: measured "
+                                f"{r['speedup_vs_dense']:.3f}x against an analytic {r['flop_speedup_vs_dense']:.3f}x; the "
+                                "same variant measures " + ", ".join(f"{x['speedup_vs_dense']:.3f}x at batch {x['batch']}"
+                                                                     for x in others)
+                                + f" ({r['mode']}). Probable timing outlier: kept, not used for any claim.")
+            L.notes.append("Flagged: " + r["timing_note"])
     return L, C, meta
 
 
@@ -2780,7 +3265,8 @@ def fig_accuracy_vs_k(Tm: Table, path: Path) -> bool:
             ys = ([o_top] if o_top is not None else []) + [r["top1_mean"] for r in rows]
             es = ([0.0] if o_top is not None else []) + [r.get("top1_std") or 0.0 for r in rows]
             ax.errorbar(xs, ys, yerr=es if any(es) else None, color=col, linestyle=ls, marker=mk, markersize=6,
-                        linewidth=2, capsize=3, label=VARIANT_INFO[key][1])
+                        linewidth=2, capsize=3,
+                        label=VARIANT_INFO[key][1] + (" (M1 run, not canonical where X2 exists)" if key == "mirror_mlp_m1" else ""))
         if o_top is not None:
             ax.axhline(o_top, color=C_INK, linestyle=":", linewidth=1, label="original")
         ax.set_xticks([0] + MAIN_KS)
@@ -3087,7 +3573,7 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                                  f"(SVD {c(f'main.{ms}.k{k}.svd_mlp.top1', 'T_main_zeroshot', {'model': model, 'k': k, 'variant': 'svd_mlp'}, 'top1_mean')}, "
                                  f"random {c(f'main.{ms}.k{k}.random_mlp.top1', 'T_main_zeroshot', {'model': model, 'k': k, 'variant': 'random_mlp'}, 'top1_mean')}; "
                                  f"n = {rr['n_seeds']})")
-            L.append(f"- {MODEL_LABEL[model]}, Mirror MLP only, top-1 (%): original "
+            L.append(f"- {MODEL_LABEL[model]}, {LABEL_MIRROR_MLP} (canonical source of every MLP-only number), top-1 (%): original "
                      f"{c(f'main.{ms}.original.top1', 'T_main_zeroshot', {'model': model, 'k': 0, 'variant': 'original'}, 'top1_mean', headline=f'{MODEL_LABEL[model]} original k-NN top-1')}; "
                      + "; ".join(parts) + ".")
     L.append("- Tables: `T_main_zeroshot` (MLP-only rows), `T_generality` (decision rows), `T_structure_per_layer`.")
@@ -3102,7 +3588,7 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                  f"{', '.join(map(str, want))} (jobs/*.txt and runs/x2/).")
     rr = tm.find(model="dinov2_vitb14_reg", k=6, variant="mirror_mlp")
     if rr and rr["status"] == "ok":
-        L.append(f"- DINOv2-reg, Mirror MLP only at k = 6: {c('main.reg.k6.mirror_mlp.top1', 'T_main_zeroshot', {'model': 'dinov2_vitb14_reg', 'k': 6, 'variant': 'mirror_mlp'}, 'top1_mean')}"
+        L.append(f"- DINOv2-reg, {LABEL_MIRROR_MLP} at k = 6: {c('main.reg.k6.mirror_mlp.top1', 'T_main_zeroshot', {'model': 'dinov2_vitb14_reg', 'k': 6, 'variant': 'mirror_mlp'}, 'top1_mean')}"
                  f" ± {c('main.reg.k6.mirror_mlp.top1_std', 'T_main_zeroshot', {'model': 'dinov2_vitb14_reg', 'k': 6, 'variant': 'mirror_mlp'}, 'top1_std', '.3f')}"
                  f" (n = {c('main.reg.k6.mirror_mlp.n', 'T_main_zeroshot', {'model': 'dinov2_vitb14_reg', 'k': 6, 'variant': 'mirror_mlp'}, 'n_seeds', 'd')}).")
     rs = reasons(["X3"])
@@ -3267,8 +3753,18 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                 rr = tm.find(model=m1["model"], k=k, variant=v)
                 if rr and rr["status"] == "ok":
                     hl = f"M1 k = {k} {VARIANT_INFO[v][1]} top-1" if v in ("vlocal", "vexact") else None
+                    extra = ""
+                    if v == "mirror_mlp_m1":
+                        x2r = tm.find(model=m1["model"], k=k, variant="mirror_mlp")
+                        if rr.get("canonical") == "no" and x2r is not None:
+                            ms_ = MODEL_SHORT.get(m1["model"], m1["model"])
+                            extra = (f"; M1 re-run, not canonical: quote {CANONICAL_RUN} "
+                                     f"{c(f'main.{ms_}.k{k}.mirror_mlp.top1', 'T_main_zeroshot', {'model': m1['model'], 'k': k, 'variant': 'mirror_mlp'}, 'top1_mean')}"
+                                     f" (n = {x2r['n_seeds']}); the M1 run reloads the float32 operator file, a numerical difference")
+                        else:
+                            extra = f"; the only source at this k ({CANONICAL_RUN} did not run it)"
                     bits.append(f"{VARIANT_INFO[v][1]} {c(f'm1.k{k}.{v}.top1', 'T_main_zeroshot', {'model': m1['model'], 'k': k, 'variant': v}, 'top1_mean', headline=hl)} "
-                                f"(flip {c(f'm1.k{k}.{v}.flip', 'T_main_zeroshot', {'model': m1['model'], 'k': k, 'variant': v}, 'flip_mean')})")
+                                f"(flip {c(f'm1.k{k}.{v}.flip', 'T_main_zeroshot', {'model': m1['model'], 'k': k, 'variant': v}, 'flip_mean')}{extra})")
             L.append(f"- k = {k}, top-1 (%): " + "; ".join(bits) + ".")
             for v in ("vlocal", "vexact"):
                 rr = tm.find(model=m1["model"], k=k, variant=v)
@@ -3455,7 +3951,11 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                         b = f"{r['variant']} {c(key + '.top1', 'T_ablations_seeds', wh, 'top1_mean')}"
                         if r.get("top1_std") is not None:
                             b += f" ± {c(key + '.top1_std', 'T_ablations_seeds', wh, 'top1_std')}"
-                        bits.append(b + f" (n = {r['n_seeds']}, fit seeds {r['fit_seeds']})")
+                        par = ""
+                        if r.get("params_vs_first_k_mean") is not None:
+                            par = (f"; params {c(key + '.params_vs_default', 'T_ablations_seeds', wh, 'params_vs_first_k_mean', '.2f')}x"
+                                   + ("" if r.get("params_matched") else ", not matched"))
+                        bits.append(b + f" (n = {r['n_seeds']}, fit seeds {r['fit_seeds']}{par})")
                     L.append(f"- {abl} ({MODEL_LABEL.get(model, model)}, k = {k}), k-NN top-1 (%), mean ± standard "
                              "deviation over fit seeds: " + "; ".join(bits) + ".")
         if tax.rows:
@@ -3469,6 +3969,49 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                             f" [{r['pairing']}{'; projection: ' + r['projection'] if r.get('projection') else ''}; exact "
                             f"projection: {fmt(r.get('params_exact'))}]")
             L.append("- A2 pairings hungarian, hungarian_cycle and generic, with the pairing and projection each row records: " + "; ".join(bits) + ".")
+        L.append("- Params: MLP weights kept over those of the default setting at the same k and fit seed "
+                 "(params_vs_mirror_first_k); \"not matched\" means outside the plan's 1% rule. See the notes of "
+                 "`T_ablations_seeds` for what each unmatched comparison means.")
+        for r in [r for r in tas.rows if (r["ablation"], r["variant"]) == ("A1", "per_layer") and r.get("canonical_top1_mean") is not None]:
+            ms, kk = MODEL_SHORT.get(r["model"], r["model"]), r["k"]
+            wh = {"model": r["model"], "ablation": "A1", "variant": "per_layer", "k": r["k"]}
+            L.append(f"- Canonical number ({MODEL_LABEL.get(r['model'], r['model'])}, k = {r['k']}): the default cell (A1 "
+                     f"per_layer = A2 mirror = A4 first = A5 alpha1.00) is the setting of {LABEL_MIRROR_MLP} in "
+                     f"`T_main_zeroshot`; quote {CANONICAL_RUN} "
+                     f"{c(f'a.{ms}.A1.per_layer.k{kk}.canonical', 'T_ablations_seeds', wh, 'canonical_top1_mean')} "
+                     f"over fit seeds {r['fit_seeds']}, not the ablation script's "
+                     f"{c(f'a.{ms}.A1.per_layer.k{kk}.top1', 'T_ablations_seeds', wh, 'top1_mean')} "
+                     f"(mean difference {c(f'a.{ms}.A1.per_layer.k{kk}.minus_canonical', 'T_ablations_seeds', wh, 'minus_canonical_mean', '+.3f')}). "
+                     "The ablation script reloads the operators from their float32 file and re-cleans them; X2 projects "
+                     "with the float64 operators as fitted. Same pairing, parameter count and evaluation code (A1 svd, "
+                     "which uses no operator, is identical in both), so the difference is numerical.")
+        for r in [r for r in tas.rows if r["ablation"] == "A4" and r["variant"] == "last" and r.get("params_matched") is False]:
+            ms, kk = MODEL_SHORT.get(r["model"], r["model"]), r["k"]
+            wh = {"model": r["model"], "ablation": "A4", "variant": "last", "k": r["k"]}
+            wf = {"model": r["model"], "ablation": "A4", "variant": "first", "k": r["k"]}
+            same_bl = "lowest breaking share" if any("A4/last" in str(x.get("note")) for x in tas.rows
+                                                      if x["ablation"] == "A4" and x["variant"] == "lowest_share"
+                                                      and x["k"] == r["k"] and x["model"] == r["model"]) else None
+            L.append(f"- A4 is not parameter-matched ({MODEL_LABEL.get(r['model'], r['model'])}, k = {r['k']}): last k keeps "
+                     f"{c(f'a.{ms}.A4.last.k{kk}.mlp_kept', 'T_ablations_seeds', wh, 'mlp_kept_frac_mean', '.2f')} of "
+                     f"its MLP weights against "
+                     + (f"{c(f'a.{ms}.A4.first.k{kk}.mlp_kept', 'T_ablations_seeds', wf, 'mlp_kept_frac_mean', '.2f')} "
+                        if tas.find(**wf) is not None else "fewer ")
+                     + "for first k, so \"last k beats first k\" partly reflects more weights kept"
+                     + (f"; {same_bl} selects the same blocks as last (the same model)" if same_bl else "") + ".")
+        more = [r for r in tas.rows if r["ablation"] in ("A1", "A2") and r.get("params_matched") is False
+                and (r.get("params_vs_first_k_mean") or 0) > 1]
+        if more:
+            bits = []
+            for r in more:
+                ms = MODEL_SHORT.get(r["model"], r["model"])
+                key = f"a.{ms}.{r['ablation']}.{r['variant']}.k{r['k']}"
+                wh = {"model": r["model"], "ablation": r["ablation"], "variant": r["variant"], "k": r["k"]}
+                bits.append(f"{r['ablation']} {r['variant']} (k = {r['k']}) "
+                            f"{c(key + '.params_vs_default', 'T_ablations_seeds', wh, 'params_vs_first_k_mean', '.2f')}x, "
+                            f"top-1 {c(key + '.top1', 'T_ablations_seeds', wh, 'top1_mean')}")
+            L.append("- A1 and A2 alternatives that keep more MLP weights than the default and still collapse: "
+                     + "; ".join(bits) + ". Extra weights do not rescue a wrong operator or pairing.")
         reused = [r for r in ta.rows if r["reused_from"]]
         if reused:
             L.append("- Reused cells (same model as another cell, so its result was reused rather than evaluated again): "
@@ -3563,6 +4106,36 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                 if bits:
                     L.append(f"- k = {k}, batch {b}, {mode}: speed-up against dense, measured vs analytic: "
                              + "; ".join(bits) + ".")
+        vl = [r for r in rows_m if r["variant"] == "vlocal" and r["batch"] == (batches[-1] if batches else None)
+              and r.get("wo_dense_extra_gflops") is not None]
+        if vl:
+            bits = []
+            for r in sorted(vl, key=lambda r: r["k"]):
+                wh = {"model": r["model"], "variant": "vlocal", "k": r["k"], "batch": r["batch"], "mode": mode}
+                key = f"m2.vlocal.k{r['k']}.b{r['batch']}.{mode}"
+                bits.append(f"k = {r['k']}: {c(key + '.gflops', 'T_latency', wh, 'gflops', '.2f')} against "
+                            f"{c(key + '.gflops_collector', 'T_latency', wh, 'gflops_collector', '.2f')} GFLOPs, of which "
+                            f"{c(key + '.wo_extra', 'T_latency', wh, 'wo_dense_extra_gflops', '.3f')} is the dense Wo")
+            L.append("- Two analytic speed-ups: measured / analytic uses the M2 count (the implementation that was timed); "
+                     "the collector count (`tables/cost_model.md`, used in `T_main_zeroshot`) is the structured one. They "
+                     "agree except for V-local, whose timed implementation stores Wo dense in the block's basis (M1 projected "
+                     "Wo with A_(l+1); a structured Wo would need a second rotation per block, not run). Basis rotations are "
+                     "counted alike in both. " + "; ".join(bits) + " (the rest is one rotation of the CLS feature).")
+        flagged = [r for r in tl.rows if r.get("timing_flag")]
+        for r in flagged:
+            wh = {"model": r["model"], "variant": r["variant"], "k": r["k"], "batch": r["batch"], "mode": r["mode"]}
+            key = f"m2.{r['variant']}.k{r['k']}.b{r['batch']}.{r['mode']}"
+            others = sorted((x for x in tl.rows if x["variant"] == r["variant"] and x["k"] == r["k"]
+                             and x["mode"] == r["mode"] and x is not r), key=lambda x: x["batch"])
+            ob = []
+            for x in others:
+                whx = {"model": x["model"], "variant": x["variant"], "k": x["k"], "batch": x["batch"], "mode": x["mode"]}
+                kx = f"m2.{x['variant']}.k{x['k']}.b{x['batch']}.{x['mode']}.speedup"
+                ob.append(f"{c(kx, 'T_latency', whx, 'speedup_vs_dense', '.3f')}x at batch {x['batch']}")
+            L.append(f"- Probable timing outlier (kept, flagged in `T_latency`): {r['label']} k = {r['k']}, batch {r['batch']}, "
+                     f"{r['mode']} measures {c(key + '.speedup', 'T_latency', wh, 'speedup_vs_dense', '.3f')}x, above its "
+                     f"analytic {c(key + '.flop', 'T_latency', wh, 'flop_speedup_vs_dense', '.3f')}x; the same variant "
+                     f"measures {', '.join(ob)}.")
         o = [r for r in rows_m if r["variant"] == "original" and r["batch"] == (batches[-1] if batches else None)]
         if o:
             r = o[0]
@@ -3641,7 +4214,12 @@ def build_index(P, ctx, R: Registry) -> list[str]:
                   + (" (at the grid edge)" if r.get("wd_at_grid_edge") else "")
                   + f"; k-NN check {c(key + '.knn_check', 'T_tier2', wh, 'knn_check_top1')}")
             if r.get("tier1_knn_top1") is not None:
-                b += f" (Tier-1 k-NN {c(key + '.tier1_knn', 'T_tier2', wh, 'tier1_knn_top1')})"
+                b += f" (Tier-1 k-NN {c(key + '.tier1_knn', 'T_tier2', wh, 'tier1_knn_top1')}"
+                if str(r.get("tier1_same_model", "")).startswith("no"):
+                    b += ("; not the same model: " + ("a different random draw" if r.get("method") == "random"
+                                                      else "built from the float32 operator file, a numerical difference")
+                          + ", see the `T_tier2` notes")
+                b += ")"
             L.append(b + ".")
     else:
         rs = reasons(["Tier-2", "Tier 2"])
@@ -3657,6 +4235,13 @@ def build_index(P, ctx, R: Registry) -> list[str]:
             if r.get("drop_vs_original") is not None and r["family"] != "original":
                 b += f", drop {c(key + '.drop', 'T_tier2_transfer', wh, 'drop_vs_original')}"
             L.append(b + ".")
+        for ds in sorted({r["dataset"] for r in t2x.rows if r.get("dataset_at_ceiling")}):
+            o = next((r for r in t2x.rows if r["dataset"] == ds and r.get("family") == "original"), None)
+            if o is not None:
+                ms = MODEL_SHORT.get(o["model"], o["model"])
+                L.append(f"- {ds} is at ceiling (original {c(f't2x.{ms}.{ds}.original.top1', 'T_tier2_transfer', {'model': o['model'], 'dataset': ds, 'variant': 'original'}, 'top1')}%; "
+                         "several variants tie with it exactly and none differs by more than a few test images), so it "
+                         "does not separate the methods; see the `T_tier2_transfer` notes.")
     else:
         L.append(f"- Transfer probes (CIFAR-100, Flowers-102, Pets, DTD): {NOT_RUN} (no `runs/t2/t2_transfer.csv`).")
     tsg, si = T["T_tier2_seg"], ctx["seg_info"]
@@ -3723,11 +4308,11 @@ def build_index(P, ctx, R: Registry) -> list[str]:
     extra = [("main.reg.k9.vlocal.margin_svd", "T_main_zeroshot", {"model": "dinov2_vitb14_reg", "k": 9, "variant": "vlocal"},
               "margin_svd_mean", "DINOv2-reg k = 9 V-local margin over SVD (points)"),
              ("main.reg.k6.mirror_mlp.margin_svd", "T_main_zeroshot", {"model": "dinov2_vitb14_reg", "k": 6, "variant": "mirror_mlp"},
-              "margin_svd_mean", "DINOv2-reg k = 6 Mirror MLP-only margin over SVD (points)"),
+              "margin_svd_mean", f"DINOv2-reg k = 6 {LABEL_MIRROR_MLP} margin over SVD (points)"),
              ("main.plain.k6.mirror_mlp.margin_svd", "T_main_zeroshot", {"model": "dinov2_vitb14", "k": 6, "variant": "mirror_mlp"},
-              "margin_svd_mean", "DINOv2 k = 6 Mirror MLP-only margin over SVD (points)"),
+              "margin_svd_mean", f"DINOv2 k = 6 {LABEL_MIRROR_MLP} margin over SVD (points)"),
              ("main.reg.k6.mirror_mlp.top1_mean", "T_main_zeroshot", {"model": "dinov2_vitb14_reg", "k": 6, "variant": "mirror_mlp"},
-              "top1_mean", "DINOv2-reg k = 6 Mirror MLP-only top-1"),
+              "top1_mean", f"DINOv2-reg k = 6 {LABEL_MIRROR_MLP} top-1 (headline; canonical source {CANONICAL_RUN})"),
              ("main.reg.k12.vexact.flip", "T_main_zeroshot", {"model": "dinov2_vitb14_reg", "k": 12, "variant": "vexact"},
               "flip_mean", "DINOv2-reg k = 12 V-exact flip consistency, bf16 (%)"),
              ("g.reg.s0.row4", "T_generality", {"model": "dinov2_vitb14_reg", "fit_seed": 0}, "row4_value",
@@ -3866,12 +4451,15 @@ def main(argv=None) -> dict:
     T["T_e1_history"] = build_e1_history(P, e1, e1b, diag, commits)
     T["T_x_checks"] = build_x_checks(P, x1, x1b, x4, m1, plan_text)
     T["T_attention"], T["T_attention_vexact"], T["T_attention_conversion"] = build_attention(P, m1)
-    T["T_ablations"], T["T_ablations_seeds"], T["T_ablations_a2_extra"], a_files, a_dups = build_ablations(P)
-    T["T_tier2"], T["T_tier2_transfer"] = build_tier2(P, T["T_main_zeroshot"], T["T_healing"], m1, x2)
+    T["T_ablations"], T["T_ablations_seeds"], T["T_ablations_a2_extra"], a_files, a_dups = build_ablations(
+        P, T["T_main_zeroshot"])
+    T["T_healing_vexact"], vx_info = build_healing_vexact(P, m1, {m_: a_["depth"] for m_, a_ in archs.items()})
+    T["T_tier2"], T["T_tier2_transfer"] = build_tier2(P, T["T_main_zeroshot"], T["T_healing"], m1, x2, T["T_ablations"],
+                                                      T["T_healing_vexact"])
     T["T_tier2_seg"], T["T_tier2_seg_classes"], seg_info = build_tier2_seg(P, plan_text)
     add_linear_to_healing(T["T_healing"], T["T_tier2"])
-    T["T_healing_vexact"], vx_info = build_healing_vexact(P, m1, {m_: a_["depth"] for m_, a_ in archs.items()})
-    T["T_latency"], T["T_latency_checks"], m2_meta = build_latency(P, T["T_main_zeroshot"], archs)
+    vexact_device_notes(T["T_healing_vexact"], T["T_main_zeroshot"])
+    T["T_latency"], T["T_latency_checks"], m2_meta = build_latency(P, T["T_main_zeroshot"], archs, m1)
     T["T_latency_profile"], T["T_latency_profile_triton"], prof_meta = build_latency_profile(P)
     T["T_f4"], T["T_f4_p2"], f4_files, _ = build_f4(P)
     T["T_prereg"] = build_prereg(P, e1, e1b, f3, d_free, T["T_healing_p3"], T["T_generality_p4"], x1, status, th,
@@ -4014,6 +4602,12 @@ def main(argv=None) -> dict:
                 lines += tt.md_lines()
         elif name == "T_main_zeroshot":
             lines += T["T_main_zeroshot"].md_lines()
+            noted = [r for r in T["T_main_zeroshot"].rows if r.get("remark_id")]
+            if noted:
+                lines += ["## Row notes", ""]
+                lines += [f"- [{r['remark_id']}] {r['model_label']}, k = {r['k']}, {r['variant_label']} (run "
+                          f"{r['experiment']}): {r['remark']}" for r in noted]
+                lines.append("")
             notrun = [r for r in T["T_main_zeroshot"].rows if r["status"] == NOT_RUN]
             if notrun:
                 lines += ["## Rows not run and why", ""]
@@ -4101,6 +4695,32 @@ def main(argv=None) -> dict:
         dev.append(f"P2: {p2r['verdict']} (runs/f4/f4_p2.json).")
     for d_ in a_dups:
         dev.append(f"A: the key ablation/variant/k/fit seed {d_} appears in more than one CSV; the first was kept.")
+    for r in T["T_main_zeroshot"].rows:
+        if r.get("canonical") == "no":
+            dev.append(f"Duplicate setting: {r['model_label']} k = {r['k']} {r['variant_label']} has an M1 row next to the "
+                       f"canonical {CANONICAL_RUN} row; the M1 row is kept and marked not canonical (operator file round "
+                       "trip, a numerical difference; T_main_zeroshot row notes).")
+    unmatched = [r for r in T["T_ablations_seeds"].rows if r.get("params_matched") is False and r["ablation"] in ("A1", "A2", "A4")]
+    for model in sorted({r["model"] for r in unmatched}):
+        for k in sorted({r["k"] for r in unmatched if r["model"] == model}):
+            names = [f"{r['ablation']} {r['variant']}" for r in unmatched if r["model"] == model and r["k"] == k]
+            dev.append(f"A: not parameter-matched to the default ({MODEL_LABEL.get(model, model)}, k = {k}): "
+                       f"{', '.join(names)}; ratios in T_ablations_seeds (params vs default).")
+    for r in T["T_latency"].rows:
+        if r.get("timing_flag"):
+            dev.append(f"M2: {r['label']} k = {r['k']}, batch {r['batch']}, {r['mode']} is a probable timing outlier "
+                       "(measured speed-up above its analytic one); kept and flagged in T_latency.")
+    for ds in sorted({r["dataset"] for r in T["T_tier2_transfer"].rows if r.get("dataset_at_ceiling")}):
+        dev.append(f"Tier 2: {ds} is at ceiling and does not separate the methods (T_tier2_transfer notes).")
+    for r in T["T_tier2"].rows:
+        if str(r.get("tier1_same_model", "")).startswith("no"):
+            dev.append(f"Tier 2: {r['model_label']} {r['variant']}: the probed model is not the model behind its Tier-1 "
+                       f"number ({'a different random draw' if r.get('method') == 'random' else 'rebuilt from the float32 operator file, a numerical difference'}; "
+                       "T_tier2 notes).")
+    for r in T["T_healing_vexact"].rows:
+        if r.get("note") and r.get("gpu"):
+            dev.append(f"V-exact healing k = {r['k']}: run on {r['gpu']}, which measures its own original; compare within "
+                       "the row (T_healing_vexact notes).")
     for r in T["T_tier2_seg"].rows:
         if r.get("note"):
             dev.append(f"Tier 2 ADE20K: {r['model_label']} {r['variant']}: {r['note']}.")

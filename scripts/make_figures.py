@@ -54,7 +54,7 @@ TINT = 0.28                        # zero-shot bars: this much of the colour ove
 
 # Methods: colour follows the method in every figure; marker and hatch carry it in greyscale.
 METHODS = {
-    "mirror_mlp": {"label": "Mirror, MLP only", "color": C_BLUE, "marker": "o", "hatch": ""},
+    "mirror_mlp": {"label": "Mirror V-local, MLP only", "color": C_BLUE, "marker": "o", "hatch": ""},
     "vlocal": {"label": "Mirror V-local, MLP + attention", "color": C_AQUA, "marker": "^", "hatch": "||"},
     "vexact": {"label": "Mirror V-exact, MLP + attention", "color": C_VIOLET, "marker": "D", "hatch": "\\\\\\"},
     "svd": {"label": "SVD at matched parameters", "color": C_ORANGE, "marker": "s", "hatch": "///"},
@@ -453,6 +453,9 @@ def fig2_healing(T: Tables, R: Registry, out: Path):
     cap += (f"Dashed line: the original model. One healing run per method (seed 0, n = 1, no error bars). "
             f"Protocol: {PROTOCOL}; healing data from train images only.")
     notes = []
+    for r in (vx or []):
+        if r.get("note") and num(r.get("healed_top1")) is not None:
+            notes.append(f"V-exact k = {inum(r['k'])}: {r['note']} (T_healing_vexact.csv, column gpu).")
     if vx_note:
         notes.append("The V-exact full-conversion healed point (k = 12) is not drawn: T_healing_vexact.csv is not in "
                      "results/paper/tables/ yet. STATUS.md reports it from runs/m3_vexact/k12/; the figure picks it up "
@@ -652,10 +655,27 @@ def fig3_ablations(T: Tables, R: Registry, out: Path):
            f"parameters. (d) Projection strength alpha, interpolating between the original weights (alpha = 0) "
            f"and the full projection (alpha = 1). Panels and seeds: {'; '.join(parts)}. "
            f"{seeds_phrase(ns)}. Protocol: {PROTOCOL}.")
-    notes = ["A3 (fit-set size) is in T_ablations_seeds but is not drawn (not requested for this figure).",
-             "Alternatives in (a) and (b) do not all keep the same parameter count as the default: see column "
-             "params_vs_mirror_first_k in T_ablations.csv (for example all self-twins 1.20, shared over all layers "
-             "1.17, Hungarian 0.98)."]
+    notes = ["A3 (fit-set size) is in T_ablations_seeds but is not drawn (not requested for this figure)."]
+    unm = [r for r in rows if r.get("model") == model and r.get("ablation") in ("A1", "A2")
+           and str(r.get("params_matched", "")).lower() == "false" and num(r.get("params_vs_first_k_mean")) is not None]
+    if unm:
+        notes.append("Alternatives in (a) and (b) do not all keep the default's parameter count (params_vs_first_k_mean "
+                     "in T_ablations_seeds.csv): " + ", ".join(
+                         f"{r['variant']} {num(r['params_vs_first_k_mean']):.2f}" for r in
+                         sorted(unm, key=lambda r: -num(r["params_vs_first_k_mean"]))) + ".")
+    a4 = [r for r in rows if r.get("model") == model and r.get("ablation") == "A4"
+          and str(r.get("params_matched", "")).lower() == "false"]
+    if a4:
+        notes.append("Panel (c) is not parameter-matched: " + ", ".join(
+            f"{r['variant']} keeps {num(r['params_vs_first_k_mean']):.2f} times the default's MLP weights" for r in a4)
+            + ", so its gain over the first k blocks partly reflects more weights kept.")
+    dflt = next((r for r in rows if r.get("model") == model and r.get("ablation") == "A1"
+                 and r.get("variant") == "per_layer" and num(r.get("canonical_top1_mean")) is not None), None)
+    if dflt:
+        notes.append(f"The default marker is the ablation script's own value ({num(dflt['top1_mean']):.2f} at k = "
+                     f"{inum(dflt['k'])}); the canonical Mirror V-local, MLP only number is the X2 value in "
+                     f"T_main_zeroshot ({num(dflt['canonical_top1_mean']):.2f}, Figure 1). The two are the same setting; "
+                     "the ablation script reloads the operators from their float32 file, a numerical difference.")
     R.figures.append({"title": "Figure 3. Zero-shot ablations (A1, A2, A4, A5)", "files": files, "caption": cap,
                       "sources": [("T_ablations_seeds.csv", "model, ablation, variant, k, n_seeds, fit_seeds, top1_mean, "
                                    "top1_std, note"),
@@ -893,8 +913,9 @@ def fig5_generality(T: Tables, R: Registry, out: Path):
                Line2D([], [], label="pre-registered P4 bar", **{k: v for k, v in bar_kw.items() if k != "zorder"})]
     handles += [Patch(facecolor=tint(METHODS[k]["color"]), edgecolor=METHODS[k]["color"], hatch=METHODS[k]["hatch"],
                       linewidth=0.7, label=lab) for k, lab in
-                (("mirror_mlp", "Mirror"), ("svd", "SVD, matched parameters"), ("random", "random structure"))]
-    fig.legend(handles=handles, loc="outside upper center", ncol=6)
+                (("mirror_mlp", METHODS["mirror_mlp"]["label"]), ("svd", "SVD, matched parameters"),
+                 ("random", "random structure"))]
+    fig.legend(handles=handles, loc="outside upper center", ncol=3)
     files = save(fig, out, "fig5_generality")
 
     nn = sorted({st[m]["n"] for m in models})
@@ -952,7 +973,7 @@ def fig6_cost(T: Tables, R: Registry, out: Path):
     xlim = (min(xs + [1.0]) - 0.03, max(xs) + 0.03)
     ylim = (min(ys) - 0.06, max(ys + [1.0]) + 0.08)
 
-    fig, axes = plt.subplots(1, len(batches), figsize=(DOUBLE, 2.5), sharex=True, sharey=True, layout="constrained",
+    fig, axes = plt.subplots(1, len(batches), figsize=(DOUBLE, 2.9), sharex=True, sharey=True, layout="constrained",
                              squeeze=False)
     present = []
     for i, (ax, b) in enumerate(zip(axes[0], batches)):
@@ -974,6 +995,10 @@ def fig6_cost(T: Tables, R: Registry, out: Path):
                 ax.plot(num(r["flop_speedup_vs_dense"]), num(r["speedup_vs_dense"]), marker=m["marker"],
                         ms=MS[m["marker"]] + 0.6, color=m["color"], fillstyle=kfill[inum(r["k"])],
                         mfc=m["color"], mfcalt="white", mec=m["color"], mew=0.9, ls="none", zorder=3)
+                if str(r.get("timing_flag", "")).lower() == "true":
+                    ax.annotate("outlier?", (num(r["flop_speedup_vs_dense"]), num(r["speedup_vs_dense"])),
+                                xytext=(5, -2), textcoords="offset points", fontsize=FONT - 1.5, color=C_MUTED,
+                                ha="left", va="top", zorder=5)
         ax.set_xlim(*xlim)
         ax.set_ylim(*ylim)
         ax.set_xlabel("Analytic speed-up (FLOPs)")
@@ -982,19 +1007,23 @@ def fig6_cost(T: Tables, R: Registry, out: Path):
         panel_title(ax, "abcdef"[i], f"batch {b}")
     handles = [Line2D([], [], color=METHODS[k]["color"], marker=METHODS[k]["marker"], ms=MS[METHODS[k]["marker"]] + 0.6,
                       mec=METHODS[k]["color"], lw=0.6,
-                      label={"mirror_mlp": "Mirror, MLP only", "vlocal": "Mirror V-local",
-                             "vexact": "Mirror V-exact", "svd": "SVD", "prune": "MLP width pruning"}[k])
+                      label={"mirror_mlp": "Mirror V-local, MLP only", "vlocal": "Mirror V-local, MLP + attention",
+                             "vexact": "Mirror V-exact, MLP + attention", "svd": "SVD", "prune": "MLP width pruning"}[k])
                for k in METHOD_ORDER if k in present]
     row2 = [Line2D([], [], color=C_MUTED, marker="o", ms=4.6, ls="none", fillstyle=kfill[k], mfc=C_MUTED,
                    mfcalt="white", mec=C_MUTED, mew=0.9, label=f"k = {k}") for k in ks]
     row2 += [Line2D([], [], color=C_MUTED, lw=0.7, label="y = x (all of the analytic saving)"),
              Line2D([], [], label="dense model (speed-up 1)", **ORIG_KW)]
-    # legend fills column by column: interleave so the first row holds the methods and the second the keys
-    ncol = max(len(handles), len(row2))
+    # three columns: the methods fill the first rows and the keys the rows below; the legend fills column by column,
+    # so the row-major list is reordered
+    ncol = 3
     blank = Line2D([], [], ls="none", label=" ")
-    handles = handles + [blank] * (ncol - len(handles))
-    row2 = row2 + [blank] * (ncol - len(row2))
-    fig.legend(handles=[h for pair in zip(handles, row2) for h in pair], loc="outside upper center", ncol=ncol)
+    handles = handles + [blank] * (-len(handles) % ncol)
+    row2 = row2 + [blank] * (-len(row2) % ncol)
+    items = handles + row2
+    nrow = len(items) // ncol
+    fig.legend(handles=[items[r * ncol + c] for c in range(ncol) for r in range(nrow)], loc="outside upper center",
+               ncol=ncol)
     files = save(fig, out, "fig6_cost")
 
     cap = (f"Measured against analytic speed-up of the converted DINOv2-reg models, relative to the dense model in "
@@ -1004,15 +1033,34 @@ def fig6_cost(T: Tables, R: Registry, out: Path):
            f"latency over the variant's (median of timed forward passes, bf16, torch.compile, one A100). Points on "
            f"the grey y = x line would realise the whole analytic saving; points below the dashed line are slower "
            f"than the dense model. SVD and width pruning keep the same parameter count as the matched Mirror "
-           f"variant. One timing run per point (seed 0, n = 1).")
+           f"variant. One timing run per point (seed 0, n = 1)."
+           + (" A point marked 'outlier?' measures faster than its FLOPs allow and is flagged as a probable timing "
+              "outlier." if any(str(r.get("timing_flag", "")).lower() == "true" for r in pts) else ""))
     R.figures.append({"title": "Figure 6. Cost: measured against analytic speed-up (M2)", "files": files,
                       "caption": cap,
                       "sources": [("T_latency.csv", "variant, k, batch, mode_used = compile, speedup_vs_dense, "
                                    "flop_speedup_vs_dense")],
-                      "notes": ["Eager-mode rows and the hub original are not drawn.",
-                                "x is the timing script's own count (flop_speedup_vs_dense, 'analytic (M2)'); the "
-                                "collector's count (collector_flop_speedup) differs for V-local (for example 1.162 "
-                                "against 1.183 at k = 6) and is empty for pruning."]})
+                      "notes": fig6_notes(pts)})
+
+
+def fig6_notes(pts) -> list[str]:
+    notes = ["Eager-mode rows and the hub original are not drawn."]
+    vl = sorted((r for r in pts if r.get("variant") == "vlocal" and num(r.get("collector_flop_speedup")) is not None
+                 and abs(num(r["collector_flop_speedup"]) - num(r["flop_speedup_vs_dense"])) > 5e-4),
+                key=lambda r: (inum(r["k"]), inum(r["batch"])))
+    if vl:
+        r = vl[0]
+        notes.append(f"x is the timing script's own count (flop_speedup_vs_dense, 'analytic (M2)'), the count of the "
+                     f"implementation that was timed. The collector's structured count (collector_flop_speedup) differs "
+                     f"only for V-local ({num(r['flop_speedup_vs_dense']):.3f} against "
+                     f"{num(r['collector_flop_speedup']):.3f} at k = {inum(r['k'])}), because the timed V-local stores "
+                     "Wo dense (T_latency notes); it is empty for pruning.")
+    flagged = [r for r in pts if str(r.get("timing_flag", "")).lower() == "true"]
+    for r in flagged:
+        notes.append(f"Marked 'outlier?': {r.get('label') or r['variant']} k = {inum(r['k'])}, batch {inum(r['batch'])} "
+                     f"({num(r['speedup_vs_dense']):.3f} measured against {num(r['flop_speedup_vs_dense']):.3f} analytic), "
+                     "flagged in T_latency as a probable timing outlier; it is drawn but not used for any claim.")
+    return notes
 
 
 # ----------------------------------------------------------------------------------------------
@@ -1024,7 +1072,7 @@ DATASET_LABEL = {"cifar100": "CIFAR-100", "dtd": "DTD", "flowers102": "Flowers-1
 
 def _t2_style(r) -> tuple[str | None, bool]:
     fam, meth, lab = (r.get("family") or "").lower(), (r.get("method") or "").lower(), r.get("label") or ""
-    healed = fam == "healed"
+    healed = fam.startswith("healed")
     if meth in ("vlocal", "vexact", "svd", "random", "prune"):
         return meth, healed
     if meth == "mirror":
@@ -1052,6 +1100,9 @@ def fig7_tier2(T: Tables, R: Registry, out: Path):
         R.na(f"{name}, transfer", "T_tier2_transfer.csv not found")
     if seg is None:
         R.na(f"{name}, ADE20K segmentation panel", "T_tier2_seg.csv not in the tables yet")
+    if seg and not any(_t2_style(r)[0] for r in seg if num(r.get("mIoU")) is not None):
+        R.na(f"{name}, ADE20K segmentation panel", "T_tier2_seg.csv has only the original model so far")
+        seg = None
     panels = [p for p, rows in (("lin", lin), ("tr", tr), ("seg", seg)) if rows]
     if not panels:
         return R.na(name, "no Tier-2 tables")
@@ -1198,8 +1249,9 @@ def fig7_tier2(T: Tables, R: Registry, out: Path):
             cap_parts.append(f"({letter}) ADE20K linear segmentation, mIoU (%) on validation (dashed: original).")
             sources.append(("T_tier2_seg.csv", "model, variant, label, family, method, k, mIoU"))
     handles = [Patch(facecolor=tint(METHODS[k]["color"]), edgecolor=METHODS[k]["color"], hatch=METHODS[k]["hatch"],
-                     linewidth=0.7, label={"mirror_mlp": "Mirror, MLP only", "vlocal": "Mirror V-local",
-                                           "vexact": "Mirror V-exact", "svd": "SVD, matched parameters",
+                     linewidth=0.7, label={"mirror_mlp": "Mirror V-local, MLP only",
+                                           "vlocal": "Mirror V-local, MLP + attention",
+                                           "vexact": "Mirror V-exact, MLP + attention", "svd": "SVD, matched parameters",
                                            "random": "random structure", "prune": "width pruning"}[k])
                for k in METHOD_ORDER if k in present]
     if any_zs:
@@ -1214,7 +1266,15 @@ def fig7_tier2(T: Tables, R: Registry, out: Path):
            " Light bars: zero-shot conversion; solid bars: after healing. One probe per model and variant (seed 0, "
            "n = 1, no error bars); the probe's weight decay is chosen on a held-out part of each training set. "
            "Converted models use operators fitted on ImageNet train images.")
+    ceil = sorted({DATASET_LABEL.get(r["dataset"], r["dataset"]) for r in (tr or [])
+                   if str(r.get("dataset_at_ceiling", "")).lower() == "true"})
+    if ceil:
+        cap += (f" {fmt_list(ceil)} is at ceiling (several variants tie with the original exactly), so it does not "
+                "separate the methods.")
     notes = []
+    if ceil:
+        notes.append(f"{fmt_list(ceil)}: flagged at ceiling by the collector (dataset_at_ceiling in "
+                     "T_tier2_transfer.csv; see its notes).")
     if mae_only:
         notes.append(f"T_tier2 rows with only the original model ({fmt_list(mae_only)}) are not drawn.")
     if tr:
@@ -1240,7 +1300,8 @@ def write_index(R: Registry, T: Tables, out: Path, gi: dict):
          f"named, and `results/paper/numbers.json` gives each table value's source file, seed and commit. "
          f"Rerun this script after the collector refreshes the tables.", "",
          "Encoding used throughout: colour follows the method, and a marker shape (lines, points) or hatch (bars) "
-         "carries it in greyscale: Mirror, MLP only: blue circle, no hatch; Mirror V-local: aqua upward triangle, "
+         "carries it in greyscale: Mirror V-local, MLP only: blue circle, no hatch; Mirror V-local (MLP + attention): "
+         "aqua upward triangle, "
          "vertical hatch; Mirror V-exact: violet diamond, back-slash hatch; SVD at matched parameters: orange "
          "square, slash hatch; random structure: grey downward triangle, dotted hatch; MLP width pruning: dark grey "
          "plus. In Figure 4 colour and marker follow the model (as in the collector's figures). Zero-shot results "

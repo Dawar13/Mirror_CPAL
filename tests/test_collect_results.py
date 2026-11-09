@@ -588,6 +588,7 @@ def test_ablations_every_k_and_fit_seed(tmp_path):
             if not p.is_file():
                 pytest.skip(f"needs {p.name}")
             d = pd.read_csv(p)
+            d = d[d["k"] != 9]          # real k = 9 rows (once they exist) are replaced by the synthetic ones
             k9 = d[d["k"] == 6].copy()
             k9["k"] = 9
             k9["top1"] = k9["top1"] - 1.0 - 0.25 * fs
@@ -635,3 +636,194 @@ def test_ablations_every_k_and_fit_seed(tmp_path):
     assert math.isclose(e["value"], sum(want[("A1", "per_layer")]) / 3, rel_tol=1e-12) and e["fit_seed"] == "0,1,2"
     seeds = pd.read_csv(out / "tables" / "T_ablations_seeds.csv")
     assert set(seeds["k"]) == {6, 9}
+
+
+# ------------------------------------------------------------------------------------------------
+# Consistency rules: one canonical number per setting, parameter ratios, one label per method, flags
+# ------------------------------------------------------------------------------------------------
+def test_canonical_headline_rule_unit():
+    """mark_canonical_main: an X2 row is canonical; an M1 row of the same setting is not (with the per-seed
+    difference); an M1 row at a k that X2 did not run stays canonical. Synthetic numbers."""
+    m = "dinov2_vitb14_reg"
+    T = CR.Table("T_main_zeroshot", "t", ["model", "k", "variant"], [])
+
+    def rec(top1, fs):
+        return {"top1": top1, "src": f"runs/x2/perlayer_reg_s{fs}/results/e1_surgery.csv", "seed": 0,
+                "where": {"k": 6, "variant": "surgery"}}
+
+    x2 = T.add({"model": m, "k": 6, "variant": "mirror_mlp", "status": "ok", "experiment": "X2", "n_seeds": 2,
+                "top1_mean": 70.5, "_per_seed": {0: rec(70.0, 0), 1: rec(71.0, 1)}})
+    m1 = T.add({"model": m, "k": 6, "variant": "mirror_mlp_m1", "status": "ok", "experiment": "M1", "n_seeds": 1,
+                "top1_mean": 70.25, "_per_seed": {0: rec(70.25, 0)}})
+    only = T.add({"model": m, "k": 12, "variant": "mirror_mlp_m1", "status": "ok", "experiment": "M1", "n_seeds": 1,
+                  "top1_mean": 60.0, "_per_seed": {0: rec(60.0, 0)}})
+    gone = T.add({"model": m, "k": 12, "variant": "mirror_mlp", "status": "not run", "experiment": "X2"})
+    CR.mark_canonical_main(T)
+    assert x2["canonical"] == "yes" and only["canonical"] == "yes" and gone["canonical"] == ""
+    assert m1["canonical"] == "no" and math.isclose(m1["minus_canonical"], 0.25)
+    assert "X2" in m1["remark"] and m1["remark_id"] >= 1 and "only source" in only["remark"]
+    v, x = CR.canonical_seed_value(T, m, 6, "mirror", 1)
+    assert v == 71.0 and x["src"].endswith("perlayer_reg_s1/results/e1_surgery.csv")
+    assert CR.canonical_seed_value(T, m, 6, "mirror", 2) == (None, None)
+
+
+def _abl_row(m, abl, var, k, fs, top1, ratio, blocks="1 2 3 4 5 6", reused="", n_fit=2000):
+    return {"model": m, "ablation": abl, "variant": var, "k": k, "fit_seed": fs, "blocks": blocks, "top1": top1,
+            "flip_consistency": 90.0, "drop_points": 80.0 - top1, "mlp_params_kept_frac": 0.58 * ratio,
+            "params_vs_mirror_first_k": ratio, "params_exact": True, "n_fit_images": n_fit, "n_query": 50000,
+            "reused_from": reused, "info": "{}", "git_hash": "fixturehash", "seed": 0}
+
+
+def test_ablations_canonical_and_parameter_ratio_synthetic(tmp_path):
+    """build_ablations with T_main_zeroshot: the default cell gets the X2 value of its fit seed and the difference;
+    every row carries its parameter ratio and whether it is matched; A4 and A1/A2 budget notes are written.
+    All numbers are synthetic fixtures."""
+    root = _bare_root(tmp_path)
+    m = "dinov2_vitb14_reg"
+    d = root / "runs" / "a" / m
+    for fs, pl in ((0, 77.11), (1, 77.04)):
+        _write_csv(d / f"A1_s{fs}.csv", [_abl_row(m, "A1", "per_layer", 6, fs, pl, 1.0),
+                                         _abl_row(m, "A1", "svd", 6, fs, 8.77, 0.999),
+                                         _abl_row(m, "A1", "identity", 6, fs, 24.5, 1.18)])
+    _write_csv(d / "A4_s0.csv", [_abl_row(m, "A4", "first", 6, 0, 77.11, 1.0, reused="A1/per_layer/k6/s0"),
+                                 _abl_row(m, "A4", "last", 6, 0, 78.67, 1.53, blocks="7 8 9 10 11 12"),
+                                 _abl_row(m, "A4", "lowest_share", 6, 0, 78.67, 1.53, blocks="7 8 9 10 11 12",
+                                          reused="A4/last/k6/s0")])
+    _write_csv(d / "A3_s0.csv", [_abl_row(m, "A3", "n2000", 6, 0, 77.09, 1.0),
+                                 _abl_row(m, "A3", "n100", 6, 0, 77.03, 0.998, n_fit=100)])
+    Tm = CR.Table("T_main_zeroshot", "t", ["model", "k", "variant"], [])
+    per = {fs: {"top1": v, "src": f"runs/x2/perlayer_reg_s{fs}/results/e1_surgery.csv", "seed": 0,
+                "where": {"k": 6, "variant": "surgery"}} for fs, v in ((0, 77.094), (1, 77.088))}
+    per_svd = {fs: {"top1": 8.77, "src": f"runs/x2/perlayer_reg_s{fs}/results/e1_surgery.csv", "seed": 0,
+                    "where": {"k": 6, "variant": "svd"}} for fs in (0, 1)}
+    Tm.add({"model": m, "k": 6, "variant": "mirror_mlp", "status": "ok", "experiment": "X2", "_per_seed": per})
+    Tm.add({"model": m, "k": 6, "variant": "svd_mlp", "status": "ok", "experiment": "X2", "_per_seed": per_svd})
+    T, S, X, files, dups = CR.build_ablations(CR.Paths(root), Tm)
+    pl0 = T.find(model=m, ablation="A1", variant="per_layer", k=6, fit_seed=0)
+    assert pl0["canonical_top1"] == 77.094 and math.isclose(pl0["minus_canonical"], 77.11 - 77.094)
+    assert pl0["_loc"]["canonical_top1"]["file"] == "runs/x2/perlayer_reg_s0/results/e1_surgery.csv"
+    assert T.find(model=m, ablation="A4", variant="first", k=6, fit_seed=0)["canonical_top1"] == 77.094
+    assert T.find(model=m, ablation="A3", variant="n2000", k=6, fit_seed=0)["canonical_top1"] == 77.094
+    assert T.find(model=m, ablation="A3", variant="n100", k=6, fit_seed=0).get("canonical_top1") is None
+    assert T.find(model=m, ablation="A1", variant="identity", k=6, fit_seed=0).get("canonical_top1") is None
+    assert T.find(model=m, ablation="A1", variant="svd", k=6, fit_seed=1)["minus_canonical"] == 0
+    s_pl = S.find(model=m, ablation="A1", variant="per_layer", k=6)
+    assert math.isclose(s_pl["canonical_top1_mean"], (77.094 + 77.088) / 2)
+    assert "quote X2" in s_pl["note"]
+    assert "identical to X2" in S.find(model=m, ablation="A1", variant="svd", k=6)["note"]
+    # parameter ratio on every row; matched within 1%
+    for r in T.rows:
+        assert r["params_vs_mirror_first_k"] is not None
+        assert r["params_matched"] == (abs(r["params_vs_mirror_first_k"] - 1) <= 0.01)
+    last = S.find(model=m, ablation="A4", variant="last", k=6)
+    assert last["params_matched"] is False and math.isclose(last["params_vs_first_k_mean"], 1.53)
+    assert "not parameter-matched" in last["note"]
+    assert "A4/last" in S.find(model=m, ablation="A4", variant="lowest_share", k=6)["note"]
+    notes = " ".join(S.notes)
+    assert "A4 (DINOv2-reg, k = 6) is not parameter-matched" in notes and "same blocks as last" in notes
+    assert "A1 identity 1.18x" in notes and "still collapse" in notes and "Canonical number" in notes
+    assert "params vs default" in [h for h, _, _ in T.md_cols] and "params vs default" in [h for h, _, _ in S.md_cols]
+
+
+def test_canonical_headline_and_ratios_real(package):
+    """On the repository's own results: the headline is the X2 value everywhere it is quoted; same-setting rows
+    from other scripts are marked; the ablation tables carry the parameter ratio of every row."""
+    out, res = package
+    x2 = {}
+    for p in sorted((ROOT / "runs" / "x2").glob("perlayer_reg_s*/results/e1_surgery.csv")):
+        s = pd.read_csv(p)
+        sel = s[(s["k"] == 6) & (s["variant"] == "surgery")]
+        if len(sel):
+            x2[int(p.parent.parent.name.rsplit("_s", 1)[1])] = float(sel["top1"].iloc[0])
+    if not x2:
+        pytest.skip("needs the X2 runs of the registers model")
+    T = res["tables"]
+    main = T["T_main_zeroshot"]
+    head = main.find(model="dinov2_vitb14_reg", k=6, variant="mirror_mlp")
+    assert head["canonical"] == "yes" and head["experiment"] == "X2"
+    assert math.isclose(head["top1_mean"], sum(x2.values()) / len(x2), rel_tol=1e-12)
+    numbers = json.loads((out / "numbers.json").read_text(encoding="utf-8"))
+    for key in ("main.reg.k6.mirror_mlp.top1", "main.reg.k6.mirror_mlp.top1_mean"):
+        if key in numbers:
+            assert all(f.startswith("runs/x2/") for f in str(numbers[key]["source_file"]).split(";")), key
+            assert math.isclose(numbers[key]["value"], head["top1_mean"], rel_tol=1e-12)
+    dup = main.find(model="dinov2_vitb14_reg", k=6, variant="mirror_mlp_m1")
+    if dup is not None and dup["status"] == "ok":
+        assert dup["canonical"] == "no" and "X2" in dup["remark"]
+        assert "not canonical" in _section((out / "INDEX.md").read_text(encoding="utf-8"), "M1:")
+    abl = T["T_ablations"]
+    if abl.rows:
+        src = {}
+        for f in (ROOT / "runs" / "a").glob("*/A*_s*.csv"):
+            for _, r in pd.read_csv(f).iterrows():
+                src[(r["model"], r["ablation"], r["variant"], int(r["k"]), int(r["fit_seed"]))] = r
+        for r in abl.rows:
+            s = src[(r["model"], r["ablation"], r["variant"], r["k"], r["fit_seed"])]
+            assert math.isclose(r["params_vs_mirror_first_k"], float(s["params_vs_mirror_first_k"]), rel_tol=1e-12)
+        for fs, v in x2.items():
+            r = abl.find(model="dinov2_vitb14_reg", ablation="A1", variant="per_layer", k=6, fit_seed=fs)
+            if r is not None:
+                assert r["canonical_top1"] == v and math.isclose(r["minus_canonical"], r["top1"] - v, abs_tol=1e-12)
+        md = (out / "tables" / "T_ablations.md").read_text(encoding="utf-8")
+        assert "params vs default" in md and "matched (1%)" in md and "X2 (canonical)" in md
+        a4 = T["T_ablations_seeds"].find(model="dinov2_vitb14_reg", ablation="A4", variant="last", k=6)
+        if a4 is not None and a4["params_vs_first_k_mean"] > 1.01:
+            assert a4["params_matched"] is False
+            assert any("A4" in n and "not parameter-matched" in n for n in T["T_ablations_seeds"].notes)
+    t2 = T["T_tier2"].find(model="dinov2_vitb14_reg", variant="mirror_mlp_k6")
+    if t2 is not None and 0 in x2:
+        assert t2["tier1_knn_top1"] == x2[0] and t2["tier1_same_model"].startswith("no")
+
+
+def test_one_label_per_method(package):
+    out, res = package
+    banned = ("Mirror per-layer", "Mirror Surgery, MLP only", "Mirror, MLP only", "SVD at the MLP-only budget",
+              "SVD at the V-local budget")
+    for p in list((out / "tables").glob("T_*.md")) + [out / "INDEX.md"]:
+        text = p.read_text(encoding="utf-8")
+        for b in banned:
+            assert b not in text, (p.name, b)
+    main = res["tables"]["T_main_zeroshot"]
+    labels = {r["variant"]: r["variant_label"] for r in main.rows if r["k"]}
+    assert labels.get("mirror_mlp") == labels.get("mirror_mlp_m1") == CR.LABEL_MIRROR_MLP
+    for t in ("T_tier2", "T_tier2_transfer", "T_tier2_seg"):
+        for r in res["tables"][t].rows:
+            fm = (r.get("family"), r.get("method"))
+            if fm in CR.METHOD_LABEL:
+                assert r["label"] == CR.METHOD_LABEL[fm], (t, r["variant"])
+    for r in res["tables"]["T_latency"].rows:
+        if r["variant"] in CR.M2_LABEL:
+            assert r["label"] == CR.M2_LABEL[r["variant"]]
+    assert CR.method_label("mlp", "mirror", "anything") == CR.METHOD_LABEL[("m1", "mlp_only")] == CR.LABEL_MIRROR_MLP
+
+
+def test_timing_outlier_and_ceiling_flags(tmp_path):
+    """A converted variant measured faster than its FLOPs allow is flagged (kept); a transfer dataset whose
+    variants tie with an original at ceiling is flagged. Synthetic numbers."""
+    root = _bare_root(tmp_path)
+    m, g = "dinov2_vitb14_reg", "fixturehash"
+    lat = []
+    for v, k, b, sp, flop in (("dense", 0, 64, 1.0, 1.0), ("mlp_only", 6, 1, 0.84, 1.10), ("mlp_only", 6, 64, 1.25, 1.10),
+                              ("mlp_only", 6, 256, 0.91, 1.10)):
+        lat.append({"model": m, "variant": v, "label": v, "k": k, "params_model": 1000, "gflops": 40.0 / flop,
+                    "macs_per_image": 20.0 / flop, "batch": b, "mode": "compile", "mode_used": "compile",
+                    "latency_ms_median": 1.0 / sp, "throughput_img_s": 1.0, "git_hash": g, "seed": 0,
+                    "speedup_vs_dense": sp, "speedup_vs_original": sp, "flop_speedup_vs_dense": flop})
+    _write_csv(root / "runs" / "m2" / "m2_latency.csv", lat)
+    rows = [("original", "original", "original", 0, 99.69), ("a_k6", "m1", "vexact", 6, 99.69),
+            ("b_k9", "healed", "mirror", 9, 99.69), ("c_k9", "healed", "random", 9, 99.56)]
+    _write_csv(root / "runs" / "t2" / "t2_transfer.csv", [
+        {"model": m, "dataset": ds, "variant": v, "label": v, "family": f, "method": me, "k": k,
+         "top1": t if ds == "flowers102" else t - 10 - k, "n_train": 2040, "n_test": 6149, "git_hash": g, "seed": 0}
+        for ds in ("flowers102", "dtd") for v, f, me, k, t in rows])
+    out, res, idx, numbers = _run(root, tmp_path)
+    L = res["tables"]["T_latency"]
+    flagged = [r for r in L.rows if r.get("timing_flag")]
+    assert [(r["variant"], r["batch"]) for r in flagged] == [("mlp_only", 64)]
+    assert "0.840x at batch 1" in flagged[0]["timing_note"] and "0.910x at batch 256" in flagged[0]["timing_note"]
+    assert len(L.rows) == 4 and "Probable timing outlier" in _section(idx, "M2:")
+    X = res["tables"]["T_tier2_transfer"]
+    assert all(r.get("dataset_at_ceiling") for r in X.rows if r["dataset"] == "flowers102")
+    assert not any(r.get("dataset_at_ceiling") for r in X.rows if r["dataset"] == "dtd")
+    assert any(n.startswith("flowers102") and "does not separate the methods" in n for n in X.notes)
+    assert "flowers102 is at ceiling" in _section(idx, "Tier 2:")
