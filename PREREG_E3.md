@@ -1,4 +1,4 @@
-# DRAFT, not active until Dawar signs off
+# ACTIVE: signed off by Dawar on 2026-11-09 (about 18:10 UTC); the decisions of Section 12 are recorded there
 
 # PREREG_E3: matched healed baselines at full conversion (k = 12)
 
@@ -219,12 +219,13 @@ probe about 1,900 s. About 6.0 GPU-hours for the healing line and 0.4 for Tier 2
   `tests/test_e3.py`.
 - Every output records the config, seed and git hash.
 
-## 12. Points for Dawar to decide before signing
+## 12. Decisions taken at sign-off (Dawar, 2026-11-09)
 
-1. Seed condition: as written, a check needs its difference to exceed s. A stricter reading is that the margin over
-   the bar must exceed s (difference >= bar + s). Choose one.
-2. The overall budget is close to the pilot's (V-exact keeps 0.765 of the model's parameters at k = 12; the pilot's
-   V-local k = 9 kept 42,097,128 of 63,700,992 matrix parameters in blocks 1 to 9), where healed SVD reached 77.57.
-   E3.b passes only if healed SVD ends at 75.34 or lower. Whether this is a fair test of the claim, or E3 should
-   report the difference without a bar, is a framing decision.
-3. Gate name (G5) and whether E3 replaces G2 in the paper or sits next to it.
+1. Seed condition: the reading of Section 7 as written. A check counts as passed only if its difference is larger
+   than s (not the stricter difference >= bar + s).
+2. The bars stay as in Section 7 (the E2 bars, unchanged): E3.b needs healed SVD at 75.34 or lower when V0 = 78.34.
+   The overall budget is close to the pilot's (V-exact keeps 0.765 of the model's parameters at k = 12; the pilot's
+   V-local k = 9 kept 42,097,128 of 63,700,992 matrix parameters in blocks 1 to 9, where healed SVD reached 77.57), so
+   E3.b may fail; the result is reported whichever way it goes.
+3. The gate is G5. E3 sits next to G2 in the paper: G2 is reported as failed, as pre-registered, and E3 is reported
+   as the pre-registered follow-up at full conversion, where the ceiling that bound G2 does not bind.
