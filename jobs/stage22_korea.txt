@@ -1,0 +1,23 @@
+# RTX 5090 in South Korea (vast.ai instance 59906003, rented 2026-11-09 after the Estonian 5090's GPU was taken
+# by another renter; its /workspace was copied across with vast.ai's instance copy). Same list as
+# stage21_resume.txt, ordered by value to the paper, with the zero-shot strong baselines switched on (recommended
+# to Dawar on 2026-11-09; zero-shot only, so not part of the healing grid that G2 put on hold). Every job skips
+# finished work. Launch from /workspace/Mirror_CPAL:
+#   export HF_HOME=/workspace/hf MIRROR_MEM_SCALE=2.5 PATH=$PWD/.venv/bin:$PATH
+#   PAR=3 NEED_MB=6000 bash scripts/vm_sched.sh jobs/stage22_korea.txt
+# then, alone on the GPU once this list is done: M2 latency and profile (commands at the end, commented).
+@5000 runs/x2/perlayer_reg_s0/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/strong_baselines.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s0 --fit-seed 0 --ks 6,9 --methods asvd,slicegpt,prune_act --out runs/sb
+@6000 runs/m3_vexact_5090/k12/SUMMARY.md | export OMP_NUM_THREADS=4; python scripts/flip_avg_baseline.py --model dinov2_vitb14_reg --variants original --vexact-dir runs/m3_vexact_5090 --vexact-fp32 --out runs/t1_flipavg
+@12000 runs/m3_vexact_5090/k12/SUMMARY.md | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --num-workers 4 --out runs/t2_seg
+@6000 runs/m3_vexact_5090/k12/SUMMARY.md | python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --out runs/t2 && python scripts/tier2_transfer.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --out runs/t2
+@4000 cache/train_meta.json runs/x2/perlayer_reg_s0/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/f7_visuals.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s0 --blocks 1,3,6 --pairs 8 --images 5000 --out runs/f7
+@5000 runs/x2/perlayer_reg_s1/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s1 --fit-seed 1 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg
+@5000 runs/x2/perlayer_reg_s2/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A4,A5 --ks 6 --out runs/a/dinov2_vitb14_reg
+@5000 runs/x2/perlayer_reg_s2/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg
+@12000 runs/m3_pilot/svd/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_svd_k9 --num-workers 4 --out runs/t2_seg
+@12000 runs/m3_pilot/mirror/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_mirror_k9 --num-workers 4 --out runs/t2_seg
+@12000 runs/m3_pilot/random/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_random_k9 --num-workers 4 --out runs/t2_seg
+@12000 runs/t2_seg/seg/dinov2_vitb14_reg/healed_vexact_k12.json | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants original --num-workers 4 --out runs/t2_seg_rerun
+# Last, alone on the GPU (nothing else running): M2 latency and profile on the 5090 (second device):
+# python scripts/m2_latency.py --model dinov2_vitb14_reg --k 6,9,12 --variants original,dense,vlocal,vexact,mlp_only,svd,prune --out runs/m2_5090
+# python scripts/m2_profile.py --model dinov2_vitb14_reg --variants dense,vexact,vlocal,mlp_only,svd,prune --k 6,12 --batch 256 --modes compile,eager --out runs/m2_profile
