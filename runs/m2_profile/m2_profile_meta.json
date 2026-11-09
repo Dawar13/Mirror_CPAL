@@ -1,0 +1,204 @@
+{
+  "experiment": "M2 profile (why the converted models are slower than dense)",
+  "date": "2026-11-09 16:23:22",
+  "model": "dinov2_vitb14_reg",
+  "tiny": false,
+  "seed": 0,
+  "git": {
+    "git_hash": "6f2c9181a8ea9b7b0fc1dd7da3466ab0e52d04e7",
+    "git_dirty": null
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "cuda": "12.8"
+  },
+  "device_type": "cuda",
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "hub_repo": "facebookresearch/dinov2",
+    "structure": "runs/m1/m1_structure.npz",
+    "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "variants": "dense,vexact,vlocal,mlp_only,svd,prune",
+    "k": "6,12",
+    "batch": 256,
+    "modes": "compile,eager",
+    "compile_mode": "default",
+    "warmup": 20,
+    "iters": 100,
+    "prof_iters": 10,
+    "sub_warmup": 10,
+    "sub_iters": 50,
+    "sub_blocks": "all",
+    "no_submodules": false,
+    "top": 30,
+    "align": 8,
+    "img_size": 224,
+    "seed": 0,
+    "memory_fraction": 0.25,
+    "reference": "runs/m2_clean/m2_latency.csv",
+    "out": "runs/m2_profile",
+    "device": null,
+    "tiny": false,
+    "ks": [
+      6,
+      12
+    ],
+    "mode_list": [
+      "compile",
+      "eager"
+    ],
+    "variant_list": [
+      "dense",
+      "vexact",
+      "vlocal",
+      "mlp_only",
+      "svd",
+      "prune"
+    ],
+    "img_px": 224
+  },
+  "m2_args": {
+    "model": "dinov2_vitb14_reg",
+    "hub_repo": "facebookresearch/dinov2",
+    "structure": "runs/m1/m1_structure.npz",
+    "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "k": "6,12",
+    "variants": "dense,vexact,vlocal,mlp_only,svd,prune",
+    "batches": null,
+    "modes": null,
+    "compile_mode": "default",
+    "warmup": 20,
+    "iters": 100,
+    "align": 8,
+    "check_images": 8,
+    "cache_dir": "cache",
+    "img_size": 224,
+    "seed": 0,
+    "memory_fraction": 0.25,
+    "out": null,
+    "force": false,
+    "device": null,
+    "tiny": false,
+    "ks": [
+      6,
+      12
+    ],
+    "batch_list": [
+      1,
+      64,
+      256
+    ],
+    "mode_list": [
+      "compile",
+      "eager"
+    ],
+    "variant_list": [
+      "dense",
+      "vexact",
+      "vlocal",
+      "mlp_only",
+      "svd",
+      "prune"
+    ],
+    "random_seed": 1,
+    "register_margin": 0.0,
+    "img_px": 224
+  },
+  "provenance": {
+    "structure": "/workspace/m2run/runs/m1/m1_structure.npz",
+    "structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3",
+    "operators": "/workspace/m2run/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+    "structure_ks": [
+      6,
+      9,
+      12
+    ],
+    "a_out_offset": 1,
+    "random_seed": 1,
+    "fit_seed": 0,
+    "structure_git_hash": "ced2c089288d658bb0ce1666c1ec49fd684427f9"
+  },
+  "ks": [
+    6,
+    12
+  ],
+  "variants": [
+    "dense",
+    "vexact",
+    "vlocal",
+    "mlp_only",
+    "svd",
+    "prune",
+    "vexact",
+    "vlocal",
+    "mlp_only",
+    "svd",
+    "prune"
+  ],
+  "batch": 256,
+  "modes": [
+    "compile",
+    "eager"
+  ],
+  "warmup": 20,
+  "iters": 100,
+  "prof_iters": 10,
+  "sub_warmup": 10,
+  "sub_iters": 50,
+  "sub_blocks": "all",
+  "align": 8,
+  "compile_mode": "default",
+  "depth": 12,
+  "embed_dim": 768,
+  "heads": 12,
+  "head_dim": 64,
+  "n_tokens": 261,
+  "n_patches": 256,
+  "img_size": 224,
+  "memory_fraction": 0.25,
+  "nvidia_smi": {
+    "before": "NVIDIA GeForce RTX 5090, 0 %, 4 MiB, 32607 MiB, 195 MHz",
+    "after": "NVIDIA GeForce RTX 5090, 99 %, 2236 MiB, 32607 MiB, 2647 MHz"
+  },
+  "skipped": [],
+  "errors": [],
+  "reference": "runs/m2_clean/m2_latency.csv",
+  "profiler": {
+    "activities": "CPU and CUDA",
+    "time_source": "cuda kernel time",
+    "excluded": "record_function annotations (gpu_user_annotation, '## ... ##', compiled-region markers)"
+  },
+  "categories": {
+    "gemm": "GEMM (cuBLAS, CUTLASS, convolution)",
+    "attention": "attention (flash or memory-efficient SDPA)",
+    "triton": "fused Triton kernels (compile)",
+    "elementwise": "elementwise and activation",
+    "norm": "normalisation",
+    "memory": "memory movement (copy, cat, gather, index, permute, pad, fill)",
+    "other": "other"
+  },
+  "timing_dtype": "bfloat16 weights and inputs",
+  "tf32": false,
+  "timing": {
+    "stages": {
+      "load": 9.05,
+      "build, time and profile": 579.34
+    },
+    "total_s": 588.51
+  },
+  "files": [
+    "m2_profile.csv",
+    "m2_submodules.csv",
+    "m2_triton.csv",
+    "m2_top_kernels.csv",
+    "top_kernels/",
+    "M2_PROFILE.md",
+    "m2_profile_meta.json"
+  ]
+}
