@@ -72,7 +72,7 @@ __all__ = [
     "DEFAULT_LRS", "HealConfig", "HealData", "Constraint", "MirrorMLPConstraint", "LowRankLinear",
     "LowRankMLP", "exact_involution", "configure_trainable", "sample_crop_params", "crop_resize_flip",
     "augment_batch", "centre_view", "distill_terms", "lr_at", "evaluate_heldout", "heal", "select_lr",
-    "heal_with_lr_selection", "trained_state_dict", "save_trained_blocks", "load_trained_blocks",
+    "probe_extra_lrs", "heal_with_lr_selection", "trained_state_dict", "save_trained_blocks", "load_trained_blocks",
 ]
 
 
@@ -1027,6 +1027,29 @@ def heal(teacher_adapter, student_model: nn.Module, data: HealData, cfg, constra
 # ----------------------------------------------------------------------------------------------
 # Learning-rate selection
 # ----------------------------------------------------------------------------------------------
+def _lr_trial(teacher_adapter, make_student: Callable, data: HealData, cfg: HealConfig, lr: float,
+              budget_steps: int, out: Path | None) -> dict:
+    """One short selection trial: a fresh student, `budget_steps` steps at `lr` with its own warm-up and
+    cosine schedule, the config's seed, no checkpoint; scored by the held-out loss at the end (+inf if it
+    diverged). Writes the trial's logs to <out>/lr_<lr>/ when `out` is given."""
+    student, cons = make_student()
+    tcfg = replace(cfg, lr=float(lr), max_steps=int(budget_steps), save_checkpoint=False,
+                   checkpoint_path=None, eval_every=0)
+    res = heal(teacher_adapter, student, data, tcfg, cons, out / f"lr_{float(lr):.0e}" if out else None)
+    hf = res["heldout_final"]
+    score = float(hf["total"]) if (hf is not None and not res["diverged"]) else float("inf")
+    if not math.isfinite(score):
+        score = float("inf")
+    trial = {"lr": float(lr), "heldout_loss": score, "heldout_terms": hf,
+             "heldout_initial": res["heldout_initial"]["total"] if res["heldout_initial"] else None,
+             "train_loss_last": res["train_loss_last"], "diverged": res["diverged"]}
+    del student, cons, res
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    return trial
+
+
 def select_lr(teacher_adapter, make_student: Callable, data: HealData, cfg, lrs: Sequence[float] = DEFAULT_LRS,
               budget_steps: int = 100, out_dir=None) -> dict:
     """Short run per learning rate; pick the lowest distillation loss on the held-out train rows.
@@ -1039,23 +1062,7 @@ def select_lr(teacher_adapter, make_student: Callable, data: HealData, cfg, lrs:
         raise ValueError("learning-rate selection needs held-out train rows")
     cfg = as_config(cfg)
     out = Path(out_dir) if out_dir is not None else None
-    trials = []
-    for lr in lrs:
-        student, cons = make_student()
-        tcfg = replace(cfg, lr=float(lr), max_steps=int(budget_steps), save_checkpoint=False,
-                       checkpoint_path=None, eval_every=0)
-        res = heal(teacher_adapter, student, data, tcfg, cons, out / f"lr_{float(lr):.0e}" if out else None)
-        hf = res["heldout_final"]
-        score = float(hf["total"]) if (hf is not None and not res["diverged"]) else float("inf")
-        if not math.isfinite(score):
-            score = float("inf")
-        trials.append({"lr": float(lr), "heldout_loss": score, "heldout_terms": hf,
-                       "heldout_initial": res["heldout_initial"]["total"] if res["heldout_initial"] else None,
-                       "train_loss_last": res["train_loss_last"], "diverged": res["diverged"]})
-        del student, cons, res
-        gc.collect()
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+    trials = [_lr_trial(teacher_adapter, make_student, data, cfg, lr, budget_steps, out) for lr in lrs]
     if all(not math.isfinite(t["heldout_loss"]) for t in trials):
         raise RuntimeError("every learning rate diverged")
     best = min(range(len(trials)), key=lambda i: (trials[i]["heldout_loss"], i))
@@ -1069,13 +1076,68 @@ def select_lr(teacher_adapter, make_student: Callable, data: HealData, cfg, lrs:
     return result
 
 
+def probe_extra_lrs(teacher_adapter, make_student: Callable, data: HealData, cfg, selection: dict,
+                    extra_lrs: Sequence[float], out_dir=None, extra_info: dict | None = None) -> dict:
+    """Secondary learning-rate check (E3, PREREG_E3.md): the short selection trial of select_lr at each rate
+    in `extra_lrs` (same seed, so the same data order and augmentation, the same budget and the same held-out
+    train rows as the grid in `selection`), compared with the grid's trials. It never changes the chosen
+    rate: the result only says whether an extra rate would have won (its held-out loss below every grid
+    rate's; ties go to the grid, as select_lr breaks ties towards the earlier rate). A diverged extra trial
+    is recorded, not raised. Writes <out_dir>/lr_extra/lr_<lr>/ (trial logs) and <out_dir>/lr_extra.json."""
+    if data.heldout_rows is None or len(data.heldout_rows) == 0:
+        raise ValueError("learning-rate selection needs held-out train rows")
+    cfg = as_config(cfg)
+    extra_lrs = [float(v) for v in extra_lrs]
+    if not extra_lrs:
+        raise ValueError("no extra learning rates")
+    out = Path(out_dir) if out_dir is not None else None
+    if selection.get("skipped") or not selection.get("trials"):
+        raise ValueError("the extra rates are compared with the grid's trials: run the learning-rate selection "
+                         "(no --lr) to use them")
+    budget = int(selection["budget_steps"])
+    if int(selection.get("seed", cfg.seed)) != int(cfg.seed):
+        raise ValueError("the grid was selected with another seed")
+    grid = [{"lr": float(t["lr"]), "heldout_loss": float(t["heldout_loss"]), "diverged": bool(t["diverged"])}
+            for t in selection["trials"]]
+    trials = [_lr_trial(teacher_adapter, make_student, data, cfg, lr, budget, out / "lr_extra" if out else None)
+              for lr in extra_lrs]
+    grid_best = min(t["heldout_loss"] for t in grid)
+    winners = [t["lr"] for t in trials if t["heldout_loss"] < grid_best]
+    everything = grid + [{"lr": t["lr"], "heldout_loss": t["heldout_loss"]} for t in trials]
+    best_all = min(range(len(everything)), key=lambda i: (everything[i]["heldout_loss"], i))
+    result = {"check": "secondary learning-rate check (PREREG_E3.md): would an extra rate have won the short selection?",
+              "rule": "an extra rate would have won if its held-out loss after the short budget is below every grid "
+                      "rate's (ties go to the grid); the chosen rate is never changed",
+              "chosen_lr": float(selection["best_lr"]), "grid_lrs": [t["lr"] for t in grid], "grid": grid,
+              "extra_lrs": extra_lrs, "extra": trials, "extra_would_win": bool(winners), "winning_extra_lrs": winners,
+              "best_lr_with_extra": float(everything[best_all]["lr"]), "budget_steps": budget, "seed": int(cfg.seed),
+              "n_heldout": int(len(data.heldout_rows) if cfg.max_heldout is None
+                               else min(len(data.heldout_rows), int(cfg.max_heldout))),
+              **(extra_info or {}), **git_info()}
+    if out is not None:
+        out.mkdir(parents=True, exist_ok=True)
+        _write_json(out / "lr_extra.json", result)
+    log("lr extra: " + ", ".join(f"{t['lr']:.0e} -> {t['heldout_loss']:.5f}" for t in trials)
+        + f"; grid best {selection['best_lr']:.0e} ({grid_best:.5f}); "
+        + (f"WOULD HAVE WON: {', '.join(f'{v:.0e}' for v in winners)}" if winners else "no extra rate would have won")
+        + " (the chosen rate is unchanged)")
+    return result
+
+
 def heal_with_lr_selection(teacher_adapter, make_student: Callable, data: HealData, cfg,
-                           lrs: Sequence[float] = DEFAULT_LRS, budget_steps: int = 100, out_dir=None) -> dict:
+                           lrs: Sequence[float] = DEFAULT_LRS, budget_steps: int = 100, out_dir=None,
+                           extra_lrs: Sequence[float] = ()) -> dict:
     """select_lr, then the full budget with the chosen rate. Returns {"lr_selection", "final",
-    "student"} (the healed student model, for evaluation)."""
+    "student"} (the healed student model, for evaluation). With `extra_lrs`, probe_extra_lrs runs between
+    the selection and the full run (its result under "lr_extra"); the chosen rate is unchanged."""
     cfg = as_config(cfg)
     out = Path(out_dir) if out_dir is not None else None
     sel = select_lr(teacher_adapter, make_student, data, cfg, lrs, budget_steps, out / "lr_selection" if out else None)
+    extra = (probe_extra_lrs(teacher_adapter, make_student, data, cfg, sel, extra_lrs, out)
+             if extra_lrs else None)
     student, cons = make_student()
     final = heal(teacher_adapter, student, data, replace(cfg, lr=sel["best_lr"]), cons, out / "final" if out else None)
-    return {"lr_selection": sel, "final": final, "student": student}
+    res = {"lr_selection": sel, "final": final, "student": student}
+    if extra is not None:
+        res["lr_extra"] = extra
+    return res

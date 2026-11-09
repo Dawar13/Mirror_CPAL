@@ -53,8 +53,8 @@ __all__ = [
     "project_embeddings", "install_even_head", "build_vexact", "register_info", "RegisterScores",
     "match_registers", "align_mirror_tokens", "stream_equivariance", "feature_invariance",
     "random_involution_fixing_ones", "random_head_structure", "random_head_maps_like",
-    "matched_random_structure", "attention_svd_ranks", "apply_attention_svd", "mlp_mirror_params",
-    "involution_trace64",
+    "matched_random_structure", "random_register_pairing_like", "matched_random_span_structure",
+    "attention_svd_ranks", "apply_attention_svd", "mlp_mirror_params", "involution_trace64",
 ]
 
 
@@ -471,6 +471,29 @@ def matched_random_structure(A_layers, perms, seed: int, fix_ones: bool = True, 
         perms_r.append(random_pairing(h, int((p != np.arange(h)).sum() // 2), seed=seed * 1000 + 500 + b))
     heads_r = None if heads is None else [random_head_maps_like(hm, seed * 1000 + 900 + b) for b, hm in enumerate(heads)]
     return {"A_layers": A_r, "perms": perms_r, "heads": heads_r}
+
+
+def random_register_pairing_like(reg_perm, seed: int) -> np.ndarray:
+    """Random register involution with the same number of swapped pairs as `reg_perm` (identity if it
+    has none)."""
+    p = np.asarray(reg_perm, dtype=np.int64)
+    R = len(p)
+    if not np.array_equal(p[p], np.arange(R)):
+        raise ValueError("register permutation must be an involution")
+    return np.asarray(random_pairing(R, int((p != np.arange(R)).sum() // 2), seed=int(seed)), dtype=np.int64)
+
+
+def matched_random_span_structure(A_star, perms, heads, reg_perm, seed: int, fix_ones: bool = True) -> dict:
+    """Random-structure control for V-exact (E3, PREREG_E3.md): a random span operator with the d+ and d-
+    of A_star (A 1 = 1 with fix_ones), per block a random neuron pairing with the fitted numbers of pairs
+    and self-twins, random head maps like the fitted ones (same twin pairs, self-heads and self-head
+    traces) and a random register pairing with the fitted number of pairs. Operators, pairings and head
+    maps are matched_random_structure(mode "shared") with the same seeds (A: seed*1000, pairings:
+    seed*1000 + 500 + b, head maps: seed*1000 + 900 + b); registers: seed*1000 + 990. `perms` and `heads`
+    are indexed by block. The free-parameter counts equal the fitted structure's."""
+    r = matched_random_structure([A_star], perms, seed, fix_ones=fix_ones, mode="shared", heads=heads)
+    return {"A_star": r["A_layers"][0], "perms": r["perms"], "heads": r["heads"],
+            "reg_perm": random_register_pairing_like(reg_perm, seed * 1000 + 990)}
 
 
 # ----------------------------------------------------------------------------------------------

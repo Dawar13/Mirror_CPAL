@@ -55,6 +55,15 @@ mapped into the student's space before the loss (mirror/heal.py calls `distill_t
   symmetrise=False turns the mirror averaging off (block targets only centred, final targets raw),
   for checks and ablations. With it on, the teacher runs on the batch and its mirror (twice the
   teacher compute of the pilot).
+  block_targets (default: "symmetrised" with symmetrise, else "centred") sets the block terms on
+  their own: "raw" gives the teacher's own block outputs (not centred, not symmetrised), as the M3
+  pilot uses them. E3's SVD arm with V-exact targets (configs/e3_svd_sym.yaml) uses "raw" block
+  targets with the flip-averaged final target: centring belongs to the folded stream, and the A*
+  symmetrisation is loss-neutral only for a student with that symmetry (PREREG_E3.md).
+
+E3 (PREREG_E3.md) also uses: vexact_block_params (the per-block accounting that vexact_param_counts
+sums), matched_svd_ranks (SVD ranks at those per-block counts) and SpanTrainable (V-exact's trainable
+set for a student without the projections).
 """
 from __future__ import annotations
 
@@ -71,13 +80,16 @@ from .data import mirror
 from .heal import MirrorMLPConstraint, exact_involution
 from .heal_attn import MirrorAttnConstraint
 from .knn import extract_features, knn_predict
-from .m1 import (_check_perm, align_mirror_tokens, build_vexact, feature_invariance, involution_trace64,
-                 mlp_mirror_params, project_embeddings, register_info, stream_equivariance)
+from .m1 import (_check_perm, align_mirror_tokens, attention_svd_ranks, build_vexact, feature_invariance,
+                 involution_trace64, mlp_mirror_params, project_embeddings, register_info, stream_equivariance)
+from .surgery import equivariant_param_count, perm_trace, svd_rank_for
 
 FINAL_TARGETS = ("symmetrised", "even")
+BLOCK_TARGETS = ("symmetrised", "centred", "raw")
 
-__all__ = ["FINAL_TARGETS", "VExactTeacher", "embedding_parameters", "VExactEmbeddings", "train_scope_for",
-           "build_vexact_student", "vexact_param_counts", "span_exactness", "flip_check"]
+__all__ = ["FINAL_TARGETS", "BLOCK_TARGETS", "VExactTeacher", "embedding_parameters", "span_frozen_parameters",
+           "VExactEmbeddings", "SpanTrainable", "train_scope_for", "build_vexact_student", "vexact_block_params",
+           "vexact_param_counts", "matched_svd_ranks", "span_exactness", "flip_check"]
 
 
 def _float_dtype(t: torch.Tensor) -> torch.dtype:
@@ -103,9 +115,16 @@ class VExactTeacher:
     layer0_tokens, grid_hw, ...), so the trainer runs the student exactly as with the plain adapter.
     """
 
-    def __init__(self, base, A, k: int, reg_perm=None, symmetrise: bool = True, final_target: str = "symmetrised"):
+    def __init__(self, base, A, k: int, reg_perm=None, symmetrise: bool = True, final_target: str = "symmetrised",
+                 block_targets: str | None = None):
         if final_target not in FINAL_TARGETS:
             raise ValueError(f"final_target must be one of {FINAL_TARGETS}, not {final_target!r}")
+        if block_targets is None:
+            block_targets = "symmetrised" if symmetrise else "centred"
+        if block_targets not in BLOCK_TARGETS:
+            raise ValueError(f"block_targets must be one of {BLOCK_TARGETS}, not {block_targets!r}")
+        if block_targets == "symmetrised" and not symmetrise:
+            raise ValueError('block_targets "symmetrised" needs symmetrise=True (the teacher must also see the mirror)')
         L = int(base.depth)
         if not 1 <= int(k) <= L:
             raise ValueError(f"k must be in [1, {L}]")
@@ -118,6 +137,7 @@ class VExactTeacher:
         self.reg_perm = _check_perm(reg_perm, int(reg["R"]))
         self.symmetrise = bool(symmetrise)
         self.final_target = final_target
+        self.block_targets = block_targets
         if self.even_head and final_target == "even" and not isinstance(base.model.norm, nn.LayerNorm):
             raise ValueError('final_target "even" needs the teacher\'s final norm to be nn.LayerNorm')
         self._mats: dict = {}
@@ -133,9 +153,13 @@ class VExactTeacher:
             final = self.final_target if self.symmetrise else ("raw" if self.final_target == "symmetrised" else "even, not averaged")
         else:
             final = "raw (no even head)"
+        if self.block_targets == "raw":
+            blocks = "raw (the teacher's own block outputs, not centred or symmetrised)"
+        else:
+            blocks = "centred" + (", symmetrised with A*" if self.block_targets == "symmetrised" else "")
         return {"type": "VExactTeacher", "k": self.k, "even_head": self.even_head, "symmetrise": self.symmetrise,
-                "block_targets": "centred" + (", symmetrised with A*" if self.symmetrise else ""),
-                "final_target": final, "d_plus": _d_plus(self.A), "reg_perm": [int(v) for v in self.reg_perm]}
+                "block_targets": blocks, "final_target": final, "d_plus": _d_plus(self.A),
+                "reg_perm": [int(v) for v in self.reg_perm]}
 
     def _mat(self, name: str, device, dtype) -> torch.Tensor:
         key = (name, str(device), dtype)
@@ -192,7 +216,12 @@ class VExactTeacher:
         for i, blk in enumerate(m.blocks):
             t = blk(t)
             if i in plan.capture:
-                feats[f"block{i}"] = self.stream_target(t, B, symmetrise=self.symmetrise and i < self.k)
+                if self.block_targets == "raw":
+                    with _no_autocast(t):
+                        feats[f"block{i}"] = t[:B].to(_float_dtype(t))
+                else:
+                    feats[f"block{i}"] = self.stream_target(
+                        t, B, symmetrise=self.block_targets == "symmetrised" and i < self.k)
         f = self.final_targets(t, m.norm(t), B)
         feats["cls"] = f[:, 0]
         feats["patch"] = f[:, plan.n_prefix:]
@@ -216,9 +245,39 @@ def embedding_parameters(model: nn.Module) -> list:
     return out
 
 
+def span_frozen_parameters(model: nn.Module, blocks: Sequence[int], embeddings: bool) -> list:
+    """Every parameter that is neither in `blocks` nor (with `embeddings`) an embedding parameter: what a
+    V-exact student keeps frozen (unconverted blocks, final norm affine, mask token, heads)."""
+    keep = {id(p) for b in blocks for p in model.blocks[int(b)].parameters()}
+    if embeddings:
+        keep |= {id(p) for _, p in embedding_parameters(model)}
+    return [p for p in model.parameters() if id(p) not in keep]
+
+
 def train_scope_for(train_embeddings: bool) -> str:
     """HealConfig.train_scope to use with VExactEmbeddings(train=train_embeddings)."""
     return "all" if train_embeddings else "converted"
+
+
+class SpanTrainable:
+    """Constraint (mirror/heal.py protocol) that only freezes: with train_scope "all", everything outside
+    the converted blocks and the embedding side (embedding_parameters) stays frozen, so a student
+    without the V-exact projections trains the same set of tensors as a V-exact student with
+    train_embeddings (E3's SVD arm, PREREG_E3.md). Nothing is projected; the embeddings train freely."""
+
+    def __init__(self, blocks: Sequence[int], embeddings: bool = True):
+        self.blocks = [int(b) for b in blocks]
+        self.embeddings = bool(embeddings)
+
+    def frozen_parameters(self, model: nn.Module) -> list:
+        return span_frozen_parameters(model, self.blocks, self.embeddings)
+
+    def __call__(self, model: nn.Module) -> None:
+        return None
+
+    def describe(self) -> dict:
+        return {"type": "SpanTrainable", "blocks": self.blocks, "embeddings_train": self.embeddings,
+                "frozen": "everything outside the converted blocks" + (" and the embeddings" if self.embeddings else "")}
 
 
 class VExactEmbeddings:
@@ -254,10 +313,7 @@ class VExactEmbeddings:
                              "build the student with mirror.m1.build_vexact")
 
     def frozen_parameters(self, model: nn.Module) -> list:
-        keep = {id(p) for b in self.blocks for p in model.blocks[b].parameters()}
-        if self.train:
-            keep |= {id(p) for _, p in embedding_parameters(model)}
-        return [p for p in model.parameters() if id(p) not in keep]
+        return span_frozen_parameters(model, self.blocks, self.train)
 
     @torch.no_grad()
     def __call__(self, model: nn.Module) -> None:
@@ -310,17 +366,57 @@ def build_vexact_student(adapter, A, k: int, perms: Sequence, head_maps: Sequenc
     return model, cons, info
 
 
+def vexact_block_params(d: int, h: int, A, perms: Sequence, head_maps: Sequence) -> list:
+    """Per converted block (aligned with `perms` and `head_maps`), the matrix parameters V-exact keeps:
+    fc1 and fc2 (surgery.equivariant_param_count with A_in = A_out = A), their sum "mlp"
+    (m1.mlp_mirror_params), Wq, Wk, Wv and Wo (attention.attention_free_params) and their sum "attn".
+    vexact_param_counts sums these, so this is the accounting behind its totals."""
+    if len(perms) != len(head_maps):
+        raise ValueError("one perm and one HeadMaps per block")
+    A = exact_involution(A)
+    tr_a = involution_trace64(A)
+    rows = []
+    for b, (perm, hm) in enumerate(zip(perms, head_maps)):
+        fc = equivariant_param_count(h, d, perm_trace(perm), tr_a)
+        mlp = mlp_mirror_params(h, d, perm, A, A)
+        if mlp != 2 * fc:
+            raise AssertionError(f"block {b}: fc1 + fc2 = {2 * fc} but mlp_mirror_params gives {mlp}")
+        att = attention_free_params(d, hm, A, A)
+        rows.append({"block": b, "fc1": int(fc), "fc2": int(fc), "mlp": int(mlp),
+                     **{key: int(att[key]) for key in ("Wq", "Wk", "Wv", "Wo")}, "attn": int(att["matrices"])})
+    return rows
+
+
+def matched_svd_ranks(block_params: Sequence[dict], h: int, d: int, D: int) -> list:
+    """SVD ranks at V-exact's per-block budgets (E3): per block, fc1 and fc2 ranks from
+    surgery.svd_rank_for and (r_q, r_k, r_v, r_o) from m1.attention_svd_ranks, the rules of the M3 pilot's
+    SVD arm (the largest rank whose factorisation r (rows + cols) does not exceed the V-exact count of
+    that matrix). Each row also holds the kept counts and the relative shortfall of SVD against V-exact,
+    for the MLP and the attention of that block separately."""
+    rows = []
+    for p in block_params:
+        r1, r2 = svd_rank_for(h, d, p["fc1"]), svd_rank_for(h, d, p["fc2"])
+        ra = attention_svd_ranks(p, d, D)
+        mlp_svd, att_svd = (r1 + r2) * (h + d), sum(ra) * (D + d)
+        rows.append({"block": int(p["block"]), "mlp_ranks": [int(r1), int(r2)], "attn_ranks": [int(r) for r in ra],
+                     "mlp_kept_svd": int(mlp_svd), "mlp_kept_vexact": int(p["mlp"]),
+                     "attn_kept_svd": int(att_svd), "attn_kept_vexact": int(p["attn"]),
+                     "mlp_rel_gap": (p["mlp"] - mlp_svd) / p["mlp"], "attn_rel_gap": (p["attn"] - att_svd) / p["attn"]})
+    return rows
+
+
 def vexact_param_counts(adapter, A, k: int, perms: Sequence, head_maps: Sequence) -> dict:
     """Matrix parameters of the converted blocks (fc1, fc2, Wq, Wk, Wv, Wo) kept by V-exact and dense,
     and the whole-model count after conversion (biases and embeddings counted as dense). Same
-    convention as scripts/m1_attention.variant_params("vexact")."""
+    convention as scripts/m1_attention.variant_params("vexact"). Sums vexact_block_params."""
     d, h = adapter.embed_dim, adapter.mlp_hidden
     H, dh = attn_dims(adapter.model.blocks[0])
     D = H * dh
     A = exact_involution(A)
     blocks = range(int(k))
-    mlp_kept = sum(mlp_mirror_params(h, d, perms[b], A, A) for b in blocks)
-    att_kept = sum(attention_free_params(d, head_maps[b], A, A)["matrices"] for b in blocks)
+    per = vexact_block_params(d, h, A, [perms[b] for b in blocks], [head_maps[b] for b in blocks])
+    mlp_kept = sum(p["mlp"] for p in per)
+    att_kept = sum(p["attn"] for p in per)
     mlp_dense, att_dense = 2 * h * d * int(k), 4 * D * d * int(k)
     n_model = int(sum(p.numel() for p in adapter.model.parameters()))
     dense, kept = mlp_dense + att_dense, mlp_kept + att_kept

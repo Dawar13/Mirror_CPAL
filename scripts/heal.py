@@ -27,6 +27,20 @@ After healing, the healed student (and, with knn.zero_shot, the unhealed one) is
 paper's Tier-1 k-NN protocol (100 train images per class as the bank, all 50k validation images as
 queries, bf16, k = 20, T = 0.07); the original's score comes from the cache written by run_e1.py.
 Results go to <out_dir>/<method>/knn.json and summary.json.
+
+E3 options (PREREG_E3.md; configs/e3_svd_raw.yaml, configs/e3_svd_sym.yaml), all off by default:
+  structure.mode span          one operator A* over blocks 0..k-1 (k = len(blocks)), read from the M1
+                               structure file as scripts/heal_vexact.py reads it (load_span_operator).
+                               The svd arm then takes its ranks from V-exact's per-block parameter
+                               counts (mirror.heal_vexact.vexact_block_params, matched_svd_ranks).
+  student.materialise_pos_embed write the position grid of the evaluation size into the student, as
+                               V-exact does (same function at that size; mirror.m1.materialise_pos_embed).
+  student.train_span_only      with heal.train_scope "all": only the converted blocks and the embeddings
+                               train (mirror.heal_vexact.SpanTrainable), V-exact's trainable set.
+  targets.final                raw (default: the teacher's own outputs) or flip_average (V-exact's
+                               full-conversion targets: the final CLS and patch targets are the flip
+                               average of the teacher's features, the loss normalisers are measured on
+                               them; block targets stay raw). Needs structure.mode span and k = depth.
 """
 from __future__ import annotations
 
@@ -53,8 +67,11 @@ from mirror.fit import involution_trace  # noqa: E402
 from mirror.heal import (DEFAULT_LRS, HealConfig, HealData, LowRankMLP, MirrorMLPConstraint,  # noqa: E402
                          exact_involution, heal, heal_with_lr_selection)
 from mirror.heal_attn import LowRankAttention, MirrorAttnConstraint  # noqa: E402
+from mirror.heal_vexact import SpanTrainable, VExactTeacher, matched_svd_ranks, vexact_block_params  # noqa: E402
 from mirror.knn import evaluate_knn  # noqa: E402
 from mirror.m1 import apply_attention_svd, attention_svd_ranks, random_head_maps_like, random_head_structure  # noqa: E402
+from mirror.m1 import materialise_pos_embed, register_info  # noqa: E402
+from mirror.m1 import random_involution_fixing_ones as span_random_involution  # noqa: E402
 from mirror.matching import random_pairing  # noqa: E402
 from mirror.surgery import (apply_surgery_two, apply_svd_baseline, equivariant_param_count,  # noqa: E402
                             perm_trace, svd_rank_for)
@@ -72,7 +89,21 @@ def parse_args(argv=None):
     p.add_argument("--lr", type=float, default=None, help="skip learning-rate selection and use this rate")
     p.add_argument("--max-steps", type=int, default=None, help="cap the full run (debugging only)")
     p.add_argument("--memory-fraction", type=float, default=None, help="overrides compute.gpu_memory_fraction")
+    p.add_argument("--extra-lrs", default=None,
+                   help="comma-separated extra rates for the secondary learning-rate check (overrides "
+                        "lr_selection.extra_lrs; short trials only, the chosen rate is unchanged)")
     return p.parse_args(argv)
+
+
+def extra_lrs_of(cfg: dict, cli: str | None = None) -> list:
+    """Extra rates of the secondary learning-rate check (E3): --extra-lrs, else lr_selection.extra_lrs. Each
+    gets only the short selection trial (mirror.heal.probe_extra_lrs); none may repeat a grid rate."""
+    sel = cfg.get("lr_selection", {}) or {}
+    vals = [float(v) for v in cli.split(",") if v.strip()] if cli else [float(v) for v in (sel.get("extra_lrs") or [])]
+    grid = [float(v) for v in sel.get("lrs", DEFAULT_LRS)]
+    if any(v in grid for v in vals):
+        raise ValueError(f"extra rates {vals} repeat a grid rate {grid}")
+    return vals
 
 
 def _resolve(path) -> Path:
@@ -174,14 +205,71 @@ def load_heads(cfg: dict, adapter, operators_path: str | None) -> dict:
     return {"heads": heads, "a_out_offset": off, "heads_source": src}
 
 
+def _sha256_file(path) -> str:
+    import hashlib
+
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def load_span_operator(cfg: dict, adapter, k: int) -> dict:
+    """The V-exact span operator A* and register pairing for blocks 0..k-1 (stream layers 0..k), from the
+    M1 structure file (structure.heads, runs/m1/m1_structure.npz: A_star, ks, reg_perm, model), as
+    scripts/heal_vexact.py uses them. Returns A_star (exact involution), reg_perm, span_source and
+    span_sha256. Tiny: a random span operator (d+ = d/2 + 4) and the identity register pairing."""
+    d = adapter.embed_dim
+    R = register_info(adapter.model, adapter)["R"]
+    if cfg.get("tiny_mode"):
+        A = span_random_involution(d, d // 2 + 4, seed=int(cfg["seed"]) * 100 + 90 + int(k))
+        return {"A_star": A, "reg_perm": np.arange(R, dtype=np.int64),
+                "span_source": "tiny random span operator (smoke test)", "span_sha256": None}
+    path = _resolve(cfg["structure"]["heads"])
+    with np.load(path) as z:
+        if "A_star" not in z.files:
+            raise ValueError(f"{path} has no span operators (A_star); rerun scripts/m1_attention.py")
+        ks = [int(v) for v in z["ks"]]
+        model_name = str(z["model"]) if "model" in z.files else None
+        if k not in ks:
+            raise ValueError(f"{path} holds span operators for k in {ks}, not {k}: rerun scripts/m1_attention.py "
+                             f"with --ks including {k}")
+        i = ks.index(k)
+        A = exact_involution(z["A_star"][i])
+        reg_perm = np.asarray(z["reg_perm"][i], dtype=np.int64)
+    if model_name is not None and model_name != cfg["model"]["name"]:
+        raise ValueError(f"{path} was fitted on {model_name}, not {cfg['model']['name']}")
+    if len(reg_perm) != R:
+        raise ValueError(f"{path}: register pairing has {len(reg_perm)} entries, the model has {R} registers")
+    return {"A_star": A, "reg_perm": reg_perm, "span_source": str(path), "span_sha256": _sha256_file(path)}
+
+
+def _with_span_operator(cfg: dict, adapter, out: dict) -> dict:
+    """structure.mode span: every layer's operator is the span operator A* for k = len(blocks)."""
+    blocks = [int(b) for b in cfg.get("blocks", [])]
+    k = len(blocks)
+    if not blocks or blocks != list(range(k)):
+        raise ValueError("structure.mode span (one operator A* over the span) needs blocks 0..k-1")
+    if out.get("heads") is None:
+        raise ValueError("structure.mode span needs structure.attention true (V-exact converts MLP and attention)")
+    sp = load_span_operator(cfg, adapter, k)
+    out.update(sp)
+    out.update({"A_layers": [sp["A_star"]] * (adapter.depth + 1), "mode": "span", "span_k": k,
+                "source": f"{out['source']} (neuron pairings); span operator A* for k = {k}: {sp['span_source']}"})
+    return out
+
+
 def load_structure(cfg: dict, adapter) -> dict:
     """Fitted mirror structure: A_layers (L + 1 operators; layer 0 = tokens entering block 0, layer
     l = output of block l - 1) and perms (one neuron involution per block), from structure.operators
     (the run_e1.py layout: e1_operators.npz with A_layers [L+1, d, d], A_shared [d, d], perms [L, h]).
-    With structure.attention also the M1 head structure (load_heads).
+    With structure.attention also the M1 head structure (load_heads). With structure.mode span every
+    layer gets the V-exact span operator A* (load_span_operator), plus A_star and reg_perm.
     """
     s = cfg["structure"]
     L, d, h = adapter.depth, adapter.embed_dim, adapter.mlp_hidden
+    mode = s.get("mode", "per_layer")
     if cfg.get("tiny_mode"):
         seed = int(cfg["seed"])
         A = [random_involution_fixing_ones(d, d // 2 + 4 * (l % 3), seed=seed * 100 + l) for l in range(L + 1)]
@@ -189,11 +277,10 @@ def load_structure(cfg: dict, adapter) -> dict:
         out = {"A_layers": A, "perms": perms, "mode": "per_layer", "source": "tiny random structure (smoke test)"}
         if s.get("attention", True):
             out.update(load_heads(cfg, adapter, None))
-        return out
+        return _with_span_operator(cfg, adapter, out) if mode == "span" else out
     if not s.get("operators"):
         raise FileNotFoundError("set structure.operators to the X2 operator file (e1_operators.npz)")
     path = _resolve(s["operators"])
-    mode = s.get("mode", "per_layer")
     with np.load(path) as z:
         perms = [np.asarray(p, dtype=np.int64) for p in z["perms"]]
         if mode == "per_layer":
@@ -201,14 +288,16 @@ def load_structure(cfg: dict, adapter) -> dict:
         elif mode == "shared":
             A = exact_involution(z[s.get("shared_key", "A_shared")])
             A_layers = [A] * (L + 1)
+        elif mode == "span":
+            A_layers = [np.eye(d)] * (L + 1)   # placeholder for the shape check; replaced by A* below
         else:
-            raise ValueError("structure.mode must be per_layer or shared")
+            raise ValueError("structure.mode must be per_layer, shared or span")
     if len(A_layers) != L + 1 or len(perms) != L or A_layers[0].shape != (d, d) or len(perms[0]) != h:
         raise ValueError(f"{path}: expected {L + 1} operators of {d} x {d} and {L} perms of length {h}")
     out = {"A_layers": A_layers, "perms": perms, "mode": mode, "source": str(path)}
     if s.get("attention", True):
         out.update(load_heads(cfg, adapter, str(path)))
-    return out
+    return _with_span_operator(cfg, adapter, out) if mode == "span" else out
 
 
 def matched_random_structure(structure: dict, adapter, seed: int, fix_ones: bool = True) -> dict:
@@ -262,11 +351,35 @@ def attention_constraints(cfg: dict, structure: dict, blocks: list, model) -> li
 # Methods
 # ----------------------------------------------------------------------------------------------
 def method_setup(method: str, adapter, structure: dict, blocks: list, cfg: dict):
-    """Return (make_student, info). make_student() gives a fresh (student_model, constraints)."""
+    """Return (make_student, info). make_student() gives a fresh (student_model, constraints).
+    The student options (student.materialise_pos_embed, student.train_span_only) apply to every method."""
+    make_student, info = _method_setup(method, adapter, structure, blocks, cfg)
+    st = cfg.get("student") or {}
+    materialise, span_only = bool(st.get("materialise_pos_embed", False)), bool(st.get("train_span_only", False))
+    if not (materialise or span_only):
+        return make_student, info
+    if span_only and str((cfg.get("heal") or {}).get("train_scope", "converted")) != "all":
+        raise ValueError("student.train_span_only trains the embeddings too: set heal.train_scope to all")
+    base = make_student
+
+    def make_student():
+        m, cons = base()
+        if materialise:
+            materialise_pos_embed(m, adapter)
+        return m, ([*cons, SpanTrainable(blocks, embeddings=True)] if span_only else cons)
+
+    info["student"] = {"materialise_pos_embed": materialise, "train_span_only": span_only}
+    return make_student, info
+
+
+def _method_setup(method: str, adapter, structure: dict, blocks: list, cfg: dict):
     s = cfg["structure"]
     attention = bool(s.get("attention", True))
     h, d = adapter.mlp_hidden, adapter.embed_dim
     H, dh = attn_dims(adapter.model.blocks[0])
+    if structure["mode"] == "span" and method != "svd":
+        raise ValueError("structure.mode span is for the SVD arm matched to V-exact (E3); heal V-exact and its "
+                         "random-structure control with scripts/heal_vexact.py")
     fit_in = [structure["A_layers"][b] for b in blocks]
     fit_out = [structure["A_layers"][b + 1] for b in blocks]
     fit_perms = [structure["perms"][b] for b in blocks]
@@ -309,6 +422,28 @@ def method_setup(method: str, adapter, structure: dict, blocks: list, cfg: dict)
     elif method == "svd":
         ranks = [(svd_rank_for(h, d, e1), svd_rank_for(h, d, e2)) for e1, e2 in eq]
         att_ranks = [attention_svd_ranks(f, d, H * dh) for f in att_free]
+        if structure["mode"] == "span":
+            # E3: ranks from V-exact's own per-block accounting (the code behind vexact_param_counts), checked
+            # against the pilot's rule above, which gives the same numbers when every layer's operator is A*.
+            per = vexact_block_params(d, h, structure["A_star"], fit_perms, [structure["heads"][b] for b in blocks])
+            match = matched_svd_ranks(per, h, d, H * dh)
+            if [tuple(r["mlp_ranks"]) for r in match] != ranks or [tuple(r["attn_ranks"]) for r in match] != att_ranks:
+                raise AssertionError("SVD ranks from vexact_block_params differ from the pilot rule")
+            mlp_gap = max(r["mlp_rel_gap"] for r in match)
+            att_gap = max(r["attn_rel_gap"] for r in match)
+            info["vexact_match"] = {
+                "rule": "per block and matrix, the largest rank r with r (rows + cols) <= the V-exact count",
+                "accounting": "mirror.heal_vexact.vexact_block_params (summed by vexact_param_counts)",
+                "d_plus": int(round((np.trace(structure["A_star"]) + d) / 2)), "span_k": len(blocks),
+                "mlp_kept_vexact": int(sum(r["mlp_kept_vexact"] for r in match)),
+                "attn_kept_vexact": int(sum(r["attn_kept_vexact"] for r in match)),
+                "mlp_kept_svd": int(sum(r["mlp_kept_svd"] for r in match)),
+                "attn_kept_svd": int(sum(r["attn_kept_svd"] for r in match)),
+                "max_block_rel_gap_mlp": mlp_gap, "max_block_rel_gap_attn": att_gap, "per_block": match}
+            log(f"SVD matched to V-exact over blocks 0..{len(blocks) - 1}: MLP {info['vexact_match']['mlp_kept_svd']:,} of "
+                f"{info['vexact_match']['mlp_kept_vexact']:,}, attention {info['vexact_match']['attn_kept_svd']:,} of "
+                f"{info['vexact_match']['attn_kept_vexact']:,}; largest per-block shortfall {mlp_gap:.2%} (MLP), "
+                f"{att_gap:.2%} (attention)")
 
         def make_student():
             m = copy.deepcopy(adapter.model)
@@ -328,6 +463,33 @@ def method_setup(method: str, adapter, structure: dict, blocks: list, cfg: dict)
     else:
         raise ValueError(f"unknown method {method!r}")
     return make_student, info
+
+
+FINAL_TARGET_CHOICES = ("raw", "flip_average")
+
+
+def distill_teacher(cfg: dict, teacher, structure: dict, blocks: list):
+    """The teacher the trainer distils from. targets.final raw (default): the original model's adapter
+    itself. flip_average: mirror.heal_vexact.VExactTeacher with block_targets "raw" and final_target
+    "symmetrised", so the final CLS and patch targets are the flip average of the teacher's final-norm
+    features, (f(x) + align(f(mirror x))) / 2, and the fixed loss normalisers are measured on them (as in
+    scripts/heal_vexact.py at full conversion); the block targets stay the teacher's own outputs. The
+    A*-symmetrised, centred block targets of V-exact are not used: centring belongs to the folded stream,
+    and the A* symmetrisation changes the loss only by a constant for a student that has the symmetry,
+    so for any other student it adds a pull towards A*-equivariance (PREREG_E3.md, arm 3b)."""
+    final = str((cfg.get("targets") or {}).get("final", "raw"))
+    if final not in FINAL_TARGET_CHOICES:
+        raise ValueError(f"targets.final must be one of {FINAL_TARGET_CHOICES}, not {final!r}")
+    if final == "raw":
+        return teacher
+    L = int(teacher.depth)
+    if structure.get("mode") != "span" or list(blocks) != list(range(L)):
+        raise ValueError("targets.final flip_average is V-exact's full-conversion target: it needs structure.mode span "
+                         f"and blocks 0..{L - 1} (k = depth)")
+    vt = VExactTeacher(teacher, structure["A_star"], L, structure["reg_perm"], symmetrise=True,
+                       final_target="symmetrised", block_targets="raw")
+    log(f"targets: {vt.describe()}")
+    return vt
 
 
 # ----------------------------------------------------------------------------------------------
@@ -426,17 +588,24 @@ def main(argv=None) -> dict:
     hcfg = HealConfig.from_dict({**cfg.get("heal", {}), "blocks": blocks, "seed": seed})
     if a.max_steps:
         hcfg = replace(hcfg, max_steps=int(a.max_steps))
+    heal_teacher = distill_teacher(cfg, teacher, structure, blocks)   # the plain teacher unless targets.final says otherwise
 
     sel_cfg = cfg.get("lr_selection", {}) or {}
+    extra_lrs = extra_lrs_of(cfg, a.extra_lrs)
+    if extra_lrs and a.lr is not None:
+        log(f"--lr given: no grid to compare with, so the extra rates {extra_lrs} are skipped")
+    lr_extra = None
     if a.lr is not None:
         student, cons = make_student()
-        final = heal(teacher, student, data, replace(hcfg, lr=float(a.lr)), cons, out / "final")
+        final = heal(heal_teacher, student, data, replace(hcfg, lr=float(a.lr)), cons, out / "final")
         selection = {"skipped": True, "best_lr": float(a.lr), "lrs": [float(a.lr)]}
     else:
-        res = heal_with_lr_selection(teacher, make_student, data, hcfg,
+        res = heal_with_lr_selection(heal_teacher, make_student, data, hcfg,
                                      lrs=[float(x) for x in sel_cfg.get("lrs", DEFAULT_LRS)],
-                                     budget_steps=int(sel_cfg.get("budget_steps", 100)), out_dir=out)
+                                     budget_steps=int(sel_cfg.get("budget_steps", 100)), out_dir=out,
+                                     extra_lrs=extra_lrs)
         selection, final, student = res["lr_selection"], res["final"], res["student"]
+        lr_extra = res.get("lr_extra")
     # Tier 1: k-NN of the healed student (and of the unhealed one) with the paper protocol.
     knn_res = None
     if (cfg.get("knn", {}) or {}).get("enabled", True):
@@ -445,6 +614,13 @@ def main(argv=None) -> dict:
     final = {k: v for k, v in final.items() if k != "history"}
     summary = {"method": method, "blocks": blocks, "seed": seed, "method_info": info, "lr_selection": selection,
                "final": final, "knn": knn_res, "config": cfg, **git, "env": env_info(device)}
+    if cfg.get("targets") is not None:
+        summary["targets"] = (heal_teacher.describe() if heal_teacher is not teacher else
+                              {"type": "raw", "block_targets": "raw (the teacher's own block outputs)",
+                               "final_target": "raw (the teacher's own final-norm CLS and patch tokens)"})
+    if lr_extra is not None:
+        summary["lr_extra"] = {k: lr_extra[k] for k in ("chosen_lr", "extra_lrs", "extra_would_win",
+                                                        "winning_extra_lrs", "best_lr_with_extra")}
     with open(out / "summary.json", "w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=2, default=str)
     ho = final.get("heldout_final") or {}

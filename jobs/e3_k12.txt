@@ -1,0 +1,27 @@
+# E3 (PREREG_E3.md, DRAFT until Dawar signs off): matched healed baselines at full conversion (k = 12). Do not
+# launch before PREREG_E3.md is committed (its commit is the pre-registration record).
+# Line 1 is the healing chain: ONE healing job at a time (GPU rule), commands joined with ";" so a failure does not
+# block the rest, each guarded by its final output so a restarted list skips finished arms. Order: the two SVD
+# baselines (the unknowns of the primary checks), V-exact seed 1 (seed-noise condition), the random-structure
+# control, then the short learning-rate probe of the finished V-exact seed 0 run (secondary check; grid rerun next
+# to 2e-4 on this GPU, compared with the recorded grid of runs/m3_vexact_5090/k12). The four arms run their own 2e-4
+# trial after their grid (lr_selection.extra_lrs in the configs; never chosen).
+# Lines 2 to 5: Tier-2 ImageNet linear probe of each healed E3 student (secondary measure), each starting once its
+# run has written its last file; they may overlap the next healing run (not healing jobs). Separate --out folders,
+# because the variant names (healed_vexact_k12, healed_svd_k12) repeat. V-exact seed 0's own linear probe at k = 12
+# is in jobs/stage22_korea.txt (runs/t2).
+# Estimated GPU time (RTX 5090; from runs/m3_vexact_5090/k12/summary.json: 4,703 s for V-exact k = 12, of which about
+# 1,405 s for the three 100-step selection trials, 2,471 s for the full run, 722 s k-NN, 100 s checks):
+#   svd_raw about 4,200 s (teacher on the batch only), svd_sym about 5,100 s, vexact_s1 and random about 5,200 s each
+#   (with their 2e-4 trial, about 470 s), V-exact seed 0 probe about 1,900 s (four trials): about 21,600 s, 6.0 h,
+#   for line 1; Tier 2 about 4 x 6 min. Total about 6.4 GPU-hours.
+# Line 1 waits for the k-NN caches (train224, val224): on 2026-11-09 the validation cache was not yet copied to the
+# South Korea instance (commit 2be40b9).
+# Launch from /workspace/Mirror_CPAL:
+#   export HF_HOME=/workspace/hf MIRROR_MEM_SCALE=2.5 PATH=$PWD/.venv/bin:$PATH
+#   PAR=3 NEED_MB=6000 bash scripts/vm_sched.sh jobs/e3_k12.txt
+@8000 runs/m1/m1_structure.npz runs/x2/perlayer_reg_s0/results/e1_operators.npz cache/train_meta.json cache/heal256_uint8.npy cache/train224_uint8.npy cache/val224_uint8.npy cache/val_labels.npy |export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4; [ -f runs/e3/svd_raw/svd/summary.json ] || python scripts/heal.py --config configs/e3_svd_raw.yaml; [ -f runs/e3/svd_sym/svd/summary.json ] || python scripts/heal.py --config configs/e3_svd_sym.yaml; [ -f runs/e3/vexact_s1/k12/SUMMARY.md ] || python scripts/heal_vexact.py --config configs/e3_vexact_s1.yaml; [ -f runs/e3/random/k12/SUMMARY.md ] || python scripts/heal_vexact.py --config configs/e3_random.yaml; [ -f runs/e3/lr_probe_vexact_s0/k12/lr_extra.json ] || python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 12 --extra-lrs 2e-4 --lr-probe-only --reference-run runs/m3_vexact_5090/k12 --out-dir runs/e3/lr_probe_vexact_s0
+@6000 runs/e3/svd_raw/svd/summary.json | python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_svd_k12 --heal-dir runs/e3/svd_raw --out runs/e3/t2_svd_raw
+@6000 runs/e3/svd_sym/svd/summary.json | python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_svd_k12 --heal-dir runs/e3/svd_sym --out runs/e3/t2_svd_sym
+@6000 runs/e3/vexact_s1/k12/SUMMARY.md | python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/e3/vexact_s1 --out runs/e3/t2_vexact_s1
+@6000 runs/e3/random/k12/SUMMARY.md | python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/e3/random --out runs/e3/t2_random

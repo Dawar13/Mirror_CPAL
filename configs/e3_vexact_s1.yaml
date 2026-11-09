@@ -1,0 +1,22 @@
+# E3 arm 2 (PREREG_E3.md): V-exact full conversion (k = 12) healed again with healing seed 1, to estimate the
+# seed noise of the headline. Everything is configs/m3_vexact.yaml (same A*, neuron pairings, head maps and register
+# pairing, read from the same files; same data, budget, schedule, learning-rate grid and selection); only the seed
+# differs. Outside --tiny the seed controls only the healing randomness: the data order (mirror.heal._step_rows),
+# the crops and flips (the augmentation generator, seed + 7919), the global RNGs (set_seed) and the same for the
+# three learning-rate trials. The student has no random initialisation (it is built from the original weights).
+#   python scripts/heal_vexact.py --config configs/e3_vexact_s1.yaml          # results in runs/e3/vexact_s1/k12/
+# CPU smoke test: add --tiny (with --tiny the seed also changes the tiny random model and structure).
+base: m3_vexact.yaml
+seed: 1
+k: 12
+
+lr_selection:                  # grid and budget as configs/m3_vexact.yaml (inherited)
+  extra_lrs: [2.0e-4]          # secondary check only (PREREG_E3.md): one short trial, lr_extra.json; never chosen
+
+out_dir: runs/e3/vexact_s1
+
+tiny:
+  k: 4
+  lr_selection:
+    extra_lrs: [3.0e-3]
+  out_dir: tiny_out/e3/vexact_s1

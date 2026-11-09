@@ -1,0 +1,31 @@
+# E3 arm 4 (PREREG_E3.md): random-structure control at full conversion (k = 12). The V-exact construction and
+# recipe of configs/m3_vexact.yaml (healing seed 0), but A*, the neuron pairings, the head maps and the register
+# pairing are replaced by matched random ones (mirror.m1.matched_random_span_structure, fixed seed below):
+#   A*        random orthogonal involution with the fitted d+ and d- (read from the structure file), A 1 = 1;
+#   neurons   per block a random pairing with the fitted numbers of pairs and self-twins;
+#   heads     per block random head maps with the fitted numbers of twin pairs and self-heads and the fitted
+#             self-head traces (mirror.m1.random_head_maps_like), so the same free-parameter counts;
+#   registers a random pairing with the fitted number of register pairs.
+# The student is exactly equivariant under the random structure (the exactness and fp32 flip checks run as for
+# V-exact), and the targets are symmetrised with the random A*, as V-exact's are with the fitted one.
+#   python scripts/heal_vexact.py --config configs/e3_random.yaml             # results in runs/e3/random/k12/
+# CPU smoke test: add --tiny.
+base: m3_vexact.yaml
+seed: 0
+k: 12
+
+structure:
+  random_span: true            # replace the fitted structure by the matched random one (scripts/heal_vexact.py)
+  random_seed: 1               # fixed seed of the random structure (as the M3 pilot's random arm)
+  random_fix_ones: true        # random A* keeps A 1 = 1, like the fitted operator
+
+lr_selection:                  # grid and budget as configs/m3_vexact.yaml (inherited)
+  extra_lrs: [2.0e-4]          # secondary check only (PREREG_E3.md): one short trial, lr_extra.json; never chosen
+
+out_dir: runs/e3/random
+
+tiny:
+  k: 4
+  lr_selection:
+    extra_lrs: [3.0e-3]
+  out_dir: tiny_out/e3/random

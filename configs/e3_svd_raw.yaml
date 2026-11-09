@@ -1,0 +1,43 @@
+# E3 arm 3a (PREREG_E3.md): SVD at full conversion (k = 12, MLP and attention), ranks matched per block to V-exact's
+# kept parameters, healed with the raw teacher targets (as the M3 pilot's SVD arm). The recipe is that of
+# configs/m3_vexact.yaml: same data, epochs, batch, schedule, learning-rate grid and selection, healing seed 0, GPU
+# cap 0.25; the trainable set is V-exact's (train_scope "all" with student.train_span_only: the converted blocks and
+# the embeddings train, nothing is re-projected; the final norm affine and the mask token stay frozen as in V-exact).
+# Ranks: per block and matrix the largest rank r with r (rows + cols) <= the V-exact count of that matrix
+# (mirror.heal_vexact.vexact_block_params and matched_svd_ranks, the accounting that gives V-exact's 64,554,464).
+#   python scripts/heal.py --config configs/e3_svd_raw.yaml                   # results in runs/e3/svd_raw/svd/
+# CPU smoke test: add --tiny.
+base: m3_pilot.yaml
+seed: 0
+method: svd
+blocks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]   # k = 12, full conversion
+
+structure:
+  mode: span                   # every layer's operator is V-exact's span operator A* for k = 12 (from structure.heads)
+  heads: runs/m1/m1_structure.npz
+  operators: runs/x2/perlayer_reg_s0/results/e1_operators.npz
+  attention: true
+
+student:
+  materialise_pos_embed: true  # the 224-px position grid written into the model, as V-exact does (same function)
+  train_span_only: true        # only the converted blocks and the embeddings train (V-exact's trainable set)
+
+targets:
+  final: raw                   # raw: the teacher's own outputs (3a); flip_average: V-exact's targets (3b)
+
+heal:
+  train_scope: all             # as V-exact with vexact.train_embeddings (student.train_span_only freezes the rest)
+
+lr_selection:                  # grid and budget as configs/m3_pilot.yaml and configs/m3_vexact.yaml (inherited)
+  extra_lrs: [2.0e-4]          # secondary check only (PREREG_E3.md): one short trial, lr_extra.json; never chosen
+
+compute:
+  gpu_memory_fraction: 0.25    # as configs/m3_vexact.yaml
+
+out_dir: runs/e3/svd_raw
+
+tiny:
+  blocks: [0, 1, 2, 3]         # the tiny model has 4 blocks: full conversion
+  lr_selection:
+    extra_lrs: [3.0e-3]
+  out_dir: tiny_out/e3/svd_raw

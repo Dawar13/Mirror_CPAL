@@ -1,0 +1,19 @@
+# E3 arm 3b (PREREG_E3.md): as configs/e3_svd_raw.yaml (SVD at V-exact's per-block parameter counts, k = 12, the
+# V-exact recipe and trainable set), but with V-exact's full-conversion final targets: the final CLS and patch
+# targets are the flip average of the teacher's final-norm features (image and mirror, patch grid aligned), and the
+# fixed loss normalisers are measured on these targets, the CLS one included (scripts/heal.py distill_teacher,
+# mirror.heal_vexact.VExactTeacher with block_targets "raw"). The block targets stay the teacher's own outputs:
+# V-exact's centring belongs to its folded stream, and symmetrising with A* changes the loss only by a constant for
+# a student with that symmetry; for the SVD student it would add a pull towards A*-equivariance (PREREG_E3.md).
+# The teacher runs on every batch and its mirror, as in V-exact.
+#   python scripts/heal.py --config configs/e3_svd_sym.yaml                   # results in runs/e3/svd_sym/svd/
+# CPU smoke test: add --tiny.
+base: e3_svd_raw.yaml
+
+targets:
+  final: flip_average
+
+out_dir: runs/e3/svd_sym
+
+tiny:
+  out_dir: tiny_out/e3/svd_sym
