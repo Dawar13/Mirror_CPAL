@@ -51,7 +51,7 @@ def test_requested_variant_names_resolve_and_protocol_defaults():
         S.KNOWN_REVISIONS["danjacobellis/scene_parse_150"]
     t = S.parse_args(["--tiny"])
     assert (t.crop, t.batch_size, t.num_workers) == (56, 4, 0)
-    for bad in ("vexact", "healed_vexact_k9", "mirror_k6", "svd_mlp_k0"):
+    for bad in ("vexact", "healed_vexact_k0", "mirror_k6", "svd_mlp_k0"):    # healed_vexact_k<K> (K >= 1) is valid
         with pytest.raises(ValueError):
             S.T2.parse_variants(bad)
 

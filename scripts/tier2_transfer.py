@@ -6,7 +6,13 @@ scripts/tier2_linear.py.
     export HF_HOME=/home/dawar/hf
     python scripts/tier2_transfer.py --model dinov2_vitb14_reg --variants original,vexact_k6,vlocal_k9 --out runs/t2
     python scripts/tier2_transfer.py --model dinov2_vitb14_reg --datasets cifar100 --variants original --out runs/t2
+    python scripts/tier2_transfer.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --out runs/t2
     python scripts/tier2_transfer.py --tiny --out tiny_out/t2      # CPU smoke test (synthetic parquet, no download)
+
+Variants and their builders are those of scripts/tier2_linear.py (VariantFactory), including
+healed_vexact_k<K> (--vexact-dir, --vexact-checkpoint, --vexact-config as there): the loaded student
+is checked before any feature is extracted, and the feature statement and check values go to the
+CSV (vexact_* columns and notes).
 
 Data (downloaded on the VM only, under $HF_HOME). Hugging Face dataset ids below were checked on the
 Hugging Face API on 2026-11-08 (not gated, parquet files; split sizes from the dataset cards); the
@@ -285,6 +291,9 @@ def parse_args(argv=None):
     p.add_argument("--m1-structure", default=None)
     p.add_argument("--heal-dir", default=None)
     p.add_argument("--heal-config", default=None)
+    p.add_argument("--vexact-dir", default=None, help="as in scripts/tier2_linear.py")
+    p.add_argument("--vexact-checkpoint", default=None, help="as in scripts/tier2_linear.py")
+    p.add_argument("--vexact-config", default=None, help="as in scripts/tier2_linear.py")
     p.add_argument("--random-seed", type=int, default=1)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--img-size", type=int, default=224)
@@ -311,7 +320,8 @@ def parse_args(argv=None):
 CSV_COLUMNS = ["model", "dataset", "variant", "label", "family", "method", "k", "top1", "top5", "mean_per_class_top1",
                "chosen_wd", "wd_at_grid_edge", "holdout_top1_at_chosen", "final_hit_iter_limit", "feature_dim",
                "n_train", "n_test", "num_classes", "hf_id", "t_extract_s", "t_probe_s", "git_hash", "git_dirty", "seed",
-               "date"]
+               "date", "vexact_even_head", "vexact_span_exact_rel_max", "vexact_feature_flip_rel_max",
+               "vexact_checks_pass", "notes"]
 
 
 def write_tables(out: Path) -> list:
@@ -351,6 +361,12 @@ def write_tables(out: Path) -> list:
                 cells.append("-" if r is None else f"{r['top1']:.2f} ({r['mean_per_class_top1']:.2f})")
             lines.append(f"| {v} | " + " | ".join(cells) + " |")
         lines.append("")
+        noted = {}
+        for r in rs:
+            if r.get("notes") and r["variant"] not in noted:
+                noted[r["variant"]] = r["notes"]
+        if noted:
+            lines += [f"- {v}: {n}." for v, n in noted.items()] + [""]
     git = sorted({str(r["git_hash"])[:10] + (" (dirty)" if r.get("git_dirty") else "") for r in rows})
     lines += ["Datasets (Hugging Face ids, verify on VM): " + "; ".join(
         f"{d}: {DATASETS[d]['hf_id']}" for d in DATASETS if any(r['dataset'] == d for r in rows)) + ".",
@@ -364,6 +380,7 @@ def main(argv=None) -> dict:
     a = parse_args(argv)
     tiny = a.tiny
     variants = T2.parse_variants(a.variants)
+    T2.check_vexact_checkpoint_arg(variants, a.vexact_checkpoint)
     model_name = "tiny" if tiny else a.model
     out = Path(a.out) if a.out else REPO_ROOT / ("tiny_out/t2" if tiny else "runs/t2")
     out.mkdir(parents=True, exist_ok=True)
@@ -411,9 +428,10 @@ def main(argv=None) -> dict:
 
             V.load_or_make_structure(None, True, adapter, V.TinyProtocol(), device, out)
             paths["operators"] = str(out / "tiny_fit" / "results" / "e1_operators.npz")
-        factory = T2.VariantFactory(adapter, a.model, tiny, paths["operators"], paths["m1_structure"],
-                                    paths["heal_dir"], a.heal_config, a.random_seed)
+        factory = T2.make_factory(adapter, a, tiny, paths)
         kind = T2.feature_kind(adapter)
+        for v in variants:                    # every input file of every variant exists before any work starts
+            factory.sources(v)
     pin = device.type == "cuda"
     bs = min(a.batch_size, 16) if tiny else a.batch_size
     nw = 0 if tiny else a.num_workers
@@ -489,7 +507,7 @@ def main(argv=None) -> dict:
                    "n_test": int(len(ys)), "num_classes": registry[d]["num_classes"], "hf_id": registry[d]["hf_id"],
                    "t_extract_s": round(t_ext[d], 1), "t_probe_s": round(time.time() - t0, 1),
                    "git_hash": git["git_hash"], "git_dirty": git["git_dirty"], "seed": a.seed,
-                   "date": time.strftime("%Y-%m-%d %H:%M:%S")}
+                   "date": time.strftime("%Y-%m-%d %H:%M:%S"), **T2.variant_row_extras(info)}
             T2.write_json(pj, {"transfer_row": row, "selection": sel, "final": fin, "test": test, "variant_info": info,
                                "sources": sources, "dataset_meta": dsets[d]["meta"],
                                "feature_meta": {"train": mt, "test": ms}, "probe_settings": settings,

@@ -6,6 +6,7 @@
         --out runs/t2
     python scripts/tier2_linear.py --model mae_b16 --variants original --out runs/t2
     python scripts/tier2_linear.py --model dinov2_vitb14 --variants original,mirror_mlp_k6,svd_mlp_k6 --out runs/t2
+    python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_vexact_k12,healed_vexact_k6 --out runs/t2
     python scripts/tier2_linear.py --tiny --variants original,mirror_mlp_k2 --out tiny_out/t2    # CPU smoke test
 
 Protocol ("logistic regression on [CLS, mean patch token], trained on the 100k bank, tested on
@@ -50,6 +51,22 @@ Variants (built with the existing code; nothing is reimplemented here):
                               config (runs/m3_pilot/<method>/summary.json), then
                               mirror.heal.load_trained_blocks(<run>/final/trained_blocks.pt); the
                               constraint checks of the loaded student are recorded
+  healed_vexact_k<K>          the healed V-exact student (scripts/heal_vexact.py: one operator A* over
+                              blocks 1..K, MLP + attention, exactly mirror-equivariant over the span;
+                              K = depth is the full conversion with the even head). Built as
+                              scripts/heal_vexact.py builds it (its load_vexact_structure with the run's
+                              own config, <vexact-dir>/k<K>/summary.json, then
+                              mirror.heal_vexact.build_vexact_student), then
+                              mirror.heal.load_trained_blocks(<vexact-dir>/k<K>/final/trained_blocks.pt);
+                              --vexact-checkpoint names the file instead. The feature is the probe
+                              feature above through the student's own final norm, which at K = depth
+                              holds the even head (RMSNorm, y (I + A*)/2, affine): the same forward as
+                              the k-NN feature of scripts/heal_vexact.py, so at K = depth an image and
+                              its mirror give the same feature (exactly up to fp32 rounding). After
+                              loading, heal_vexact's exactness probe (span_exactness on its check
+                              images, fp32) and, at K = depth, the probe feature of those images
+                              against their mirrors must pass, or the run stops; the values go to the
+                              CSV (vexact_* columns and notes) and the log
 
 Outputs under --out: t2_linear.csv (one row per model and variant: top-1, top-5, chosen weight
 decay, feature dimension, k-NN check, parameter counts, timings, git hash, seed), T2_LINEAR.md,
@@ -96,10 +113,12 @@ SPLITS = ("bank", "val")
 # Default structure files per model (the X2 fits, M1 structure and M3 pilot; all from fit seed 0).
 MODEL_DEFAULTS = {
     "dinov2_vitb14_reg": {"operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
-                          "m1_structure": "runs/m1/m1_structure.npz", "heal_dir": "runs/m3_pilot"},
+                          "m1_structure": "runs/m1/m1_structure.npz", "heal_dir": "runs/m3_pilot",
+                          "vexact_dir": "runs/m3_vexact"},
     "dinov2_vitb14": {"operators": "runs/x2/perlayer_plain_s0/results/e1_operators.npz",
-                      "m1_structure": None, "heal_dir": None},
+                      "m1_structure": None, "heal_dir": None, "vexact_dir": None},
 }
+DEFAULT_VEXACT_CONFIG = "configs/m3_vexact.yaml"   # fallback when <vexact-dir>/k<K>/summary.json is missing
 
 _MEMORY_FRACTION = DEFAULT_MEMORY_FRACTION
 
@@ -110,7 +129,7 @@ _MEMORY_FRACTION = DEFAULT_MEMORY_FRACTION
 @dataclass(frozen=True)
 class VariantName:
     name: str        # as given on the command line (used in file names and tables)
-    family: str      # original | mlp | m1 | healed
+    family: str      # original | mlp | m1 | healed | healed_vexact
     method: str      # original | mirror | svd | random | vlocal | vexact
     k: int           # converted blocks (0 for the original)
 
@@ -131,6 +150,7 @@ VARIANT_LABELS = {
     ("healed", "mirror"): "healed Mirror V-local, MLP + attention, k = {k} (M3)",
     ("healed", "svd"): "healed SVD, MLP + attention, k = {k} (M3)",
     ("healed", "random"): "healed random structure, MLP + attention, k = {k} (M3)",
+    ("healed_vexact", "vexact"): "healed Mirror V-exact, MLP + attention, k = {k} (scripts/heal_vexact.py)",
 }
 
 _PATTERNS = [
@@ -140,6 +160,7 @@ _PATTERNS = [
     (re.compile(r"^(vlocal|vexact)_k(\d+)$"), lambda m: ("m1", m.group(1), int(m.group(2)))),
     (re.compile(r"^(svd|random)_attn_k(\d+)$"), lambda m: ("m1", m.group(1), int(m.group(2)))),
     (re.compile(r"^healed_(mirror|svd|random)_k(\d+)$"), lambda m: ("healed", m.group(1), int(m.group(2)))),
+    (re.compile(r"^healed_vexact_k(\d+)$"), lambda m: ("healed_vexact", "vexact", int(m.group(1)))),
 ]
 
 
@@ -153,8 +174,8 @@ def parse_variant(name: str) -> VariantName:
                 raise ValueError(f"{name}: k must be at least 1")
             return VariantName(name, family, method, k)
     raise ValueError(f"unknown variant {name!r}; expected original, mirror_mlp_k<K>, svd_mlp_k<K>, random_k<K>, "
-                     "random_mlp_k<K>, vlocal_k<K>, vexact_k<K>, svd_attn_k<K>, random_attn_k<K> or "
-                     "healed_<mirror|svd|random>_k<K>")
+                     "random_mlp_k<K>, vlocal_k<K>, vexact_k<K>, svd_attn_k<K>, random_attn_k<K>, "
+                     "healed_<mirror|svd|random>_k<K> or healed_vexact_k<K>")
 
 
 def parse_variants(text: str) -> list:
@@ -166,6 +187,14 @@ def parse_variants(text: str) -> list:
     if not out:
         raise ValueError("no variants given")
     return out
+
+
+def check_vexact_checkpoint_arg(variants, vexact_checkpoint) -> None:
+    """--vexact-checkpoint names one file, so it can serve one healed V-exact variant only."""
+    n = sum(v.family == "healed_vexact" for v in variants)
+    if vexact_checkpoint and n != 1:
+        raise ValueError(f"--vexact-checkpoint names one checkpoint, but {n} healed_vexact_k<K> variants were "
+                         "requested; request exactly one, or use --vexact-dir (<dir>/k<K>/final/trained_blocks.pt)")
 
 
 # ----------------------------------------------------------------------------------------------
@@ -590,14 +619,18 @@ class ProtocolData:
 # ----------------------------------------------------------------------------------------------
 class VariantFactory:
     def __init__(self, adapter, model_name: str, tiny: bool, operators=None, m1_structure=None, heal_dir=None,
-                 heal_config=None, random_seed: int = 1):
+                 heal_config=None, random_seed: int = 1, vexact_dir=None, vexact_checkpoint=None,
+                 vexact_config=None):
         self.adapter, self.model_name, self.tiny = adapter, model_name, tiny
         self.operators = _resolve(operators) if operators else None
         self.m1_structure_path = _resolve(m1_structure) if m1_structure else None
         self.heal_dir = _resolve(heal_dir) if heal_dir else None
         self.heal_config = _resolve(heal_config) if heal_config else REPO_ROOT / "configs" / "m3_pilot.yaml"
         self.random_seed = int(random_seed)
-        self._struct = self._m1 = self._heal = None
+        self.vexact_dir = _resolve(vexact_dir) if vexact_dir else None
+        self.vexact_checkpoint = _resolve(vexact_checkpoint) if vexact_checkpoint else None
+        self.vexact_config = _resolve(vexact_config or DEFAULT_VEXACT_CONFIG)
+        self._struct = self._m1 = self._heal = self._heal_vexact = None
         self._m1_S = None
 
     # ----- provenance (cheap; used to validate cached features) -------------------------------
@@ -611,10 +644,32 @@ class VariantFactory:
     def heal_run(self, v: VariantName) -> Path:
         return self._need(self.heal_dir, "the M3 healing directory", "--heal-dir") / v.method
 
+    def vexact_run(self, v: VariantName) -> tuple:
+        """(run directory, checkpoint) of a healed V-exact variant, in the scripts/heal_vexact.py layout
+        <vexact-dir>/k<K>/final/trained_blocks.pt; --vexact-checkpoint names the file directly (its run
+        directory is then the folder above final/). Fails with a clear message if the file is missing."""
+        if self.vexact_checkpoint is not None:
+            ck = self.vexact_checkpoint
+            run = ck.parent.parent if ck.parent.name == "final" else ck.parent
+        else:
+            base = self._need(self.vexact_dir, "the V-exact healing directory (out_dir of scripts/heal_vexact.py)",
+                              "--vexact-dir")
+            run = base / f"k{v.k}"
+            ck = run / "final" / "trained_blocks.pt"
+        if not ck.is_file():
+            raise FileNotFoundError(
+                f"{v.name}: healed V-exact checkpoint {ck} not found. Heal it first (python scripts/heal_vexact.py "
+                f"--config configs/m3_vexact.yaml --k {v.k}) or pass --vexact-dir (or --vexact-checkpoint) for a run "
+                "that has final/trained_blocks.pt")
+        return run, ck
+
     def sources(self, v: VariantName) -> dict:
         """Files the variant is built from, with their sha256 (stored with the features)."""
         if v.family == "original":
             return {}
+        if v.family == "healed_vexact":
+            run, ck = self.vexact_run(v)
+            return {"vexact_run": str(run), "checkpoint": str(ck), "checkpoint_sha256": sha256(ck)}
         if v.family == "mlp":
             p = self._need(self.operators, "the X2 operator file (e1_operators.npz)", "--operators")
             return {"operators": str(p), "operators_sha256": sha256(p)}
@@ -648,6 +703,12 @@ class VariantFactory:
         if self._heal is None:
             self._heal = load_script("heal")
         return self._heal
+
+    def heal_vexact(self):
+        """scripts/heal_vexact.py as a module (its structure loader and check data are reused as they are)."""
+        if self._heal_vexact is None:
+            self._heal_vexact = load_script("heal_vexact")
+        return self._heal_vexact
 
     def m1_structure(self, need_k=None):
         """(S, ops) as scripts/m1_attention.py uses them, from the saved m1_structure.npz (its own
@@ -718,6 +779,10 @@ class VariantFactory:
                          "mlp_params_kept": p["mlp_params_kept"], "attn_params_kept": p["attn_params_kept"],
                          "a_out_offset": S["a_out_offset"], "m1_saved": saved,
                          "even_head": bool(v.method == "vexact" and v.k == L)})
+        elif v.family == "healed_vexact":
+            m, extra = self._build_healed_vexact(v)
+            info.update(extra)
+            kept = int(extra["mlp_params_kept"]) + int(extra["attn_params_kept"])
         else:
             m, extra = self._build_healed(v)
             info.update(extra)
@@ -769,6 +834,139 @@ class VariantFactory:
             extra["attn_params_kept"] = int(minfo["attn_params_kept"])
         return m, extra
 
+    # ----- healed V-exact (scripts/heal_vexact.py) ----------------------------------------------
+    def _vexact_config(self, v: VariantName, run: Path) -> tuple:
+        """(config, summary or None, config source): the run's own config from <run>/summary.json, as
+        the existing healed variants read theirs; configs/m3_vexact.yaml (--vexact-config) otherwise."""
+        from mirror.utils import load_config
+
+        summ_path = run / "summary.json"
+        if summ_path.exists():
+            summ = json.loads(summ_path.read_text(encoding="utf-8"))
+            cfg, src = dict(summ["config"]), str(summ_path)
+            if int(summ.get("k", v.k)) != v.k:
+                raise ValueError(f"{v.name}: {summ_path} is a V-exact run with k = {summ['k']}, not {v.k}")
+        else:
+            summ = None
+            cfg, src = load_config(self.vexact_config, tiny=self.tiny), str(self.vexact_config)
+            log(f"WARNING: {summ_path} missing; rebuilding the V-exact student from {self.vexact_config}")
+        cfg["k"], cfg["method"] = v.k, "vexact"
+        if bool(cfg.get("tiny_mode")) != bool(self.tiny):
+            raise ValueError(f"{v.name}: {src} is {'a tiny' if cfg.get('tiny_mode') else 'not a tiny'} run; this run is "
+                             f"{'tiny' if self.tiny else 'not tiny'}")
+        if not self.tiny and cfg["model"]["name"] != self.model_name:
+            raise ValueError(f"{v.name}: {src} healed {cfg['model']['name']}, not {self.model_name}")
+        return cfg, summ, src
+
+    def _build_healed_vexact(self, v: VariantName):
+        """The healed V-exact student, built exactly as scripts/heal_vexact.py builds it (make_student:
+        load_vexact_structure, then build_vexact_student with the run's train_embeddings), the
+        constraints prepared as mirror.heal.heal does, then the checkpoint loaded with
+        mirror.heal.load_trained_blocks (the reload path heal_vexact.py documents). Then checked."""
+        hv = self.heal_vexact()
+        from mirror.heal import load_trained_blocks
+        from mirror.heal_vexact import build_vexact_student, vexact_param_counts
+
+        ad, L = self.adapter, int(self.adapter.depth)
+        run, ck = self.vexact_run(v)
+        cfg, summ, cfg_src = self._vexact_config(v, run)
+        st = hv.load_vexact_structure(cfg, ad, v.k)
+        rec_sha = ((summ or {}).get("structure") or {}).get("span_sha256")
+        if rec_sha and st["span_sha256"] != rec_sha:
+            raise ValueError(f"{v.name}: {st['span_source']} (sha256 {str(st['span_sha256'])[:12]}) is not the span "
+                             f"operator file the run was healed with (sha256 {rec_sha[:12]}, {run / 'summary.json'})")
+        A, reg_perm = st["A_star"], st["reg_perm"]
+        train_emb = bool((cfg.get("vexact") or {}).get("train_embeddings", True))
+        m, cons, _ = build_vexact_student(ad, A, v.k, st["perms"], st["heads"], reg_perm, train_embeddings=train_emb)
+        for c in cons:
+            prep = getattr(c, "prepare", None)
+            if callable(prep):
+                prep(m)
+        ck_meta = load_trained_blocks(m, ck)
+        m.eval()
+        loaded = checkpoint_matches(m, ck, list(range(v.k)))
+        checks = constraint_checks(m, cons)
+        vchecks = self._vexact_checks(v, m, cfg, A, reg_perm, run)
+        pc = vexact_param_counts(ad, A, v.k, st["perms"], st["heads"])
+        knn = (summ or {}).get("knn") or {}
+        on_cuda = str(((summ or {}).get("env") or {}).get("device", "")).startswith("cuda")
+        extra = {"builder": "scripts/heal_vexact.load_vexact_structure + mirror.heal_vexact.build_vexact_student "
+                            "(as scripts/heal_vexact.py make_student) + mirror.heal.load_trained_blocks",
+                 "vexact_run": str(run), "checkpoint": str(ck), "heal_config_source": cfg_src, "heal_seed": cfg.get("seed"),
+                 "structure": {kk: st[kk] for kk in ("span_source", "span_sha256", "operators_source", "heads_source")},
+                 "reg_perm": [int(x) for x in reg_perm], "d_plus": pc["d_plus"], "d_minus": pc["d_minus"],
+                 "train_embeddings": train_emb, "even_head": bool(v.k == L), "feature": vexact_feature_note(v.k, L),
+                 "checkpoint_meta": ck_meta, "checkpoint_check": loaded, "constraint_checks": checks,
+                 "vexact_checks": vchecks, "param_counts": pc, "mlp_params_kept": int(pc["mlp_params_kept"]),
+                 "attn_params_kept": int(pc["attn_params_kept"]),
+                 "recorded_knn_healed_top1": (knn.get("healed") or {}).get("top1"),
+                 # as scripts/heal_vexact.py's SUMMARY.md: the bf16 autocast applies on CUDA only
+                 "recorded_knn_precision": "bf16" if (knn.get("amp") == "bf16" and on_cuda) else "fp32"}
+        return m, extra
+
+    @torch.no_grad()
+    def _vexact_checks(self, v: VariantName, model, cfg: dict, A, reg_perm, run: Path) -> dict:
+        """Checks after loading, so a wrong load cannot pass silently, on scripts/heal_vexact.py's own
+        check images (check_data "probe" and probe_batches: 64 ImageNet validation images on the paper
+        protocol): its exactness probe (mirror.heal_vexact.span_exactness), the k-NN feature of each
+        image against its mirror (mirror.m1.feature_invariance, as flip_check records it), and the same
+        for the probe feature. Per batch max |f(mirror x) - f(x)| / max |f(x)|, then the largest over
+        batches (flip_check's convention), so the values compare with exactness.json and flipcheck.json
+        of the run. At full conversion the probe feature must agree within the exactness tolerance. Run
+        in the model's dtype (fp32) without autocast. Raises RuntimeError on failure."""
+        from mirror.data import mirror as mirror_images
+        from mirror.heal_vexact import span_exactness
+        from mirror.m1 import feature_invariance
+
+        hv = self.heal_vexact()
+        ad, L = self.adapter, int(self.adapter.depth)
+        device = next(model.parameters()).device
+        cc = cfg.get("checks") or {}
+        tol = float(cc.get("exact_tol", 1e-4))
+        cd = hv.check_data(cfg, device)
+        xs = hv.probe_batches(ad, cd["probe"], int(cc.get("exact_images", 64)), device)
+        ex = span_exactness(ad, model, xs, A, v.k, reg_perm, tol=tol)
+        knn_rel = max(feature_invariance(ad, model, x)["rel_max"] for x in xs)
+
+        def rel(a, b):
+            r = float(b.abs().max())
+            return float(a.abs().max()) / r if r > 0 else float("nan")
+
+        parts = []
+        for x in xs:
+            f = probe_feature(ad, x, model).double()
+            ft = probe_feature(ad, mirror_images(x), model).double()
+            s = f.shape[1] - int(ad.embed_dim)                   # [CLS (or pooled) | mean patch token]
+            parts.append((rel(ft - f, f), rel(ft[:, :s] - f[:, :s], f[:, :s]), rel(ft[:, s:] - f[:, s:], f[:, s:])))
+        flip = {"rel_max": max(p[0] for p in parts), "first_part_rel_max": max(p[1] for p in parts),
+                "mean_patch_rel_max": max(p[2] for p in parts), "knn_cls_feature_rel_max": knn_rel,
+                "n_images": int(sum(x.shape[0] for x in xs))}
+        full = v.k == L
+        recorded = {}
+        for name, key in (("exactness.json", "max_rel_inside"), ("flipcheck.json", "cls_feature_rel_max")):
+            p = run / name
+            if p.exists():
+                recorded[f"{name}:{key}"] = json.loads(p.read_text(encoding="utf-8")).get(key)
+        ok = bool(ex["pass"]) and (not full or flip["rel_max"] < tol)
+        out = {"pass": ok, "full_conversion": full, "tol": tol, "protocol": cd["protocol"], "n_images": ex["n_images"],
+               "dtype": ex["dtype"], "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
+               "span_exact_max_rel_inside": ex["max_rel_inside"], "span_exact_pass": bool(ex["pass"]),
+               "span_exact_rows": ex["rows"], "probe_feature_flip": flip, "recorded_after_healing": recorded}
+        log(f"  {v.name}: checks after loading ({ex['n_images']} {cd['protocol']} check images, {ex['dtype']}): span "
+            f"exactness max rel {ex['max_rel_inside']:.2e} (tol {tol:g}); image vs mirror max rel: probe feature "
+            f"{flip['rel_max']:.2e}, k-NN CLS feature {knn_rel:.2e}"
+            f"{' (must be below tol at full conversion)' if full else ' (not invariant: k < depth)'}; "
+            f"recorded after healing {json.dumps(_jsonable(recorded))}: {'PASS' if ok else 'FAIL'}")
+        if not ex["pass"]:
+            raise RuntimeError(f"{v.name}: the loaded student is not exactly mirror-equivariant over blocks 1..{v.k} "
+                               f"(max relative error {ex['max_rel_inside']:.2e} >= {tol:g}); wrong checkpoint or "
+                               f"structure for {run}. Not probing it.")
+        if full and not flip["rel_max"] < tol:
+            raise RuntimeError(f"{v.name}: at full conversion the probe feature of an image and its mirror differ by "
+                               f"{flip['rel_max']:.2e} (relative, fp32) >= {tol:g}; the even head or the load is wrong. "
+                               "Not probing it.")
+        return out
+
 
 @torch.no_grad()
 def _rank64(lin) -> int:
@@ -796,6 +994,55 @@ def constraint_checks(model, cons) -> dict:
     return out
 
 
+@torch.no_grad()
+def checkpoint_matches(model, path, blocks) -> dict:
+    """After mirror.heal.load_trained_blocks: the checkpoint converted `blocks`, and every tensor in it
+    equals the model's state (a load that silently skipped or cast something fails here)."""
+    payload = torch.load(path, map_location="cpu", weights_only=True)
+    sd, own = payload["state_dict"], model.state_dict()
+    got = [int(b) for b in payload.get("blocks", [])]
+    if got != [int(b) for b in blocks]:
+        raise ValueError(f"{path} trained blocks {got}, expected {list(blocks)}")
+    differ = [k for k, t in sd.items() if not torch.equal(own[k].detach().cpu(), t)]
+    if differ:
+        raise RuntimeError(f"{path}: {len(differ)} tensors differ from the model after loading, e.g. {differ[:3]}")
+    return {"scope": payload.get("scope"), "blocks": got, "n_tensors": len(sd), "n_model_tensors": len(own),
+            "model_tensors_not_in_checkpoint": sorted(set(own) - set(sd))[:20], "all_equal": True}
+
+
+def vexact_feature_note(k: int, depth: int) -> str:
+    """What the probe feature of a healed V-exact variant is (CSV notes)."""
+    if int(k) == int(depth):
+        return ("feature [CLS, mean patch token] after the student's own final norm (RMSNorm, even head y (I + A*)/2, "
+                "affine), the forward of the k-NN feature of scripts/heal_vexact.py; exactly mirror-invariant in fp32 "
+                "(bf16 forward passes round the mirrored computation differently)")
+    return (f"feature [CLS, mean patch token] after the student's own final norm (RMSNorm, affine; no even head at "
+            f"k = {k} < {depth}), the forward of the k-NN feature of scripts/heal_vexact.py; exactly equivariant over "
+            f"blocks 1..{k} only, so not mirror-invariant")
+
+
+def variant_row_extras(info: dict) -> dict:
+    """Extra CSV columns for variants with checks after loading (healed V-exact): the feature used and the
+    check values. Empty for every other variant."""
+    vc = (info or {}).get("vexact_checks")
+    if not vc:
+        return {}
+    fl = vc["probe_feature_flip"]
+    rec = vc.get("recorded_after_healing") or {}
+    rec_ex = rec.get("exactness.json:max_rel_inside")
+    knn = info.get("recorded_knn_healed_top1")
+    dt = str(vc.get("dtype", "")).replace("torch.", "")
+    note = (f"{info.get('feature', '')}; checks after loading ({vc['n_images']} {vc['protocol']} check images, {dt}): "
+            f"span exactness max rel {vc['span_exact_max_rel_inside']:.1e} (tol {vc['tol']:g}"
+            + (f"; {rec_ex:.1e} recorded after healing" if isinstance(rec_ex, (int, float)) else "")
+            + f"), image vs mirror probe feature max rel {fl['rel_max']:.1e}: {'PASS' if vc['pass'] else 'FAIL'}"
+            + (f"; Tier-1 k-NN of the healed run {knn:.2f} ({info.get('recorded_knn_precision', 'fp32')} features)"
+               if isinstance(knn, (int, float)) else ""))
+    return {"notes": note, "vexact_even_head": bool(info.get("even_head")),
+            "vexact_span_exact_rel_max": vc["span_exact_max_rel_inside"], "vexact_feature_flip_rel_max": fl["rel_max"],
+            "vexact_checks_pass": bool(vc["pass"])}
+
+
 # ----------------------------------------------------------------------------------------------
 # Tables
 # ----------------------------------------------------------------------------------------------
@@ -803,7 +1050,9 @@ CSV_COLUMNS = ["model", "variant", "label", "family", "method", "k", "top1", "to
                "knn_check_top1", "chosen_wd", "wd_at_grid_edge", "holdout_top1_at_chosen", "final_hit_iter_limit",
                "final_lbfgs_iters", "feature_dim", "feature_kind", "n_bank", "n_val", "n_wd_train", "n_wd_holdout",
                "converted_params_kept", "converted_params_dense", "model_params", "t_build_s", "t_extract_s",
-               "t_probe_s", "amp", "feature_dtype", "wd_grid", "git_hash", "git_dirty", "seed", "date"]
+               "t_probe_s", "amp", "feature_dtype", "wd_grid", "git_hash", "git_dirty", "seed", "date",
+               "vexact_even_head", "vexact_span_exact_rel_max", "vexact_feature_flip_rel_max", "vexact_checks_pass",
+               "notes"]
 
 
 def probe_json_path(out: Path, model_name: str, variant: str) -> Path:
@@ -852,6 +1101,12 @@ def write_summary(path: Path, rows: list, csv_name: str) -> None:
              "on the whole bank. Full-batch L-BFGS on standardised features.", "",
              "The k-NN check column is k-NN top-1 (k = 20, T = 0.07) on the CLS (or pooled) half of the same "
              "cached features: it should sit close to the Tier-1 k-NN number of the same variant.", ""]
+    if any(r.get("vexact_checks_pass") is not None for r in rows):
+        lines += ["Healed V-exact rows (healed_vexact_k<K>, scripts/heal_vexact.py): the same feature through the "
+                  "student's own final norm, which at full conversion holds the even head, so the feature of an image "
+                  "and of its mirror are equal in fp32 (bf16 forward passes round the mirrored computation differently). "
+                  "The loaded student is checked before probing (span exactness and image vs mirror feature, fp32); "
+                  "values and the feature statement are in the CSV columns vexact_* and notes.", ""]
     for model in sorted({r["model"] for r in rows}):
         rs = [r for r in rows if r["model"] == model]
         orig = next((r for r in rs if r["family"] == "original"), None)
@@ -866,6 +1121,12 @@ def write_summary(path: Path, rows: list, csv_name: str) -> None:
                 notes.append("wd at grid edge")
             if r.get("final_hit_iter_limit"):
                 notes.append("final fit hit the iteration limit")
+            if r.get("vexact_checks_pass") is not None:
+                notes.append(f"loaded student checked: span exactness {r['vexact_span_exact_rel_max']:.1e}, "
+                             f"image vs mirror feature {r['vexact_feature_flip_rel_max']:.1e}, "
+                             f"{'PASS' if r['vexact_checks_pass'] else 'FAIL'}; "
+                             + ("even head, feature mirror-invariant" if r.get("vexact_even_head") else
+                                "no even head (k < depth)"))
             lines.append(f"| {r['variant']} | {r['label']} | {_f(r['top1'])} | {_f(r['top5'])} | {delta} | "
                          f"{_f(r.get('knn_check_top1'))} | {r['chosen_wd']:.3g} | {_int(r.get('model_params'))} | "
                          f"{'; '.join(notes) or '-'} |")
@@ -890,6 +1151,12 @@ def parse_args(argv=None):
     p.add_argument("--m1-structure", default=None, help="M1 m1_structure.npz (default per model)")
     p.add_argument("--heal-dir", default=None, help="M3 output directory with <method>/final/trained_blocks.pt")
     p.add_argument("--heal-config", default=None, help="fallback config when <heal-dir>/<method>/summary.json is missing")
+    p.add_argument("--vexact-dir", default=None,
+                   help="scripts/heal_vexact.py output directory with k<K>/final/trained_blocks.pt (default per model)")
+    p.add_argument("--vexact-checkpoint", default=None,
+                   help="healed V-exact checkpoint file (overrides --vexact-dir; one healed_vexact variant per run)")
+    p.add_argument("--vexact-config", default=None,
+                   help=f"fallback config when <vexact-dir>/k<K>/summary.json is missing (default {DEFAULT_VEXACT_CONFIG})")
     p.add_argument("--random-seed", type=int, default=1, help="matched random structure (MLP-only variants)")
     p.add_argument("--seed", type=int, default=0, help="global seed and the weight-decay split")
     p.add_argument("--cache-dir", default="cache")
@@ -920,12 +1187,23 @@ def parse_args(argv=None):
 def resolve_paths(a) -> dict:
     d = {} if a.tiny else dict(MODEL_DEFAULTS.get(a.model, {}))
     return {"operators": a.operators or d.get("operators"), "m1_structure": a.m1_structure or d.get("m1_structure"),
-            "heal_dir": a.heal_dir or d.get("heal_dir")}
+            "heal_dir": a.heal_dir or d.get("heal_dir"),
+            "vexact_dir": getattr(a, "vexact_dir", None) or d.get("vexact_dir"),
+            "vexact_checkpoint": getattr(a, "vexact_checkpoint", None),
+            "vexact_config": getattr(a, "vexact_config", None)}
+
+
+def make_factory(adapter, a, tiny: bool, paths: dict) -> "VariantFactory":
+    """The VariantFactory of a run, from the parsed arguments and resolve_paths (both Tier-2 scripts)."""
+    return VariantFactory(adapter, a.model, tiny, paths["operators"], paths["m1_structure"], paths["heal_dir"],
+                          a.heal_config, a.random_seed, vexact_dir=paths.get("vexact_dir"),
+                          vexact_checkpoint=paths.get("vexact_checkpoint"), vexact_config=paths.get("vexact_config"))
 
 
 def main(argv=None) -> dict:
     a = parse_args(argv)
     variants = parse_variants(a.variants)
+    check_vexact_checkpoint_arg(variants, a.vexact_checkpoint)
     tiny = a.tiny
     model_name = "tiny" if tiny else a.model
     out = Path(a.out) if a.out else REPO_ROOT / ("tiny_out/t2" if tiny else "runs/t2")
@@ -959,11 +1237,12 @@ def main(argv=None) -> dict:
 
             V.load_or_make_structure(None, True, adapter, V.TinyProtocol(), device, out)
             paths["operators"] = str(out / "tiny_fit" / "results" / "e1_operators.npz")
-        factory = VariantFactory(adapter, a.model, tiny, paths["operators"], paths["m1_structure"], paths["heal_dir"],
-                                 a.heal_config, a.random_seed)
+        factory = make_factory(adapter, a, tiny, paths)
         kind = feature_kind(adapter)
     log(f"adapter: depth {adapter.depth}, d {adapter.embed_dim}, prefix tokens {adapter.n_prefix_tokens}, "
         f"feature {kind} + mean patch")
+    for v in variants:                        # every input file of every variant exists before any work starts
+        factory.sources(v)
 
     results, run_timing = [], {}
     for v in variants:
@@ -1042,7 +1321,8 @@ def main(argv=None) -> dict:
                "converted_params_dense": info.get("converted_params_dense"), "model_params": info.get("model_params"),
                "t_build_s": round(t_build, 1), "t_extract_s": round(t_extract, 1), "t_probe_s": round(t_probe, 1),
                "amp": a.amp, "feature_dtype": a.feature_dtype, "wd_grid": a.wd_grid, "git_hash": git["git_hash"],
-               "git_dirty": git["git_dirty"], "seed": a.seed, "date": time.strftime("%Y-%m-%d %H:%M:%S")}
+               "git_dirty": git["git_dirty"], "seed": a.seed, "date": time.strftime("%Y-%m-%d %H:%M:%S"),
+               **variant_row_extras(info)}
         np.savez(pj.with_name(f"{v.name}_probe.npz"), W=pr["W"], b=pr["b"], mean=pr["mean"], std=pr["std"],
                  holdout_positions=pr["holdout_positions"])
         write_json(pj, {"row": row, "selection": sel, "final": fin, "test": test, "variant_info": info,

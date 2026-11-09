@@ -58,7 +58,9 @@ def test_requested_variant_names_resolve():
     assert [v.name for v in T2.parse_variants("original, original,vexact_k6")] == ["original", "vexact_k6"]
     for v in T2.parse_variants(names):
         assert v.label and "{k}" not in v.label
-    for bad in ("mirror_k6", "vexact", "healed_vexact_k9", "svd_mlp_k0", "Original", ""):
+    vx = {v.name: (v.family, v.method, v.k) for v in T2.parse_variants("healed_vexact_k12,healed_vexact_k6")}
+    assert vx == {"healed_vexact_k12": ("healed_vexact", "vexact", 12), "healed_vexact_k6": ("healed_vexact", "vexact", 6)}
+    for bad in ("mirror_k6", "vexact", "healed_vexact", "healed_vexact_k0", "healed_vlocal_k9", "svd_mlp_k0", "Original", ""):
         with pytest.raises(ValueError):
             T2.parse_variants(bad)
 
