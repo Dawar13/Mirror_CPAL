@@ -1,5 +1,6 @@
 """Tier 2 ADE20K linear segmentation (scripts/tier2_ade20k.py): CPU tests with tiny models and synthetic
 segmentation data. Nothing here downloads data or weights."""
+import copy
 import importlib.util
 import json
 import pickle
@@ -371,6 +372,114 @@ def test_vexact_rebuilt_at_segmentation_resolution_is_exact_and_the_low_resoluti
     assert "contrast" not in S.vexact_checks(fake, ad_seg, m_seg, SimpleNamespace(k=k), x_seg, contrast_px=None)
 
 
+# ---------------------------------------------------------------- healed V-exact at the segmentation resolution
+VX_CONFIG = ROOT / "configs" / "m3_vexact.yaml"
+
+
+def _mock_adapter(img_size, dtype=torch.float64):
+    """DINOv2 mock with 4 registers, positions stored for 5 x 5 (like 37 x 37): 56 px stands for 224 px."""
+    from test_fold import make_mock
+
+    return _MockDinoAdapter(make_mock(num_register_tokens=4, img_size=70, dtype=dtype), img_size)
+
+
+def _mock_healed_run(root, k, dtype=torch.float64):
+    """A V-exact run on the mock in scripts/heal_vexact.py's layout (<root>/k<k>/final/trained_blocks.pt and
+    summary.json with the tiny config): healed at 56 px with trained, re-projected embeddings, so the healed
+    position grid differs from the projection of the original one. Returns the 56 px adapter."""
+    from mirror.heal import HealConfig, HealData, heal
+    from mirror.heal_vexact import VExactTeacher, build_vexact_student
+    from mirror.utils import load_config
+
+    cfg = load_config(VX_CONFIG, tiny=True)
+    cfg["k"], cfg["method"] = k, "vexact"
+    ad = _mock_adapter(56, dtype)
+    st = S.T2.VariantFactory(ad, "tiny", True).heal_vexact().load_vexact_structure(cfg, ad, k)
+    student, cons, _ = build_vexact_student(ad, st["A_star"], k, st["perms"], st["heads"], st["reg_perm"])
+    zero_shot_pos = student.pos_embed.detach().clone()
+    rng = np.random.default_rng(0)
+    data = HealData(rng.integers(0, 256, (24, 64, 64, 3), dtype=np.uint8), np.arange(16), np.arange(16, 24))
+    hc = HealConfig(blocks=list(range(k)), seed=0, lr=3e-3, max_steps=3, batch_size=8, micro_batch=4, crop_size=56,
+                    warmup_steps=1, calib_images=8, log_every=0, prefetch=0, train_scope="all")
+    heal(VExactTeacher(ad, st["A_star"], k, st["reg_perm"]), student, data, hc, cons, Path(root) / f"k{k}" / "final")
+    assert not torch.equal(student.pos_embed, zero_shot_pos)                    # the healed grid was trained
+    (Path(root) / f"k{k}" / "summary.json").write_text(json.dumps({"config": cfg, "k": k}, default=str))
+    return ad, st
+
+
+@pytest.mark.parametrize("k", [3, 2])                                            # full conversion and a partial span
+def test_healed_vexact_moved_to_the_segmentation_size(tmp_path, k):
+    from mirror.heal_vexact import span_exactness
+
+    ad56, st = _mock_healed_run(tmp_path, k)
+    A = st["A_star"]
+    v = S.T2.parse_variant(f"healed_vexact_k{k}")
+    healed, info56 = S.T2.VariantFactory(ad56, "tiny", True, vexact_dir=tmp_path).build(v)   # as tier2_linear loads it
+    assert info56["position_grid"] is None and info56["vexact_checks"]["pass"]
+    ad84 = S.adapter_at(ad56, 84)                                                # stands for 448 px: 6 x 6 grid
+    g = torch.Generator().manual_seed(9)
+    xs = [torch.randn(2, 3, 84, 84, dtype=torch.float64, generator=g) for _ in range(2)]
+    f84 = S.T2.VariantFactory(ad84, "tiny", True, vexact_dir=tmp_path)
+    f84.check_xs, f84.check_label = xs, "random 84 px images"
+    m, info = f84.build(v)
+
+    # Equal to the healed student on every tensor except the position embedding.
+    sh, sm = healed.state_dict(), m.state_dict()
+    assert set(sh) == set(sm)
+    assert all(torch.equal(sh[n], sm[n]) for n in sh if n != "pos_embed")
+    assert sh["pos_embed"].shape[1] == 1 + 16 and sm["pos_embed"].shape[1] == 1 + 36
+    # The grid is the healed one interpolated with the model's own rule, then projected with A* (recomputed here).
+    with torch.no_grad():
+        mock = copy.deepcopy(ad84.model)
+        mock.pos_embed = torch.nn.Parameter(healed.pos_embed.detach().clone())      # the healed 4 x 4 grid
+        interp = mock.interpolate_pos_encoding(torch.zeros(1, 37, 48, dtype=torch.float64), 84, 84)
+    A64 = torch.as_tensor(A)
+    grid = interp[0, 1:].reshape(6, 6, -1)
+    want = torch.cat([(0.5 * (interp[0, :1] + interp[0, :1] @ A64)),
+                      (0.5 * (grid + grid.flip(1) @ A64)).reshape(36, -1)])[None]
+    assert torch.allclose(m.pos_embed, want, rtol=0, atol=1e-12)
+    pg = info["position_grid"]
+    assert pg["healed_grid"] == [4, 4] and pg["eval_grid"] == [6, 6] and pg["interpolate_offset"] == 0.1
+    assert pg["reprojection_rel_change"] == pytest.approx(
+        float((want[0, 1:] - interp[0, 1:]).norm() / interp[0, 1:].norm()), rel=1e-9)
+    # Exact at 84 px (fp64 mock), at full conversion also the probe feature of an image and its mirror ...
+    vc = info["vexact_checks"]
+    assert vc["pass"] and vc["span_exact_max_rel_inside"] < 1e-10 and vc["protocol"] == "random 84 px images"
+    assert vc["n_images"] == 4 and vc["full_conversion"] == (k == 3)
+    # ... and not without the re-projection (recorded, and recomputed on a copy with the interpolated grid).
+    assert pg["span_exact_without_reprojection"] > 1e-4 and not pg["span_exact_without_reprojection_pass"]
+    raw = copy.deepcopy(m)
+    with torch.no_grad():
+        raw.pos_embed.copy_(interp)
+    bad = span_exactness(ad84, raw, xs, A, k, st["reg_perm"])
+    assert not bad["pass"] and bad["max_rel_inside"] == pytest.approx(pg["span_exact_without_reprojection"], rel=1e-9)
+    assert "deviation: healed 4 x 4 position grid interpolated to 6 x 6" in S.T2.variant_row_extras(info)["notes"]
+
+
+def test_healed_vexact_checks_need_images_at_the_model_size_and_a_checkpoint(tmp_path):
+    ad56, _ = _mock_healed_run(tmp_path, 2)
+    ad84 = S.adapter_at(ad56, 84)
+    v = S.T2.parse_variant("healed_vexact_k2")
+    with pytest.raises(ValueError, match="check images at 84 px"):              # no check images given
+        S.T2.VariantFactory(ad84, "tiny", True, vexact_dir=tmp_path).build(v)
+    f = S.T2.VariantFactory(ad84, "tiny", True, vexact_dir=tmp_path)
+    f.check_xs = [torch.randn(2, 3, 56, 56, dtype=torch.float64)]               # images at the wrong size
+    with pytest.raises(ValueError, match=r"check images are \[\(56, 56\)\] px but the model runs at 84 px"):
+        f.build(v)
+    # A missing checkpoint gives a clear error before any work, from the factory and from the CLI.
+    with pytest.raises(FileNotFoundError, match=r"not found\. Heal it first .*--k 3"):
+        S.T2.VariantFactory(ad84, "tiny", True, vexact_dir=tmp_path).sources(S.T2.parse_variant("healed_vexact_k3"))
+    out = tmp_path / "t2_seg"
+    with pytest.raises(FileNotFoundError, match=r"trained_blocks\.pt not found\. Heal it first"):
+        S.main(["--tiny", "--variants", "healed_vexact_k3", "--vexact-dir", str(tmp_path), "--out", str(out), *FAST])
+    with pytest.raises(FileNotFoundError, match="pass --vexact-dir"):
+        S.main(["--tiny", "--variants", "healed_vexact_k2", "--out", str(out), *FAST])
+    with pytest.raises(ValueError, match="--vexact-checkpoint names one checkpoint"):
+        S.main(["--tiny", "--variants", "healed_vexact_k2,healed_vexact_k3", "--out", str(out), "--vexact-checkpoint",
+                str(tmp_path / "k2" / "final" / "trained_blocks.pt"), *FAST])
+    assert not (out / "seg").exists()
+
+
 # ---------------------------------------------------------------- CLI
 def _tiny_files(tmp_path):
     from test_tier2 import _tiny_m1_structure, _tiny_operators
@@ -424,6 +533,50 @@ def test_cli_tiny_resume_skips_finished_variant(tmp_path, monkeypatch):
     (vdir / "original.json").unlink()
     res3 = S.main(args)
     assert [r["mIoU"] for r in res3["rows"]] == [r["mIoU"] for r in res["rows"]]
+
+
+def test_cli_healed_vexact_moved_to_the_crop_size_on_the_mock(tmp_path, monkeypatch):
+    """End to end: a V-exact run healed at 56 px on the mock, segmented at 84 px. The CSV, the JSON and the summary
+    record the moved grid (a deviation), the re-projection's relative change and the exactness at 84 px."""
+    import pandas as pd
+
+    _mock_healed_run(tmp_path / "vx", 3, dtype=torch.float32)
+    monkeypatch.setattr(S, "build_seg_adapter", lambda model, tiny, device, crop: _mock_adapter(crop, torch.float32))
+    out = tmp_path / "t2_seg"
+    res = S.main(["--tiny", "--variants", "healed_vexact_k3", "--vexact-dir", str(tmp_path / "vx"), "--crop", "84",
+                  "--out", str(out), *FAST])
+    r = res["rows"][0]
+    assert r["family"] == "healed_vexact" and 0 <= r["mIoU"] <= 100
+    assert r["vexact_grid"].startswith("interpolated") and (r["vexact_healed_px"], r["vexact_built_px"]) == (56, 84)
+    assert r["vexact_checks_pass"] and r["vexact_max_rel_err"] < 1e-4 < r["vexact_rel_err_without_reprojection"]
+    assert r["vexact_grid_reproj_rel_change"] > 1e-3 and r["vexact_feature_flip_rel_max"] < 1e-4
+    assert "bicubic, scale factor (w0 + 0.1) / M" in r["vexact_grid_interpolation"]
+    df = pd.read_csv(out / "t2_ade20k.csv")
+    for col in ("vexact_grid", "vexact_grid_reproj_rel_change", "vexact_rel_err_without_reprojection",
+                "vexact_max_rel_err", "vexact_checks_pass", "vexact_healed_px"):
+        assert col in df.columns and df[col].notna().all()
+    js = json.loads((out / "seg" / "tiny" / "healed_vexact_k3.json").read_text(encoding="utf-8"))
+    assert js["vexact_checks"]["healed"]["pass"] and js["vexact_checks"]["position_grid"]["eval_grid"] == [6, 6]
+    assert js["settings"]["healed_vexact_grid"] == S.HEALED_VEXACT_GRID
+    assert js["vexact_checks"]["healed"]["protocol"] == "ADE20K training crops at 84 px"
+    md = (out / "T2_ADE20K.md").read_text(encoding="utf-8")
+    assert "DEVIATION: healed position grid interpolated" in md and "Healed V-exact (deviation" in md
+    assert "healed at 56 px" in md and chr(0x2014) not in md
+
+
+def test_cli_healed_vexact_at_its_healing_size(tmp_path):
+    """A tiny scripts/heal_vexact.py run segmented at its own size: no grid change, checks on the crops."""
+    hv = load_script("heal_vexact")
+    hv.main(["--config", str(VX_CONFIG), "--tiny", "--k", "4", "--lr", "1e-3", "--max-steps", "2",
+             "--out-dir", str(tmp_path / "vx")])
+    out = tmp_path / "t2_seg"
+    res = S.main(["--tiny", "--variants", "healed_vexact_k4", "--vexact-dir", str(tmp_path / "vx"), "--out", str(out),
+                  *FAST])
+    r = res["rows"][0]
+    assert r["vexact_grid"] == "as healed" and (r["vexact_healed_px"], r["vexact_built_px"]) == (56, 56)
+    assert r["vexact_checks_pass"] and r["vexact_max_rel_err"] < 1e-4 and r["vexact_grid_reproj_rel_change"] is None
+    md = (out / "T2_ADE20K.md").read_text(encoding="utf-8")
+    assert "healed at 56 px; exact at 56 px" in md and "DEVIATION" not in md
 
 
 def test_cli_tiny_vexact_checks_and_other_families(tmp_path):

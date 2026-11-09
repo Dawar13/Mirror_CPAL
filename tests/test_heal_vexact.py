@@ -258,6 +258,19 @@ def test_cli_tiny_runs_end_to_end(tmp_path):
     assert checks["1:MirrorAttnConstraint"]["max_rel_violation"] < 1e-6
     assert checks["2:VExactEmbeddings"]["max_share"] < 1e-10
     assert s["exactness"]["pass"] and s["flipcheck"]["pass"] and s["flipcheck"]["flip_consistency"] == 100.0
+    # SUMMARY.md states how the recipe differs from the M3 pilot, with the extra trainable count read from the run:
+    # exactly the embedding parameters (patch embedding, position embedding, CLS token) of the tiny model.
+    from mirror.adapters import TimmTinyAdapter
+
+    d = s["deviations"]
+    emb = embedding_parameters(TimmTinyAdapter(img_size=56, seed=0).model)
+    assert d["embeddings_trained"] and d["symmetrised_targets"] and d["full_conversion"]
+    assert sorted(d["extra_trainable_tensors"]) == sorted(n for n, _ in emb)
+    assert d["extra_trainable_params"] == sum(p.numel() for _, p in emb) > 0
+    md = (out / "SUMMARY.md").read_text(encoding="utf-8")
+    assert "Recipe (as the M3 pilot)" not in md and "## Deviations from the M3 pilot" in md
+    assert f"{d['extra_trainable_params']:,}" in md and "flip average" in md and "the CLS one included" in md
+    assert chr(0x2014) not in md
     assert {"original", "zero_shot", "healed"} <= set(s["knn"]) and 0 <= s["knn"]["healed"]["top1"] <= 100
     for f in ("summary.json", "SUMMARY.md", "knn.json", "exactness.json", "flipcheck.json", "final/metrics.json",
               "final/trained_blocks.pt", "lr_selection/lr_selection.json"):

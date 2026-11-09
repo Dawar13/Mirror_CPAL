@@ -2,7 +2,10 @@
 """V-exact healing (PAPER_EXPERIMENTS.md, Stage 3 "V-exact full conversion, healed"; also the V-exact
 arm of the M3 grid): the V-exact student (one operator A* over blocks 1..k, exactly mirror-equivariant
 over the span; k = 12 is the full conversion, 100% flip consistency) healed by distillation from the
-original model with the M3-pilot recipe.
+original model with the M3-pilot budget, data, optimiser and learning-rate grid. Two differences from the
+pilot, listed in SUMMARY.md under "Deviations from the M3 pilot": the embeddings train and are
+re-projected after every step (vexact.train_embeddings), and the targets are symmetrised (at full
+conversion the flip-averaged final target, with the loss normalisers measured on it).
 
     python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 12     # full conversion
     python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 6
@@ -200,6 +203,57 @@ def _dtype(name: str) -> str:
     return str(name).replace("torch.", "")
 
 
+def pilot_deviations(model, final: dict, train_emb: bool, teacher: dict, k: int, depth: int) -> dict:
+    """How this run differs from the M3 pilot recipe (a description for SUMMARY.md; the recipe is as configured).
+    The pilot trains the converted blocks only, so the extra trainable parameters are those of the tensors the
+    trainer recorded as trainable (final["trainable_names"]) outside the converted blocks."""
+    sizes = {n: int(p.numel()) for n, p in model.named_parameters()}
+    outside = [n for n in final.get("trainable_names", []) if not n.startswith("blocks.")]
+    return {"embeddings_trained": bool(train_emb), "extra_trainable_tensors": outside,
+            "extra_trainable_params": int(sum(sizes[n] for n in outside)), "n_trainable": final.get("n_trainable"),
+            "symmetrised_targets": bool(teacher["symmetrise"]), "block_targets": teacher["block_targets"],
+            "final_target": teacher["final_target"], "full_conversion": int(k) == int(depth),
+            "normaliser": (final.get("config") or {}).get("normaliser")}
+
+
+def deviation_lines(s: dict) -> list:
+    """The "Deviations from the M3 pilot" section of SUMMARY.md."""
+    d = s.get("deviations") or {}
+    k, L = s["k"], s["depth"]
+    out = ["## Deviations from the M3 pilot", "",
+           "The M3 pilot (scripts/heal.py, configs/m3_pilot.yaml) trains only the converted blocks, against the "
+           "teacher's own outputs. This run differs in two ways (a description; the recipe is as configured):", ""]
+    if d.get("embeddings_trained"):
+        out.append(f"1. Embeddings trained and re-projected: {', '.join(d['extra_trainable_tensors'])} train "
+                   "(train_scope \"all\") and are re-projected with A* after every optimiser step, so they stay exactly "
+                   f"equivariant. Extra trainable parameters compared with the pilot, read from this run: "
+                   f"{d['extra_trainable_params']:,} (of {d['n_trainable']:,} trainable).")
+    else:
+        out.append("1. Embeddings frozen at their projection (vexact.train_embeddings false), as the pilot keeps its "
+                   f"embeddings frozen: {d.get('extra_trainable_params', 0):,} extra trainable parameters.")
+    norm = d.get("normaliser") or "fixed"
+    if d.get("symmetrised_targets"):
+        t = ("2. Symmetrised targets: the teacher's block outputs are centred over channels and symmetrised with A* "
+             "(the mean of the output for the image and the aligned, A*-mapped output for its mirror); the teacher runs "
+             "on every batch and on its mirror. ")
+        if d.get("full_conversion"):
+            what = ("the flip average of the teacher's final-norm features for the image and its mirror"
+                    if d.get("final_target") == "symmetrised" else
+                    "the even projection, before the final affine, of the flip-averaged normalised teacher tokens")
+            t += (f"At full conversion the final targets (CLS and patch tokens) are {what}, and the loss normalisers "
+                  f"({norm}) are measured on these targets, the CLS one included. ")
+        else:
+            t += (f"The final targets are the teacher's own (k = {k} < {L}); the block-term normalisers ({norm}) are "
+                  "measured on the symmetrised targets. ")
+        t += ("Under random flips (p = 0.5) the expected loss equals that of the raw targets up to a constant; "
+              "the change removes the part an exactly equivariant student cannot fit.")
+    else:
+        t = ("2. Targets not symmetrised (vexact.symmetrise_targets false): block outputs only centred over channels "
+             "(the folded stream); final targets as the teacher's.")
+    out += [t, ""]
+    return out
+
+
 def write_summary_md(out: Path, s: dict) -> Path:
     k, L = s["k"], s["depth"]
     g = s["git_hash"]
@@ -218,7 +272,8 @@ def write_summary_md(out: Path, s: dict) -> Path:
         f"head maps: `{s['structure']['heads_source']}`. Seed {s['seed']}; git `{g[:10]}`"
         f"{' (uncommitted changes)' if s.get('git_dirty') else ''}. Written {s['date']}.",
         "",
-        f"Recipe (as the M3 pilot): {fin['steps_done']} steps of {hc['batch_size']} images "
+        f"Recipe: the M3 pilot's budget, data, optimiser, schedule and learning-rate grid, with the differences listed "
+        f"under \"Deviations from the M3 pilot\" below. {fin['steps_done']} steps of {hc['batch_size']} images "
         f"({fin['images_seen']} images seen, {s['data']['n_train']} healing images, train split), AdamW, cosine schedule, "
         f"{'bf16 autocast' if fin['amp'] == 'bf16' else 'fp32'}; learning rate {sel['best_lr']:.0e} "
         + ("given on the command line" if sel.get("skipped") else
@@ -268,6 +323,7 @@ def write_summary_md(out: Path, s: dict) -> Path:
         f"of training" + (f", peak GPU memory {_f(fin['peak_memory_gb'], 2)} GB" if fin.get("peak_memory_gb") is not None else "")
         + f"; whole script {_f(s['timing']['total_s'], 0)} s.",
         "",
+        *deviation_lines(s),
         "Notes:",
         "- One seed. Held-out losses use the V-exact targets (centred, symmetrised), so they are not comparable with the "
         "M3 pilot's.",
@@ -382,6 +438,7 @@ def main(argv=None) -> dict:
         "embeddings": "trained, re-projected every step" if train_emb else "frozen after projection",
         "data": {"n_train": int(len(data.train_rows)),
                  "n_heldout": int(len(data.heldout_rows)) if data.heldout_rows is not None else 0},
+        "deviations": pilot_deviations(student, final, train_emb, vteacher.describe(), k, L),
         "lr_selection": selection, "final": final, "knn": knn_res, "exactness": exact, "flipcheck": flip,
         "config": cfg, **git, "env": env_info(device), "timing": {"stages": timer.stages, "total_s": timer.total()},
     }

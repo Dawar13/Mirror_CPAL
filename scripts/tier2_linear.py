@@ -66,7 +66,15 @@ Variants (built with the existing code; nothing is reimplemented here):
                               loading, heal_vexact's exactness probe (span_exactness on its check
                               images, fp32) and, at K = depth, the probe feature of those images
                               against their mirrors must pass, or the run stops; the values go to the
-                              CSV (vexact_* columns and notes) and the log
+                              CSV (vexact_* columns and notes) and the log.
+                              At another input size than the healing one (scripts/tier2_ade20k.py at
+                              448 px), the student is built at that size the same way, every tensor of
+                              the healed student except the position grid is copied in, and the healed
+                              grid is interpolated with the model's own interpolate_pos_encoding (the
+                              rule mirror.m1.materialise_pos_embed uses) and re-projected with A* by
+                              mirror.m1.project_embeddings, as build_vexact projects a materialised
+                              grid (a deviation, recorded under "position_grid"). The checks then need
+                              images at that size (VariantFactory.check_xs)
 
 Outputs under --out: t2_linear.csv (one row per model and variant: top-1, top-5, chosen weight
 decay, feature dimension, k-NN check, parameter counts, timings, git hash, seed), T2_LINEAR.md,
@@ -84,6 +92,7 @@ if torch.cuda.is_available():
 
 import argparse  # noqa: E402
 import contextlib  # noqa: E402
+import copy  # noqa: E402
 import gc  # noqa: E402
 import hashlib  # noqa: E402
 import importlib.util  # noqa: E402
@@ -187,6 +196,24 @@ def parse_variants(text: str) -> list:
     if not out:
         raise ValueError("no variants given")
     return out
+
+
+def adapter_at(adapter, img_size: int):
+    """A shallow copy of `adapter` (same model object) that describes `img_size` inputs."""
+    if img_size % adapter.patch_size:
+        raise ValueError(f"{img_size} px is not a multiple of the patch size {adapter.patch_size}")
+    ad = copy.copy(adapter)
+    ad.img_size = int(img_size)
+    ad.grid_hw = (ad.img_size // ad.patch_size, ad.img_size // ad.patch_size)
+    return ad
+
+
+def healing_px(cfg: dict) -> int:
+    """Input size a scripts/heal_vexact.py run healed at (scripts/heal.py build_teacher's rule)."""
+    crop = int(cfg["heal"]["crop_size"])
+    if cfg.get("tiny_mode"):
+        return crop
+    return int((cfg.get("model") or {}).get("img_size", crop))
 
 
 def check_vexact_checkpoint_arg(variants, vexact_checkpoint) -> None:
@@ -632,6 +659,10 @@ class VariantFactory:
         self.vexact_config = _resolve(vexact_config or DEFAULT_VEXACT_CONFIG)
         self._struct = self._m1 = self._heal = self._heal_vexact = None
         self._m1_S = None
+        # Check images for healed V-exact variants (normalised [B, 3, S, S] tensors at the adapter's size and
+        # dtype) and how to describe them. None: scripts/heal_vexact.py's own check images (224 px ImageNet).
+        self.check_xs = None
+        self.check_label = None
 
     # ----- provenance (cheap; used to validate cached features) -------------------------------
     def _need(self, path, what: str, flag: str) -> Path:
@@ -877,7 +908,11 @@ class VariantFactory:
                              f"operator file the run was healed with (sha256 {rec_sha[:12]}, {run / 'summary.json'})")
         A, reg_perm = st["A_star"], st["reg_perm"]
         train_emb = bool((cfg.get("vexact") or {}).get("train_embeddings", True))
-        m, cons, _ = build_vexact_student(ad, A, v.k, st["perms"], st["heads"], reg_perm, train_embeddings=train_emb)
+        heal_px = healing_px(cfg)
+        same_px = heal_px == int(ad.img_size)
+        # The healed student at its healing resolution: built as scripts/heal_vexact.py builds it, then loaded.
+        ad_h = ad if same_px else adapter_at(ad, heal_px)
+        m, cons, _ = build_vexact_student(ad_h, A, v.k, st["perms"], st["heads"], reg_perm, train_embeddings=train_emb)
         for c in cons:
             prep = getattr(c, "prepare", None)
             if callable(prep):
@@ -885,6 +920,9 @@ class VariantFactory:
         ck_meta = load_trained_blocks(m, ck)
         m.eval()
         loaded = checkpoint_matches(m, ck, list(range(v.k)))
+        grid = None
+        if not same_px:
+            m, cons, grid = self._regrid_healed_vexact(v, m, ck, A, reg_perm, st, train_emb, heal_px)
         checks = constraint_checks(m, cons)
         vchecks = self._vexact_checks(v, m, cfg, A, reg_perm, run)
         pc = vexact_param_counts(ad, A, v.k, st["perms"], st["heads"])
@@ -901,8 +939,97 @@ class VariantFactory:
                  "attn_params_kept": int(pc["attn_params_kept"]),
                  "recorded_knn_healed_top1": (knn.get("healed") or {}).get("top1"),
                  # as scripts/heal_vexact.py's SUMMARY.md: the bf16 autocast applies on CUDA only
-                 "recorded_knn_precision": "bf16" if (knn.get("amp") == "bf16" and on_cuda) else "fp32"}
+                 "recorded_knn_precision": "bf16" if (knn.get("amp") == "bf16" and on_cuda) else "fp32",
+                 "healed_px": heal_px, "built_px": int(ad.img_size), "position_grid": grid}
         return m, extra
+
+    @torch.no_grad()
+    def _regrid_healed_vexact(self, v: VariantName, healed, ck, A, reg_perm, st, train_emb: bool, heal_px: int):
+        """The healed V-exact student `healed` (built at `heal_px` and loaded) moved to the adapter's input size.
+
+        The student is built at the adapter's size exactly as scripts/heal_vexact.py builds it (same structure,
+        register pairing and train_embeddings) and receives every tensor of `healed` except the position
+        embedding. The healed position embedding (CLS row plus the healed grid) is interpolated to the new grid
+        with the model's own interpolate_pos_encoding, the call mirror.m1.materialise_pos_embed makes, and then
+        re-projected with A* by mirror.m1.project_embeddings, the projection build_vexact applies to a
+        materialised grid; only the position embedding of that projection is kept. This is a deviation from the
+        healed model (the healed grid was never trained at this size). Returns (model, constraints, record)."""
+        from mirror.heal_vexact import build_vexact_student, span_exactness
+        from mirror.m1 import materialise_pos_embed, project_embeddings
+
+        ad = self.adapter
+        if not (hasattr(ad.model, "interpolate_pos_encoding") and hasattr(ad.model, "prepare_tokens_with_masks")):
+            raise NotImplementedError(f"{v.name}: healed at {heal_px} px, evaluated at {ad.img_size} px, but the model "
+                                      "has a fixed position grid; only DINOv2-style models can be moved")
+        if self.check_xs is None:
+            raise ValueError(f"{v.name}: healed at {heal_px} px, evaluated at {ad.img_size} px: the exactness checks "
+                             f"need check images at {ad.img_size} px (set VariantFactory.check_xs)")
+        _check_image_sizes(v, self.check_xs, ad)
+        m, cons, _ = build_vexact_student(ad, A, v.k, st["perms"], st["heads"], reg_perm, train_embeddings=train_emb)
+        for c in cons:
+            prep = getattr(c, "prepare", None)
+            if callable(prep):
+                prep(m)
+        src, own = healed.state_dict(), m.state_dict()
+        if set(src) != set(own):
+            raise RuntimeError(f"{v.name}: the student built at {ad.img_size} px has other tensors than the healed one: "
+                               f"{sorted(set(src) ^ set(own))[:5]}")
+        keep = {k: t for k, t in src.items() if k != "pos_embed"}
+        bad = [k for k, t in keep.items() if t.shape != own[k].shape]
+        if bad:
+            raise RuntimeError(f"{v.name}: shapes differ between {heal_px} and {ad.img_size} px builds: {bad[:5]}")
+        m.load_state_dict(keep, strict=False)
+        m.eval()
+        # Interpolate the healed position embedding with the model's own rule, on a scratch copy.
+        work = copy.deepcopy(m)
+        work.pos_embed = torch.nn.Parameter(healed.pos_embed.detach().clone(), requires_grad=False)
+        if not materialise_pos_embed(work, ad):
+            raise RuntimeError(f"{v.name}: the healed position embedding was not interpolated")
+        interp = work.pos_embed.detach().clone()
+        before = span_exactness(ad, work, [x.to(interp.device) for x in self.check_xs], A, v.k, reg_perm)
+        project_embeddings(work, ad, A, reg_perm, write=True)      # only work.pos_embed is used below
+        proj = work.pos_embed.detach().clone()
+        del work
+        if proj.shape != m.pos_embed.shape:
+            raise RuntimeError(f"{v.name}: interpolated grid {tuple(proj.shape)} does not fit {tuple(m.pos_embed.shape)}")
+        m.pos_embed.copy_(proj)
+        # The model now equals the healed student on every tensor except the position embedding.
+        after = m.state_dict()
+        differ = [k for k, t in keep.items() if not torch.equal(after[k], t)]
+        if differ:
+            raise RuntimeError(f"{v.name}: {len(differ)} tensors differ from the healed student, e.g. {differ[:3]}")
+        ck_sd = torch.load(ck, map_location="cpu", weights_only=True)["state_dict"]
+        ck_differ = [k for k, t in ck_sd.items() if k != "pos_embed" and not torch.equal(after[k].detach().cpu(), t)]
+        if ck_differ:
+            raise RuntimeError(f"{v.name}: {len(ck_differ)} checkpoint tensors differ after the move, e.g. {ck_differ[:3]}")
+        n_pre = int(interp.shape[1]) - ad.grid_hw[0] * ad.grid_hw[1]
+
+        def rel(a, b):
+            b64 = b.double()
+            den = float(b64.norm())
+            return float((a.double() - b64).norm()) / den if den > 0 else float("nan")
+
+        H0 = int(round(math.sqrt(int(healed.pos_embed.shape[1]) - n_pre)))
+        off, aa = getattr(ad.model, "interpolate_offset", None), getattr(ad.model, "interpolate_antialias", None)
+        rule = (f"bicubic, scale factor (w0 + {off:g}) / M" if off else "bicubic to the target size") + \
+               (", antialias" if aa else ", no antialias")
+        record = {
+            "deviation": (f"healed {H0} x {H0} position grid interpolated to {ad.grid_hw[0]} x {ad.grid_hw[1]} and "
+                          "re-projected with A*; every other tensor as healed"),
+            "healed_px": int(heal_px), "eval_px": int(ad.img_size), "healed_grid": [H0, H0], "eval_grid": list(ad.grid_hw),
+            "interpolation": "model.interpolate_pos_encoding (as mirror.m1.materialise_pos_embed): " + rule,
+            "interpolate_offset": off, "interpolate_antialias": aa,
+            "projection": "mirror.m1.project_embeddings (as mirror.m1.build_vexact); position embedding only",
+            "reprojection_rel_change": rel(proj[0, n_pre:], interp[0, n_pre:]),
+            "reprojection_rel_change_with_cls": rel(proj, interp),
+            "span_exact_without_reprojection": before["max_rel_inside"],
+            "span_exact_without_reprojection_pass": bool(before["pass"]),
+            "tensors_copied": len(keep), "checkpoint_tensors_equal_except_pos_embed": len(ck_sd) - int("pos_embed" in ck_sd),
+        }
+        log(f"  {v.name}: healed at {heal_px} px, moved to {ad.img_size} px: {record['deviation']}; interpolation "
+            f"{rule}; re-projection changed the grid by {record['reprojection_rel_change']:.2e} (relative); span "
+            f"exactness without the re-projection {before['max_rel_inside']:.2e}")
+        return m, cons, record
 
     @torch.no_grad()
     def _vexact_checks(self, v: VariantName, model, cfg: dict, A, reg_perm, run: Path) -> dict:
@@ -913,7 +1040,9 @@ class VariantFactory:
         for the probe feature. Per batch max |f(mirror x) - f(x)| / max |f(x)|, then the largest over
         batches (flip_check's convention), so the values compare with exactness.json and flipcheck.json
         of the run. At full conversion the probe feature must agree within the exactness tolerance. Run
-        in the model's dtype (fp32) without autocast. Raises RuntimeError on failure."""
+        in the model's dtype (fp32) without autocast. Raises RuntimeError on failure. When
+        VariantFactory.check_xs is set (scripts/tier2_ade20k.py), those images are used instead; the
+        images must be at the adapter's input size either way."""
         from mirror.data import mirror as mirror_images
         from mirror.heal_vexact import span_exactness
         from mirror.m1 import feature_invariance
@@ -923,8 +1052,14 @@ class VariantFactory:
         device = next(model.parameters()).device
         cc = cfg.get("checks") or {}
         tol = float(cc.get("exact_tol", 1e-4))
-        cd = hv.check_data(cfg, device)
-        xs = hv.probe_batches(ad, cd["probe"], int(cc.get("exact_images", 64)), device)
+        if self.check_xs is not None:             # images at the adapter's size (scripts/tier2_ade20k.py)
+            xs = [x.to(device) for x in self.check_xs]
+            protocol = self.check_label or "given check images"
+        else:
+            cd = hv.check_data(cfg, device)
+            xs = hv.probe_batches(ad, cd["probe"], int(cc.get("exact_images", 64)), device)
+            protocol = cd["protocol"]
+        _check_image_sizes(v, xs, ad)
         ex = span_exactness(ad, model, xs, A, v.k, reg_perm, tol=tol)
         knn_rel = max(feature_invariance(ad, model, x)["rel_max"] for x in xs)
 
@@ -948,11 +1083,11 @@ class VariantFactory:
             if p.exists():
                 recorded[f"{name}:{key}"] = json.loads(p.read_text(encoding="utf-8")).get(key)
         ok = bool(ex["pass"]) and (not full or flip["rel_max"] < tol)
-        out = {"pass": ok, "full_conversion": full, "tol": tol, "protocol": cd["protocol"], "n_images": ex["n_images"],
+        out = {"pass": ok, "full_conversion": full, "tol": tol, "protocol": protocol, "n_images": ex["n_images"],
                "dtype": ex["dtype"], "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
                "span_exact_max_rel_inside": ex["max_rel_inside"], "span_exact_pass": bool(ex["pass"]),
                "span_exact_rows": ex["rows"], "probe_feature_flip": flip, "recorded_after_healing": recorded}
-        log(f"  {v.name}: checks after loading ({ex['n_images']} {cd['protocol']} check images, {ex['dtype']}): span "
+        log(f"  {v.name}: checks after loading ({ex['n_images']} {protocol} check images, {ex['dtype']}): span "
             f"exactness max rel {ex['max_rel_inside']:.2e} (tol {tol:g}); image vs mirror max rel: probe feature "
             f"{flip['rel_max']:.2e}, k-NN CLS feature {knn_rel:.2e}"
             f"{' (must be below tol at full conversion)' if full else ' (not invariant: k < depth)'}; "
@@ -966,6 +1101,14 @@ class VariantFactory:
                                f"{flip['rel_max']:.2e} (relative, fp32) >= {tol:g}; the even head or the load is wrong. "
                                "Not probing it.")
         return out
+
+
+def _check_image_sizes(v: VariantName, xs, adapter) -> None:
+    """Healed V-exact check images must be at the adapter's input size."""
+    sizes = sorted({tuple(int(s) for s in x.shape[-2:]) for x in xs})
+    if sizes != [(int(adapter.img_size), int(adapter.img_size))]:
+        raise ValueError(f"{v.name}: check images are {sizes} px but the model runs at {adapter.img_size} px; give "
+                         "check images at that size (VariantFactory.check_xs)")
 
 
 @torch.no_grad()
@@ -1038,6 +1181,11 @@ def variant_row_extras(info: dict) -> dict:
             + f"), image vs mirror probe feature max rel {fl['rel_max']:.1e}: {'PASS' if vc['pass'] else 'FAIL'}"
             + (f"; Tier-1 k-NN of the healed run {knn:.2f} ({info.get('recorded_knn_precision', 'fp32')} features)"
                if isinstance(knn, (int, float)) else ""))
+    grid = info.get("position_grid")
+    if grid:
+        note += (f"; deviation: {grid['deviation']} (re-projection changed the interpolated grid by "
+                 f"{grid['reprojection_rel_change']:.1e}, relative; without it the span error is "
+                 f"{grid['span_exact_without_reprojection']:.1e})")
     return {"notes": note, "vexact_even_head": bool(info.get("even_head")),
             "vexact_span_exact_rel_max": vc["span_exact_max_rel_inside"], "vexact_feature_flip_rel_max": fl["rel_max"],
             "vexact_checks_pass": bool(vc["pass"])}

@@ -61,7 +61,8 @@ Protocol (one fixed recipe and one seed for every variant; nothing is tuned on v
 
 Variants: the names and builders of scripts/tier2_linear.py (VariantFactory; nothing reimplemented):
 original, mirror_mlp_k<K>, svd_mlp_k<K>, random_k<K>, vlocal_k<K>, vexact_k<K>, svd_attn_k<K>,
-random_attn_k<K>, healed_<mirror|svd|random>_k<K>. The adapter is built at the crop size (448 px), so
+random_attn_k<K>, healed_<mirror|svd|random>_k<K>, healed_vexact_k<K> (--vexact-dir, --vexact-checkpoint and
+--vexact-config as in scripts/tier2_linear.py). The adapter is built at the crop size (448 px), so
 every variant runs on 32 x 32 patch grids; DINOv2 interpolates its position embedding (stored for 37 x 37)
 to the input grid on the fly.
 
@@ -78,6 +79,18 @@ stream_equivariance, fp32; M1's bar is a relative error of 1e-4) for the 448 px 
 for the 224 px build run at 448 px. Both numbers go into the variant's JSON and the summary. V-local, MLP-only,
 SVD, random and healed variants change block weights only, so they are the same model at any resolution;
 healed students were distilled at 224 px and are evaluated as they are.
+
+Healed V-exact at 448 px (a deviation from the healed model, recorded in the CSV and the summary). The healed
+student's position grid was trained at 224 px (1 + 16 x 16 rows). scripts/tier2_linear.VariantFactory builds
+the student at 448 px exactly as scripts/heal_vexact.py builds it (the run's config, structure and register
+pairing), copies in every tensor of the healed student except the position embedding (the healed student is
+the checkpoint loaded into a 224 px build and checked tensor by tensor), interpolates the healed position
+embedding to 32 x 32 with the model's own interpolate_pos_encoding (the call mirror.m1.materialise_pos_embed
+makes: bicubic; for DINOv2 with the model's interpolate_offset and interpolate_antialias, both recorded), and
+re-projects it with A* by mirror.m1.project_embeddings, as build_vexact projects a materialised grid. Recorded:
+the relative change the re-projection made to the interpolated grid, the span exactness at 448 px without the
+re-projection, and the exactness at 448 px of the model used (fp32, TF32 off, --vexact-check-images training
+crops, bar 1e-4; at full conversion also the image-versus-mirror probe feature). If a check fails the run stops.
 
 Outputs under --out (default runs/t2_seg): t2_ade20k.csv (one row per model and variant: mIoU, aAcc, mAcc,
 iterations, seed, git hash, timings and more), T2_ADE20K.md, seg/<model>/<variant>.json (row, settings,
@@ -97,7 +110,6 @@ if torch.cuda.is_available():
 
 import argparse  # noqa: E402
 import contextlib  # noqa: E402
-import copy  # noqa: E402
 import importlib.util  # noqa: E402
 import io  # noqa: E402
 import json  # noqa: E402
@@ -171,8 +183,9 @@ KNOWN_REVISIONS = {
 DEFAULTS = {   # normal run / --tiny
     "crop": (448, 56), "iters": (8000, 20), "batch_size": (16, 4), "eval_stride": (298, 42),
     "warmup_iters": (300, 2), "num_workers": (6, 0), "decode_workers": (8, 1), "eval_batch": (16, 4),
-    "log_every": (100, 5), "ckpt_every": (1000, 10),
+    "log_every": (100, 5), "ckpt_every": (1000, 10), "vexact_check_images": (8, 4),
 }
+HEALED_VEXACT_GRID = "interpolate-reproject-v1"   # how a healed V-exact grid is moved to the crop size (settings)
 
 
 # ----------------------------------------------------------------------------------------------
@@ -732,12 +745,18 @@ def evaluate(head: LinearSegHead, feature_fn, store: RaggedStore, crop: int, str
 # ----------------------------------------------------------------------------------------------
 def adapter_at(adapter, img_size: int):
     """A shallow copy of `adapter` (same model object) that describes `img_size` inputs."""
-    if img_size % adapter.patch_size:
-        raise ValueError(f"{img_size} px is not a multiple of the patch size {adapter.patch_size}")
-    ad = copy.copy(adapter)
-    ad.img_size = int(img_size)
-    ad.grid_hw = (ad.img_size // ad.patch_size, ad.img_size // ad.patch_size)
-    return ad
+    return T2.adapter_at(adapter, img_size)
+
+
+def check_crops(store: RaggedStore, n: int, crop: int, seed: int, lut: np.ndarray, adapter, device,
+                per_batch: int = 2) -> list:
+    """The first n training crops of the schedule (no flip), normalised in the adapter's dtype, in batches of
+    `per_batch`: the check images for healed V-exact variants (VariantFactory.check_xs)."""
+    sched = make_schedule(len(store), int(n), seed)
+    xs = [crop_flip(store.image(int(j)), store.label(int(j)), crop, float(uy), float(ux), False, lut)[0]
+          for j, uy, ux in zip(sched["index"], sched["uy"], sched["ux"])]
+    x = normalize_for(adapter, torch.stack(xs).to(device))
+    return [x[i:i + per_batch] for i in range(0, x.shape[0], per_batch)]
 
 
 @torch.no_grad()
@@ -831,7 +850,9 @@ def write_tiny_seg_parquet(root: Path, num_classes: int = 4, n_train: int = 12, 
 CSV_COLUMNS = ["model", "variant", "label", "family", "method", "k", "mIoU", "aAcc", "mAcc", "iterations",
                "batch_size", "crop", "seed", "lr", "weight_decay", "warmup_iters", "bn", "eval_stride", "n_train",
                "n_val", "n_val_total", "final_train_loss", "vexact_built_px", "vexact_max_rel_err",
-               "vexact_224_build_rel_err_at_seg", "converted_params_kept", "converted_params_dense", "model_params",
+               "vexact_224_build_rel_err_at_seg", "vexact_checks_pass", "vexact_feature_flip_rel_max", "vexact_healed_px",
+               "vexact_grid", "vexact_grid_interpolation", "vexact_grid_reproj_rel_change",
+               "vexact_rel_err_without_reprojection", "converted_params_kept", "converted_params_dense", "model_params",
                "t_build_s", "t_check_s", "t_train_s", "t_eval_s", "t_total_s", "train_img_per_s",
                "resumed_from_iter", "peak_mem_gb", "amp", "hf_id", "hf_revision", "git_hash", "git_dirty", "date"]
 
@@ -894,7 +915,19 @@ def write_summary(path: Path, rows: list) -> None:
             notes = []
             if r.get("n_val") is not None and r.get("n_val_total") and r["n_val"] < r["n_val_total"]:
                 notes.append(f"partial validation ({r['n_val']} of {r['n_val_total']} images)")
-            if r.get("method") == "vexact" and r.get("vexact_built_px"):
+            if r.get("family") == "healed_vexact":
+                note = f"healed at {r.get('vexact_healed_px')} px"
+                if r.get("vexact_grid", "").startswith("interpolated"):
+                    note += (f"; DEVIATION: healed position grid interpolated to the {r['crop']} px grid "
+                             f"({r.get('vexact_grid_interpolation')}) and re-projected with A* (relative change "
+                             f"{_e(r.get('vexact_grid_reproj_rel_change'))}; span error without the re-projection "
+                             f"{_e(r.get('vexact_rel_err_without_reprojection'))})")
+                note += (f"; exact at {r['crop']} px: max relative error inside the span "
+                         f"{_e(r.get('vexact_max_rel_err'))} (bar {VEXACT_BAR:g}, fp32)")
+                if r.get("vexact_feature_flip_rel_max") is not None:
+                    note += f", image vs mirror probe feature {_e(r['vexact_feature_flip_rel_max'])}"
+                notes.append(note)
+            elif r.get("method") == "vexact" and r.get("vexact_built_px"):
                 note = (f"rebuilt at {r['vexact_built_px']} px; max relative error inside the span "
                         f"{_e(r.get('vexact_max_rel_err'))}")
                 if r.get("vexact_224_build_rel_err_at_seg") is not None:
@@ -917,6 +950,17 @@ def write_summary(path: Path, rows: list) -> None:
                   f"{c} px inputs materialised and projected), and every forward pass is exactly one {c} x {c} "
                   "window. The relative errors in the notes are measured on two training crops in fp32 (M1 bar "
                   f"{VEXACT_BAR:g}).", ""]
+    moved = [r for r in rows if r.get("family") == "healed_vexact" and str(r.get("vexact_grid", "")).startswith("interp")]
+    if moved:
+        c, hp = moved[0]["crop"], moved[0].get("vexact_healed_px")
+        lines += [f"Healed V-exact (deviation from the healed model): the student was healed at {hp} px, so its trained "
+                  f"position grid fits {hp} px inputs. For {c} px it is built at {c} px as scripts/heal_vexact.py builds "
+                  "it, every tensor of the healed student except the position embedding is copied in, and the healed "
+                  "position embedding is interpolated to the new grid with the model's own interpolate_pos_encoding "
+                  "(rule in the notes) and re-projected with A* as mirror.m1.build_vexact projects a materialised grid. "
+                  "The notes give the relative change the re-projection made, the span error without it, and the "
+                  f"exactness of the model used, on {c} px training crops in fp32 with TF32 off (bar {VEXACT_BAR:g}; "
+                  "the run stops above it).", ""]
     git = sorted({str(r["git_hash"])[:10] + (" (dirty)" if r.get("git_dirty") else "") for r in rows})
     seeds = sorted({int(r["seed"]) for r in rows})
     lines += [f"Source: `t2_ade20k.csv` and `seg/<model>/<variant>.json` in this folder. Commit(s): {', '.join(git)}; "
@@ -940,6 +984,14 @@ def parse_args(argv=None):
     p.add_argument("--m1-structure", default=None)
     p.add_argument("--heal-dir", default=None)
     p.add_argument("--heal-config", default=None)
+    p.add_argument("--vexact-dir", default=None,
+                   help="scripts/heal_vexact.py output directory with k<K>/final/trained_blocks.pt (default per model)")
+    p.add_argument("--vexact-checkpoint", default=None,
+                   help="healed V-exact checkpoint file (overrides --vexact-dir; one healed_vexact variant per run)")
+    p.add_argument("--vexact-config", default=None,
+                   help="fallback config when <vexact-dir>/k<K>/summary.json is missing (default configs/m3_vexact.yaml)")
+    p.add_argument("--vexact-check-images", type=int, default=None,
+                   help="training crops for the exactness checks of healed V-exact variants (8)")
     p.add_argument("--random-seed", type=int, default=1)
     p.add_argument("--seed", type=int, default=0, help="crop schedule and head initialisation (same for every variant)")
     p.add_argument("--crop", type=int, default=None, help="crop and evaluation size, px (448)")
@@ -995,13 +1047,15 @@ def run_settings(a, v, model_name: str, sources: dict, data_meta: dict, entry: d
             "eval_stride": a.eval_stride, "max_val_images": a.max_val_images, "amp": a.amp, "ignore_index": IGNORE,
             "dataset": {"hf_id": entry["hf_id"], "revision": entry["revision"], "counts": data_meta.get("counts"),
                         "short_side": data_meta.get("short_side")},
-            "random_seed": a.random_seed if v.method == "random" else None, "sources": sources}
+            "random_seed": a.random_seed if v.method == "random" else None, "sources": sources,
+            **({"healed_vexact_grid": HEALED_VEXACT_GRID} if v.family == "healed_vexact" else {})}
 
 
 def main(argv=None) -> dict:
     a = parse_args(argv)
     tiny = a.tiny
     variants = T2.parse_variants(a.variants)
+    T2.check_vexact_checkpoint_arg(variants, a.vexact_checkpoint)
     model_name = "tiny" if tiny else a.model
     out = Path(a.out) if a.out else REPO_ROOT / ("tiny_out/t2_seg" if tiny else "runs/t2_seg")
     out.mkdir(parents=True, exist_ok=True)
@@ -1041,8 +1095,11 @@ def main(argv=None) -> dict:
 
             V.load_or_make_structure(None, True, adapter, V.TinyProtocol(img_size=a.crop), device, out)
             paths["operators"] = str(out / "tiny_fit" / "results" / "e1_operators.npz")
-        factory = T2.VariantFactory(adapter, a.model, tiny, paths["operators"], paths["m1_structure"],
-                                    paths["heal_dir"], a.heal_config, a.random_seed)
+        factory = T2.make_factory(adapter, a, tiny, paths)
+        if any(v.family == "healed_vexact" for v in variants):
+            # Healed V-exact students are checked at the segmentation size (fp32, TF32 off) on training crops.
+            factory.check_xs = check_crops(data["train"], a.vexact_check_images, a.crop, a.seed, lut, adapter, device)
+            factory.check_label = f"ADE20K training crops at {a.crop} px"
     log(f"adapter: {a.crop} px, grid {adapter.grid_hw}, depth {adapter.depth}, d {adapter.embed_dim}, "
         f"prefix tokens {adapter.n_prefix_tokens}")
     cfg = TrainCfg(iters=a.iters, batch=a.batch_size, lr=a.lr, weight_decay=a.weight_decay, warmup=a.warmup_iters,
@@ -1078,7 +1135,14 @@ def main(argv=None) -> dict:
         feature_fn = make_feature_fn(adapter, model, device, amp)
 
         t0, checks = time.time(), None
-        if v.method == "vexact" and not a.no_vexact_check:
+        if v.family == "healed_vexact":
+            # Checked while building (scripts/tier2_linear.VariantFactory; the build stops if a check fails).
+            hc = info["vexact_checks"]
+            log(f"  healed V-exact at {a.crop} px: max relative error inside the span "
+                f"{hc['span_exact_max_rel_inside']:.2e} (bar {hc['tol']:g}); "
+                + (f"position grid: {info['position_grid']['deviation']}" if info.get("position_grid")
+                   else "position grid as healed"))
+        elif v.method == "vexact" and not a.no_vexact_check:
             with vt.stage(f"V-exact checks {v.name}"):
                 sched = make_schedule(len(data["train"]), 2, a.seed)
                 xs = [crop_flip(data["train"].image(int(j)), data["train"].label(int(j)), a.crop, float(uy), float(ux),
@@ -1131,6 +1195,18 @@ def main(argv=None) -> dict:
         speeds = [h["img_per_s"] for h in hist[1:]] or [h["img_per_s"] for h in hist]
         exact = (checks or {}).get("at_build_resolution", {})
         contrast = (checks or {}).get("contrast", {})
+        healed_vx = {}
+        if v.family == "healed_vexact":
+            hc, grid = info["vexact_checks"], info.get("position_grid") or {}
+            healed_vx = {"vexact_built_px": a.crop, "vexact_max_rel_err": hc["span_exact_max_rel_inside"],
+                         "vexact_checks_pass": bool(hc["pass"]),
+                         "vexact_feature_flip_rel_max": hc["probe_feature_flip"]["rel_max"] if hc.get("full_conversion")
+                         else None,
+                         "vexact_healed_px": info.get("healed_px"),
+                         "vexact_grid": "interpolated and re-projected (deviation)" if grid else "as healed",
+                         "vexact_grid_interpolation": grid.get("interpolation"),
+                         "vexact_grid_reproj_rel_change": grid.get("reprojection_rel_change"),
+                         "vexact_rel_err_without_reprojection": grid.get("span_exact_without_reprojection")}
         row = {"model": model_name, "variant": v.name, "label": v.label, "family": v.family, "method": v.method,
                "k": v.k, "mIoU": ev["mIoU"], "aAcc": ev["aAcc"], "mAcc": ev["mAcc"], "iterations": a.iters,
                "batch_size": a.batch_size, "crop": a.crop, "seed": a.seed, "lr": a.lr, "weight_decay": a.weight_decay,
@@ -1148,7 +1224,9 @@ def main(argv=None) -> dict:
                "resumed_from_iter": int(train_res.get("start_iter") or 0),
                "peak_mem_gb": round(torch.cuda.max_memory_allocated(device) / 2 ** 30, 2) if device.type == "cuda" else None,
                "amp": a.amp, "hf_id": entry["hf_id"], "hf_revision": entry["revision"], "git_hash": git["git_hash"],
-               "git_dirty": git["git_dirty"], "date": time.strftime("%Y-%m-%d %H:%M:%S")}
+               "git_dirty": git["git_dirty"], "date": time.strftime("%Y-%m-%d %H:%M:%S"), **healed_vx}
+        if v.family == "healed_vexact":
+            checks = {"healed": info["vexact_checks"], "position_grid": info.get("position_grid")}
         T2.write_json(vjson, {
             "row": row, "settings": settings,
             "metrics": {"mIoU": ev["mIoU"], "aAcc": ev["aAcc"], "mAcc": ev["mAcc"], "per_class_iou": ev["iou"],

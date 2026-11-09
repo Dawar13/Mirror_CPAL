@@ -1,6 +1,12 @@
 # V-exact healing (PAPER_EXPERIMENTS.md, Stage 3 "V-exact full conversion, healed"; also the V-exact arm
 # of the M3 grid). One operator A* over blocks 1..k, exactly mirror-equivariant over the span; k = 12 is
-# the full conversion (100% flip consistency). Same healing budget and recipe as configs/m3_pilot.yaml.
+# the full conversion (100% flip consistency). Same healing budget, data, optimiser, schedule and learning-rate
+# grid as configs/m3_pilot.yaml, with two differences (listed in SUMMARY.md, "Deviations from the M3 pilot"):
+#   1. the embeddings (patch embedding, position embedding, CLS token, registers) train and are re-projected
+#      with A* after every step (vexact.train_embeddings; the pilot trains the converted blocks only);
+#   2. the targets are symmetrised: block outputs centred and symmetrised with A*; at full conversion the
+#      final target is the flip average of the teacher's features, and the loss normalisers (the CLS one
+#      included) are measured on these targets (vexact.symmetrise_targets, vexact.final_target).
 # One healing job at a time on the shared GPU:
 #   python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 12
 #   python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 6
