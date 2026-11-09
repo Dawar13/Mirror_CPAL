@@ -1,0 +1,16 @@
+# Rented RTX 5090: the jobs of stage12_vast.txt not yet started when it was replaced by the file-aware scheduler
+# (2026-11-09 about 06:30 UTC; stage12 jobs 1 to 3, ADE20K MLP/V-exact variants, V-exact healing k = 6 then 12,
+# DINOv2-L, kept running). Format: "<needed files> | <command>". Launch from /workspace/Mirror_CPAL with
+#   export HF_HOME=/workspace/hf MIRROR_MEM_SCALE=2.5 PATH=$PWD/.venv/bin:$PATH
+#   PAR=4 NEED_MB=4000 bash scripts/vm_sched.sh jobs/stage13_vast_sched.txt
+cache/train_meta.json | python scripts/run_e1.py --config configs/g_dinov2_s_reg.yaml --fit-seed 0 --ks 6 --out-root runs/g/dinov2_s_reg_s0
+cache/train_meta.json runs/x2/perlayer_reg_s0/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s0 --fit-seed 0 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg
+cache/train_meta.json runs/x2/perlayer_reg_s1/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s1 --fit-seed 1 --ablation A4,A5 --ks 6 --out runs/a/dinov2_vitb14_reg
+cache/train_meta.json runs/x2/perlayer_reg_s2/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A4,A5 --ks 6 --out runs/a/dinov2_vitb14_reg
+runs/m3_pilot/svd/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_svd_k9 --num-workers 4 --out runs/t2_seg
+runs/m3_vexact/k6/SUMMARY.md | python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_vexact_k6 --out runs/t2 && python scripts/tier2_transfer.py --model dinov2_vitb14_reg --variants healed_vexact_k6 --out runs/t2
+runs/m3_pilot/mirror/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_mirror_k9 --num-workers 4 --out runs/t2_seg
+runs/m3_pilot/random/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_random_k9 --num-workers 4 --out runs/t2_seg
+cache/train_meta.json runs/x2/perlayer_reg_s1/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s1 --fit-seed 1 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg
+cache/train_meta.json runs/x2/perlayer_reg_s2/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg
+runs/m3_vexact_5090/k12/SUMMARY.md | python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --out runs/t2 && python scripts/tier2_transfer.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --out runs/t2
