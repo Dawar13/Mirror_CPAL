@@ -1,0 +1,26 @@
+# Resume list for the rented RTX 5090 after it was switched off (2026-11-09 about 09:50 UTC, storage kept).
+# Every job skips finished work (rows, variants, checkpoints), so the whole list is safe to rerun. After a restart
+# the ssh port and possibly the IP change (vast.ai Connect dialog). Before starting:
+#   1. pull runs/ results from the VM (MAE complete run, A4/A5 seed 1, A1 k = 9 seed 1, and anything finished after
+#      the last pull: ADE20K healed V-exact k = 12, its probes, flip averaging);
+#   2. ship the code (ship_vast.sh: git archive without runs/results/logs);
+#   3. resume the uploads (fit seed 2 operators, then the three M3-pilot checkpoints; scratchpad upload_resume.sh).
+# Launch from /workspace/Mirror_CPAL:
+#   export HF_HOME=/workspace/hf MIRROR_MEM_SCALE=2.5 PATH=$PWD/.venv/bin:$PATH
+#   PAR=3 NEED_MB=6000 bash scripts/vm_sched.sh jobs/stage21_resume.txt
+@5000 runs/x2/perlayer_reg_s1/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s1 --fit-seed 1 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg
+@12000 runs/m3_vexact_5090/k12/SUMMARY.md | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --num-workers 4 --out runs/t2_seg
+@6000 runs/m3_vexact_5090/k12/SUMMARY.md | python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --out runs/t2 && python scripts/tier2_transfer.py --model dinov2_vitb14_reg --variants healed_vexact_k12 --vexact-dir runs/m3_vexact_5090 --out runs/t2
+@6000 runs/m3_vexact_5090/k12/SUMMARY.md | export OMP_NUM_THREADS=4; python scripts/flip_avg_baseline.py --model dinov2_vitb14_reg --variants original --vexact-dir runs/m3_vexact_5090 --vexact-fp32 --out runs/t1_flipavg
+@4000 cache/train_meta.json runs/x2/perlayer_reg_s0/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/f7_visuals.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s0 --blocks 1,3,6 --pairs 8 --images 5000 --out runs/f7
+@5000 runs/x2/perlayer_reg_s2/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A4,A5 --ks 6 --out runs/a/dinov2_vitb14_reg
+@5000 runs/x2/perlayer_reg_s2/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/stage1_ablate.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s2 --fit-seed 2 --ablation A1,A2 --ks 9 --out runs/a/dinov2_vitb14_reg
+@12000 runs/m3_pilot/svd/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_svd_k9 --num-workers 4 --out runs/t2_seg
+@12000 runs/m3_pilot/mirror/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_mirror_k9 --num-workers 4 --out runs/t2_seg
+@12000 runs/m3_pilot/random/final/trained_blocks.pt | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants healed_random_k9 --num-workers 4 --out runs/t2_seg
+@12000 runs/t2_seg/seg/dinov2_vitb14_reg/healed_vexact_k12.json | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants original --num-workers 4 --out runs/t2_seg_rerun
+# Awaiting Dawar's decision after G2 (zero-shot strong baselines at matched parameters, about 1 GPU-hour):
+# @5000 runs/x2/perlayer_reg_s0/results/e1_operators.npz | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4; python scripts/strong_baselines.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s0 --fit-seed 0 --ks 6,9 --methods asvd,slicegpt,prune_act --out runs/sb
+# Last, alone on a quiet GPU (the other project's jobs stopped): M2 latency and profile on the 5090 (second device):
+# python scripts/m2_latency.py --model dinov2_vitb14_reg --k 6,9,12 --variants original,dense,vlocal,vexact,mlp_only,svd,prune --out runs/m2_5090
+# python scripts/m2_profile.py --model dinov2_vitb14_reg --variants dense,vexact,vlocal,mlp_only,svd,prune --k 6,12 --batch 256 --modes compile,eager --out runs/m2_profile
