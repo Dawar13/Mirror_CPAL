@@ -1,0 +1,706 @@
+{
+  "method": "vexact",
+  "k": 6,
+  "depth": 12,
+  "blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "seed": 0,
+  "date": "2026-11-09 07:21:21",
+  "method_info": {
+    "mlp_params_kept": 16444608,
+    "attn_params_kept": 8633568,
+    "converted_params_dense": 42467328,
+    "converted_params_kept": 25078176,
+    "converted_kept_frac": 0.5905287000868056,
+    "model_params_original": 86583552,
+    "model_params": 69194400,
+    "model_params_frac": 0.7991633330080984,
+    "d_plus": 552,
+    "d_minus": 216
+  },
+  "structure": {
+    "span_source": "/workspace/Mirror_CPAL/runs/m1/m1_structure.npz",
+    "span_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3",
+    "operators_source": "/workspace/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "heads_source": "/workspace/Mirror_CPAL/runs/m1/m1_structure.npz"
+  },
+  "reg_perm": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "teacher": {
+    "type": "VExactTeacher",
+    "k": 6,
+    "even_head": false,
+    "symmetrise": true,
+    "block_targets": "centred, symmetrised with A*",
+    "final_target": "raw (no even head)",
+    "d_plus": 552,
+    "reg_perm": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "embeddings": "trained, re-projected every step",
+  "data": {
+    "n_train": 100000,
+    "n_heldout": 5000
+  },
+  "lr_selection": {
+    "best_lr": 5e-05,
+    "lrs": [
+      1e-05,
+      5e-05,
+      0.0001
+    ],
+    "budget_steps": 100,
+    "seed": 0,
+    "trials": [
+      {
+        "lr": 1e-05,
+        "heldout_loss": 0.5423522891864874,
+        "heldout_terms": {
+          "total": 0.5423522891864874,
+          "block0": 0.02373613839466039,
+          "block1": 0.03599530844141968,
+          "block2": 0.054835987392628356,
+          "block3": 0.06470721554883033,
+          "block4": 0.0906320956756763,
+          "block5": 0.12363927656696684,
+          "cls": 0.04445824523552022,
+          "patch": 0.10434802193078525
+        },
+        "heldout_initial": 1.1557635222717493,
+        "train_loss_last": 0.47728448268026114,
+        "diverged": false
+      },
+      {
+        "lr": 5e-05,
+        "heldout_loss": 0.44423756396336317,
+        "heldout_terms": {
+          "total": 0.44423756396336317,
+          "block0": 0.015472354366262282,
+          "block1": 0.028231459618395106,
+          "block2": 0.0441065033865561,
+          "block3": 0.052926611116263886,
+          "block4": 0.07389076797429459,
+          "block5": 0.10233257303269915,
+          "cls": 0.037303965774792475,
+          "patch": 0.08997332869409959
+        },
+        "heldout_initial": 1.1557635222717493,
+        "train_loss_last": 0.38964558934094384,
+        "diverged": false
+      },
+      {
+        "lr": 0.0001,
+        "heldout_loss": 0.4611599233137674,
+        "heldout_terms": {
+          "total": 0.4611599233137674,
+          "block0": 0.01578877848607584,
+          "block1": 0.030504716399730687,
+          "block2": 0.048300137896609835,
+          "block3": 0.05615490705922239,
+          "block4": 0.0765569692337885,
+          "block5": 0.1047624679099273,
+          "cls": 0.03778168091224079,
+          "patch": 0.09131026541617206
+        },
+        "heldout_initial": 1.1557635222717493,
+        "train_loss_last": 0.4020500514889136,
+        "diverged": false
+      }
+    ],
+    "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+    "git_dirty": null
+  },
+  "final": {
+    "config": {
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "seed": 0,
+      "lr": 5e-05,
+      "epochs": 2.0,
+      "max_steps": null,
+      "batch_size": 256,
+      "micro_batch": 32,
+      "weight_decay": 0.05,
+      "decay_1d": false,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08,
+      "warmup_frac": 0.05,
+      "warmup_steps": null,
+      "min_lr_ratio": 0.0,
+      "grad_clip": null,
+      "crop_size": 224,
+      "crop_scale": [
+        0.35,
+        1.0
+      ],
+      "crop_ratio": [
+        0.75,
+        1.3333333333333333
+      ],
+      "hflip_p": 0.5,
+      "w_cls": 1.0,
+      "w_patch": 1.0,
+      "w_block": 1.0,
+      "normaliser": "fixed",
+      "calib_images": 1024,
+      "train_scope": "all",
+      "grad_checkpoint": false,
+      "amp": "auto",
+      "share_prefix": true,
+      "eval_every": 200,
+      "eval_batch": null,
+      "max_heldout": null,
+      "log_every": 20,
+      "prefetch": 2,
+      "save_checkpoint": true,
+      "checkpoint_path": null
+    },
+    "seed": 0,
+    "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+    "git_dirty": null,
+    "env": {
+      "python": "3.12.3",
+      "platform": "Linux-5.15.0-181-generic-x86_64-with-glibc2.39",
+      "torch": "2.11.0+cu128",
+      "numpy": "2.5.4",
+      "device": "cuda:0",
+      "gpu": "NVIDIA GeForce RTX 5090",
+      "cuda": "12.8"
+    },
+    "constraints": [
+      {
+        "type": "MirrorMLPConstraint",
+        "blocks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "n_pairs": [
+          1168,
+          1116,
+          1013,
+          963,
+          878,
+          672
+        ],
+        "n_self": [
+          736,
+          840,
+          1046,
+          1146,
+          1316,
+          1728
+        ],
+        "d_plus_in": [
+          552,
+          552,
+          552,
+          552,
+          552,
+          552
+        ],
+        "d_plus_out": [
+          552,
+          552,
+          552,
+          552,
+          552,
+          552
+        ]
+      },
+      {
+        "type": "MirrorAttnConstraint",
+        "blocks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "n_head_pairs": [
+          0,
+          1,
+          1,
+          0,
+          1,
+          1
+        ],
+        "n_self_heads": [
+          12,
+          10,
+          10,
+          12,
+          10,
+          10
+        ],
+        "d_plus_in": [
+          552,
+          552,
+          552,
+          552,
+          552,
+          552
+        ],
+        "d_plus_out": [
+          552,
+          552,
+          552,
+          552,
+          552,
+          552
+        ]
+      },
+      {
+        "type": "VExactEmbeddings",
+        "blocks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "d_plus": 552,
+        "embeddings": "trained, re-projected every step",
+        "reg_perm": [
+          0,
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "constraint_checks": {
+      "0:MirrorMLPConstraint": {
+        "max_rel_violation": 2.240655397897258e-08,
+        "per_block": [
+          2.240655397897258e-08,
+          2.1870564404747316e-08,
+          2.225159185930203e-08,
+          2.1750294085680864e-08,
+          2.1541628223675367e-08,
+          2.0024557016282733e-08
+        ]
+      },
+      "1:MirrorAttnConstraint": {
+        "max_rel_violation": 9.680231223508689e-09,
+        "per_block": [
+          6.6310348763931036e-09,
+          9.680231223508689e-09,
+          8.351296918565937e-09,
+          7.940422227797812e-09,
+          9.468738650168926e-09,
+          9.130363467926986e-09
+        ]
+      },
+      "2:VExactEmbeddings": {
+        "max_share": 2.101951901899582e-16,
+        "shares": {
+          "patch_embed.weight": 1.1813430495387855e-16,
+          "patch_embed.bias": 1.019013748921504e-17,
+          "pos_embed.patches": 2.101951901899582e-16,
+          "pos_embed.cls": 3.8948745218804255e-17,
+          "cls_token": 3.8948745218804255e-17,
+          "registers": 2.786857528935682e-17
+        },
+        "embeddings_train": true
+      }
+    },
+    "n_trainable": 43162368,
+    "n_trainable_tensors": 53,
+    "trainable_names": [
+      "cls_token",
+      "pos_embed",
+      "register_tokens",
+      "patch_embed.proj.weight",
+      "patch_embed.proj.bias",
+      "blocks.0.attn.qkv.weight",
+      "blocks.0.attn.qkv.bias",
+      "blocks.0.attn.proj.weight",
+      "blocks.0.attn.proj.bias",
+      "blocks.0.mlp.fc1.weight",
+      "blocks.0.mlp.fc1.bias",
+      "blocks.0.mlp.fc2.weight",
+      "blocks.0.mlp.fc2.bias",
+      "blocks.1.attn.qkv.weight",
+      "blocks.1.attn.qkv.bias",
+      "blocks.1.attn.proj.weight",
+      "blocks.1.attn.proj.bias",
+      "blocks.1.mlp.fc1.weight",
+      "blocks.1.mlp.fc1.bias",
+      "blocks.1.mlp.fc2.weight",
+      "blocks.1.mlp.fc2.bias",
+      "blocks.2.attn.qkv.weight",
+      "blocks.2.attn.qkv.bias",
+      "blocks.2.attn.proj.weight",
+      "blocks.2.attn.proj.bias",
+      "blocks.2.mlp.fc1.weight",
+      "blocks.2.mlp.fc1.bias",
+      "blocks.2.mlp.fc2.weight",
+      "blocks.2.mlp.fc2.bias",
+      "blocks.3.attn.qkv.weight",
+      "blocks.3.attn.qkv.bias",
+      "blocks.3.attn.proj.weight",
+      "blocks.3.attn.proj.bias",
+      "blocks.3.mlp.fc1.weight",
+      "blocks.3.mlp.fc1.bias",
+      "blocks.3.mlp.fc2.weight",
+      "blocks.3.mlp.fc2.bias",
+      "blocks.4.attn.qkv.weight",
+      "blocks.4.attn.qkv.bias",
+      "blocks.4.attn.proj.weight",
+      "blocks.4.attn.proj.bias",
+      "blocks.4.mlp.fc1.weight",
+      "blocks.4.mlp.fc1.bias",
+      "blocks.4.mlp.fc2.weight",
+      "blocks.4.mlp.fc2.bias",
+      "blocks.5.attn.qkv.weight",
+      "blocks.5.attn.qkv.bias",
+      "blocks.5.attn.proj.weight",
+      "blocks.5.attn.proj.bias",
+      "blocks.5.mlp.fc1.weight",
+      "blocks.5.mlp.fc1.bias",
+      "blocks.5.mlp.fc2.weight",
+      "blocks.5.mlp.fc2.bias"
+    ],
+    "amp": "bf16",
+    "share_prefix_used": false,
+    "first_grad_block": 0,
+    "normalisers": {
+      "block0": 0.025072533322848253,
+      "block1": 0.014732325439518131,
+      "block2": 0.013014964835971352,
+      "block3": 0.0190087085376323,
+      "block4": 0.02586741113544202,
+      "block5": 0.042037667637410986,
+      "cls": 0.8641759936825614,
+      "patch": 0.8336013933035268
+    },
+    "weights": {
+      "cls": 1.0,
+      "patch": 1.0,
+      "block0": 1.0,
+      "block1": 1.0,
+      "block2": 1.0,
+      "block3": 1.0,
+      "block4": 1.0,
+      "block5": 1.0
+    },
+    "total_steps": 780,
+    "steps_done": 780,
+    "warmup_steps": 39,
+    "steps_per_epoch": 390,
+    "images_seen": 199680,
+    "diverged": false,
+    "heldout_images": 5000,
+    "heldout_initial": {
+      "total": 1.1557635222717493,
+      "block0": 0.057579637993338005,
+      "block1": 0.08089606945034786,
+      "block2": 0.1081260589365414,
+      "block3": 0.1309687300985158,
+      "block4": 0.16752538342550746,
+      "block5": 0.25089166980907546,
+      "cls": 0.13085235749518573,
+      "patch": 0.22892361506323752
+    },
+    "heldout_final": {
+      "total": 0.2918474514095749,
+      "block0": 0.008093717030958021,
+      "block1": 0.016763910828413865,
+      "block2": 0.02592263927957328,
+      "block3": 0.03323548795541721,
+      "block4": 0.04821705021566356,
+      "block5": 0.06731326737772027,
+      "cls": 0.025831913572737283,
+      "patch": 0.0664694651490914
+    },
+    "train_loss_first": 1.092005141545087,
+    "train_loss_last": 0.2661476077628322,
+    "train_loss_last10_mean": 0.2636852013383759,
+    "seconds_total": 2993.88,
+    "seconds_train": 2948.8,
+    "peak_memory_gb": 4.164698600769043,
+    "checkpoint": "/workspace/Mirror_CPAL/runs/m3_vexact/k6/final/trained_blocks.pt"
+  },
+  "knn": {
+    "protocol": "v2",
+    "amp": "bf16",
+    "k": 20,
+    "temperature": 0.07,
+    "seed": 0,
+    "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+    "original": {
+      "top1": 78.93199920654297,
+      "flip_consistency": 96.27799987792969,
+      "source": "/workspace/Mirror_CPAL/cache/knn_original/dinov2_vitb14_reg_v2_bf16.json"
+    },
+    "zero_shot": {
+      "top1": 77.37199664115906,
+      "flip_consistency": 94.99199986457825,
+      "n_bank": 100000,
+      "n_query": 50000,
+      "drop_points": 1.5600025653839111
+    },
+    "healed": {
+      "top1": 78.7880003452301,
+      "flip_consistency": 96.37999534606934,
+      "n_bank": 100000,
+      "n_query": 50000,
+      "drop_points": 0.1439988613128662
+    }
+  },
+  "exactness": {
+    "k": 6,
+    "tol": 0.0001,
+    "max_rel_inside": 4.586209832545588e-06,
+    "pass": true,
+    "n_images": 64,
+    "dtype": "torch.float32",
+    "rows": [
+      {
+        "layer": 0,
+        "in_span": true,
+        "max_abs_err": 5.872365383297051e-06,
+        "max_abs_ref": 6.867061138153076,
+        "rel_max": 8.551497161821465e-07,
+        "rel_fro": 6.536502802309338e-07
+      },
+      {
+        "layer": 1,
+        "in_span": true,
+        "max_abs_err": 2.0203556465370198e-05,
+        "max_abs_ref": 4.4052839279174805,
+        "rel_max": 4.586209832545588e-06,
+        "rel_fro": 1.9853670826462166e-06
+      },
+      {
+        "layer": 2,
+        "in_span": true,
+        "max_abs_err": 1.8864973586385503e-05,
+        "max_abs_ref": 5.179753303527832,
+        "rel_max": 3.6420602451350195e-06,
+        "rel_fro": 2.7591533256660484e-06
+      },
+      {
+        "layer": 3,
+        "in_span": true,
+        "max_abs_err": 2.157607055441879e-05,
+        "max_abs_ref": 6.448509216308594,
+        "rel_max": 3.345900553239787e-06,
+        "rel_fro": 3.4508990945566452e-06
+      },
+      {
+        "layer": 4,
+        "in_span": true,
+        "max_abs_err": 4.287147913473177e-05,
+        "max_abs_ref": 21.76492691040039,
+        "rel_max": 1.9697506594541143e-06,
+        "rel_fro": 3.634677573924152e-06
+      },
+      {
+        "layer": 5,
+        "in_span": true,
+        "max_abs_err": 4.1614033479575596e-05,
+        "max_abs_ref": 20.308609008789062,
+        "rel_max": 2.0490833942179925e-06,
+        "rel_fro": 4.334997239247495e-06
+      },
+      {
+        "layer": 6,
+        "in_span": true,
+        "max_abs_err": 4.188253185688495e-05,
+        "max_abs_ref": 22.723800659179688,
+        "rel_max": 1.8431129759081808e-06,
+        "rel_fro": 4.875325070096877e-06
+      },
+      {
+        "layer": 7,
+        "in_span": false,
+        "max_abs_err": 9.52704416258435,
+        "max_abs_ref": 21.928665161132812,
+        "rel_max": 0.4344561829267401,
+        "rel_fro": 0.6666956382976833
+      },
+      {
+        "layer": 8,
+        "in_span": false,
+        "max_abs_err": 105.23746312467364,
+        "max_abs_ref": 131.44857788085938,
+        "rel_max": 0.8005979586942156,
+        "rel_fro": 0.9208086525184002
+      },
+      {
+        "layer": 9,
+        "in_span": false,
+        "max_abs_err": 105.2815787376426,
+        "max_abs_ref": 131.49008178710938,
+        "rel_max": 0.8006807609116864,
+        "rel_fro": 0.9447610986669597
+      },
+      {
+        "layer": 10,
+        "in_span": false,
+        "max_abs_err": 106.9658550711066,
+        "max_abs_ref": 141.23736572265625,
+        "rel_max": 0.7573481318049529,
+        "rel_fro": 1.010524809990412
+      },
+      {
+        "layer": 11,
+        "in_span": false,
+        "max_abs_err": 110.31092079100301,
+        "max_abs_ref": 204.06752014160156,
+        "rel_max": 0.5405608923676769,
+        "rel_fro": 1.0135138793717562
+      },
+      {
+        "layer": 12,
+        "in_span": false,
+        "max_abs_err": 106.18649444584153,
+        "max_abs_ref": 177.96380615234375,
+        "rel_max": 0.5966746651560255,
+        "rel_fro": 1.0419447174242116
+      }
+    ],
+    "seed": 0,
+    "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04"
+  },
+  "flipcheck": null,
+  "config": {
+    "seed": 0,
+    "method": "vexact",
+    "k": 6,
+    "model": {
+      "hub_repo": "facebookresearch/dinov2",
+      "name": "dinov2_vitb14_reg",
+      "img_size": 224
+    },
+    "structure": {
+      "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "heads": "runs/m1/m1_structure.npz",
+      "attn_a_out": "auto",
+      "mode": "per_layer",
+      "attention": true
+    },
+    "vexact": {
+      "train_embeddings": true,
+      "symmetrise_targets": true,
+      "final_target": "symmetrised"
+    },
+    "data": {
+      "images": "cache/heal256_uint8.npy",
+      "index": "cache/train_index.npz",
+      "meta": "cache/train_meta.json",
+      "train_key": "heal_rows",
+      "heldout_key": "healval_rows"
+    },
+    "heal": {
+      "epochs": 2,
+      "batch_size": 256,
+      "micro_batch": 32,
+      "weight_decay": 0.05,
+      "warmup_frac": 0.05,
+      "min_lr_ratio": 0.0,
+      "crop_size": 224,
+      "crop_scale": [
+        0.35,
+        1.0
+      ],
+      "hflip_p": 0.5,
+      "w_cls": 1.0,
+      "w_patch": 1.0,
+      "w_block": 1.0,
+      "normaliser": "fixed",
+      "calib_images": 1024,
+      "grad_checkpoint": false,
+      "amp": "auto",
+      "eval_every": 200,
+      "log_every": 20,
+      "prefetch": 2
+    },
+    "lr_selection": {
+      "lrs": [
+        1e-05,
+        5e-05,
+        0.0001
+      ],
+      "budget_steps": 100
+    },
+    "knn": {
+      "enabled": true,
+      "cache_dir": "cache",
+      "k": 20,
+      "temperature": 0.07,
+      "amp": "bf16",
+      "batch_size": 128,
+      "num_workers": 4,
+      "zero_shot": true
+    },
+    "checks": {
+      "cache_dir": "cache",
+      "exact_images": 64,
+      "exact_tol": 0.0001,
+      "flip_check": true,
+      "flip_bank_per_class": 10,
+      "flip_queries": 5000,
+      "batch_size": 128,
+      "num_workers": 4
+    },
+    "compute": {
+      "device": "cuda",
+      "gpu_memory_fraction": 0.25,
+      "tf32": false
+    },
+    "out_dir": "runs/m3_vexact",
+    "tiny_mode": false,
+    "config_path": "configs/m3_vexact.yaml"
+  },
+  "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+  "git_dirty": null,
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-5.15.0-181-generic-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "cuda": "12.8"
+  },
+  "timing": {
+    "stages": {
+      "load": 4.72,
+      "heal": 4067.72,
+      "knn": 747.62,
+      "checks": 3.01
+    },
+    "total_s": 4823.15
+  }
+}

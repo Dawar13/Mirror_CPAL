@@ -1,0 +1,326 @@
+{
+  "config": {
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "seed": 0,
+    "lr": 0.0001,
+    "epochs": 2.0,
+    "max_steps": 100,
+    "batch_size": 256,
+    "micro_batch": 32,
+    "weight_decay": 0.05,
+    "decay_1d": false,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "warmup_frac": 0.05,
+    "warmup_steps": null,
+    "min_lr_ratio": 0.0,
+    "grad_clip": null,
+    "crop_size": 224,
+    "crop_scale": [
+      0.35,
+      1.0
+    ],
+    "crop_ratio": [
+      0.75,
+      1.3333333333333333
+    ],
+    "hflip_p": 0.5,
+    "w_cls": 1.0,
+    "w_patch": 1.0,
+    "w_block": 1.0,
+    "normaliser": "fixed",
+    "calib_images": 1024,
+    "train_scope": "all",
+    "grad_checkpoint": false,
+    "amp": "auto",
+    "share_prefix": true,
+    "eval_every": 0,
+    "eval_batch": null,
+    "max_heldout": null,
+    "log_every": 20,
+    "prefetch": 2,
+    "save_checkpoint": false,
+    "checkpoint_path": null
+  },
+  "seed": 0,
+  "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+  "git_dirty": null,
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-5.15.0-181-generic-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda:0",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "cuda": "12.8"
+  },
+  "constraints": [
+    {
+      "type": "MirrorMLPConstraint",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_pairs": [
+        1168,
+        1116,
+        1013,
+        963,
+        878,
+        672
+      ],
+      "n_self": [
+        736,
+        840,
+        1046,
+        1146,
+        1316,
+        1728
+      ],
+      "d_plus_in": [
+        552,
+        552,
+        552,
+        552,
+        552,
+        552
+      ],
+      "d_plus_out": [
+        552,
+        552,
+        552,
+        552,
+        552,
+        552
+      ]
+    },
+    {
+      "type": "MirrorAttnConstraint",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_head_pairs": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "n_self_heads": [
+        12,
+        10,
+        10,
+        12,
+        10,
+        10
+      ],
+      "d_plus_in": [
+        552,
+        552,
+        552,
+        552,
+        552,
+        552
+      ],
+      "d_plus_out": [
+        552,
+        552,
+        552,
+        552,
+        552,
+        552
+      ]
+    },
+    {
+      "type": "VExactEmbeddings",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "d_plus": 552,
+      "embeddings": "trained, re-projected every step",
+      "reg_perm": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "constraint_checks": {
+    "0:MirrorMLPConstraint": {
+      "max_rel_violation": 3.1475120314646105e-08,
+      "per_block": [
+        3.1475120314646105e-08,
+        3.074861905932589e-08,
+        3.046273906989887e-08,
+        3.097515760701215e-08,
+        3.095891183856273e-08,
+        2.997583983919984e-08
+      ]
+    },
+    "1:MirrorAttnConstraint": {
+      "max_rel_violation": 1.2767828299819443e-08,
+      "per_block": [
+        5.94446768737606e-09,
+        1.1968486874362786e-08,
+        1.1280548966151391e-08,
+        1.0864821720794031e-08,
+        1.2767828299819443e-08,
+        1.239688822771995e-08
+      ]
+    },
+    "2:VExactEmbeddings": {
+      "max_share": 3.2185027223274787e-16,
+      "shares": {
+        "patch_embed.weight": 2.426490611939272e-16,
+        "patch_embed.bias": 1.681668931676201e-17,
+        "pos_embed.patches": 3.2185027223274787e-16,
+        "pos_embed.cls": 8.426764756447128e-17,
+        "cls_token": 8.426764756447128e-17,
+        "registers": 6.747043622771137e-17
+      },
+      "embeddings_train": true
+    }
+  },
+  "n_trainable": 43162368,
+  "n_trainable_tensors": 53,
+  "trainable_names": [
+    "cls_token",
+    "pos_embed",
+    "register_tokens",
+    "patch_embed.proj.weight",
+    "patch_embed.proj.bias",
+    "blocks.0.attn.qkv.weight",
+    "blocks.0.attn.qkv.bias",
+    "blocks.0.attn.proj.weight",
+    "blocks.0.attn.proj.bias",
+    "blocks.0.mlp.fc1.weight",
+    "blocks.0.mlp.fc1.bias",
+    "blocks.0.mlp.fc2.weight",
+    "blocks.0.mlp.fc2.bias",
+    "blocks.1.attn.qkv.weight",
+    "blocks.1.attn.qkv.bias",
+    "blocks.1.attn.proj.weight",
+    "blocks.1.attn.proj.bias",
+    "blocks.1.mlp.fc1.weight",
+    "blocks.1.mlp.fc1.bias",
+    "blocks.1.mlp.fc2.weight",
+    "blocks.1.mlp.fc2.bias",
+    "blocks.2.attn.qkv.weight",
+    "blocks.2.attn.qkv.bias",
+    "blocks.2.attn.proj.weight",
+    "blocks.2.attn.proj.bias",
+    "blocks.2.mlp.fc1.weight",
+    "blocks.2.mlp.fc1.bias",
+    "blocks.2.mlp.fc2.weight",
+    "blocks.2.mlp.fc2.bias",
+    "blocks.3.attn.qkv.weight",
+    "blocks.3.attn.qkv.bias",
+    "blocks.3.attn.proj.weight",
+    "blocks.3.attn.proj.bias",
+    "blocks.3.mlp.fc1.weight",
+    "blocks.3.mlp.fc1.bias",
+    "blocks.3.mlp.fc2.weight",
+    "blocks.3.mlp.fc2.bias",
+    "blocks.4.attn.qkv.weight",
+    "blocks.4.attn.qkv.bias",
+    "blocks.4.attn.proj.weight",
+    "blocks.4.attn.proj.bias",
+    "blocks.4.mlp.fc1.weight",
+    "blocks.4.mlp.fc1.bias",
+    "blocks.4.mlp.fc2.weight",
+    "blocks.4.mlp.fc2.bias",
+    "blocks.5.attn.qkv.weight",
+    "blocks.5.attn.qkv.bias",
+    "blocks.5.attn.proj.weight",
+    "blocks.5.attn.proj.bias",
+    "blocks.5.mlp.fc1.weight",
+    "blocks.5.mlp.fc1.bias",
+    "blocks.5.mlp.fc2.weight",
+    "blocks.5.mlp.fc2.bias"
+  ],
+  "amp": "bf16",
+  "share_prefix_used": false,
+  "first_grad_block": 0,
+  "normalisers": {
+    "block0": 0.025072533322848253,
+    "block1": 0.014732325439518131,
+    "block2": 0.013014964835971352,
+    "block3": 0.0190087085376323,
+    "block4": 0.02586741113544202,
+    "block5": 0.042037667637410986,
+    "cls": 0.8641759936825614,
+    "patch": 0.8336013933035268
+  },
+  "weights": {
+    "cls": 1.0,
+    "patch": 1.0,
+    "block0": 1.0,
+    "block1": 1.0,
+    "block2": 1.0,
+    "block3": 1.0,
+    "block4": 1.0,
+    "block5": 1.0
+  },
+  "total_steps": 100,
+  "steps_done": 100,
+  "warmup_steps": 5,
+  "steps_per_epoch": 390,
+  "images_seen": 25600,
+  "diverged": false,
+  "heldout_images": 5000,
+  "heldout_initial": {
+    "total": 1.1557635222717493,
+    "block0": 0.057579637993338005,
+    "block1": 0.08089606945034786,
+    "block2": 0.1081260589365414,
+    "block3": 0.1309687300985158,
+    "block4": 0.16752538342550746,
+    "block5": 0.25089166980907546,
+    "cls": 0.13085235749518573,
+    "patch": 0.22892361506323752
+  },
+  "heldout_final": {
+    "total": 0.4611599233137674,
+    "block0": 0.01578877848607584,
+    "block1": 0.030504716399730687,
+    "block2": 0.048300137896609835,
+    "block3": 0.05615490705922239,
+    "block4": 0.0765569692337885,
+    "block5": 0.1047624679099273,
+    "cls": 0.03778168091224079,
+    "patch": 0.09131026541617206
+  },
+  "train_loss_first": 1.092005141545087,
+  "train_loss_last": 0.4020500514889136,
+  "train_loss_last10_mean": 0.41035268192645163,
+  "seconds_total": 348.3,
+  "seconds_train": 302.9,
+  "peak_memory_gb": 4.164698600769043,
+  "checkpoint": null
+}
