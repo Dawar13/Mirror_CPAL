@@ -8,9 +8,9 @@ set -u
 JOBS="$1"; PAR="${PAR:-4}"; NEED_MB="${NEED_MB:-4000}"; STAGGER="${STAGGER:-60}"
 name=$(basename "$JOBS" .txt); mkdir -p "logs/$name"
 mapfile -t LINES < <(grep -vE '^\s*(#|$)' "$JOBS")
-n=${#LINES[@]}; declare -A started
+n=${#LINES[@]}; declare -A started=(); nstarted=0
 echo "== scheduler $(date -u +%H:%M:%S): $n jobs, PAR $PAR, NEED_MB $NEED_MB"
-while [ "${#started[@]}" -lt "$n" ]; do
+while [ "$nstarted" -lt "$n" ]; do
   launched=0
   for i in $(seq 0 $((n - 1))); do
     [ -n "${started[$i]:-}" ] && continue
@@ -20,7 +20,7 @@ while [ "${#started[@]}" -lt "$n" ]; do
     [ $ok -eq 1 ] || continue
     free=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits | head -1)
     [ "$free" -ge "$NEED_MB" ] || break
-    started[$i]=1; j=$((i + 1))
+    started[$i]=1; nstarted=$((nstarted + 1)); j=$((i + 1))
     echo "== start $j $(date -u +%H:%M:%S) $cmd"
     ( bash -c "$cmd" > "logs/$name/job$j.log" 2>&1; echo "== end $j rc=$? $(date -u +%H:%M:%S) $cmd" ) &
     launched=1; sleep "$STAGGER"
