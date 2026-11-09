@@ -1,0 +1,5 @@
+# Rented RTX 5090, requeued 2026-11-09 07:45 UTC: the V-exact k = 12 re-heal ran out of GPU memory at 07:35 (too many
+# jobs on the 32 GB card) and the ADE20K original rerun was stopped to free memory. Run one at a time:
+#   PAR=1 NEED_MB=9000 bash scripts/vm_sched.sh jobs/stage16_vast_requeue.txt
+- | export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4; python scripts/heal_vexact.py --config configs/m3_vexact.yaml --k 12 --out-dir runs/m3_vexact_5090
+- | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants original --num-workers 4 --out runs/t2_seg_rerun
