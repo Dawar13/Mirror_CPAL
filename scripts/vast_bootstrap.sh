@@ -50,7 +50,10 @@ elif [ "$step" = "caches" ]; then
   . .venv/bin/activate
   test -s "$HF_HOME/token" || { echo "missing $HF_HOME/token (ImageNet is gated)"; exit 1; }
   python scripts/build_cache.py 2>&1 | tee logs/build_cache.log
-  python scripts/build_train_cache.py --workers "$(( $(nproc) - 2 ))" 2>&1 | tee logs/build_train_cache.log
+  # nproc shows the host's CPUs inside a container; use the cgroup quota (cpu.max) when there is one.
+  ncpu=$(awk '$1 != "max" {printf "%d", $1 / $2}' /sys/fs/cgroup/cpu.max 2>/dev/null); ncpu=${ncpu:-$(nproc)}
+  [ "$ncpu" -ge 1 ] 2>/dev/null || ncpu=$(nproc)
+  python scripts/build_train_cache.py --workers "$(( ncpu > 3 ? ncpu - 2 : 1 ))" 2>&1 | tee logs/build_train_cache.log
   ls -la cache/
 else
   echo "usage: bash scripts/vast_bootstrap.sh env|caches"; exit 2
