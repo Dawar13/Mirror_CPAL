@@ -1,0 +1,145 @@
+{
+  "experiment": "M2 efficient implementation and latency",
+  "date": "2026-11-09 16:41:53",
+  "model": "dinov2_vitb14_reg",
+  "tiny": false,
+  "seed": 0,
+  "git": {
+    "git_hash": "6f2c9181a8ea9b7b0fc1dd7da3466ab0e52d04e7",
+    "git_dirty": null
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "cuda": "12.8"
+  },
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "hub_repo": "facebookresearch/dinov2",
+    "structure": "runs/m1/m1_structure.npz",
+    "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "k": "6,9,12",
+    "variants": "original,dense,vlocal,vexact,mlp_only,svd,prune",
+    "batches": null,
+    "modes": null,
+    "compile_mode": "default",
+    "warmup": 20,
+    "iters": 100,
+    "align": 8,
+    "check_images": 8,
+    "cache_dir": "cache",
+    "img_size": 224,
+    "seed": 0,
+    "memory_fraction": 0.3,
+    "out": "runs/m2_5090",
+    "force": false,
+    "device": null,
+    "tiny": false,
+    "ks": [
+      6,
+      9,
+      12
+    ],
+    "batch_list": [
+      1,
+      64,
+      256
+    ],
+    "mode_list": [
+      "compile",
+      "eager"
+    ],
+    "variant_list": [
+      "original",
+      "dense",
+      "vlocal",
+      "vexact",
+      "mlp_only",
+      "svd",
+      "prune"
+    ],
+    "random_seed": 1,
+    "register_margin": 0.0,
+    "img_px": 224
+  },
+  "provenance": {
+    "structure": "/workspace/m2run/runs/m1/m1_structure.npz",
+    "structure_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3",
+    "operators": "/workspace/m2run/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "operators_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+    "structure_ks": [
+      6,
+      9,
+      12
+    ],
+    "a_out_offset": 1,
+    "random_seed": 1,
+    "fit_seed": 0,
+    "structure_git_hash": "ced2c089288d658bb0ce1666c1ec49fd684427f9"
+  },
+  "ks": [
+    6,
+    9,
+    12
+  ],
+  "variants": [
+    "original",
+    "dense",
+    "vlocal",
+    "vexact",
+    "mlp_only",
+    "svd",
+    "prune"
+  ],
+  "batches": [
+    1,
+    64,
+    256
+  ],
+  "modes": [
+    "compile",
+    "eager"
+  ],
+  "warmup": 20,
+  "iters": 100,
+  "align": 8,
+  "compile_mode": "default",
+  "check_images": "random normal images (seed 0)",
+  "thresholds": {
+    "float64": "rel_raw < 1e-06",
+    "float32": "max_abs_unit < 1e-05",
+    "bfloat16": "max_abs_unit < 0.001"
+  },
+  "depth": 12,
+  "embed_dim": 768,
+  "mlp_hidden": 3072,
+  "heads": 12,
+  "head_dim": 64,
+  "n_tokens": 261,
+  "n_patches": 256,
+  "img_size": 224,
+  "params_original": 86583552,
+  "nvidia_smi": {
+    "before": "NVIDIA GeForce RTX 5090, 0 %, 4 MiB, 32607 MiB, 195 MHz",
+    "after": "NVIDIA GeForce RTX 5090, 100 %, 1800 MiB, 32607 MiB, 2947 MHz"
+  },
+  "skipped": [],
+  "ones_deviation": {
+    "per_layer_max": 3.326224245716219e-07,
+    "span_max": 1.1626695314431403e-11
+  },
+  "checks_pass": false,
+  "tf32": false,
+  "timing_dtype": "bfloat16 weights and inputs",
+  "timing": {
+    "stages": {
+      "load": 3.12,
+      "build, check and time": 1027.05
+    },
+    "total_s": 1030.23
+  }
+}
