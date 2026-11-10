@@ -2,17 +2,17 @@
   "experiment": "Tier 2 ImageNet linear probe",
   "model": "dinov2_vitb14_reg",
   "variants": [
-    "healed_vexact_k6"
+    "healed_vexact_k12"
   ],
   "args": {
     "model": "dinov2_vitb14_reg",
-    "variants": "healed_vexact_k6",
+    "variants": "healed_vexact_k12",
     "out": "runs/t2",
     "operators": null,
     "m1_structure": null,
     "heal_dir": null,
     "heal_config": null,
-    "vexact_dir": null,
+    "vexact_dir": "runs/m3_vexact_5090",
     "vexact_checkpoint": null,
     "vexact_config": null,
     "random_seed": 1,
@@ -44,12 +44,12 @@
     "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
     "m1_structure": "runs/m1/m1_structure.npz",
     "heal_dir": "runs/m3_pilot",
-    "vexact_dir": "runs/m3_vexact",
+    "vexact_dir": "runs/m3_vexact_5090",
     "vexact_checkpoint": null,
     "vexact_config": null
   },
   "git": {
-    "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+    "git_hash": "c121ed09bba380eceba6ef76a8d680b70329501a",
     "git_dirty": null
   },
   "env": {
@@ -65,16 +65,16 @@
   "feature_recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
   "timing": {
     "stages": {
-      "load": 6.18
+      "load": 4.31
     },
     "variants": {
-      "healed_vexact_k6": {
-        "build healed_vexact_k6": 38.5,
-        "extract healed_vexact_k6 bank": 261.56,
-        "extract healed_vexact_k6 val": 127.7,
-        "probe healed_vexact_k6": 441.52
+      "healed_vexact_k12": {
+        "build healed_vexact_k12": 31.15,
+        "extract healed_vexact_k12 bank": 310.43,
+        "extract healed_vexact_k12 val": 146.28,
+        "probe healed_vexact_k12": 550.11
       }
     },
-    "total_s": 877.0
+    "total_s": 1045.3
   }
 }

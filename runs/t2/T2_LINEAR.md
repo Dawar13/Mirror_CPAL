@@ -29,6 +29,7 @@ Healed V-exact rows (healed_vexact_k<K>, scripts/heal_vexact.py): the same featu
 | healed_random_k9 | healed random structure, MLP + attention, k = 9 (M3) | 74.99 | 92.79 | -5.99 | 73.28 | 0.00316 | 64,979,688 | - |
 | healed_svd_k9 | healed SVD, MLP + attention, k = 9 (M3) | 79.30 | 95.26 | -1.69 | 77.57 | 0.00316 | 64,932,864 | - |
 | vlocal_k9 | Mirror V-local, MLP + attention, k = 9 | 76.77 | 93.73 | -4.21 | 74.70 | 0.00316 | 64,979,688 | - |
+| healed_vexact_k12 | healed Mirror V-exact, MLP + attention, k = 12 (scripts/heal_vexact.py) | 80.10 | 95.55 | -0.89 | 78.34 | 0.00316 | 66,203,360 | loaded student checked: span exactness 8.7e-06, image vs mirror feature 4.2e-06, PASS; even head, feature mirror-invariant |
 
 ## mae_b16
 
@@ -36,4 +37,4 @@ Healed V-exact rows (healed_vexact_k<K>, scripts/heal_vexact.py): the same featu
 |---|---|---|---|---|---|---|---|---|
 | original | original | 56.54 | 79.83 | - | 13.72 | 0.001 | 85,798,656 | - |
 
-Source: `t2_linear.csv` and `probe/<model>/<variant>.json` in this folder. Commit(s): 8a7b6c4e42 (dirty), b95ccd5886, edc3bbc98b (dirty); seed(s): 0. Feature extraction and probe timings are in the CSV.
+Source: `t2_linear.csv` and `probe/<model>/<variant>.json` in this folder. Commit(s): 8a7b6c4e42 (dirty), b95ccd5886, c121ed09bb, edc3bbc98b (dirty); seed(s): 0. Feature extraction and probe timings are in the CSV.

@@ -1,0 +1,530 @@
+{
+  "transfer_row": {
+    "model": "dinov2_vitb14_reg",
+    "dataset": "dtd",
+    "variant": "healed_vexact_k6",
+    "label": "healed Mirror V-exact, MLP + attention, k = 6 (scripts/heal_vexact.py)",
+    "family": "healed_vexact",
+    "method": "vexact",
+    "k": 6,
+    "top1": 83.19148936170212,
+    "top5": 97.7127659574468,
+    "mean_per_class_top1": 83.19148936170212,
+    "chosen_wd": 0.0316,
+    "wd_at_grid_edge": true,
+    "holdout_top1_at_chosen": 83.77659574468085,
+    "final_hit_iter_limit": false,
+    "feature_dim": 1536,
+    "n_train": 3760,
+    "n_test": 1880,
+    "num_classes": 47,
+    "hf_id": "tanganke/dtd",
+    "t_extract_s": 15.8,
+    "t_probe_s": 271.6,
+    "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+    "git_dirty": null,
+    "seed": 0,
+    "date": "2026-11-09 08:00:57",
+    "notes": "feature [CLS, mean patch token] after the student's own final norm (RMSNorm, affine; no even head at k = 6 < 12), the forward of the k-NN feature of scripts/heal_vexact.py; exactly equivariant over blocks 1..6 only, so not mirror-invariant; checks after loading (64 v2 check images, float32): span exactness max rel 4.6e-06 (tol 0.0001; 4.6e-06 recorded after healing), image vs mirror probe feature max rel 4.2e-01: PASS; Tier-1 k-NN of the healed run 78.79 (bf16 features)",
+    "vexact_even_head": false,
+    "vexact_span_exact_rel_max": 4.586209832142354e-06,
+    "vexact_feature_flip_rel_max": 0.42305837553772463,
+    "vexact_checks_pass": true
+  },
+  "selection": {
+    "chosen_wd": 0.0316,
+    "holdout_top1_at_chosen": 83.77659574468085,
+    "wd_at_grid_edge": true,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 83.24468085106383,
+        "holdout_top5": 96.27659574468085,
+        "holdout_loss": 0.619530089358066,
+        "train_objective": 0.1793179214000702,
+        "grad_max": 1.2844597222283483e-05,
+        "n_iter": 164,
+        "n_eval": 177,
+        "hit_limit": false,
+        "seconds": 63.45
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 81.64893617021276,
+        "holdout_top5": 96.54255319148936,
+        "holdout_loss": 0.6994481999823388,
+        "train_objective": 0.037194713950157166,
+        "grad_max": 1.9617073121480644e-06,
+        "n_iter": 174,
+        "n_eval": 188,
+        "hit_limit": false,
+        "seconds": 67.24
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 80.85106382978724,
+        "holdout_top5": 96.01063829787235,
+        "holdout_loss": 0.845793866096659,
+        "train_objective": 0.006618763320147991,
+        "grad_max": 8.664055712870322e-07,
+        "n_iter": 115,
+        "n_eval": 125,
+        "hit_limit": false,
+        "seconds": 43.37
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 80.85106382978724,
+        "holdout_top5": 96.01063829787235,
+        "holdout_loss": 1.0340678438227227,
+        "train_objective": 0.001060981652699411,
+        "grad_max": 8.470773309454671e-07,
+        "n_iter": 27,
+        "n_eval": 33,
+        "hit_limit": false,
+        "seconds": 7.68
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 80.58510638297872,
+        "holdout_top5": 96.27659574468085,
+        "holdout_loss": 1.25197430874439,
+        "train_objective": 0.0001587451552040875,
+        "grad_max": 4.616185833583586e-07,
+        "n_iter": 8,
+        "n_eval": 16,
+        "hit_limit": false,
+        "seconds": 1.59
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 80.58510638297872,
+        "holdout_top5": 96.27659574468085,
+        "holdout_loss": 1.25197430874439,
+        "train_objective": 3.8695747207384557e-05,
+        "grad_max": 5.572971986111952e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.03
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 83.77659574468085,
+        "holdout_top5": 96.54255319148936,
+        "holdout_loss": 0.6300273245953499,
+        "train_objective": 0.3617100119590759,
+        "grad_max": 1.9256258383393288e-05,
+        "n_iter": 86,
+        "n_eval": 96,
+        "hit_limit": false,
+        "seconds": 31.93
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 82.44680851063829,
+        "holdout_top5": 96.27659574468085,
+        "holdout_loss": 0.6482449795337434,
+        "train_objective": 0.08356824517250061,
+        "grad_max": 7.927912520244718e-06,
+        "n_iter": 102,
+        "n_eval": 116,
+        "hit_limit": false,
+        "seconds": 37.71
+      }
+    ],
+    "n_train": 3384,
+    "n_holdout": 376,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.0316,
+    "train_objective": 0.376145601272583,
+    "grad_max": 5.736880120821297e-05,
+    "n_iter": 59,
+    "n_eval": 63,
+    "hit_limit": false,
+    "seconds": 18.15,
+    "train_top1": 99.01595744680851
+  },
+  "test": {
+    "top1": 83.19148936170212,
+    "top5": 97.7127659574468,
+    "mean_per_class_top1": 83.19148936170212,
+    "loss": 0.5887013536818484,
+    "n": 1880
+  },
+  "variant_info": {
+    "variant": "healed_vexact_k6",
+    "label": "healed Mirror V-exact, MLP + attention, k = 6 (scripts/heal_vexact.py)",
+    "family": "healed_vexact",
+    "method": "vexact",
+    "k": 6,
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "model_params_original": 86583552,
+    "builder": "scripts/heal_vexact.load_vexact_structure + mirror.heal_vexact.build_vexact_student (as scripts/heal_vexact.py make_student) + mirror.heal.load_trained_blocks",
+    "vexact_run": "/workspace/Mirror_CPAL/runs/m3_vexact/k6",
+    "checkpoint": "/workspace/Mirror_CPAL/runs/m3_vexact/k6/final/trained_blocks.pt",
+    "heal_config_source": "/workspace/Mirror_CPAL/runs/m3_vexact/k6/summary.json",
+    "heal_seed": 0,
+    "structure": {
+      "span_source": "/workspace/Mirror_CPAL/runs/m1/m1_structure.npz",
+      "span_sha256": "9a10a17e1ea2b646dbbae62bedec8827ac833b72f1ec3dab7f28eb40ca1e18f3",
+      "operators_source": "/workspace/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "heads_source": "/workspace/Mirror_CPAL/runs/m1/m1_structure.npz"
+    },
+    "reg_perm": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "d_plus": 552,
+    "d_minus": 216,
+    "train_embeddings": true,
+    "even_head": false,
+    "feature": "feature [CLS, mean patch token] after the student's own final norm (RMSNorm, affine; no even head at k = 6 < 12), the forward of the k-NN feature of scripts/heal_vexact.py; exactly equivariant over blocks 1..6 only, so not mirror-invariant",
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 5e-05,
+      "steps": 780,
+      "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+      "git_dirty": null
+    },
+    "checkpoint_check": {
+      "scope": "all",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_tensors": 128,
+      "n_model_tensors": 128,
+      "model_tensors_not_in_checkpoint": [],
+      "all_equal": true
+    },
+    "constraint_checks": {
+      "0:MirrorMLPConstraint": {
+        "max_rel_violation": 2.240655398075842e-08,
+        "per_block": [
+          2.240655398075842e-08,
+          2.1870564401533303e-08,
+          2.2251591847687474e-08,
+          2.1750294084216106e-08,
+          2.1541628223235357e-08,
+          2.0024557017312857e-08
+        ]
+      },
+      "1:MirrorAttnConstraint": {
+        "max_rel_violation": 9.68023124300346e-09,
+        "per_block": [
+          6.631034876265916e-09,
+          9.68023124300346e-09,
+          8.351296918622418e-09,
+          7.940422221951788e-09,
+          9.46873866664699e-09,
+          9.130363481447818e-09
+        ]
+      },
+      "2:VExactEmbeddings": {
+        "max_share": 2.101951903432687e-16,
+        "shares": {
+          "patch_embed.weight": 1.181343048824564e-16,
+          "patch_embed.bias": 1.0190137479142025e-17,
+          "pos_embed.patches": 2.101951903432687e-16,
+          "pos_embed.cls": 3.8948745074805154e-17,
+          "cls_token": 3.8948745074805154e-17,
+          "registers": 2.78685747590997e-17
+        },
+        "embeddings_train": true
+      }
+    },
+    "vexact_checks": {
+      "pass": true,
+      "full_conversion": false,
+      "tol": 0.0001,
+      "protocol": "v2",
+      "n_images": 64,
+      "dtype": "torch.float32",
+      "tf32_matmul": false,
+      "span_exact_max_rel_inside": 4.586209832142354e-06,
+      "span_exact_pass": true,
+      "span_exact_rows": [
+        {
+          "layer": 0,
+          "in_span": true,
+          "max_abs_err": 5.872365387737943e-06,
+          "max_abs_ref": 6.867061138153076,
+          "rel_max": 8.551497168288412e-07,
+          "rel_fro": 6.536502802333626e-07
+        },
+        {
+          "layer": 1,
+          "in_span": true,
+          "max_abs_err": 2.020355646359384e-05,
+          "max_abs_ref": 4.4052839279174805,
+          "rel_max": 4.586209832142354e-06,
+          "rel_fro": 1.9853670826470115e-06
+        },
+        {
+          "layer": 2,
+          "in_span": true,
+          "max_abs_err": 1.8864973586829592e-05,
+          "max_abs_ref": 5.179753303527832,
+          "rel_max": 3.642060245220755e-06,
+          "rel_fro": 2.759153325664838e-06
+        },
+        {
+          "layer": 3,
+          "in_span": true,
+          "max_abs_err": 2.1576070554085724e-05,
+          "max_abs_ref": 6.448509216308594,
+          "rel_max": 3.3459005531881373e-06,
+          "rel_fro": 3.450899094559737e-06
+        },
+        {
+          "layer": 4,
+          "in_span": true,
+          "max_abs_err": 4.2871479115191846e-05,
+          "max_abs_ref": 21.76492691040039,
+          "rel_max": 1.9697506585563432e-06,
+          "rel_fro": 3.634677573927788e-06
+        },
+        {
+          "layer": 5,
+          "in_span": true,
+          "max_abs_err": 4.161403347247017e-05,
+          "max_abs_ref": 20.308609008789062,
+          "rel_max": 2.04908339386812e-06,
+          "rel_fro": 4.334997239246106e-06
+        },
+        {
+          "layer": 6,
+          "in_span": true,
+          "max_abs_err": 4.1882531844450455e-05,
+          "max_abs_ref": 22.723800659179688,
+          "rel_max": 1.8431129753609791e-06,
+          "rel_fro": 4.875325070099458e-06
+        },
+        {
+          "layer": 7,
+          "in_span": false,
+          "max_abs_err": 9.527044162584351,
+          "max_abs_ref": 21.928665161132812,
+          "rel_max": 0.43445618292674015,
+          "rel_fro": 0.6666956382976833
+        },
+        {
+          "layer": 8,
+          "in_span": false,
+          "max_abs_err": 105.23746312467367,
+          "max_abs_ref": 131.44857788085938,
+          "rel_max": 0.8005979586942158,
+          "rel_fro": 0.9208086525184004
+        },
+        {
+          "layer": 9,
+          "in_span": false,
+          "max_abs_err": 105.28157873764263,
+          "max_abs_ref": 131.49008178710938,
+          "rel_max": 0.8006807609116866,
+          "rel_fro": 0.9447610986669597
+        },
+        {
+          "layer": 10,
+          "in_span": false,
+          "max_abs_err": 106.96585507110662,
+          "max_abs_ref": 141.23736572265625,
+          "rel_max": 0.757348131804953,
+          "rel_fro": 1.010524809990412
+        },
+        {
+          "layer": 11,
+          "in_span": false,
+          "max_abs_err": 110.31092079100304,
+          "max_abs_ref": 204.06752014160156,
+          "rel_max": 0.540560892367677,
+          "rel_fro": 1.0135138793717562
+        },
+        {
+          "layer": 12,
+          "in_span": false,
+          "max_abs_err": 106.18649444584156,
+          "max_abs_ref": 177.96380615234375,
+          "rel_max": 0.5966746651560256,
+          "rel_fro": 1.0419447174242116
+        }
+      ],
+      "probe_feature_flip": {
+        "rel_max": 0.42305837553772463,
+        "first_part_rel_max": 0.4087649346905637,
+        "mean_patch_rel_max": 0.46142437704379113,
+        "knn_cls_feature_rel_max": 0.4087649346905637,
+        "n_images": 64
+      },
+      "recorded_after_healing": {
+        "exactness.json:max_rel_inside": 4.586209832545588e-06
+      }
+    },
+    "param_counts": {
+      "mlp_params_kept": 16444608,
+      "attn_params_kept": 8633568,
+      "converted_params_dense": 42467328,
+      "converted_params_kept": 25078176,
+      "converted_kept_frac": 0.5905287000868056,
+      "model_params_original": 86583552,
+      "model_params": 69194400,
+      "model_params_frac": 0.7991633330080984,
+      "d_plus": 552,
+      "d_minus": 216
+    },
+    "mlp_params_kept": 16444608,
+    "attn_params_kept": 8633568,
+    "recorded_knn_healed_top1": 78.7880003452301,
+    "recorded_knn_precision": "bf16",
+    "converted_params_dense": 42467328,
+    "converted_params_kept": 25078176,
+    "model_params": 69194400
+  },
+  "sources": {
+    "vexact_run": "/workspace/Mirror_CPAL/runs/m3_vexact/k6",
+    "checkpoint": "/workspace/Mirror_CPAL/runs/m3_vexact/k6/final/trained_blocks.pt",
+    "checkpoint_sha256": "4f9df517ce2351d01167c4da91eb200ed17aec5ef6ee7216ab5fc54ca49e2e4f"
+  },
+  "dataset_meta": {
+    "format": 1,
+    "hf_id": "tanganke/dtd",
+    "train_splits": [
+      "train"
+    ],
+    "test_split": "test",
+    "image": "image",
+    "label": "label",
+    "resize": 256,
+    "crop": 224,
+    "complete": true,
+    "counts": {
+      "train": 3760,
+      "test": 1880
+    },
+    "loader": "parquet",
+    "sources": {
+      "train": [
+        "train-00000-of-00001.parquet"
+      ],
+      "test": [
+        "test-00000-of-00001.parquet"
+      ]
+    },
+    "decode": {
+      "train": {
+        "n": 3760,
+        "seconds": 7.6
+      },
+      "test": {
+        "n": 1880,
+        "seconds": 4.6
+      }
+    },
+    "seconds": 24.2,
+    "interpolation": "bicubic",
+    "note": "3,760 / 1,880: one official split, train + val (verify on VM)"
+  },
+  "feature_meta": {
+    "train": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_vexact_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "vexact_run": "/workspace/Mirror_CPAL/runs/m3_vexact/k6",
+        "checkpoint": "/workspace/Mirror_CPAL/runs/m3_vexact/k6/final/trained_blocks.pt",
+        "checkpoint_sha256": "4f9df517ce2351d01167c4da91eb200ed17aec5ef6ee7216ab5fc54ca49e2e4f"
+      },
+      "img_size": 224,
+      "dataset": "dtd",
+      "hf_id": "tanganke/dtd",
+      "split": "train",
+      "n": 3760,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+      "seed": 0,
+      "seconds": 10.15
+    },
+    "test": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "healed_vexact_k6",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "vexact_run": "/workspace/Mirror_CPAL/runs/m3_vexact/k6",
+        "checkpoint": "/workspace/Mirror_CPAL/runs/m3_vexact/k6/final/trained_blocks.pt",
+        "checkpoint_sha256": "4f9df517ce2351d01167c4da91eb200ed17aec5ef6ee7216ab5fc54ca49e2e4f"
+      },
+      "img_size": 224,
+      "dataset": "dtd",
+      "hf_id": "tanganke/dtd",
+      "split": "test",
+      "n": 1880,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+      "seed": 0,
+      "seconds": 5.64
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "git": {
+    "git_hash": "b95ccd58865b4ca52ed449edb24a6a1563478a04",
+    "git_dirty": null
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Linux-5.15.0-181-generic-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.4",
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "cuda": "12.8"
+  }
+}
