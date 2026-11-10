@@ -1,0 +1,294 @@
+{
+  "info": {
+    "variant": "healed_svd_k4",
+    "label": "healed SVD, MLP + attention, k = 4 (M3)",
+    "family": "healed",
+    "method": "svd",
+    "k": 4,
+    "blocks": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "model_params_original": 304424,
+    "builder": "scripts/heal.method_setup + mirror.heal.load_trained_blocks",
+    "heal_config_source": "tiny_out/runs\\e3\\svd_sym\\svd\\summary.json",
+    "heal_seed": 0,
+    "method_info": {
+      "method": "svd",
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "mlp_params_dense": 131072,
+      "structure_source": "tiny random structure (smoke test) (neuron pairings); span operator A* for k = 4: tiny random span operator (smoke test)",
+      "structure_mode": "span",
+      "attention": true,
+      "attn_params_dense": 65536,
+      "attn_a_out_offset": 1,
+      "attn_a_out": "A_b+1",
+      "heads_source": "tiny random head structure (smoke test)",
+      "attn_params_mirror": 32672,
+      "vexact_match": {
+        "rule": "per block and matrix, the largest rank r with r (rows + cols) <= the V-exact count",
+        "accounting": "mirror.heal_vexact.vexact_block_params (summed by vexact_param_counts)",
+        "d_plus": 36,
+        "span_k": 4,
+        "mlp_kept_vexact": 68288,
+        "attn_kept_vexact": 32672,
+        "mlp_kept_svd": 66560,
+        "attn_kept_svd": 32256,
+        "max_block_rel_gap_mlp": 0.02530459231490159,
+        "max_block_rel_gap_attn": 0.027450980392156862,
+        "per_block": [
+          {
+            "block": 0,
+            "mlp_ranks": [
+              26,
+              26
+            ],
+            "attn_ranks": [
+              16,
+              16,
+              15,
+              15
+            ],
+            "mlp_kept_svd": 16640,
+            "mlp_kept_vexact": 17072,
+            "attn_kept_svd": 7936,
+            "attn_kept_vexact": 8128,
+            "mlp_rel_gap": 0.02530459231490159,
+            "attn_rel_gap": 0.023622047244094488
+          },
+          {
+            "block": 1,
+            "mlp_ranks": [
+              26,
+              26
+            ],
+            "attn_ranks": [
+              16,
+              16,
+              16,
+              16
+            ],
+            "mlp_kept_svd": 16640,
+            "mlp_kept_vexact": 17072,
+            "attn_kept_svd": 8192,
+            "attn_kept_vexact": 8192,
+            "mlp_rel_gap": 0.02530459231490159,
+            "attn_rel_gap": 0.0
+          },
+          {
+            "block": 2,
+            "mlp_ranks": [
+              26,
+              26
+            ],
+            "attn_ranks": [
+              15,
+              15,
+              16,
+              16
+            ],
+            "mlp_kept_svd": 16640,
+            "mlp_kept_vexact": 17072,
+            "attn_kept_svd": 7936,
+            "attn_kept_vexact": 8160,
+            "mlp_rel_gap": 0.02530459231490159,
+            "attn_rel_gap": 0.027450980392156862
+          },
+          {
+            "block": 3,
+            "mlp_ranks": [
+              26,
+              26
+            ],
+            "attn_ranks": [
+              16,
+              16,
+              16,
+              16
+            ],
+            "mlp_kept_svd": 16640,
+            "mlp_kept_vexact": 17072,
+            "attn_kept_svd": 8192,
+            "attn_kept_vexact": 8192,
+            "mlp_rel_gap": 0.02530459231490159,
+            "attn_rel_gap": 0.0
+          }
+        ]
+      },
+      "ranks": [
+        [
+          26,
+          26
+        ],
+        [
+          26,
+          26
+        ],
+        [
+          26,
+          26
+        ],
+        [
+          26,
+          26
+        ]
+      ],
+      "mlp_params_kept": 66560,
+      "mlp_params_mirror": 68288,
+      "attn_ranks": [
+        [
+          16,
+          16,
+          15,
+          15
+        ],
+        [
+          16,
+          16,
+          16,
+          16
+        ],
+        [
+          15,
+          15,
+          16,
+          16
+        ],
+        [
+          16,
+          16,
+          16,
+          16
+        ]
+      ],
+      "attn_params_kept": 32256,
+      "student": {
+        "materialise_pos_embed": true,
+        "train_span_only": true
+      }
+    },
+    "checkpoint_meta": {
+      "seed": 0,
+      "lr": 0.0001,
+      "steps": 4,
+      "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+      "git_dirty": false
+    },
+    "constraint_checks": {
+      "0:LowRankMLP": {
+        "numerical_ranks": [
+          [
+            26,
+            26
+          ],
+          [
+            26,
+            26
+          ],
+          [
+            26,
+            26
+          ],
+          [
+            26,
+            26
+          ]
+        ],
+        "target_ranks": [
+          [
+            26,
+            26
+          ],
+          [
+            26,
+            26
+          ],
+          [
+            26,
+            26
+          ],
+          [
+            26,
+            26
+          ]
+        ],
+        "note": "ranks of U V formed in float64 from the factors"
+      },
+      "1:LowRankAttention": {
+        "numerical_ranks": [
+          [
+            16,
+            16,
+            15,
+            15
+          ],
+          [
+            16,
+            16,
+            16,
+            16
+          ],
+          [
+            15,
+            15,
+            16,
+            16
+          ],
+          [
+            16,
+            16,
+            16,
+            16
+          ]
+        ],
+        "target_ranks": [
+          [
+            16,
+            16,
+            15,
+            15
+          ],
+          [
+            16,
+            16,
+            16,
+            16
+          ],
+          [
+            15,
+            15,
+            16,
+            16
+          ],
+          [
+            16,
+            16,
+            16,
+            16
+          ]
+        ]
+      }
+    },
+    "mlp_params_kept": 66560,
+    "attn_params_kept": 32256,
+    "converted_params_dense": 196608,
+    "converted_params_kept": 98816,
+    "model_params": 206632
+  },
+  "sources": {
+    "heal_run": "tiny_out/runs\\e3\\svd_sym\\svd",
+    "checkpoint": "tiny_out/runs\\e3\\svd_sym\\svd\\final\\trained_blocks.pt",
+    "checkpoint_sha256": "5a539421e8c0ee5ea7e2eab3097b5c1c0a55a47fdf5a54bd8c9d111a09cbd2f7"
+  },
+  "git": {
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "git_dirty": false
+  }
+}

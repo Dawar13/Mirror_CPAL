@@ -1,0 +1,365 @@
+{
+  "config": {
+    "blocks": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "seed": 0,
+    "lr": 0.0001,
+    "epochs": 1.0,
+    "max_steps": null,
+    "batch_size": 8,
+    "micro_batch": 4,
+    "weight_decay": 0.05,
+    "decay_1d": false,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "warmup_frac": 0.05,
+    "warmup_steps": null,
+    "min_lr_ratio": 0.0,
+    "grad_clip": null,
+    "crop_size": 56,
+    "crop_scale": [
+      0.35,
+      1.0
+    ],
+    "crop_ratio": [
+      0.75,
+      1.3333333333333333
+    ],
+    "hflip_p": 0.5,
+    "w_cls": 1.0,
+    "w_patch": 1.0,
+    "w_block": 1.0,
+    "normaliser": "fixed",
+    "calib_images": 8,
+    "train_scope": "all",
+    "grad_checkpoint": false,
+    "amp": "auto",
+    "share_prefix": true,
+    "eval_every": 0,
+    "eval_batch": null,
+    "max_heldout": null,
+    "log_every": 0,
+    "prefetch": 0,
+    "save_checkpoint": true,
+    "checkpoint_path": null
+  },
+  "seed": 0,
+  "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+  "git_dirty": false,
+  "env": {
+    "python": "3.12.4",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.11.0+cpu",
+    "numpy": "2.4.4",
+    "device": "cpu"
+  },
+  "constraints": [
+    {
+      "type": "LowRankMLP",
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "ranks": [
+        [
+          26,
+          26
+        ],
+        [
+          26,
+          26
+        ],
+        [
+          26,
+          26
+        ],
+        [
+          26,
+          26
+        ]
+      ],
+      "freeze_absorbed": true
+    },
+    {
+      "type": "LowRankAttention",
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "ranks": [
+        [
+          16,
+          16,
+          15,
+          15
+        ],
+        [
+          16,
+          16,
+          16,
+          16
+        ],
+        [
+          15,
+          15,
+          16,
+          16
+        ],
+        [
+          16,
+          16,
+          16,
+          16
+        ]
+      ],
+      "freeze_absorbed": true
+    },
+    {
+      "type": "SpanTrainable",
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "embeddings_train": true,
+      "frozen": "everything outside the converted blocks and the embeddings"
+    }
+  ],
+  "constraint_checks": {
+    "0:LowRankMLP": {
+      "numerical_ranks": [
+        [
+          64,
+          64
+        ],
+        [
+          64,
+          64
+        ],
+        [
+          64,
+          64
+        ],
+        [
+          64,
+          64
+        ]
+      ],
+      "target_ranks": [
+        [
+          26,
+          26
+        ],
+        [
+          26,
+          26
+        ],
+        [
+          26,
+          26
+        ],
+        [
+          26,
+          26
+        ]
+      ]
+    },
+    "1:LowRankAttention": {
+      "numerical_ranks": [
+        [
+          16,
+          16,
+          15,
+          15
+        ],
+        [
+          16,
+          16,
+          16,
+          16
+        ],
+        [
+          15,
+          15,
+          16,
+          16
+        ],
+        [
+          16,
+          16,
+          16,
+          16
+        ]
+      ],
+      "target_ranks": [
+        [
+          16,
+          16,
+          15,
+          15
+        ],
+        [
+          16,
+          16,
+          16,
+          16
+        ],
+        [
+          15,
+          15,
+          16,
+          16
+        ],
+        [
+          16,
+          16,
+          16,
+          16
+        ]
+      ]
+    }
+  },
+  "n_trainable": 139968,
+  "n_trainable_tensors": 76,
+  "trainable_names": [
+    "cls_token",
+    "pos_embed",
+    "patch_embed.proj.weight",
+    "patch_embed.proj.bias",
+    "blocks.0.attn.qkv.q.U",
+    "blocks.0.attn.qkv.q.V",
+    "blocks.0.attn.qkv.q.bias",
+    "blocks.0.attn.qkv.k.U",
+    "blocks.0.attn.qkv.k.V",
+    "blocks.0.attn.qkv.k.bias",
+    "blocks.0.attn.qkv.v.U",
+    "blocks.0.attn.qkv.v.V",
+    "blocks.0.attn.qkv.v.bias",
+    "blocks.0.attn.proj.U",
+    "blocks.0.attn.proj.V",
+    "blocks.0.attn.proj.bias",
+    "blocks.0.mlp.fc1.U",
+    "blocks.0.mlp.fc1.V",
+    "blocks.0.mlp.fc1.bias",
+    "blocks.0.mlp.fc2.U",
+    "blocks.0.mlp.fc2.V",
+    "blocks.0.mlp.fc2.bias",
+    "blocks.1.attn.qkv.q.U",
+    "blocks.1.attn.qkv.q.V",
+    "blocks.1.attn.qkv.q.bias",
+    "blocks.1.attn.qkv.k.U",
+    "blocks.1.attn.qkv.k.V",
+    "blocks.1.attn.qkv.k.bias",
+    "blocks.1.attn.qkv.v.U",
+    "blocks.1.attn.qkv.v.V",
+    "blocks.1.attn.qkv.v.bias",
+    "blocks.1.attn.proj.U",
+    "blocks.1.attn.proj.V",
+    "blocks.1.attn.proj.bias",
+    "blocks.1.mlp.fc1.U",
+    "blocks.1.mlp.fc1.V",
+    "blocks.1.mlp.fc1.bias",
+    "blocks.1.mlp.fc2.U",
+    "blocks.1.mlp.fc2.V",
+    "blocks.1.mlp.fc2.bias",
+    "blocks.2.attn.qkv.q.U",
+    "blocks.2.attn.qkv.q.V",
+    "blocks.2.attn.qkv.q.bias",
+    "blocks.2.attn.qkv.k.U",
+    "blocks.2.attn.qkv.k.V",
+    "blocks.2.attn.qkv.k.bias",
+    "blocks.2.attn.qkv.v.U",
+    "blocks.2.attn.qkv.v.V",
+    "blocks.2.attn.qkv.v.bias",
+    "blocks.2.attn.proj.U",
+    "blocks.2.attn.proj.V",
+    "blocks.2.attn.proj.bias",
+    "blocks.2.mlp.fc1.U",
+    "blocks.2.mlp.fc1.V",
+    "blocks.2.mlp.fc1.bias",
+    "blocks.2.mlp.fc2.U",
+    "blocks.2.mlp.fc2.V",
+    "blocks.2.mlp.fc2.bias",
+    "blocks.3.attn.qkv.q.U",
+    "blocks.3.attn.qkv.q.V",
+    "blocks.3.attn.qkv.q.bias",
+    "blocks.3.attn.qkv.k.U",
+    "blocks.3.attn.qkv.k.V",
+    "blocks.3.attn.qkv.k.bias",
+    "blocks.3.attn.qkv.v.U",
+    "blocks.3.attn.qkv.v.V",
+    "blocks.3.attn.qkv.v.bias",
+    "blocks.3.attn.proj.U",
+    "blocks.3.attn.proj.V",
+    "blocks.3.attn.proj.bias",
+    "blocks.3.mlp.fc1.U",
+    "blocks.3.mlp.fc1.V",
+    "blocks.3.mlp.fc1.bias",
+    "blocks.3.mlp.fc2.U",
+    "blocks.3.mlp.fc2.V",
+    "blocks.3.mlp.fc2.bias"
+  ],
+  "amp": "none",
+  "share_prefix_used": false,
+  "first_grad_block": 0,
+  "normalisers": {
+    "block0": 0.4291077620369817,
+    "block1": 0.4304077078793251,
+    "block2": 0.4337906416343416,
+    "block3": 0.435246036104704,
+    "cls": 1.0091125121121207,
+    "patch": 0.6133503162481543
+  },
+  "weights": {
+    "cls": 1.0,
+    "patch": 1.0,
+    "block0": 1.0,
+    "block1": 1.0,
+    "block2": 1.0,
+    "block3": 1.0
+  },
+  "total_steps": 4,
+  "steps_done": 4,
+  "warmup_steps": 0,
+  "steps_per_epoch": 4,
+  "images_seen": 32,
+  "diverged": false,
+  "heldout_images": 8,
+  "heldout_initial": {
+    "total": 1.0688895076638312,
+    "block0": 0.0010480143102381556,
+    "block1": 0.002077169241176799,
+    "block2": 0.0031556467615725652,
+    "block3": 0.004175251293816232,
+    "cls": 0.22239036520965053,
+    "patch": 0.836043060847377
+  },
+  "heldout_final": {
+    "total": 0.9390587724347473,
+    "block0": 0.0021443849284162176,
+    "block1": 0.003004461797806326,
+    "block2": 0.0039762996333607276,
+    "block3": 0.0048897966248564835,
+    "cls": 0.10601533048060056,
+    "patch": 0.819028498969707
+  },
+  "train_loss_first": 1.0028372898232192,
+  "train_loss_last": 0.8350561067927629,
+  "train_loss_last10_mean": 0.8973942390439333,
+  "seconds_total": 1.25,
+  "seconds_train": 1.04,
+  "peak_memory_gb": null,
+  "checkpoint": "tiny_out/runs\\e3\\svd_sym\\svd\\final\\trained_blocks.pt"
+}

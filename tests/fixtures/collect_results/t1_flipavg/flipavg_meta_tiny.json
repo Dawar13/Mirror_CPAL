@@ -1,0 +1,126 @@
+{
+  "experiment": "flip-averaging baseline (exact flip invariance at test time)",
+  "model": "tiny",
+  "plan": [
+    {
+      "variant": "original",
+      "modes": [
+        "plain",
+        "flipavg"
+      ]
+    },
+    {
+      "variant": "healed_vexact_k4",
+      "modes": [
+        "plain",
+        "plain_fp32"
+      ]
+    }
+  ],
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "variants": "original",
+    "out": "tiny_out/runs/t1_flipavg",
+    "operators": null,
+    "m1_structure": null,
+    "heal_dir": null,
+    "heal_config": null,
+    "random_seed": 1,
+    "vexact_dir": "tiny_out/runs/m3_vexact_5090",
+    "vexact_k": null,
+    "vexact_config": null,
+    "vexact_fp32": true,
+    "seed": 0,
+    "cache_dir": "cache",
+    "img_size": 224,
+    "knn_batch_size": 128,
+    "knn_k": 20,
+    "knn_temperature": 0.07,
+    "batch_size": 256,
+    "num_workers": 4,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-3,1e-2",
+    "no_wd_refine": true,
+    "holdout_frac": 0.1,
+    "max_iter": 60,
+    "history_size": 20,
+    "tol_grad": 1e-06,
+    "probe_tf32": false,
+    "skip_probe": false,
+    "force": false,
+    "memory_fraction": null,
+    "device": null,
+    "tiny": true,
+    "tiny_classes": 4,
+    "tiny_bank_per_class": 20,
+    "tiny_val_per_class": 8
+  },
+  "paths": {
+    "operators": null,
+    "m1_structure": null,
+    "heal_dir": null,
+    "vexact_dir": "tiny_out/runs/m3_vexact_5090",
+    "vexact_checkpoint": null,
+    "vexact_config": null
+  },
+  "git": {
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "git_dirty": false
+  },
+  "env": {
+    "python": "3.12.4",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.11.0+cpu",
+    "numpy": "2.4.4",
+    "device": "cpu"
+  },
+  "seed": 0,
+  "protocol": "tiny synthetic",
+  "features": {
+    "knn": "CLS token after the final norm; flipavg averages it over the image and its mirror after the final norm and before the L2 normalisation of the k-NN (mirror.knn.extract_features normalises the averaged vector)",
+    "probe": "[CLS after the final norm, mean patch token after the final norm] (tier2_linear.probe_feature); flipavg averages the whole vector over the image and its mirror",
+    "probe_recipe_plain": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+    "probe_recipe_flipavg": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]; flip-averaged: (p(x) + p(mirror x)) / 2"
+  },
+  "cost": {
+    "arch": {
+      "d": 64,
+      "h": 256,
+      "depth": 4,
+      "T": 17,
+      "n_patches": 16,
+      "patch": 14,
+      "in_chans": 3,
+      "model_params_dense": 304424
+    },
+    "source": "scripts/collect_results.analytic_cost (one forward pass) x forward passes"
+  },
+  "timing": {
+    "stages": {
+      "load": 9.62
+    },
+    "variants": {
+      "original": {
+        "build original": 0.01,
+        "knn original plain": 0.15,
+        "extract original plain bank": 0.08,
+        "extract original plain val": 0.03,
+        "probe original plain": 0.53,
+        "knn original flipavg": 0.26,
+        "extract original flipavg bank": 0.14,
+        "extract original flipavg val": 0.06,
+        "probe original flipavg": 0.67
+      },
+      "healed_vexact_k4": {
+        "build healed_vexact_k4": 0.49,
+        "knn healed_vexact_k4 plain": 0.14,
+        "extract healed_vexact_k4 plain bank": 0.09,
+        "extract healed_vexact_k4 plain val": 0.03,
+        "probe healed_vexact_k4 plain": 0.81,
+        "knn healed_vexact_k4 plain_fp32": 0.15
+      }
+    },
+    "total_s": 16.31
+  }
+}

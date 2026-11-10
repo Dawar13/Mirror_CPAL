@@ -9,7 +9,8 @@ columns, and what was skipped) and figures_meta.json (git hash, inputs with SHA-
 No number is computed here beyond what a figure shows: means and standard deviations come from the tables;
 the only arithmetic is a difference of two table values where a panel plots a drop (stated in FIGURES.md).
 There is no randomness (no seed is needed). A missing table, or missing rows, prints "not available" and
-skips that figure or panel; rerun after scripts/collect_results.py has refreshed the tables.
+skips that figure or panel; rerun after scripts/collect_results.py has refreshed the tables. The F7 teaser figures
+are drawn by scripts/f7_visuals.py into the same folder; this script only lists them in FIGURES.md.
 
 Style: one sans font (Arial, falling back to Liberation Sans or DejaVu Sans), 7 pt text; the palette of
 mirror/report.py (slots 1 to 3 of the reference palette) plus slots 4 to 7 as in scripts/collect_results.py;
@@ -1288,6 +1289,115 @@ def fig7_tier2(T: Tables, R: Registry, out: Path):
 
 
 # ----------------------------------------------------------------------------------------------
+# Figure 0 (teaser): drawn by scripts/f7_visuals.py, indexed here
+# ----------------------------------------------------------------------------------------------
+F7_STEMS = ("fig0_teaser", "figF7_twins_full", "figF7_layer0_filters")
+
+
+def fig0_teaser_entry(T: Tables, R: Registry, out: Path):
+    """F7 figures are drawn by scripts/f7_visuals.py (into this folder by default, or with --replot runs/f7); this
+    script only lists them in FIGURES.md with their source tables."""
+    name = "Figure 0 (teaser, F7)"
+    rows = T.get("T_f7")
+    files = [f"{s}.{x}" for s in F7_STEMS for x in ("pdf", "png") if (out / f"{s}.{x}").is_file()]
+    if not files:
+        return R.na(name, "figure files not in this folder; `python scripts/f7_visuals.py --replot runs/f7` draws them"
+                    + ("" if rows else " (T_f7.csv not found either: runs/f7 not collected)"))
+    notes = ["Drawn by scripts/f7_visuals.py from runs/f7/, not by this script; its draft captions (with the check to "
+             "make on the figure before keeping them) are in runs/f7/F7_SUMMARY.md."]
+    if rows is None:
+        notes.append("T_f7.csv is not in the tables: the numbers behind the figure are not collected yet.")
+    R.figures.append({"title": "Figure 0 (teaser, F7). Mirror twins and layer-0 filters", "files": files,
+                      "caption": "See runs/f7/F7_SUMMARY.md (draft captions written by scripts/f7_visuals.py).",
+                      "sources": [("T_f7.csv", "block, twin_r_median, rand_r_median, frac_twin_gt_rand, n_pairs"),
+                                  ("T_f7_layer0.csv", "operator, parity, energy_share, sym_fraction")],
+                      "notes": notes})
+
+
+# ----------------------------------------------------------------------------------------------
+# Figure 8: E3, healed k-NN at full conversion against the pre-registered bars
+# ----------------------------------------------------------------------------------------------
+E3_POINTS = (("v0", "vexact", "V-exact\nseed 0"), ("v1", "vexact", "V-exact\nseed 1"),
+             ("svd_raw", "svd", "SVD\nraw targets"), ("svd_sym", "svd", "SVD\nV-exact targets"),
+             ("random", "random", "random\nstructure"))
+
+
+def fig8_e3(T: Tables, R: Registry, out: Path):
+    name = "Figure 8 (E3, matched healed baselines at full conversion)"
+    rows = T.get("T_e3")
+    if rows is None:
+        return R.na(name, "T_e3.csv not found")
+    checks = {r["id"]: r for r in (T.get("T_e3_checks") or [])}
+    by = {r.get("key"): r for r in rows}
+    pts = []
+    for key, style, tick in E3_POINTS:
+        r = by.get(key)
+        if r is None or num(r.get("healed_top1")) is None:
+            R.na(f"{name}, arm {r.get('arm') if r else key}", "no healed k-NN in T_e3")
+            continue
+        if str(r.get("tiny", "")).lower() == "true":
+            R.na(f"{name}, arm {r.get('arm')}", "TINY smoke-test row, not a result")
+            continue
+        pts.append({"key": key, "style": style, "tick": f"{tick}\n(arm {r.get('arm')})", "y": num(r["healed_top1"]),
+                    "orig": num(r.get("original_top1"))})
+    if not any(p["key"] == "v0" for p in pts) or len(pts) < 2:
+        return R.na(name, "needs arm 1 (V0) and at least one other arm with a healed k-NN")
+    ca, cb, cs, cg = (checks.get(i, {}) for i in ("E3.a", "E3.b", "E3.seed", "G5"))
+    fig, ax = plt.subplots(figsize=(SINGLE, 2.6), layout="constrained")
+    grid(ax)
+    xs = {p["key"]: i for i, p in enumerate(pts)}
+    v0 = next(p for p in pts if p["key"] == "v0")
+    if v0["orig"] is not None:
+        ax.axhline(v0["orig"], zorder=1.5, **ORIG_KW)
+    # The pre-registered bars, drawn over the arms they apply to: R at most V0 - bar(E3.a); S at most V0 - bar(E3.b).
+    bar_lines = []
+    for cid, keys in (("E3.a", ("random",)), ("E3.b", ("svd_raw", "svd_sym"))):
+        y = num(checks.get(cid, {}).get("max_baseline"))
+        at = [xs[k] for k in keys if k in xs]
+        if y is None or not at:
+            continue
+        ax.hlines(y, min(at) - 0.42, max(at) + 0.42, colors=C_INK, linewidth=1.0, zorder=2.5)
+        ax.text(max(at) + 0.42, y, f" {cid} bar", ha="left", va="center", fontsize=FONT - 1.5, color=C_MUTED)
+        bar_lines.append((cid, y))
+    for i, p in enumerate(pts):
+        m = METHODS[p["style"]]
+        ax.plot(i, p["y"], marker=m["marker"], ms=MS[m["marker"]] + 1.0, mfc=m["color"], mec="white", mew=0.5,
+                ls="none", zorder=4)
+        ax.text(i, p["y"] + 0.25, f"{p['y']:.2f}", ha="center", va="bottom", fontsize=FONT - 1, color=C_INK)
+    ys = [p["y"] for p in pts] + [y for _, y in bar_lines] + ([v0["orig"]] if v0["orig"] is not None else [])
+    lo, hi = math.floor(min(ys) - 1.0), math.ceil(max(ys) + 1.0)
+    ax.set_ylim(lo, hi)
+    ax.set_xticks(range(len(pts)), [p["tick"] for p in pts], fontsize=FONT - 1)
+    ax.set_xlim(-0.6, len(pts) - 0.1)
+    ax.set_ylabel("healed k-NN top-1 (%)")
+    ax.tick_params(axis="x", length=0)
+    handles = [orig_handle("original model"), Line2D([], [], color=C_INK, lw=1.0, label="pre-registered bar")]
+    fig.legend(handles=handles, loc="outside upper center", ncol=2)
+    files = save(fig, out, "fig8_e3")
+
+    def vtxt(c, spec="+.2f"):
+        v = num(c.get("value"))
+        return (f"{v:{spec}}, " if v is not None else "") + str(c.get("verdict") or "not available")
+
+    s = num(cs.get("value"))
+    cap = ("E3: healed k-NN top-1 (%) at full conversion (all 12 blocks, MLP and attention) of V-exact (seeds 0 and 1) "
+           "and of its matched healed baselines (SVD at matched parameters with raw and with V-exact final targets, and "
+           "the random-structure control), one recipe for all. Each horizontal bar marks the largest baseline value the "
+           "pre-registered bar allows (V0 minus the bar); each check also needs its difference to be larger than the seed "
+           "difference s = |V0 - V1|" + (f" ({s:.2f})" if s is not None else "") + ". "
+           f"E3.a (V0 minus random): {vtxt(ca)}; E3.b (V0 minus the better SVD arm): {vtxt(cb)}; gate G5: "
+           f"{cg.get('verdict') or 'not available'}. The y-axis does not start at zero. One healing run per arm (two for "
+           f"V-exact). Protocol: {PROTOCOL}; healing data from train images only.")
+    notes = [f"Bars: V0 minus the E3.a and E3.b bars, column max_baseline of T_e3_checks ({', '.join(f'{c} {y:.2f}' for c, y in bar_lines)})."]
+    if any("pending" in str(c.get("verdict", "")) for c in (ca, cb, cg)):
+        notes.append("Some checks are pending (arms not run or a validity condition not yet met); see T_e3_checks.")
+    R.figures.append({"title": "Figure 8. E3: matched healed baselines at full conversion", "files": files, "caption": cap,
+                      "sources": [("T_e3.csv", "key, arm, healed_top1, original_top1, tiny"),
+                                  ("T_e3_checks.csv", "id, value, max_baseline, verdict (E3.a, E3.b, E3.seed, G5)")],
+                      "notes": notes})
+
+
+# ----------------------------------------------------------------------------------------------
 # FIGURES.md and meta
 # ----------------------------------------------------------------------------------------------
 def write_index(R: Registry, T: Tables, out: Path, gi: dict):
@@ -1337,7 +1447,8 @@ def main(argv=None):
     setup_style()
     T, R = Tables(tables), Registry()
     gi = git_info()
-    for f in (fig1_main, fig2_healing, fig3_ablations, fig4_tax, fig5_generality, fig6_cost, fig7_tier2):
+    for f in (fig0_teaser_entry, fig1_main, fig2_healing, fig3_ablations, fig4_tax, fig5_generality, fig6_cost, fig7_tier2,
+              fig8_e3):
         f(T, R, out)
     write_index(R, T, out, gi)
     meta = {"script": "scripts/make_figures.py", "date": dt.datetime.now().isoformat(timespec="seconds"), **gi,

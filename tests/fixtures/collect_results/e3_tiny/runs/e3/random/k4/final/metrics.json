@@ -1,0 +1,266 @@
+{
+  "config": {
+    "blocks": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "seed": 0,
+    "lr": 0.0001,
+    "epochs": 1.0,
+    "max_steps": null,
+    "batch_size": 8,
+    "micro_batch": 4,
+    "weight_decay": 0.05,
+    "decay_1d": false,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "warmup_frac": 0.05,
+    "warmup_steps": null,
+    "min_lr_ratio": 0.0,
+    "grad_clip": null,
+    "crop_size": 56,
+    "crop_scale": [
+      0.35,
+      1.0
+    ],
+    "crop_ratio": [
+      0.75,
+      1.3333333333333333
+    ],
+    "hflip_p": 0.5,
+    "w_cls": 1.0,
+    "w_patch": 1.0,
+    "w_block": 1.0,
+    "normaliser": "fixed",
+    "calib_images": 8,
+    "train_scope": "all",
+    "grad_checkpoint": false,
+    "amp": "auto",
+    "share_prefix": true,
+    "eval_every": 0,
+    "eval_batch": null,
+    "max_heldout": null,
+    "log_every": 0,
+    "prefetch": 0,
+    "save_checkpoint": true,
+    "checkpoint_path": null
+  },
+  "seed": 0,
+  "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+  "git_dirty": false,
+  "env": {
+    "python": "3.12.4",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.11.0+cpu",
+    "numpy": "2.4.4",
+    "device": "cpu"
+  },
+  "constraints": [
+    {
+      "type": "MirrorMLPConstraint",
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_pairs": [
+        85,
+        85,
+        85,
+        85
+      ],
+      "n_self": [
+        86,
+        86,
+        86,
+        86
+      ],
+      "d_plus_in": [
+        36,
+        36,
+        36,
+        36
+      ],
+      "d_plus_out": [
+        36,
+        36,
+        36,
+        36
+      ]
+    },
+    {
+      "type": "MirrorAttnConstraint",
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_head_pairs": [
+        1,
+        2,
+        1,
+        2
+      ],
+      "n_self_heads": [
+        2,
+        0,
+        2,
+        0
+      ],
+      "d_plus_in": [
+        36,
+        36,
+        36,
+        36
+      ],
+      "d_plus_out": [
+        36,
+        36,
+        36,
+        36
+      ]
+    },
+    {
+      "type": "VExactEmbeddings",
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "d_plus": 36,
+      "embeddings": "trained, re-projected every step",
+      "reg_perm": []
+    }
+  ],
+  "constraint_checks": {
+    "0:MirrorMLPConstraint": {
+      "max_rel_violation": 3.727494159135528e-08,
+      "per_block": [
+        3.4909131769209437e-08,
+        3.519175131357822e-08,
+        3.727494159135528e-08,
+        3.484590016855568e-08
+      ]
+    },
+    "1:MirrorAttnConstraint": {
+      "max_rel_violation": 1.7791512194687636e-08,
+      "per_block": [
+        1.7668419635472672e-08,
+        1.7757260071661626e-08,
+        1.767319580788022e-08,
+        1.7791512194687636e-08
+      ]
+    },
+    "2:VExactEmbeddings": {
+      "max_share": 3.268936542342151e-16,
+      "shares": {
+        "patch_embed.weight": 3.2069333765495287e-16,
+        "patch_embed.bias": 2.2120421032883682e-16,
+        "pos_embed.patches": 3.1887795776914986e-16,
+        "pos_embed.cls": 3.268936542342151e-16,
+        "cls_token": 2.688699556984831e-16
+      },
+      "embeddings_train": true,
+      "even_head_max_abs_err": 2.978806279418933e-08
+    }
+  },
+  "n_trainable": 237760,
+  "n_trainable_tensors": 36,
+  "trainable_names": [
+    "cls_token",
+    "pos_embed",
+    "patch_embed.proj.weight",
+    "patch_embed.proj.bias",
+    "blocks.0.attn.qkv.weight",
+    "blocks.0.attn.qkv.bias",
+    "blocks.0.attn.proj.weight",
+    "blocks.0.attn.proj.bias",
+    "blocks.0.mlp.fc1.weight",
+    "blocks.0.mlp.fc1.bias",
+    "blocks.0.mlp.fc2.weight",
+    "blocks.0.mlp.fc2.bias",
+    "blocks.1.attn.qkv.weight",
+    "blocks.1.attn.qkv.bias",
+    "blocks.1.attn.proj.weight",
+    "blocks.1.attn.proj.bias",
+    "blocks.1.mlp.fc1.weight",
+    "blocks.1.mlp.fc1.bias",
+    "blocks.1.mlp.fc2.weight",
+    "blocks.1.mlp.fc2.bias",
+    "blocks.2.attn.qkv.weight",
+    "blocks.2.attn.qkv.bias",
+    "blocks.2.attn.proj.weight",
+    "blocks.2.attn.proj.bias",
+    "blocks.2.mlp.fc1.weight",
+    "blocks.2.mlp.fc1.bias",
+    "blocks.2.mlp.fc2.weight",
+    "blocks.2.mlp.fc2.bias",
+    "blocks.3.attn.qkv.weight",
+    "blocks.3.attn.qkv.bias",
+    "blocks.3.attn.proj.weight",
+    "blocks.3.attn.proj.bias",
+    "blocks.3.mlp.fc1.weight",
+    "blocks.3.mlp.fc1.bias",
+    "blocks.3.mlp.fc2.weight",
+    "blocks.3.mlp.fc2.bias"
+  ],
+  "amp": "none",
+  "share_prefix_used": false,
+  "first_grad_block": 0,
+  "normalisers": {
+    "block0": 0.21641749088192916,
+    "block1": 0.2167059462792328,
+    "block2": 0.21906600222337108,
+    "block3": 0.21956616409042903,
+    "cls": 1.0091125121121207,
+    "patch": 0.6133503162481543
+  },
+  "weights": {
+    "cls": 1.0,
+    "patch": 1.0,
+    "block0": 1.0,
+    "block1": 1.0,
+    "block2": 1.0,
+    "block3": 1.0
+  },
+  "total_steps": 4,
+  "steps_done": 4,
+  "warmup_steps": 0,
+  "steps_per_epoch": 4,
+  "images_seen": 32,
+  "diverged": false,
+  "heldout_images": 8,
+  "heldout_initial": {
+    "total": 1.2175232898067823,
+    "block0": 0.0016574944791900754,
+    "block1": 0.003307664937592068,
+    "block2": 0.0047645499777489685,
+    "block3": 0.006615167346587096,
+    "cls": 0.7091124322911635,
+    "patch": 0.49206598077450053
+  },
+  "heldout_final": {
+    "total": 1.0472334506762162,
+    "block0": 0.003129076499533315,
+    "block1": 0.0045480030811966094,
+    "block2": 0.005718166878190571,
+    "block3": 0.006785944674277119,
+    "cls": 0.541821900535258,
+    "patch": 0.4852303590077605
+  },
+  "train_loss_first": 1.3043581297970377,
+  "train_loss_last": 1.121679618023336,
+  "train_loss_last10_mean": 1.1748731238476466,
+  "seconds_total": 1.27,
+  "seconds_train": 1.12,
+  "peak_memory_gb": null,
+  "checkpoint": "tiny_out/runs\\e3\\random\\k4\\final\\trained_blocks.pt"
+}

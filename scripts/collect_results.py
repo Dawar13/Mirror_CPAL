@@ -15,11 +15,13 @@ whenever new results arrive:
     python scripts/collect_results.py --out <dir> --skip-scripts
 
 Outputs under --out:
-  tables/      T_main_zeroshot, T_healing (with T_healing_vexact), T_generality, T_structure_per_layer,
-               T_prereg, T_x_checks, T_e1_history, T_attention, T_ablations, T_tier2 (with
-               T_tier2_transfer and T_tier2_seg; per-class IoU in T_tier2_seg_classes.csv), T_latency,
-               T_latency_profile, T_f4 (each as .csv and .md; some .md files hold several related
-               CSVs), plus the outputs of f1_tax.py and f2_drift.py (prefix ext_);
+  tables/      T_main_zeroshot, T_healing (with T_healing_vexact), T_e3 (E3 arms; T_e3_checks: E3.a, E3.b,
+               seed condition, gate G5, validity, learning-rate check), T_strong_baselines, T_flipavg,
+               T_generality, T_structure_per_layer, T_prereg, T_x_checks, T_e1_history, T_attention,
+               T_ablations, T_tier2 (with T_tier2_transfer, T_tier2_seg and T_tier2_seg_rerun; per-class
+               IoU in T_tier2_seg_classes.csv), T_latency (with T_latency_5090 and T_latency_devices for
+               the second device), T_latency_profile, T_f4, T_f7 (each as .csv and .md; some .md files
+               hold several related CSVs), plus the outputs of f1_tax.py and f2_drift.py (prefix ext_);
   figures/     PNG figures regenerated from the tables (and the f1/f2 figures, prefix ext_);
   scripts/     raw output folders of f1_tax.py and f2_drift.py;
   INDEX.md     one section per experiment ID; numbers.json (flat); collector_meta.json.
@@ -1972,14 +1974,16 @@ def build_attention(P, m1):
 # ================================================================================================
 # T_prereg
 # ================================================================================================
-def build_prereg(P, e1, e1b, f3, d_free, Tp3, Tp4, x1, status, th, commits, f4):
+def build_prereg(P, e1, e1b, f3, d_free, Tp3, Tp4, x1, status, th, commits, f4, Te3c: Table | None = None,
+                 th3: dict | None = None):
     T = Table("T_prereg", "Every pre-registered check", ["id"],
               [("id", "id", ""), ("experiment", "experiment", ""), ("check", "statement", ""), ("value", "value", ".4g"),
                ("threshold", "threshold", ""), ("verdict", "verdict", ""), ("source", "source_file", ""),
                ("pre-registration", lambda r: f"{r.get('prereg_file', '')} {short(r.get('prereg_commit'))}"
                 if r.get("prereg_file") else "", ""), ("note", "note", "")])
     T.notes = ["Thresholds are read from the pre-registration files (or from the run outputs, which copy them); the "
-               "commit is the one that added the file (git log --diff-filter=A). Pending: a run is still missing."]
+               "commit is the one that added the file (git log --diff-filter=A), except for PREREG_E3.md, whose record is "
+               "the commit that signed it off (the first commit marking it ACTIVE). Pending: a run is still missing."]
 
     def dec_rows(prefix, exp, r, pfile):
         if not r or not r.get("decision"):
@@ -2066,6 +2070,15 @@ def build_prereg(P, e1, e1b, f3, d_free, Tp3, Tp4, x1, status, th, commits, f4):
                "threshold": r.get("threshold_text"), "verdict": r["verdict"], "source_file": "tables/T_healing_p3.csv",
                "note": r.get("note"), "prereg_file": "PREREG_E2.md", "prereg_commit": th.get("commit"),
                "_src": r.get("_src"), "_derived": {"value": "T_healing_p3"}})
+    # E3 and gate G5 (PREREG_E3.md; next to G2, Section 12 decision 3)
+    for r in (Te3c.rows if Te3c is not None else []):
+        if r["id"] not in ("E3.a", "E3.b", "E3.seed", "G5", "E3.lr"):
+            continue
+        T.add({"id": r["id"], "experiment": "E3", "statement": r["statement"], "value": r.get("value"),
+               "threshold": r.get("threshold"), "verdict": r["verdict"], "source_file": "tables/T_e3_checks.csv",
+               "note": r.get("note"), "prereg_file": "PREREG_E3.md", "prereg_commit": (th3 or {}).get("commit"),
+               "_src": r.get("_src"), "_git": r.get("_git"), "_seed": r.get("_seed"),
+               "_derived": {"value": (r.get("_derived") or {}).get("value", "T_e3_checks")}})
     for r in Tp4.rows:
         T.add({"id": r["check"], "experiment": "G", "statement": r["statement"], "value": r.get("value"),
                "threshold": r.get("threshold_text"), "verdict": r["verdict"], "source_file": "tables/T_generality_p4.csv",
@@ -2419,6 +2432,23 @@ def ablation_budget_notes(T: Table, S: Table) -> None:
                 S.notes.append(note)
 
 
+def local_run_dir(P, path) -> Path | None:
+    """A run folder named in a result file (often an absolute path on the GPU machine, e.g. /workspace/<repo>/runs/...)
+    as a folder of this repository: the path itself when it exists here, else its part from the last runs/ on."""
+    if not path:
+        return None
+    s_ = str(path).replace(chr(92), "/")
+    p_ = Path(s_)
+    if p_.is_absolute() and p_.is_dir():
+        return p_
+    if not s_.startswith("/") and (P.root / s_).is_dir():
+        return P.root / s_
+    m_ = list(re.finditer(r"(?:^|/)(runs/.+)$", s_))
+    if m_ and (P.root / m_[-1][1]).is_dir():
+        return P.root / m_[-1][1]
+    return None
+
+
 def _runs_path_in(obj):
     """First string in a nested JSON naming a run folder known to the collector, and its fit seed."""
     stack = [obj]
@@ -2514,11 +2544,23 @@ def build_tier2(P, Tm: Table, Th: Table, m1: dict, x2: dict, Ta: Table | None = 
                 h = Th.find(method=meth)
                 if h is not None and h.get("k") == k and h.get("healed_top1") is not None:
                     t1, t1src, t1loc = h["healed_top1"], f"T_healing healed ({h.get('source')})", h["_loc"].get("healed_top1")
-            elif fam == "healed_vexact" and Tv is not None:
-                h = Tv.find(k=k)
-                if h is not None and h.get("healed_top1") is not None and not h.get("tiny"):
-                    t1, t1src = h["healed_top1"], f"T_healing_vexact healed ({h.get('source')})"
-                    t1loc = h["_loc"].get("healed_top1")
+            elif fam == "healed_vexact":
+                # the healing run the probe rebuilt (variant JSON), when it is on this machine: runs/m3_vexact (A100) and
+                # runs/m3_vexact_5090 hold different checkpoints of the same k
+                run = ((vj.get("info") or {}).get("vexact_run") or (vj.get("sources") or {}).get("vexact_run"))
+                rp = local_run_dir(P, run)
+                kj = read_json(rp / "knn.json") if rp is not None else None
+                if kj and isinstance(kj.get("healed"), dict) and kj["healed"].get("top1") is not None:
+                    t1, t1src = py(kj["healed"]["top1"]), f"knn.json of the healing run the probe rebuilt ({P.rel(rp)})"
+                    t1loc = json_loc(P.rel(rp / "knn.json"), ["healed", "top1"])
+                    row["healing_run"] = P.rel(rp)
+                elif Tv is not None:
+                    h = Tv.find(k=k)
+                    if h is not None and h.get("healed_top1") is not None and not h.get("tiny"):
+                        t1, t1src = h["healed_top1"], f"T_healing_vexact healed ({h.get('source')})"
+                        t1loc = h["_loc"].get("healed_top1")
+                        row["healing_run"] = (f"not recorded on this machine ({str(run).replace(chr(92), '/')})" if run
+                                              else "not recorded on this machine (no variant JSON)")
             elif fam == "m1" and m1.get("knn") is not None and m1.get("model") == model:
                 sel = m1["knn"][(m1["knn"]["k"] == k) & (m1["knn"]["variant"] == meth)]
                 if len(sel) == 1:
@@ -2561,16 +2603,17 @@ def build_tier2(P, Tm: Table, Th: Table, m1: dict, x2: dict, Ta: Table | None = 
                 f"({', '.join(older)}) come from earlier runs: their git hash and date are in the CSV, their run meta in "
                 "git history. Comparisons across runs (for example a drop against the original) include the run-to-run "
                 "spread between GPUs.")
-        for r in [r for r in T.rows if r.get("tier1_note")]:
-            T.notes.append(f"{r['model_label']} {r['variant']} ({r['label']}): {r['tier1_note']}")
-        gaps = [r for r in T.rows if r.get("tier1_check_gap") is not None]
-        if gaps:
-            g = max(gaps, key=lambda r: abs(r["tier1_check_gap"]))
-            T.notes.append("Where the probe and Tier 1 use the same model, the k-NN check is computed on the probe's own "
-                           f"stored features (feature_dtype {g.get('feature_dtype') or 'as recorded'}) and differs from the "
-                           f"Tier-1 value by at most {abs(g['tier1_check_gap']):.3f} points ({g['model_label']} "
-                           f"{g['variant']}); {len(gaps)} of {sum(1 for r in T.rows if r.get('tier1_same_model') == 'yes')} "
-                           "such rows differ at all. Quote the Tier-1 value for k-NN.")
+    # once, after the per-model run notes (these were repeated for every run meta file before 2026-11-10)
+    for r in [r for r in T.rows if r.get("tier1_note")]:
+        T.notes.append(f"{r['model_label']} {r['variant']} ({r['label']}): {r['tier1_note']}")
+    gaps = [r for r in T.rows if r.get("tier1_check_gap") is not None]
+    if gaps:
+        g = max(gaps, key=lambda r: abs(r["tier1_check_gap"]))
+        T.notes.append("Where the probe and Tier 1 use the same model, the k-NN check is computed on the probe's own "
+                       f"stored features (feature_dtype {g.get('feature_dtype') or 'as recorded'}) and differs from the "
+                       f"Tier-1 value by at most {abs(g['tier1_check_gap']):.3f} points ({g['model_label']} "
+                       f"{g['variant']}); {len(gaps)} of {sum(1 for r in T.rows if r.get('tier1_same_model') == 'yes')} "
+                       "such rows differ at all. Quote the Tier-1 value for k-NN.")
     f2 = P.runs / "t2" / "t2_transfer.csv"
     dx = read_csv(f2)
     if dx is not None:
@@ -2641,6 +2684,12 @@ def tier1_note(row: dict, Ta: Table | None) -> None:
                              f"the all-ones direction; the Tier-1 column is the {CANONICAL_RUN} control of run_e1.py, another "
                              f"draw ({t1:.2f} against {chk:.2f}; both at chance). The probe's margins over random use "
                              "its own draw.")
+    elif fam == "healed_vexact" and str(row.get("healing_run", "")).startswith("not recorded"):
+        row["tier1_same_model"] = "unverified"
+        row["tier1_note"] = (f"the healing run this probe rebuilt is {row['healing_run']}, so the Tier-1 column is the "
+                             f"V-exact healing table's value at k = {k} ({t1:.2f}) and may come from another healing run of "
+                             f"the same k (runs/m3_vexact and runs/m3_vexact_5090 hold different checkpoints); the probe's "
+                             f"own k-NN check is {chk:.2f}.")
     else:
         row["tier1_same_model"] = "yes"
         if abs(chk - t1) > 1e-9:
@@ -2675,8 +2724,9 @@ def transfer_ceiling(X: Table) -> None:
 
 def build_tier2_seg(P, plan_text: str = ""):
     """Tier 2 ADE20K linear segmentation: runs/t2_seg/ written by scripts/tier2_ade20k.py (t2_ade20k.csv, one row
-    per model and variant; seg/<model>/<variant>.json with per-class IoU; t2_ade20k_meta_<model>.json). Only
-    runs/t2_seg is read (smoke-test folders such as runs/t2_seg_smoke are never read)."""
+    per model and variant; seg/<model>/<variant>.json with per-class IoU; t2_ade20k_meta_<model>.json), and
+    runs/t2_seg_rerun/ (the same script run again on some variants: the run-to-run spread, T_tier2_seg_rerun). Smoke-test
+    folders such as runs/t2_seg_smoke are never read."""
     T = Table("T_tier2_seg", "Tier 2: ADE20K linear segmentation (runs/t2_seg/t2_ade20k.csv)", ["model", "variant"],
               [("model", "model_label", ""), ("variant", "variant", ""), ("k", "k", "d"), ("mIoU", "mIoU", ".2f"),
                ("aAcc", "aAcc", ".2f"), ("mAcc", "mAcc", ".2f"),
@@ -2716,9 +2766,22 @@ def build_tier2_seg(P, plan_text: str = ""):
         mj = read_json(mf)
         if mj:
             info["meta"][str(mj.get("model") or mf.stem.replace("t2_ade20k_meta_", ""))] = {"file": P.rel(mf), "json": mj}
+    R = Table("T_tier2_seg_rerun", "Tier 2 ADE20K: the same variant run twice (runs/t2_seg and runs/t2_seg_rerun)",
+              ["model", "variant"],
+              [("model", "model_label", ""), ("variant", "variant", ""), ("mIoU: first", "first_mIoU", ".3f"),
+               ("mIoU: rerun", "rerun_mIoU", ".3f"), ("rerun minus first", "diff_mIoU", "+.3f"),
+               ("aAcc: first / rerun", lambda r: f"{fmt(r.get('first_aAcc'), '.3f')} / {fmt(r.get('rerun_aAcc'), '.3f')}", ""),
+               ("mAcc: first / rerun", lambda r: f"{fmt(r.get('first_mAcc'), '.3f')} / {fmt(r.get('rerun_mAcc'), '.3f')}", ""),
+               ("GPU: first / rerun", lambda r: f"{r.get('first_gpu') or 'not recorded'} / {r.get('rerun_gpu') or 'not recorded'}", ""),
+               ("git: first / rerun", lambda r: f"{short(r.get('first_git'))} / {short(r.get('rerun_git'))}", "")])
+    R.notes = ["The same variant trained and scored again with the same script, recipe and seed. scripts/tier2_ade20k.py "
+               "notes that CUDA's bilinear-upsampling backward uses atomic adds, so GPU reruns can differ; the difference "
+               "is one measured run-to-run spread (one pair of runs, a rough estimate). GPU: env.gpu of the folder's "
+               "t2_ade20k_meta_<model>.json when that file lists the variant (it describes the folder's last run only)."]
+    info["rerun_csv"] = P.rel(P.runs / "t2_seg_rerun" / "t2_ade20k.csv")
     df = read_csv(base / "t2_ade20k.csv")
     if df is None:
-        return T, C, info
+        return T, C, R, info
     f = P.rel(base / "t2_ade20k.csv")
     for _, r in df.iterrows():
         model, var = str(r["model"]), str(r["variant"])
@@ -2801,15 +2864,74 @@ def build_tier2_seg(P, plan_text: str = ""):
         miss = [v for v in (mm["json"].get("variants") or []) if v not in have]
         if miss:
             info["missing"][model] = miss
-    return T, C, info
+    seg_rerun(P, T, R, info)
+    return T, C, R, info
 
 
+def seg_rerun(P, T: Table, R: Table, info: dict) -> None:
+    """runs/t2_seg_rerun/t2_ade20k.csv: each rerun variant next to its first run (rerun_* columns of T_tier2_seg, one
+    row of T_tier2_seg_rerun) and a data-driven note on the run-to-run spread."""
+    rb = P.runs / "t2_seg_rerun"
+    dr = read_csv(rb / "t2_ade20k.csv")
+    if dr is None:
+        return
+    fr = P.rel(rb / "t2_ade20k.csv")
+
+    def gpu_of(folder: Path, model: str, var: str):
+        mj = read_json(folder / f"t2_ade20k_meta_{model}.json") or {}
+        return (mj.get("env") or {}).get("gpu") if var in (mj.get("variants") or []) else None
+
+    for _, r in dr.iterrows():
+        model, var = str(r["model"]), str(r["variant"])
+        where = {"model": model, "variant": var}
+        first = T.find(model=model, variant=var)
+        row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "variant": var, "rerun_source": fr,
+               "rerun_git": r.get("git_hash"), "rerun_date": r.get("date"), "rerun_gpu": gpu_of(rb, model, var),
+               "_src": fr, "_git": r.get("git_hash"), "_seed": py(r.get("seed")), "_loc": {}, "_derived": {}}
+        for c in ("mIoU", "aAcc", "mAcc"):
+            if c in r and py(r[c]) is not None:
+                row[f"rerun_{c}"] = py(r[c])
+                row["_loc"][f"rerun_{c}"] = csv_loc(fr, where, c)
+        if first is not None:
+            row.update({"first_source": first["_src"], "first_git": first.get("git_hash"), "first_date": first.get("date"),
+                        "first_gpu": gpu_of(P.runs / "t2_seg", model, var)})
+            row["_src"] = f"{first['_src']};{fr}"
+            row["_git"] = f"{first.get('_git')};{r.get('git_hash')}"
+            for c in ("mIoU", "aAcc", "mAcc"):
+                if first.get(c) is not None:
+                    row[f"first_{c}"] = first[c]
+                    if first["_loc"].get(c):
+                        row["_loc"][f"first_{c}"] = first["_loc"][c]
+                if row.get(f"first_{c}") is not None and row.get(f"rerun_{c}") is not None:
+                    row[f"diff_{c}"] = row[f"rerun_{c}"] - row[f"first_{c}"]
+                    row["_derived"][f"diff_{c}"] = f"{c} of the rerun minus that of the first run"
+                    first[f"rerun_{c}"] = row[f"rerun_{c}"]
+                    first["_loc"][f"rerun_{c}"] = row["_loc"][f"rerun_{c}"]
+                    first[f"rerun_minus_first_{c}"] = row[f"diff_{c}"]
+                    first["_derived"][f"rerun_minus_first_{c}"] = f"{c} of runs/t2_seg_rerun minus that of runs/t2_seg"
+        R.add(row)
+    spread = [r for r in R.rows if r.get("diff_mIoU") is not None]
+    if spread:
+        big = max(spread, key=lambda r: abs(r["diff_mIoU"]))
+        T.notes.append("Run-to-run spread (T_tier2_seg_rerun): " + "; ".join(
+            f"{r['variant']} measured {r['first_mIoU']:.2f} and {r['rerun_mIoU']:.2f} mIoU ({r['diff_mIoU']:+.2f})" for r in spread)
+            + f". Differences between variants of {abs(big['diff_mIoU']):.2f} mIoU or less are within this one measured "
+              "rerun difference; columns rerun_* hold the rerun values.")
+    for r in R.rows:
+        if r.get("first_mIoU") is None:
+            T.notes.append(f"{r['variant']} ({r['model_label']}) has a rerun in `{fr}` but no first run in `runs/t2_seg`.")
+
+
+M2_SECOND = "m2_5090"          # M2 latency on a second device (RTX 5090), same arguments as the primary run
 M2_TO_MAIN ={"vlocal": "vlocal", "vexact": "vexact", "mlp_only": "mirror_mlp_m1", "svd": "svd_attn",
               "random": "random_attn", "dense": "original", "original": "original"}
 
 
-def build_latency(P, Tm: Table, archs: dict, m1: dict | None = None):
-    L = Table("T_latency", f"M2: measured latency against analytic cost (runs/{P.m2}/m2_latency.csv)",
+def build_latency(P, Tm: Table, archs: dict, m1: dict | None = None, sub: str | None = None, suffix: str = ""):
+    """M2 latency of one run folder (runs/<sub>/, default the primary run P.m2): T_latency<suffix> and
+    T_latency_checks<suffix>; a second device's run (runs/m2_5090) uses suffix "_5090"."""
+    sub = sub or P.m2
+    L = Table(f"T_latency{suffix}", f"M2: measured latency against analytic cost (runs/{sub}/m2_latency.csv)",
               ["model", "variant", "k", "batch", "mode"],
               [("variant", "variant", ""), ("method", "label", ""), ("k", "k", "d"), ("batch", "batch", "d"),
                ("mode", "mode_used", ""),
@@ -2840,13 +2962,26 @@ def build_latency(P, Tm: Table, archs: dict, m1: dict | None = None):
                "Timing flag: a converted variant whose measured speed-up exceeds its analytic one (measured / analytic "
                "above 1) cannot be explained by its FLOPs; such rows are kept but marked as probable timing outliers "
                "(listed below with the same variant's other batch sizes)."]
-    C = Table("T_latency_checks", "M2 checks: efficient model against the dense model it was built from",
-              ["variant", "k", "dtype"],
+    C = Table(f"T_latency_checks{suffix}", f"M2 checks: efficient model against the dense model it was built from "
+              f"(runs/{sub}/m2_checks.csv)", ["variant", "k", "dtype"],
               [("variant", "variant", ""), ("k", "k", "d"), ("dtype", "dtype", ""), ("criterion", "criterion", ""),
                ("value", "value", ".2e"), ("pass", "pass", ""), ("noise floor", "noise_floor_unit", ".2e")])
-    base = P.runs / P.m2
+    base = P.runs / sub
     lat, chk, meta = read_csv(base / "m2_latency.csv"), read_csv(base / "m2_checks.csv"), read_json(base / "m2_meta.json")
     mgit = ((meta or {}).get("git") or {}).get("git_hash")
+    if meta:
+        dev = (meta.get("env") or {}).get("gpu") or (meta.get("env") or {}).get("device")
+        ci = str(meta.get("check_images") or "not recorded")
+        L.notes.insert(0, f"Device: {dev or 'not recorded'} (runs/{sub}/m2_meta.json, {meta.get('date')}). Timed inputs are "
+                          "random normal images in every run (scripts/m2_latency.py time_model); equivalence check images: "
+                          f"{ci}.")
+        if ci.startswith("random"):
+            note = ("The equivalence checks of this run used random normal images: scripts/m2_latency.py falls back to them "
+                    "when the validation image cache is not available on the machine. They compare the efficient model with "
+                    "the dense model it was built from, so they test the implementation on these inputs, not on validation "
+                    "images.")
+            L.notes.insert(1, note)
+            C.notes.append(note)
     status: dict = {}
     if chk is not None:
         fchk = P.rel(base / "m2_checks.csv")
@@ -2950,7 +3085,8 @@ def build_latency_profile(P):
     T = Table("T_latency_profile", "M2 profile: where the time goes (runs/m2_profile/m2_profile.csv, m2_submodules.csv)",
               ["model", "variant", "k", "mode", "batch"],
               [("variant", "variant", ""), ("k", "k", "d"), ("mode", "mode_used", ""), ("median ms", "latency_ms_median", ".3f"),
-               ("kernel ms", "kernel_ms", ".3f"), ("idle ms", "idle_ms", ".3f")] + cat_cols)
+               ("kernel ms", "kernel_ms", ".3f"), ("idle ms", "idle_ms", ".3f"), ("GEMM TFLOP/s", "gemm_tflops", ".0f")]
+              + cat_cols)
     T.notes = ["Kernel time per forward by category, ms and share of the kernel time (scripts/m2_profile.py sorts every "
                "GPU activity into a category by its name; time_source says whether these are CUDA kernel times or, in "
                "the CPU smoke test, operator self times). Idle = median latency minus kernel time. Gap = median latency "
@@ -2967,6 +3103,12 @@ def build_latency_profile(P):
     base = P.runs / "m2_profile"
     prof, sub, tri = read_csv(base / "m2_profile.csv"), read_csv(base / "m2_submodules.csv"), read_csv(base / "m2_triton.csv")
     meta = read_json(base / "m2_profile_meta.json")
+    if meta:
+        env = meta.get("env") or {}
+        T.notes.insert(0, f"Device: {env.get('gpu') or env.get('device') or meta.get('device_type') or 'not recorded'} "
+                          f"(runs/m2_profile/m2_profile_meta.json, {meta.get('date')}); batch {meta.get('batch')}. GEMM "
+                          "TFLOP/s: the GEMM FLOPs per forward (2 x multiply-adds, gemm_gflop) over the GEMM kernel time "
+                          "(gemm_tflops of m2_profile.csv).")
     if prof is None:
         return T, X, meta
     f = P.rel(base / "m2_profile.csv")
@@ -3115,6 +3257,984 @@ def build_f4(P):
                 row["note"] = f"verdict {pj.get('verdict')} (threshold {fmt(pj.get('threshold'), 'g')})"
             S.add(row)
     return T, S, files, pj
+
+
+# ================================================================================================
+# E3 (PREREG_E3.md): matched healed baselines at full conversion, gate G5
+# ================================================================================================
+# Comparisons of k-NN differences allow this many points for the float32 rounding of the recorded top-1 values (their
+# exact values are multiples of 100 / n_query, 0.002 points for the 50,000 validation queries).
+E3_TOL = 1e-4
+# key, arm (PREREG_E3.md Section 3), display label, kind (writer: heal_vexact.py k<K>/ folders or heal.py <method>/),
+# run folder under runs/, Tier-2 folder under runs/ (None: the healed V-exact row of runs/t2, jobs/stage22_korea.txt)
+E3_ARMS = (
+    ("v0", "1", LABEL_VEXACT + ", healed, seed 0 (RTX 5090, V0)", "vexact", "m3_vexact_5090", None),
+    ("v0_a100", "1 (A100)", LABEL_VEXACT + ", healed, seed 0 (A100 copy, not used in the checks)", "vexact",
+     "m3_vexact", None),
+    ("v1", "2", LABEL_VEXACT + ", healed, seed 1 (V1)", "vexact", "e3/vexact_s1", "e3/t2_vexact_s1"),
+    ("svd_raw", "3a", LABEL_SVD_ATTN + ", healed, raw targets", "svd", "e3/svd_raw/svd", "e3/t2_svd_raw"),
+    ("svd_sym", "3b", LABEL_SVD_ATTN + ", healed, V-exact final targets", "svd", "e3/svd_sym/svd", "e3/t2_svd_sym"),
+    ("random", "4", "Random structure (V-exact construction), MLP + attention, healed (R)", "vexact", "e3/random",
+     "e3/t2_random"),
+)
+E3_LR_PROBE = "e3/lr_probe_vexact_s0"       # Section 8: arm 1's grid rerun next to 2e-4 (lr_extra.json only)
+E3_LR_ARMS = ("v0", "v1", "svd_raw", "svd_sym", "random")
+E3_USES = {"E3.a": ("v0", "v1", "random"), "E3.b": ("v0", "v1", "svd_raw", "svd_sym")}
+
+
+def prereg_signoff_commit(P: Paths, file: str, marker: str = "ACTIVE: signed off") -> tuple[str | None, str]:
+    """The commit that made a pre-registration file ACTIVE (its record: the first commit whose text holds `marker`),
+    else the commit that added the file."""
+    try:
+        out = subprocess.run(["git", "log", "--format=%H", f"-S{marker}", "--", file], cwd=P.root,
+                             capture_output=True, text=True, timeout=20)
+        lines = [x for x in out.stdout.split() if x]
+        if out.returncode == 0 and lines:
+            return lines[-1], f"the commit that signed {file} off (first commit with \"{marker}\")"
+    except Exception:  # noqa: BLE001
+        pass
+    c = git_added_commit(P, file)
+    return c, (f"the commit that added {file} (no signed-off commit found)" if c else "not recorded")
+
+
+def parse_prereg_e3(P: Paths) -> dict:
+    """Bars and validity limits of PREREG_E3.md (read from the text, never typed) and its record commit."""
+    p = P.root / "PREREG_E3.md"
+    th = {"file": "PREREG_E3.md", "exists": p.is_file(), "active": False, "commit": None, "commit_source": "no file"}
+    if not p.is_file():
+        return th
+    th["commit"], th["commit_source"] = prereg_signoff_commit(P, "PREREG_E3.md")
+    raw = p.read_text(encoding="utf-8")
+    th["active"] = raw.lstrip().startswith("# ACTIVE")
+    t = " ".join(raw.split())
+    pats = {"bar_a": r"\|\s*E3\.a\s*\|\s*V0 - R\s*\|\s*>=\s*([\d.]+)",
+            "bar_b": r"\|\s*E3\.b\s*\|\s*V0 - S\s*\|\s*>=\s*([\d.]+)",
+            "steps": r"completes (\d+) of \d+ steps",
+            "tol": r"exactness check \(tolerance ([\d.]+e-?\d+|[\d.]+)\)",
+            "flip_pct": r"fp32 flip check \(([\d.]+)%\)",
+            "block_pct": r"every block is matched within ([\d.]+)%",
+            "extra_lr": r"selection trial at ([\d.]+e-?\d+|[\d.]+)",
+            "k": r"full conversion \(k = (\d+)\)"}
+    for k, pat in pats.items():
+        m = re.search(pat, t)
+        th[k] = float(m[1]) if m else None
+    if th.get("k") is not None:
+        th["k"] = int(th["k"])
+    return th
+
+
+def e3_check(diff, bar, s, tol: float = E3_TOL) -> tuple[str, bool | None, bool | None]:
+    """PREREG_E3.md Sections 7 and 12: a check passes when its difference meets the bar AND is larger than the seed
+    difference s (not the stricter difference >= bar + s). Returns (verdict, meets the bar, larger than s). A missed
+    bar fails whatever s is; a met bar waits for s."""
+    if diff is None or bar is None:
+        return PENDING, None, None
+    meets = diff >= bar - tol
+    above = None if s is None else bool(diff - s > tol)
+    if not meets:
+        return FAIL, False, above
+    if s is None:
+        return PENDING, True, None
+    return (PASS if above else FAIL), True, above
+
+
+def _combine(vs) -> str:
+    """All must pass: any failure fails the whole, otherwise pending until every part passes."""
+    return PASS if vs and all(v == PASS for v in vs) else (FAIL if FAIL in vs else PENDING)
+
+
+def lr_txt(x) -> str:
+    """A learning rate as the pre-registration writes it (2e-4, 1e-5)."""
+    if not isnum(x):
+        return "the extra rate"
+    m, e = f"{float(x):.6e}".split("e")
+    return f"{float(m):g}e{int(e)}"
+
+
+def _path_tail(path, rel) -> bool:
+    a, b = str(path).replace("\\", "/").rstrip("/"), str(rel).replace("\\", "/").rstrip("/")
+    return a == b or a.endswith("/" + b)
+
+
+def read_lr_extra(lx: dict, src: str, prefix: list) -> dict:
+    """Section 8 of PREREG_E3.md from an lr_extra.json (mirror.heal.probe_extra_lrs): an extra rate would have won if
+    its held-out loss after the short budget is below every grid rate's (ties go to the grid). Recomputed here and
+    compared with the run's own flag; a diverged or non-finite loss never wins, a diverged grid rate counts as
+    infinite."""
+    out = {"_loc": {}, "_derived": {}, "lr_extra_source": src}
+    grid, extra = lx.get("grid"), lx.get("extra")
+    out["extra_would_win_recorded"] = py(lx.get("extra_would_win"))
+    out["extra_lrs"] = "; ".join(f"{float(x):g}" for x in (lx.get("extra_lrs") or [e.get("lr") for e in extra or []]))
+    if not isinstance(grid, list) or not isinstance(extra, list) or not extra:
+        out["extra_would_win"] = out["extra_would_win_recorded"]
+        out["_derived"]["extra_would_win"] = f"recorded by the run ({src}; no per-rate losses to recompute)"
+        return out
+
+    def loss(x):
+        v = x.get("heldout_loss")
+        return float(v) if isnum(v) and not x.get("diverged") else math.inf
+
+    best = min((loss(g) for g in grid), default=math.inf)
+    out["grid_lrs"] = "; ".join(f"{float(g['lr']):g}" for g in grid)
+    out["grid_best_heldout_loss"] = best if math.isfinite(best) else None
+    out["_derived"]["grid_best_heldout_loss"] = f"lowest held-out loss of the grid trials in {src}"
+    out["grid_trials"] = "; ".join(f"{float(g['lr']):g}: {fmt(g.get('heldout_loss'), '.5f')}" for g in grid)
+    e0 = extra[0]
+    out["extra_lr"] = py(e0.get("lr"))
+    out["extra_heldout_loss"] = py(e0.get("heldout_loss"))
+    out["_loc"]["extra_heldout_loss"] = json_loc(src, prefix + ["extra", 0, "heldout_loss"])
+    out["extra_diverged"] = py(e0.get("diverged"))
+    wins = [e for e in extra if loss(e) < best]
+    out["extra_would_win"] = bool(wins)
+    out["_derived"]["extra_would_win"] = (f"recomputed from {src}: an extra rate's held-out loss below every grid "
+                                          "rate's (ties go to the grid)")
+    if out["extra_would_win_recorded"] is not None:
+        out["extra_win_matches_recorded"] = bool(out["extra_would_win_recorded"]) == out["extra_would_win"]
+    ref = lx.get("reference") or {}
+    if ref:
+        out["probe_reference_run"] = ref.get("run")
+        out["probe_same_best_lr"] = py(ref.get("same_best_lr"))
+        out["probe_max_rel_diff_heldout_loss"] = py(ref.get("max_rel_diff_heldout_loss"))
+    return out
+
+
+def read_heal_run(P: Paths, d: Path) -> dict | None:
+    """One healing output folder: scripts/heal_vexact.py (<out>/k<k>/) or scripts/heal.py (<out>/<method>/). Each part
+    from its own file (knn.json, exactness.json, flipcheck.json, final/metrics.json, lr_selection/lr_selection.json,
+    lr_extra.json), else from summary.json. None when the folder is missing or empty."""
+    d = Path(d)
+    if not d.is_dir() or not any(d.iterdir()):
+        return None
+    summ = read_json(d / "summary.json")
+    sf = P.rel(d / "summary.json")
+
+    def part(name, key):
+        j = read_json(d / name)
+        if j is not None:
+            return j, P.rel(d / name), []
+        if summ and isinstance(summ.get(key), dict):
+            return summ[key], sf, [key]
+        return None, None, []
+
+    knn, kf, kp = part("knn.json", "knn")
+    ex, ef, ep = part("exactness.json", "exactness")
+    fl, ff, fp = part("flipcheck.json", "flipcheck")
+    met, mf, mp = part("final/metrics.json", "final")
+    sel, lf, lp = part("lr_selection/lr_selection.json", "lr_selection")
+    lx, xf, xp = part("lr_extra.json", "lr_extra")
+    cfg = (summ or {}).get("config") or (met or {}).get("config") or {}
+    r = {"dir": P.rel(d), "_loc": {}, "_derived": {}}
+    r["tiny"] = bool(cfg.get("tiny_mode")) or (knn or {}).get("protocol") == "tiny synthetic"
+    r["model"] = "tiny" if r["tiny"] else (cfg.get("model") or {}).get("name")
+    r["method_recorded"] = (summ or {}).get("method")
+    blocks = (summ or {}).get("blocks") or cfg.get("blocks")
+    r["k"] = py((summ or {}).get("k")) or (len(blocks) if blocks else None)
+    r["depth"] = py((summ or {}).get("depth"))
+    knn = knn or {}
+    for part_ in ("original", "zero_shot", "healed"):
+        if isinstance(knn.get(part_), dict):
+            for c, s in (("top1", "top1"), ("flip", "flip_consistency"), ("n_query", "n_query")):
+                if knn[part_].get(s) is not None:
+                    r[f"{part_}_{c}"] = py(knn[part_][s])
+                    r["_loc"][f"{part_}_{c}"] = json_loc(kf, kp + [part_, s])
+    r["knn_amp"] = knn.get("amp")
+    if ex:
+        for c, s in (("exact_max_rel", "max_rel_inside"), ("exact_tol", "tol"), ("exact_pass", "pass")):
+            if s in ex:
+                r[c] = py(ex[s])
+                r["_loc"][c] = json_loc(ef, ep + [s])
+    if fl:
+        for c, s in (("flip_fp32", "flip_consistency"), ("flip_fp32_pass", "pass"), ("flip_fp32_n_query", "n_query")):
+            if s in fl:
+                r[c] = py(fl[s])
+                r["_loc"][c] = json_loc(ff, fp + [s])
+    if sel:
+        r["chosen_lr"] = py(sel.get("best_lr"))
+        r["_loc"]["chosen_lr"] = json_loc(lf, lp + ["best_lr"])
+        r["lr_trials"] = "; ".join(f"{float(t['lr']):g}: {fmt(t.get('heldout_loss'), '.5f')}" for t in sel.get("trials", []))
+    if lx:
+        x = read_lr_extra(lx, xf, xp)
+        r["_loc"].update(x.pop("_loc"))
+        r["_derived"].update(x.pop("_derived"))
+        r.update(x)
+    if met:
+        for c, path in (("heldout_loss_before", ["heldout_initial", "total"]), ("heldout_loss_after", ["heldout_final", "total"])):
+            v = met
+            for p_ in path:
+                v = (v or {}).get(p_)
+            if v is not None:
+                r[c] = py(v)
+                r["_loc"][c] = json_loc(mf, mp + path)
+        for c in ("steps_done", "total_steps", "n_trainable", "seconds_train"):
+            if met.get(c) is not None:
+                r[c] = py(met[c])
+                r["_loc"][c] = json_loc(mf, mp + [c])
+        r["diverged"] = py(met.get("diverged"))
+        for name, v in (met.get("constraint_checks") or {}).items():
+            if not (isinstance(v, dict) and "numerical_ranks" in v):
+                continue
+            same = v["numerical_ranks"] == v.get("target_ranks")
+            if "LowRankAttention" in name:
+                r["attn_ranks_equal"] = same
+            elif "LowRankMLP" in name:
+                r["mlp_ranks_equal_recorded"] = same
+    mi = (summ or {}).get("method_info") or {}
+    for c in ("mlp_params_kept", "attn_params_kept", "converted_params_kept", "converted_params_dense",
+              "converted_kept_frac", "model_params", "model_params_original", "model_params_frac", "d_plus", "d_minus"):
+        if mi.get(c) is not None:
+            r[c] = py(mi[c])
+            r["_loc"][c] = json_loc(sf, ["method_info", c])
+    if r.get("converted_params_kept") is None and r.get("mlp_params_kept") is not None and r.get("attn_params_kept") is not None:
+        r["converted_params_kept"] = int(r["mlp_params_kept"]) + int(r["attn_params_kept"])
+        r["_derived"]["converted_params_kept"] = f"method_info mlp_params_kept + attn_params_kept ({sf})"
+    if r.get("converted_params_dense") is None and mi.get("mlp_params_dense") is not None and mi.get("attn_params_dense") is not None:
+        r["converted_params_dense"] = int(mi["mlp_params_dense"]) + int(mi["attn_params_dense"])
+        r["_derived"]["converted_params_dense"] = f"method_info mlp_params_dense + attn_params_dense ({sf})"
+    if r.get("converted_kept_frac") is None and r.get("converted_params_kept") and r.get("converted_params_dense"):
+        r["converted_kept_frac"] = r["converted_params_kept"] / r["converted_params_dense"]
+        r["_derived"]["converted_kept_frac"] = "converted_params_kept / converted_params_dense"
+    vm = mi.get("vexact_match") or {}
+    gaps = [float(vm[c]) for c in ("max_block_rel_gap_mlp", "max_block_rel_gap_attn") if isnum(vm.get(c))]
+    if gaps:
+        r["block_gap_max"] = max(gaps)
+        r["_derived"]["block_gap_max"] = f"max of method_info.vexact_match max_block_rel_gap_mlp and _attn ({sf})"
+    tg = (summ or {}).get("targets") or (summ or {}).get("teacher") or {}
+    r["final_target"], r["block_targets"] = tg.get("final_target"), tg.get("block_targets")
+    rs = (summ or {}).get("random_structure") or {}
+    if rs:
+        r["random_structure_seed"] = py(rs.get("seed"))
+        r["random_agreement_with_fitted"] = py(rs.get("agreement_with_fitted_A"))
+    r["seed"] = py(next((x.get("seed") for x in (summ, knn, met, sel) if x and x.get("seed") is not None), None))
+    r["git_hash"] = next((x.get("git_hash") for x in (knn, summ, met, sel, ex) if x and x.get("git_hash")), None)
+    r["git_dirty"] = py((summ or met or sel or {}).get("git_dirty"))
+    r["_seed"], r["_git"] = r["seed"], r["git_hash"]
+    r["operators"] = (cfg.get("structure") or {}).get("operators")
+    r["fit_seed"] = r["_fit_seed"] = None if r["tiny"] else fit_seed_from_path(r["operators"])
+    r["gpu"] = ((summ or {}).get("env") or {}).get("gpu") or ((met or {}).get("env") or {}).get("gpu")
+    full = r.get("k") is not None and r.get("depth") is not None and r["k"] == r["depth"]
+    if r.get("healed_top1") is not None:
+        r["status"] = "complete" if (fl or not (full and r["method_recorded"] != "svd")) else \
+            "complete except the fp32 flip check"
+    elif met:
+        r["status"] = "healed; final k-NN not yet available"
+    elif sel:
+        r["status"] = "learning-rate selection only"
+    else:
+        r["status"] = "started (no result files yet)"
+    if r["tiny"]:
+        r["status"] += " (TINY smoke test, not a result)"
+    r["source"] = "; ".join(x for x in dict.fromkeys((kf, ef, ff, mf, lf, xf, sf if summ else None)) if x)
+    r["_src"] = r["source"] or P.rel(d)
+    return r
+
+
+def e3_linear(P: Paths, csv_path: Path, fam: str, meth: str, k, model=None, run_dir: str | None = None) -> dict:
+    """The Tier-2 ImageNet linear probe of one healed student (scripts/tier2_linear.py: t2_linear.csv and
+    probe/<model>/<variant>_variant.json, which names the healing run it rebuilt and, for SVD, the float64 rank check
+    of the rebuilt factors)."""
+    df = read_csv(csv_path)
+    if df is None or "family" not in df:
+        return {}
+    sel = df[(df["family"].astype(str) == fam) & (df["method"].astype(str) == meth)]
+    if model is not None and "model" in sel:
+        sel = sel[sel["model"].astype(str) == str(model)]
+    if k is not None and "k" in sel:
+        sel = sel[sel["k"].astype(int) == int(k)]
+    f = P.rel(csv_path)
+    if len(sel) != 1:
+        return {"linear_note": f"{len(sel)} matching rows in `{f}`; none used"} if len(sel) > 1 else {}
+    r = sel.iloc[0]
+    where = {"model": str(r["model"]), "variant": str(r["variant"])}
+    out = {"linear_top1": py(r["top1"]), "linear_variant": where["variant"], "linear_source": f,
+           "linear_git": r.get("git_hash"), "linear_model_params": py(r.get("model_params")),
+           "linear_wd_at_grid_edge": py(r.get("wd_at_grid_edge")), "_loc": {"linear_top1": csv_loc(f, where, "top1")}}
+    for c, s in (("linear_knn_check", "knn_check_top1"), ("linear_chosen_wd", "chosen_wd")):
+        if s in r and py(r[s]) is not None:
+            out[c] = py(r[s])
+            out["_loc"][c] = csv_loc(f, where, s)
+    vj = read_json(Path(csv_path).parent / "probe" / where["model"] / f"{where['variant']}_variant.json") or {}
+    info, srcs = vj.get("info") or {}, vj.get("sources") or {}
+    path = info.get("vexact_run") or srcs.get("vexact_run") or srcs.get("heal_run")
+    out["linear_run_path"] = path
+    out["linear_same_run"] = _path_tail(path, run_dir) if (path and run_dir) else None
+    for name, v in (info.get("constraint_checks") or {}).items():
+        if isinstance(v, dict) and "numerical_ranks" in v:
+            same = v["numerical_ranks"] == v.get("target_ranks")
+            if "LowRankMLP" in name and "float64" in str(v.get("note", "")):
+                out["rebuild_mlp_ranks_equal"] = same
+            elif "LowRankAttention" in name:
+                out["rebuild_attn_ranks_equal"] = same
+    vc = info.get("vexact_checks")
+    if isinstance(vc, dict):
+        out["linear_vexact_checks_pass"] = py(vc.get("pass"))
+    return out
+
+
+def e3_k(P: Paths, th3: dict) -> tuple[int | None, str]:
+    """Number of converted blocks of the E3 arms: the arm config, else the k<K> folders written, else PREREG_E3.md."""
+    k = load_cfg(P, "configs/e3_vexact_s1.yaml").get("k")
+    if k:
+        return int(k), "configs/e3_vexact_s1.yaml"
+    for sub in ("e3/vexact_s1", "e3/random", E3_LR_PROBE, "m3_vexact_5090"):
+        base = P.runs / sub
+        ks = sorted(int(m[1]) for d in (base.glob("k*") if base.is_dir() else []) if (m := re.fullmatch(r"k(\d+)", d.name)))
+        if ks:
+            return ks[-1], f"runs/{sub}/"
+    if th3.get("k"):
+        return int(th3["k"]), "PREREG_E3.md"
+    return None, "not found"
+
+
+def e3_validity(r: dict, th3: dict, v0: dict | None) -> tuple[str, str]:
+    """Validity conditions of PREREG_E3.md Section 7 for one arm: (PASS, FAIL or pending; the conditions, one by one)."""
+    conds = []
+    steps = th3.get("steps")
+    if r.get("steps_done") is None:
+        conds.append((PENDING, "steps: healing metrics not available"))
+    else:
+        ok = (r["steps_done"] == r.get("total_steps") and not r.get("diverged")
+              and (steps is None or int(r["steps_done"]) == int(steps)))
+        conds.append((PASS if ok else FAIL, f"steps {fmt(r['steps_done'], 'd')} of {fmt(r.get('total_steps'), 'd')} (bar "
+                      f"{fmt(steps, '.0f')} of {fmt(steps, '.0f')}), diverged {fmt(bool(r.get('diverged')))}"))
+    if r["kind"] == "vexact":
+        tol = th3.get("tol")
+        if r.get("exact_max_rel") is None:
+            conds.append((PENDING, "exactness: exactness.json not available"))
+        else:
+            ok = bool(r.get("exact_pass")) and (tol is None or r["exact_max_rel"] <= tol)
+            conds.append((PASS if ok else FAIL, f"exactness {r['exact_max_rel']:.2e} (tolerance {fmt(tol, 'g')})"))
+        fp = th3.get("flip_pct")
+        if r.get("flip_fp32") is None:
+            conds.append((PENDING, "fp32 flip check: flipcheck.json not available"))
+        else:
+            ok = bool(r.get("flip_fp32_pass")) and (fp is None or r["flip_fp32"] >= fp - 1e-9)
+            conds.append((PASS if ok else FAIL, f"fp32 flip check {r['flip_fp32']:.2f}% (bar {fmt(fp, 'g')}%)"))
+    if r["kind"] == "svd":
+        a = r.get("attn_ranks_equal", r.get("rebuild_attn_ranks_equal"))
+        m_ = r.get("rebuild_mlp_ranks_equal")
+        if a is None:
+            conds.append((PENDING, "attention ranks: no rank check recorded"))
+        else:
+            conds.append((PASS if a else FAIL, f"attention numerical ranks {'equal' if a else 'differ from'} the targets "
+                          "(float64 check)"))
+        if m_ is None:
+            conds.append((PENDING, "MLP ranks: not verifiable yet; the healing run's own check forms U V in float32 "
+                          "(mirror/heal.py LowRankMLP.check), so it reads full rank whatever the factors are; the Tier-2 "
+                          "rebuild records the float64 check (probe/<model>/<variant>_variant.json), not available"))
+        else:
+            conds.append((PASS if m_ else FAIL, f"MLP numerical ranks {'equal' if m_ else 'differ from'} the targets "
+                          "(float64 check of the Tier-2 rebuild)"))
+        bp = th3.get("block_pct")
+        if r.get("block_gap_max") is None:
+            conds.append((PENDING, "budget: per-block match not recorded"))
+        else:
+            ok = bp is None or r["block_gap_max"] <= bp / 100 + 1e-12
+            conds.append((PASS if ok else FAIL, f"largest per-block shortfall against V-exact {100 * r['block_gap_max']:.2f}% "
+                          f"(bar {fmt(bp, 'g')}%)"))
+    if r["key"] == "random":
+        if not v0 or v0.get("mlp_params_kept") is None or r.get("mlp_params_kept") is None:
+            conds.append((PENDING, "budget: needs the parameter counts of the random arm and of arm 1"))
+        else:
+            ok = (r["mlp_params_kept"], r.get("attn_params_kept")) == (v0["mlp_params_kept"], v0.get("attn_params_kept"))
+            conds.append((PASS if ok else FAIL, f"MLP and attention counts {'equal' if ok else 'differ from'} arm 1's "
+                          f"({fmt(r['mlp_params_kept'], ',d')} and {fmt(r.get('attn_params_kept'), ',d')}; the run records "
+                          "totals, not per-block counts)"))
+    verdicts = [c[0] for c in conds]
+    v = FAIL if FAIL in verdicts else (PENDING if PENDING in verdicts else PASS)
+    return v, "; ".join(f"{t} [{c}]" for c, t in conds)
+
+
+def build_e3(P: Paths, T2: Table, th3: dict):
+    """E3 (PREREG_E3.md): one row per arm (T_e3) and the pre-registered checks E3.a, E3.b, the seed condition, gate G5,
+    the reporting variants with V1 and with the mean, the secondary learning-rate check and the validity conditions
+    (T_e3_checks). Missing arms are "not run" and every check that needs them "pending"."""
+    K, k_src = e3_k(P, th3)
+    xl = lr_txt(th3.get("extra_lr"))
+    T = Table("T_e3", f"E3: matched healed baselines at full conversion (k = {fmt(K, 'd')}), one row per arm", ["arm"],
+              [("arm", "arm", ""), ("student", "label", ""), ("status", "status", ""),
+               ("zero-shot", "zero_shot_top1", ".2f"), ("healed", "healed_top1", ".2f"), ("original", "original_top1", ".2f"),
+               ("linear probe", "linear_top1", ".2f"), ("flip: k-NN", "healed_flip", ".2f"),
+               ("flip: fp32 check", lambda r: (f"{fmt(r.get('flip_fp32'), '.2f')} ({'pass' if r.get('flip_fp32_pass') else 'FAIL'})"
+                                               if r.get("flip_fp32") is not None else ""), ""),
+               ("matrix params kept", "converted_params_kept", ",d"), ("vs arm 1", "kept_vs_vexact", ".4f"),
+               ("model params kept", "model_params_frac", ".3f"), ("chosen LR", "chosen_lr", "g"),
+               (f"{xl} would have won", lambda r: fmt(r.get("extra_would_win")) if r.get("extra_would_win") is not None else "", ""),
+               ("steps", lambda r: f"{fmt(r.get('steps_done'), 'd')} / {fmt(r.get('total_steps'), 'd')}"
+                if r.get("steps_done") is not None else "", ""),
+               ("valid", "validity", ""), ("seed", "seed", "d"), ("GPU", "gpu", ""), ("git", lambda r: short(r.get("git_hash")), "")])
+    C = Table("T_e3_checks", "E3 checks and gate G5 (PREREG_E3.md Sections 7, 8 and 12)", ["id"],
+              [("id", "id", ""), ("check", "statement", ""), ("value", "value", ".3f"), ("threshold", "threshold", ""),
+               ("meets bar", "meets_bar", ""), ("larger than s", "exceeds_s", ""), ("verdict", "verdict", ""), ("note", "note", "")])
+    info = {"k": K, "k_source": k_src, "prereg": th3, "rows": {}, "planned": None}
+    jf = P.jobs / "e3_k12.txt"
+    plan = P.rel(jf) if jf.is_file() else None
+    info["planned"] = plan
+    rows: dict = {}
+    for key, arm, label, kind, sub, t2sub in E3_ARMS:
+        base = P.runs / sub
+        d = base / f"k{K}" if (kind == "vexact" and K is not None) else base
+        run = read_heal_run(P, d)
+        row = {"arm": arm, "key": key, "label": label, "kind": kind, "_loc": {}, "_derived": {}}
+        if run is None:
+            row.update({"status": NOT_RUN, "dir": P.rel(d), "_src": P.rel(d),
+                        "note": f"no files under `{P.rel(d)}/`" + (f"; planned in `{plan}`" if plan and key != "v0_a100" else "")})
+        else:
+            loc, der = run.pop("_loc"), run.pop("_derived")
+            row.update(run)
+            row["_loc"].update(loc)
+            row["_derived"].update(der)
+        lin = {}
+        if t2sub is None:
+            if T2 is not None and key in ("v0", "v0_a100"):
+                lin = e3_linear(P, P.runs / "t2" / "t2_linear.csv", "healed_vexact", "vexact", K, row.get("model"), P.rel(d))
+        else:
+            fam, meth = ("healed", "svd") if kind == "svd" else ("healed_vexact", "vexact")
+            lin = e3_linear(P, P.runs / t2sub / "t2_linear.csv", fam, meth, K, None, P.rel(d))
+        if lin:
+            lloc = lin.pop("_loc", {})
+            if lin.get("linear_same_run") is False:
+                row["linear_note"] = (f"the probe in `{lin['linear_source']}` rebuilt `{lin['linear_run_path']}`, not this "
+                                      "run; not used here")
+                row["linear_other_run"] = lin.get("linear_run_path")
+            else:
+                row.update(lin)
+                row["_loc"].update(lloc)
+                if lin.get("linear_same_run") is None and lin.get("linear_top1") is not None:
+                    row["linear_note"] = ("the probe's variant JSON (with the healing run it rebuilt) is not on this machine; "
+                                          + ("jobs/stage22_korea.txt probes runs/m3_vexact_5090" if key == "v0" else
+                                             "run folder not checked"))
+                    if key == "v0_a100":            # the runs/t2 probe of arm 1 is the RTX 5090 run (jobs/stage22_korea.txt)
+                        for c in list(lin):
+                            row.pop(c, None)
+                        row["_loc"].pop("linear_top1", None)
+                        row.pop("linear_note", None)
+        rows[key] = row
+    if K is not None:                         # Section 8 for arm 1: the probe run reruns the grid next to the extra rate
+        pf = P.runs / E3_LR_PROBE / f"k{K}" / "lr_extra.json"
+        lx = read_json(pf)
+        if lx is not None:
+            x = read_lr_extra(lx, P.rel(pf), [])
+            rows["v0"]["_loc"].update(x.pop("_loc"))
+            rows["v0"]["_derived"].update(x.pop("_derived"))
+            rows["v0"].update(x)
+    v0 = rows["v0"] if rows["v0"]["status"] != NOT_RUN else None
+    orig_params = (v0 or {}).get("model_params_original")
+    o2 = T2.find(model=(v0 or {}).get("model"), variant="original") if (T2 is not None and v0) else None
+    for key, r in rows.items():
+        if r.get("model_params") is None and r.get("linear_model_params") is not None:
+            r["model_params"] = r["linear_model_params"]
+            r["_derived"]["model_params"] = f"model_params of the Tier-2 rebuild ({r.get('linear_source')})"
+        if r.get("model_params_frac") is None and r.get("model_params") and orig_params:
+            r["model_params_frac"] = r["model_params"] / orig_params
+            r["_derived"]["model_params_frac"] = "model_params / arm 1's method_info.model_params_original"
+        if v0 and key != "v0" and r.get("converted_params_kept") and v0.get("converted_params_kept"):
+            r["kept_vs_vexact"] = r["converted_params_kept"] / v0["converted_params_kept"]
+            r["_derived"]["kept_vs_vexact"] = "converted_params_kept / that of arm 1"
+        if o2 is not None and o2.get("top1") is not None:
+            r["linear_original_top1"] = o2["top1"]
+            if o2["_loc"].get("top1"):
+                r["_loc"]["linear_original_top1"] = o2["_loc"]["top1"]
+        if r["status"] != NOT_RUN and key != "v0_a100":
+            r["validity"], r["validity_detail"] = e3_validity(r, th3, v0)
+        elif key != "v0_a100":
+            r["validity"], r["validity_detail"] = PENDING, "not run"
+        r.setdefault("_fit_seed", None)
+        T.add(r)
+    info["rows"] = rows
+    T.notes = [
+        f"Arms of PREREG_E3.md Section 3 (k = {fmt(K, 'd')}, from {k_src}): every block converted, MLP and attention, one "
+        "recipe. Arm 1 (V0) is the seed 0 V-exact run on the RTX 5090, the primary value (Section 6); its A100 copy is "
+        "reported next to it and used in no check. Top-1 and flip consistency in percent from each run's knn.json "
+        "(protocol v2 k-NN, k = 20, T = 0.07, bf16 features); fp32 check: flip consistency of the fp32 flip check "
+        "(flipcheck.json, the V-exact construction only).",
+        "Linear probe: Tier-2 ImageNet linear probe of the same healed student (scripts/tier2_linear.py: runs/t2 for arm 1, "
+        "runs/e3/t2_<arm> for the others); a probe whose variant JSON names another healing run is not used (column "
+        f"linear_note). The original model's probe: {fmt(o2.get('top1') if o2 else None, '.2f') or 'not run'} (T_tier2).",
+        "Matrix params kept: MLP and attention matrix parameters of the converted blocks (summary.json method_info; "
+        "biases and embeddings not counted, as in PREREG_E3.md Section 4); vs arm 1: over arm 1's count. Model params "
+        "kept: whole model over the original (for the SVD arms from the Tier-2 rebuild's count).",
+        f"Chosen LR: the grid's choice (lr_selection.json). {xl} would have won: Section 8; the extra trial's held-out "
+        "loss after the short budget is below every grid rate's (ties go to the grid), recomputed from lr_extra.json and "
+        "compared with the run's own flag (extra_would_win_recorded); it never changes the chosen rate. For arm 1 the "
+        f"trials are those of the probe run `runs/{E3_LR_PROBE}/k<K>/` (grid rerun next to {xl}).",
+        "Valid: the validity conditions of Section 7 (detail in T_e3_checks and in column validity_detail). Targets: "
+        "columns final_target and block_targets (3a raw; 3b the flip-averaged final targets with the teacher's own block "
+        "outputs; V-exact and the random control symmetrised).",
+    ]
+    # ---------------------------------------------------------------- checks
+    bars = {"E3.a": th3.get("bar_a"), "E3.b": th3.get("bar_b")}
+    srcs = ";".join(sorted({r["_src"] for r in rows.values() if r["status"] != NOT_RUN and r["key"] != "v0_a100"})) or ""
+    gits = ";".join(sorted({str(r["_git"]) for r in rows.values() if r.get("_git") and r["key"] != "v0_a100"})) or None
+
+    def val(key):
+        r = rows[key]
+        return r.get("healed_top1") if r["status"] != NOT_RUN else None
+
+    V0, V1, R = val("v0"), val("v1"), val("random")
+    S3a, S3b = val("svd_raw"), val("svd_sym")
+    S = max(S3a, S3b) if (S3a is not None and S3b is not None) else None
+    s_arm = ("3a" if S3a >= S3b else "3b") if S is not None else None
+    s = abs(V0 - V1) if (V0 is not None and V1 is not None) else None
+    tiny = [rows[k]["arm"] for k in ("v0", "v1", "random", "svd_raw", "svd_sym") if rows[k].get("tiny")]
+    invalid = {k: rows[k] for k in E3_LR_ARMS if rows[k].get("validity") == FAIL}
+    unver = {k: rows[k] for k in E3_LR_ARMS if rows[k]["status"] != NOT_RUN and rows[k].get("validity") == PENDING}
+
+    def base_note(cid, diff, verdict):
+        missing = [rows[k]["arm"] for k in E3_USES[cid] if val(k) is None]
+        bits = []
+        if missing:
+            bits.append("waiting for arm(s) " + ", ".join(missing))
+        if cid == "E3.b" and S is None and V0 is not None and bars["E3.b"] is not None:
+            for sv, nm in ((S3a, "3a"), (S3b, "3b")):
+                if sv is not None and V0 - sv < bars["E3.b"] - E3_TOL:
+                    bits.append(f"V0 minus {nm} alone is {V0 - sv:.3f}, below the bar; S >= {nm}, so E3.b cannot pass")
+        return bits
+
+    def check_row(cid, stmt, diff, use_v="V0", info_only=False):
+        bar = bars[cid.split(" ")[0]]
+        verdict, meets, above = e3_check(diff, bar, s)
+        note = base_note(cid.split(" ")[0], diff, verdict) if not info_only else []
+        bad = [rows[k]["arm"] for k in E3_USES[cid.split(" ")[0]] if k in invalid]
+        if tiny:
+            note.append(f"TINY smoke-test inputs (arms {', '.join(tiny)}): not a result")
+        if bad:
+            note.append(f"arm(s) {', '.join(bad)} fail a validity condition (Section 7: invalid, fix and rerun that arm)")
+        if (tiny or bad) and verdict != PENDING:
+            note.append(f"computed value {verdict}, not counted")
+            verdict = PENDING
+        if info_only and verdict in (PASS, FAIL):
+            verdict = f"would {verdict}"
+        return {"id": cid, "statement": stmt, "value": diff, "threshold": f">= {fmt(bar, '.1f')} and > s" if bar is not None
+                else "bar not found in PREREG_E3.md", "bar": bar, "s": s, "meets_bar": meets, "exceeds_s": above,
+                "verdict": verdict, "note": "; ".join(note), "_src": srcs, "_git": gits, "_seed": None,
+                "_derived": {"value": f"from T_e3 healed_top1 ({stmt})"}}
+
+    a_row = C.add({**check_row("E3.a", "V0 minus R: healed k-NN of V-exact seed 0 minus the random-structure control",
+                               None if V0 is None or R is None else V0 - R),
+                   "max_baseline": None if V0 is None or bars["E3.a"] is None else V0 - bars["E3.a"]})
+    b_row = C.add({**check_row("E3.b", "V0 minus S, S = max(3a, 3b)" + (f" (here {s_arm})" if s_arm else ""),
+                               None if V0 is None or S is None else V0 - S),
+                   "max_baseline": None if V0 is None or bars["E3.b"] is None else V0 - bars["E3.b"], "S_arm": s_arm, "S": S})
+    for rr, nm in ((a_row, "E3.a"), (b_row, "E3.b")):
+        rr["_derived"]["max_baseline"] = f"V0 minus the {nm} bar: the largest baseline value the bar allows"
+    C.add({"id": "E3.seed", "statement": "s = |V0 - V1|, the seed difference of V-exact (arms 1 and 2)", "value": s,
+           "threshold": "a check passes only if its difference is also larger than s", "verdict": "reported" if s is not None
+           else PENDING, "note": "" if s is not None else "waiting for arm 2" if V1 is None else "waiting for arm 1",
+           "_src": srcs, "_git": gits, "_derived": {"value": "|V0 - V1| from T_e3 healed_top1"}})
+    g5 = _combine([a_row["verdict"], b_row["verdict"]])
+    alt = {}
+    for nm, vv in (("V1", V1), ("mean", None if V0 is None or V1 is None else (V0 + V1) / 2)):
+        ra = check_row(f"E3.a ({nm})", f"as E3.a with {'V1' if nm == 'V1' else 'the mean of V0 and V1'} in place of V0 "
+                       "(reported, does not change the verdict)", None if vv is None or R is None else vv - R, info_only=True)
+        rb = check_row(f"E3.b ({nm})", f"as E3.b with {'V1' if nm == 'V1' else 'the mean of V0 and V1'} in place of V0 "
+                       "(reported, does not change the verdict)", None if vv is None or S is None else vv - S, info_only=True)
+        alt[nm] = (ra, rb)
+    g5_note = []
+    if V1 is not None:
+        g5_v1 = _combine([alt["V1"][0]["verdict"].replace("would ", ""), alt["V1"][1]["verdict"].replace("would ", "")])
+        if g5 in (PASS, FAIL) and g5_v1 in (PASS, FAIL) and g5_v1 != g5:
+            g5_note.append(f"the verdict differs between seeds: with V1 in place of V0, G5 would be {g5_v1}")
+    if unver and g5 in (PASS, FAIL):
+        g5_note.append("validity not yet verified for arm(s) " + ", ".join(r["arm"] for r in unver.values())
+                       + " (T_e3_checks E3.valid.*)")
+    if g5 == PASS:
+        g5_note.append("PREREG_E3.md: at full conversion healing does not close the gap to a matched structure-free "
+                       "baseline; the k = 12 headline can be credited to the mirror structure")
+    elif g5 == FAIL:
+        g5_note.append("PREREG_E3.md: report as is, stop, and discuss the framing with Dawar; no new arms, rates, seeds or "
+                       "budgets inside E3")
+    C.add({"id": "G5", "statement": "gate G5: E3.a and E3.b both pass (with the seed condition)", "verdict": g5,
+           "threshold": "both pass", "note": "; ".join(g5_note), "_src": "T_e3_checks", "_git": gits})
+    for ra, rb in alt.values():
+        C.add(ra)
+        C.add(rb)
+    # Section 8: the secondary learning-rate check
+    have = {k: rows[k] for k in E3_LR_ARMS if rows[k].get("extra_would_win") is not None}
+    winners = [rows[k]["arm"] for k in have if rows[k]["extra_would_win"]]
+    mism = [rows[k]["arm"] for k in have if rows[k].get("extra_win_matches_recorded") is False]
+    lr_note = [f"arm {rows[k]['arm']}: {xl} {fmt(rows[k].get('extra_heldout_loss'), '.5f')} against best grid "
+               f"{fmt(rows[k].get('grid_best_heldout_loss'), '.5f')}" for k in have]
+    pr = rows["v0"]
+    if pr.get("probe_same_best_lr") is not None:
+        lr_note.append(f"arm 1's probe reruns the grid: same best rate as the recorded grid {fmt(pr['probe_same_best_lr'])}, "
+                       f"largest relative difference of the held-out losses {fmt(pr.get('probe_max_rel_diff_heldout_loss'), '.2e')}")
+    if mism:
+        lr_note.append(f"the recomputed flag differs from the run's own for arm(s) {', '.join(mism)}")
+    if winners:
+        verdict = "yes: " + ", ".join(winners)
+        lr_note.append("the main comparison is flagged as possibly under-tuned (Section 8); the full budget is not rerun "
+                       f"at {xl} inside E3")
+    elif len(have) == len(E3_LR_ARMS):
+        verdict = "no"
+    else:
+        verdict = PENDING
+        lr_note.append(f"{len(have)} of {len(E3_LR_ARMS)} arms have their {xl} trial")
+    C.add({"id": "E3.lr", "statement": f"secondary learning-rate check: would {xl} have won the short selection for any "
+           "arm (never changes a chosen rate)", "value": len(winners) if have else None, "threshold": "reported",
+           "verdict": verdict, "note": "; ".join(lr_note), "_src": srcs, "_git": gits,
+           "_derived": {"value": "number of arms whose extra trial would have won (T_e3 extra_would_win)"}})
+    for key in E3_LR_ARMS:
+        r = rows[key]
+        C.add({"id": f"E3.valid.{r['arm']}", "statement": f"validity conditions of arm {r['arm']} ({r['label']})",
+               "verdict": r.get("validity", PENDING), "threshold": "every condition passes", "note": r.get("validity_detail", ""),
+               "_src": r["_src"], "_git": r.get("_git"), "_seed": r.get("_seed")})
+    C.notes = [
+        f"Bars read from PREREG_E3.md (record commit {short(th3.get('commit'))}, {th3.get('commit_source')}"
+        f"{'' if th3.get('active') else '; the file is not marked ACTIVE'}): E3.a V0 - R >= {fmt(bars['E3.a'], '.1f')}, "
+        f"E3.b V0 - S >= {fmt(bars['E3.b'], '.1f')}, with V0 and V1 the healed k-NN of V-exact seeds 0 and 1, R the random-"
+        "structure control and S the better of the two SVD arms. Seed condition (Section 12, decision 1): a check counts "
+        "as passed only if its difference is also larger than s = |V0 - V1| (not the stricter difference >= bar + s). G5: "
+        "E3.a and E3.b both pass. A missed bar fails whatever s is; a met bar waits for s.",
+        f"Comparisons allow {E3_TOL:g} points for the float32 rounding of the recorded top-1 values (exact values are "
+        "multiples of 100 / n_query, 0.002 points for 50,000 queries). Max baseline: V0 minus the bar, the largest R (E3.a) "
+        "or S (E3.b) the bar allows.",
+        "Rows marked (V1) and (mean) repeat both differences with V1, and with the mean of V0 and V1, in place of V0; they "
+        "are reported and never change the verdict. A check that uses an arm failing a validity condition stays pending "
+        "(Section 7: that arm is invalid, fixed and rerun). Validity (Section 7): every run completes the pre-registered "
+        f"steps ({fmt(th3.get('steps'), '.0f')}) without divergence; the V-exact construction passes the exactness check "
+        f"(tolerance {fmt(th3.get('tol'), 'g')}) and the fp32 flip check ({fmt(th3.get('flip_pct'), 'g')}%); the SVD arms' "
+        f"numerical ranks equal their targets; every block is matched within {fmt(th3.get('block_pct'), 'g')}%.",
+        "MLP ranks of the SVD arms: the healing run's own check (mirror/heal.py LowRankMLP.check) forms U V in float32 and "
+        "so reads full rank; the float64 check of the Tier-2 rebuild (scripts/tier2_linear.py constraint_checks) is used. "
+        "The attention check of the healing run is already float64 (mirror/heal_attn.py).",
+    ]
+    info["values"] = {"V0": V0, "V1": V1, "R": R, "S3a": S3a, "S3b": S3b, "S": S, "S_arm": s_arm, "s": s, "G5": g5}
+    return T, C, info
+
+
+# ================================================================================================
+# Strong baselines (scripts/strong_baselines.py), flip averaging (scripts/flip_avg_baseline.py), F7 (scripts/f7_visuals.py)
+# ================================================================================================
+SB_METHODS = ("asvd", "slicegpt", "prune_act")       # mirror/baselines.py METHODS
+SB_LABEL = {"asvd": "Activation-aware SVD (SVD-LLM style), MLP only",
+            "slicegpt": "SliceGPT-style PCA slicing, MLP only",
+            "prune_act": "MLP width pruning, activation-weighted, MLP only"}
+
+
+def build_strong_baselines(P: Paths, Tm: Table, archs: dict):
+    """Zero-shot strong compression baselines at the Mirror V-local MLP-only budget (runs/sb/SB_s<fit seed>.csv, the
+    Track A CSV format with ablation "SB"), per model, k and fit seed, next to the canonical X2 numbers of Mirror V-local
+    MLP only and plain SVD at the same k and fit seed (T_main_zeroshot)."""
+    T = Table("T_strong_baselines", "Strong compression baselines, zero-shot, at the Mirror V-local MLP-only budget "
+              "(runs/sb/SB_s<fit seed>.csv)", ["model", "k", "fit_seed", "method"],
+              [("model", "model_label", ""), ("k", "k", "d"), ("fit seed", "fit_seed", "d"), ("method", "label", ""),
+               ("source", "experiment", ""), ("top-1", "top1", ".2f"), ("drop", "drop_points", ".2f"),
+               ("flip consistency", "flip_consistency", ".2f"), ("MLP weights kept", "mlp_params_kept", ",d"),
+               ("vs Mirror budget", "ratio_to_mirror", ".4f"), ("within 1%", "within_1pct", ""),
+               ("not counted: stream basis", "basis_params_not_counted", ",d"),
+               ("Mirror minus this", "mirror_minus_this", "+.2f"), ("this minus SVD", "this_minus_svd", "+.2f"),
+               ("original (same run)", "original_top1", ".2f"), ("status", "status", ""),
+               ("git", lambda r: short(r.get("git_hash")), "")])
+    T.notes = [
+        "Each strong baseline compresses the MLPs (fc1, fc2) of blocks 1 to k and nothing else, matched to the MLP weight "
+        "count of Mirror V-local, MLP only, at the same k and fit run (biases excluded); statistics from the fit run's "
+        "train fit images (scripts/strong_baselines.py, mirror/baselines.py). Top-1, drop and flip consistency in percent "
+        "(protocol v2 k-NN, bf16 features). Drop: the run's own original minus the method.",
+        f"Mirror V-local, MLP only, and SVD at matched parameters, MLP only: the canonical {CANONICAL_RUN} values at the same "
+        "k and fit seed (T_main_zeroshot, per-seed values). Mirror's MLP weights are the budget the strong baselines were "
+        "matched to (mirror_budget recorded by strong_baselines.py); SVD's are the analytic count of tables/cost_model.md.",
+        "Not counted, stream basis: d x d per converted block, the change of stream basis between blocks that an "
+        "implementation of SliceGPT-style slicing stores (basis_change_params recorded by the run), and Mirror V-local's "
+        "basis rotations (rotation_params of the cost model); neither is in the MLP budget.",
+    ]
+    base = P.runs / "sb"
+    files = sorted(base.glob("SB_s*.csv")) if base.is_dir() else []
+    groups: dict = {}
+    for f in files:
+        df = read_csv(f)
+        if df is None:
+            continue
+        for _, r in df.iterrows():
+            groups.setdefault((str(r["model"]), int(r["k"]), int(r["fit_seed"])), []).append((f, r))
+    order = {m: i for i, m in enumerate(SB_METHODS)}
+    for (model, k, fs) in sorted(groups, key=lambda x: (MODEL_ORDER.index(x[0]) if x[0] in MODEL_ORDER else 99, x[1], x[2])):
+        items = sorted(groups[(model, k, fs)], key=lambda x: order.get(str(x[1]["variant"]), 99))
+        budgets = {int(_info(r.get("info")).get("mirror_budget")) for _, r in items
+                   if _info(r.get("info")).get("mirror_budget") is not None}
+        budget = budgets.pop() if len(budgets) == 1 else None
+        arch = archs.get(model)
+        o = Tm.find(model=model, k=0, variant="original")
+        o_seed = ((o or {}).get("_per_seed") or {}).get(fs)
+        grp = []
+        for method, lab in (("mirror", LABEL_MIRROR_MLP), ("svd", LABEL_SVD_MLP)):
+            v, x = canonical_seed_value(Tm, model, k, method, fs)
+            row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "k": k, "fit_seed": fs, "method": method,
+                   "label": lab, "experiment": f"{CANONICAL_RUN} (canonical)", "_loc": {}, "_derived": {}, "_fit_seed": fs}
+            if v is None:
+                row.update({"status": NOT_RUN, "note": f"no {CANONICAL_RUN} row at k = {k}, fit seed {fs}", "_src": ""})
+                grp.append(T.add(row))
+                continue
+            row.update({"status": "ok", "top1": v, "flip_consistency": x["flip"], "drop_points": x["drop"],
+                        "source": x["src"], "git_hash": x["git"], "_src": x["src"], "_git": x["git"], "_seed": x["seed"]})
+            for c, s in (("top1", "top1"), ("flip_consistency", "flip_consistency"), ("drop_points", "drop_points")):
+                row["_loc"][c] = csv_loc(x["src"], x["where"], s)
+            if o_seed:
+                row["original_top1"] = o_seed["top1"]
+                row["_loc"]["original_top1"] = csv_loc(o_seed["src"], o_seed["where"], "top1")
+            cost = x.get("cost")
+            if method == "mirror" and budget is not None:
+                row["mlp_params_kept"] = budget
+                row["_derived"]["mlp_params_kept"] = ("mirror_budget recorded in the info column of the strong-baseline "
+                                                      "CSV (variants.mirror_param_counts of the same fit run)")
+                if cost and arch:
+                    row["mlp_params_kept_cost_model"] = int(round(cost["matrix_params_kept"] - k * 4 * arch["d"] ** 2))
+                    row["_derived"]["mlp_params_kept_cost_model"] = "analytic_cost matrix_params_kept minus k 4 d^2"
+            elif cost and arch:
+                row["mlp_params_kept"] = int(round(cost["matrix_params_kept"] - k * 4 * arch["d"] ** 2))
+                row["_derived"]["mlp_params_kept"] = ("analytic_cost matrix_params_kept minus the dense attention, k 4 d^2 "
+                                                      "(tables/cost_model.md)")
+            if cost and method == "mirror":
+                row["basis_params_not_counted"] = cost.get("rotation_params")
+                row["_derived"]["basis_params_not_counted"] = "rotation_params of analytic_cost (one d x d per block)"
+            if method == "svd":
+                row["basis_params_not_counted"] = 0
+            if budget and row.get("mlp_params_kept") is not None:
+                row["ratio_to_mirror"] = row["mlp_params_kept"] / budget
+                row["_derived"]["ratio_to_mirror"] = "mlp_params_kept / mirror_budget"
+                row["within_1pct"] = abs(row["ratio_to_mirror"] - 1) <= PARAM_MATCH_TOL
+            grp.append(T.add(row))
+        for f, r in items:
+            m = str(r["variant"])
+            inf = _info(r.get("info"))
+            fr = P.rel(f)
+            where = {"model": model, "ablation": str(r["ablation"]), "variant": m, "k": k, "fit_seed": fs}
+            row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "k": k, "fit_seed": fs, "method": m,
+                   "label": SB_LABEL.get(m, m), "label_recorded": inf.get("baseline"), "experiment": "SB",
+                   "status": "ok", "source": fr, "git_hash": r.get("git_hash"), "git_dirty": py(r.get("git_dirty")),
+                   "_src": fr, "_git": r.get("git_hash"), "_seed": py(r.get("seed")), "_fit_seed": fs, "_loc": {},
+                   "_derived": {}}
+            for c, s in (("top1", "top1"), ("flip_consistency", "flip_consistency"), ("drop_points", "drop_points"),
+                         ("original_top1", "top1_original"), ("mlp_params_kept", "mlp_params_kept"),
+                         ("mlp_params_dense", "mlp_params_dense"), ("ratio_to_mirror", "params_vs_mirror_first_k"),
+                         ("n_query", "n_query"), ("n_fit_images", "n_fit_images")):
+                if s in r and py(r[s]) is not None:
+                    row[c] = py(r[s])
+                    row["_loc"][c] = csv_loc(fr, where, s)
+            row["within_1pct"] = (bool(inf["within_1pct"]) if inf.get("within_1pct") is not None else
+                                  (abs(row["ratio_to_mirror"] - 1) <= PARAM_MATCH_TOL if row.get("ratio_to_mirror") else None))
+            row["mirror_budget"], row["bias_params"] = inf.get("mirror_budget"), inf.get("bias_params")
+            row["basis_params_not_counted"] = inf.get("basis_change_params", 0)
+            row["allocation"] = json.dumps(inf.get("allocation")) if inf.get("allocation") is not None else None
+            if m == "asvd":
+                row["asvd_ridge_damp"] = inf.get("ridge_damp")
+            grp.append(T.add(row))
+        mir = next((x for x in grp if x["method"] == "mirror" and x.get("top1") is not None), None)
+        svd = next((x for x in grp if x["method"] == "svd" and x.get("top1") is not None), None)
+        for x in grp:
+            if x.get("top1") is None:
+                continue
+            if mir is not None and x is not mir:
+                x["mirror_minus_this"] = mir["top1"] - x["top1"]
+                x["_derived"]["mirror_minus_this"] = f"top1 of {CANONICAL_RUN} Mirror V-local, MLP only (same k, fit seed) minus this"
+            if svd is not None and x is not svd and x["method"] != "mirror":
+                x["this_minus_svd"] = x["top1"] - svd["top1"]
+                x["_derived"]["this_minus_svd"] = f"top1 of this minus {CANONICAL_RUN} SVD (same k, fit seed)"
+        sbo = {x.get("original_top1") for x in grp if x["experiment"] == "SB" and x.get("original_top1") is not None}
+        if o_seed and sbo and any(abs(v - o_seed["top1"]) > 1e-9 for v in sbo):
+            T.notes.append(f"{MODEL_LABEL.get(model, model)}, k = {k}, fit seed {fs}: the strong-baseline run measured the "
+                           f"original at {', '.join(f'{v:.3f}' for v in sorted(sbo))} against {o_seed['top1']:.3f} in "
+                           f"{CANONICAL_RUN}; compare drops within a run.")
+    return T, files
+
+
+FA_MODES = {"plain": 0, "plain_fp32": 1, "flipavg": 2}
+
+
+def build_flipavg(P: Paths):
+    """Flip-averaging baseline (scripts/flip_avg_baseline.py, runs/t1_flipavg/flipavg.csv): exact invariance by averaging
+    an image and its mirror at test time (two forward passes) against the healed V-exact model at full conversion (one
+    pass, exactly equivariant). Relative cost: the run's analytic GFLOPs per image over the original's (one pass)."""
+    T = Table("T_flipavg", "Flip averaging at test time (two passes) against healed V-exact (one pass) "
+              "(runs/t1_flipavg/flipavg.csv)", ["model", "variant", "mode"],
+              [("model", "model_label", ""), ("variant", "variant", ""), ("method", "label", ""), ("mode", "mode", ""),
+               ("k-NN top-1", "knn_top1", ".2f"), ("flip consistency", "flip_consistency", ".2f"),
+               ("identical features %", "feature_identical_pct", ".2f"), ("linear probe", "probe_top1", ".2f"),
+               ("passes", "forwards_per_image", "d"), ("GFLOPs per image", "gflops", ".2f"),
+               ("cost vs original", "rel_cost", ".3f"), ("params", "params", ",d"), ("params vs original", "params_frac", ".3f"),
+               ("exactly invariant", "exactly_invariant", ""),
+               ("minus flip-averaged original: k-NN", "minus_flipavg_knn", "+.2f"),
+               ("minus flip-averaged original: linear", "minus_flipavg_probe", "+.2f"), ("note", "note", "")])
+    T.notes = [
+        "Modes (scripts/flip_avg_baseline.py): plain is the paper's feature; flipavg averages the features of an image and "
+        "of its mirror (CLS after the final norm, before the L2 normalisation, for k-NN; the whole probe feature for the "
+        "linear probe), for bank and queries alike, so it is exactly mirror-invariant at two forward passes per image; "
+        "plain_fp32 is the plain k-NN with fp32 forward passes (healed V-exact at full conversion only). k-NN top-1 and "
+        "flip consistency in percent (protocol v2); identical features: share of queries whose unit feature equals that of "
+        "their mirror bit for bit; linear probe: the Tier-2 recipe.",
+        "Cost vs original: GFLOPs per image (forward passes times the analytic cost of one pass, "
+        "scripts/collect_results.analytic_cost) over the original model's one pass; where GFLOPs are not recorded, forward "
+        "passes times parameters (column rel_cost_basis). Params vs original: whole-model parameters over the original's. "
+        "Minus flip-averaged original: the row's top-1 minus that of the flip-averaged original (healed V-exact rows).",
+    ]
+    f = P.runs / "t1_flipavg" / "flipavg.csv"
+    df = read_csv(f)
+    if df is None:
+        return T
+    fr = P.rel(f)
+    for _, r in df.iterrows():
+        model, var, mode = str(r["model"]), str(r["variant"]), str(r["mode"])
+        where = {"model": model, "variant": var, "mode": mode}
+        row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "variant": var, "mode": mode,
+               "label": method_label(r.get("family"), r.get("method"), r.get("label")), "label_recorded": r.get("label"),
+               "family": r.get("family"), "method": r.get("method"), "k": py(r.get("k")), "mode_label": r.get("mode_label"),
+               "source": fr, "git_hash": r.get("git_hash"), "seed": py(r.get("seed")), "_src": fr, "_git": r.get("git_hash"),
+               "_seed": py(r.get("seed")), "_loc": {}, "_derived": {}}
+        for c in ("knn_top1", "flip_consistency", "feature_identical_pct", "feature_flip_max_abs", "probe_top1", "probe_top5",
+                  "forwards_per_image", "gflops", "gflops_per_forward", "params", "params_frac", "knn_check_top1",
+                  "chosen_wd", "healing_flip_fp32", "vexact_span_exact_rel_max", "vexact_checks_pass", "vexact_even_head",
+                  "knn_amp", "wd_at_grid_edge", "notes", "date"):
+            if c in r and py(r[c]) is not None:
+                row[c] = py(r[c])
+                if c not in ("vexact_checks_pass", "vexact_even_head", "knn_amp", "wd_at_grid_edge", "notes", "date"):
+                    row["_loc"][c] = csv_loc(fr, where, c)
+        row["exactly_invariant"] = mode == "flipavg" or (row.get("family") == "healed_vexact" and bool(row.get("vexact_even_head")))
+        if row.get("family") == "healed_vexact":
+            vj = read_json(P.runs / "t1_flipavg" / "rows" / model / f"{var}_variant.json") or {}
+            run = (vj.get("info") or {}).get("vexact_run") or (vj.get("sources") or {}).get("vexact_run")
+            if run:
+                rp = local_run_dir(P, run)
+                row["healing_run"] = P.rel(rp) if rp is not None else str(run).replace(chr(92), "/")
+                kj = read_json(rp / "knn.json") if rp is not None else None
+                if kj and isinstance(kj.get("healed"), dict) and kj["healed"].get("top1") is not None:
+                    row["healing_run_knn_top1"] = py(kj["healed"]["top1"])
+                    row["_loc"]["healing_run_knn_top1"] = json_loc(P.rel(rp / "knn.json"), ["healed", "top1"])
+        T.add(row)
+    T.rows.sort(key=lambda x: (x["model"], {"original": 0, "healed_vexact": 1}.get(x.get("family"), 2), x.get("k") or 0,
+                               x["variant"], FA_MODES.get(x["mode"], 9)))
+    for model in sorted({x["model"] for x in T.rows}):
+        rs = [x for x in T.rows if x["model"] == model]
+        o = next((x for x in rs if x.get("family") == "original" and x["mode"] == "plain"), None)
+        fa = next((x for x in rs if x.get("family") == "original" and x["mode"] == "flipavg"), None)
+        for x in rs:
+            if o is not None:
+                if x.get("gflops") is not None and o.get("gflops"):
+                    x["rel_cost"], x["rel_cost_basis"] = x["gflops"] / o["gflops"], "GFLOPs (analytic)"
+                    x["_derived"]["rel_cost"] = "gflops / gflops of the original, plain (flipavg.csv)"
+                elif x.get("params") and o.get("params") and x.get("forwards_per_image"):
+                    x["rel_cost"], x["rel_cost_basis"] = x["forwards_per_image"] * x["params"] / o["params"], "passes x parameters"
+                    x["_derived"]["rel_cost"] = "forwards_per_image x params / params of the original (flipavg.csv)"
+            if fa is not None and x is not fa and x.get("family") == "healed_vexact":
+                for c, s in (("minus_flipavg_knn", "knn_top1"), ("minus_flipavg_probe", "probe_top1")):
+                    if x.get(s) is not None and fa.get(s) is not None:
+                        x[c] = x[s] - fa[s]
+                        x["_derived"][c] = f"{s} of {x['variant']} ({x['mode']}) minus that of the flip-averaged original"
+                if x.get("gflops") and fa.get("gflops"):
+                    x["cost_vs_flipavg"] = x["gflops"] / fa["gflops"]
+                    x["_derived"]["cost_vs_flipavg"] = "gflops / gflops of the flip-averaged original"
+                if x.get("params") and fa.get("params"):
+                    x["params_vs_flipavg"] = x["params"] / fa["params"]
+                    x["_derived"]["params_vs_flipavg"] = "params / params of the flip-averaged original"
+            notes = []
+            if x.get("healing_run"):
+                notes.append(f"healed model from `{x['healing_run']}`"
+                             + (f" (its own k-NN {x['healing_run_knn_top1']:.2f})" if x.get("healing_run_knn_top1") is not None else ""))
+            if x["model"] == "tiny":
+                notes.append("TINY smoke test, not a result")
+            x["note"] = "; ".join(notes)
+    return T
+
+
+def build_latency_devices(L1: Table, L2: Table, meta1: dict | None, meta2: dict | None) -> Table:
+    """M2 on two GPUs, the same arguments: measured speed-up against dense side by side (one row per variant, k, batch
+    and mode present in both runs)."""
+    g1 = ((meta1 or {}).get("env") or {}).get("gpu") or "first GPU"
+    g2 = ((meta2 or {}).get("env") or {}).get("gpu") or "second GPU"
+    D = Table("T_latency_devices", "M2 on two GPUs: measured speed-up against dense, same arguments",
+              ["model", "variant", "k", "batch", "mode"],
+              [("variant", "variant", ""), ("method", "label", ""), ("k", "k", "d"), ("batch", "batch", "d"),
+               ("mode", "mode", ""), (f"measured: {g1}", "speedup_1", ".3f"), (f"measured: {g2}", "speedup_2", ".3f"),
+               ("second minus first", "speedup_diff", "+.3f"), ("analytic (M2)", "flop_speedup", ".3f"),
+               ("timing flag", lambda r: ", ".join(x for x in (r.get("flag_1"), r.get("flag_2")) if x), "")])
+    D.notes = [f"Speed-up against the dense reference (dense latency over the variant's, same batch and mode) measured "
+               f"on {g1} ({L1.title.split('(')[-1].rstrip(')')}) and on {g2} ({L2.title.split('(')[-1].rstrip(')')}), "
+               "with the same script and arguments. Analytic (M2): the timing script's multiply-add ratio, the same on "
+               "both devices. Timing flag: a probable timing outlier on that device (measured above analytic)."]
+    for r2 in L2.rows:
+        r1 = L1.find(model=r2["model"], variant=r2["variant"], k=r2["k"], batch=r2["batch"], mode=r2["mode"])
+        if r1 is None or r1.get("speedup_vs_dense") is None or r2.get("speedup_vs_dense") is None:
+            continue
+        row = {"model": r2["model"], "variant": r2["variant"], "label": r2.get("label"), "k": r2["k"], "batch": r2["batch"],
+               "mode": r2["mode"], "speedup_1": r1["speedup_vs_dense"], "speedup_2": r2["speedup_vs_dense"],
+               "device_1": g1, "device_2": g2, "flop_speedup": r2.get("flop_speedup_vs_dense"),
+               "flag_1": f"probable outlier ({g1})" if r1.get("timing_flag") else "",
+               "flag_2": f"probable outlier ({g2})" if r2.get("timing_flag") else "",
+               "_src": f"{r1['_src']};{r2['_src']}", "_git": f"{r1['_git']};{r2['_git']}", "_seed": r2.get("_seed"),
+               "_loc": {}, "_derived": {}}
+        if r1["_loc"].get("speedup_vs_dense"):
+            row["_loc"]["speedup_1"] = r1["_loc"]["speedup_vs_dense"]
+        if r2["_loc"].get("speedup_vs_dense"):
+            row["_loc"]["speedup_2"] = r2["_loc"]["speedup_vs_dense"]
+        if r2["_loc"].get("flop_speedup_vs_dense"):
+            row["_loc"]["flop_speedup"] = r2["_loc"]["flop_speedup_vs_dense"]
+        row["speedup_diff"] = row["speedup_2"] - row["speedup_1"]
+        row["_derived"]["speedup_diff"] = "speed-up on the second GPU minus that on the first"
+        D.add(row)
+    return D
+
+
+def build_f7(P: Paths):
+    """F7 visuals (scripts/f7_visuals.py, runs/f7/): per block, the twin correlation of the mirror pairing against a
+    random partner on held-out train images (f7_blocks.csv), and the layer-0 parity summary (f7_meta.json)."""
+    B = Table("T_f7", "F7 (teaser): mirror twins per block on held-out train images (runs/f7/f7_blocks.csv)", ["model", "block"],
+              [("model", "model_label", ""), ("block", "block", "d"), ("pairs", "n_pairs", "d"), ("self-twins", "n_self", "d"),
+               ("twin r median (q10, q90)", lambda r: f"{fmt(r.get('twin_r_median'), '.3f')} ({fmt(r.get('twin_r_q10'), '.3f')}, "
+                                                     f"{fmt(r.get('twin_r_q90'), '.3f')})" if r.get("twin_r_median") is not None else "", ""),
+               ("random r median (q10, q90)", lambda r: f"{fmt(r.get('rand_r_median'), '.3f')} ({fmt(r.get('rand_r_q10'), '.3f')}, "
+                                                       f"{fmt(r.get('rand_r_q90'), '.3f')})" if r.get("rand_r_median") is not None else "", ""),
+               ("twin above random", "frac_twin_gt_rand", ".3f"), ("chosen pairs", "n_chosen", "d"),
+               ("chosen: twin r mean", "chosen_twin_r_mean", ".3f"), ("images", "n_images", ",d"), ("fit seed", "fit_seed", "d")])
+    B.notes = ["Twin r: correlation over every patch token of the visualisation images (ImageNet train images not used to "
+               "fit the pairing, unless the run's images.source says fit) between a neuron's post-GELU activation and its "
+               "twin's on the mirrored image at the mirrored position, over every twin pair of the block (median and 10th "
+               "and 90th percentiles); random r: the same with a random partner. Twin above random: share of paired neurons "
+               "whose twin correlates better than the random partner. Chosen pairs: the top pairs of the fit run's ranking "
+               "drawn in the teaser (not hand-picked)."]
+    L0 = Table("T_f7_layer0", "F7: layer-0 patch-embedding filters by parity of A_0 (runs/f7/f7_meta.json)", ["operator", "parity"],
+               [("operator", "operator", ""), ("parity", "parity", ""), ("dimension", "dim", "d"),
+                ("energy share", "energy_share", ".3f"), ("symmetric-energy fraction", "sym_fraction", ".3f")])
+    L0.notes = ["Patch-embedding filters projected on the even (A_0 = +1) and odd (A_0 = -1) subspaces of the layer-0 operator; "
+                "energy share of each subspace and the symmetric-energy fraction of its filters (1 for an exactly symmetric "
+                "even part, 0 for an exactly antisymmetric odd part); null: a random involution with the same d+."]
+    base = P.runs / "f7"
+    info = {"dir": P.rel(base), "meta": read_json(base / "f7_meta.json"), "figures": {}}
+    df = read_csv(base / "f7_blocks.csv")
+    meta = info["meta"] or {}
+    g = (meta.get("git") or {}).get("git_hash")
+    if df is not None:
+        fb = P.rel(base / "f7_blocks.csv")
+        for _, r in df.iterrows():
+            model, b = str(r["model"]), int(r["block"])
+            row = {"model": model, "model_label": MODEL_LABEL.get(model, model), "block": b, "_src": fb,
+                   "_git": r.get("git_hash") or g, "_seed": py(r.get("seed")), "_fit_seed": py(r.get("fit_seed")),
+                   "fit_seed": py(r.get("fit_seed")), "_loc": {}, "_derived": {}}
+            for c, s in (("n_pairs", "n_pairs"), ("n_self", "n_self"), ("twin_r_median", "pairs_twin_corr_median"),
+                         ("twin_r_q10", "pairs_twin_corr_q10"), ("twin_r_q90", "pairs_twin_corr_q90"),
+                         ("rand_r_median", "pairs_rand_corr_median"), ("rand_r_q10", "pairs_rand_corr_q10"),
+                         ("rand_r_q90", "pairs_rand_corr_q90"), ("frac_twin_gt_rand", "frac_paired_neurons_twin_gt_rand"),
+                         ("n_chosen", "n_chosen"), ("chosen_twin_r_mean", "chosen_twin_corr_mean"),
+                         ("chosen_rand_r_mean", "chosen_rand_corr_mean"), ("n_images", "n_images"), ("n_tokens", "n_tokens")):
+                if s in r and py(r[s]) is not None:
+                    row[c] = py(r[s])
+                    row["_loc"][c] = csv_loc(fb, {"model": model, "block": b}, s)
+            B.add(row)
+    l0 = meta.get("layer0") or {}
+    if l0:
+        fm = P.rel(base / "f7_meta.json")
+        for op, opl in (("fitted", "A_0 (fitted)"), ("null", "random involution, same d+")):
+            for par in ("even", "odd"):
+                row = {"operator": opl, "parity": par, "_src": fm, "_git": g, "_seed": meta.get("seed"), "_loc": {}, "_derived": {}}
+                for q in ("dim", "energy_share", "sym_fraction"):
+                    kk = f"{op}_{par}_{q}"
+                    if l0.get(kk) is not None:
+                        row[q] = py(l0[kk])
+                        row["_loc"][q] = json_loc(fm, ["layer0", kk])
+                L0.add(row)
+    for stem in ("fig0_teaser", "figF7_twins_full", "figF7_layer0_filters"):
+        for where in (P.results / "paper" / "figures_paper", base / "figures"):
+            if (where / f"{stem}.pdf").is_file() or (where / f"{stem}.png").is_file():
+                info["figures"][stem] = P.rel(where)
+                break
+    return B, L0, info
 
 
 # ================================================================================================
@@ -3911,6 +5031,84 @@ def build_index(P, ctx, R: Registry) -> list[str]:
     L.append("- M3 grid: " + NOT_RUN + (" (" + " | ".join(rs) + ")" if rs else "") + ". Tables `T_healing`, `T_healing_p3`, "
              "`T_healing_vexact`; figure `fig_healing_curves.png`.")
     L.append("")
+    # ---------------------------------------------------------------- E3
+    L += ["## E3: matched healed baselines at full conversion (PREREG_E3.md, gate G5)", ""]
+    e3i = ctx["e3_info"]
+    th3 = e3i["prereg"]
+    te3, tec = T["T_e3"], T["T_e3_checks"]
+    xl = lr_txt(th3.get("extra_lr"))
+    if not th3.get("exists"):
+        L.append(f"- {NOT_RUN}: no `PREREG_E3.md`.")
+    else:
+        L.append(f"- Pre-registration: PREREG_E3.md{' (ACTIVE, signed off)' if th3.get('active') else ' (not marked ACTIVE)'}, "
+                 f"record commit {short(th3.get('commit'))} ({th3.get('commit_source')}). Bars read from its text: E3.a "
+                 f"V0 - R >= {fmt(th3.get('bar_a'), '.1f')}, E3.b V0 - S >= {fmt(th3.get('bar_b'), '.1f')} with S the better "
+                 "SVD arm, each difference also larger than the seed difference s = |V0 - V1|; gate G5 needs both. "
+                 f"k = {fmt(e3i['k'], 'd')} ({e3i['k_source']}). Tables `T_e3` (arms), `T_e3_checks` (checks, validity, "
+                 "learning-rate check); rows E3.* and G5 also in `T_prereg`.")
+        for r in te3.rows:
+            key, wh = f"e3.{r['key']}", {"arm": r["arm"]}
+            if r["status"] == NOT_RUN:
+                L.append(f"- Arm {r['arm']}, {r['label']}: {NOT_RUN} ({r.get('note', '')}).")
+                continue
+            bits = [f"status {r['status']}"]
+            if r.get("healed_top1") is not None:
+                hl = (None if r.get("tiny") or r["key"] == "v0_a100"
+                      else f"E3 arm {r['arm']}: healed k-NN top-1 (k = {fmt(e3i['k'], 'd')})")
+                bits.append(f"k-NN zero-shot {c(key + '.zero_shot', 'T_e3', wh, 'zero_shot_top1')} to healed "
+                            f"{c(key + '.healed', 'T_e3', wh, 'healed_top1', headline=hl)} (original "
+                            f"{c(key + '.original', 'T_e3', wh, 'original_top1')}); flip consistency (k-NN) "
+                            f"{c(key + '.flip', 'T_e3', wh, 'healed_flip')}")
+            if r.get("flip_fp32") is not None:
+                bits.append(f"fp32 flip check {c(key + '.flip_fp32', 'T_e3', wh, 'flip_fp32')}%")
+            if r.get("linear_top1") is not None:
+                bits.append(f"linear probe {c(key + '.linear', 'T_e3', wh, 'linear_top1')}")
+            elif r.get("linear_note"):
+                bits.append(f"linear probe: {r['linear_note']}")
+            if r.get("converted_params_kept") is not None:
+                bits.append(f"matrix parameters kept {c(key + '.kept', 'T_e3', wh, 'converted_params_kept', ',d')}"
+                            + (f" ({c(key + '.kept_vs_v0', 'T_e3', wh, 'kept_vs_vexact', '.4f')} of arm 1's)"
+                               if r.get("kept_vs_vexact") is not None else ""))
+            if r.get("chosen_lr") is not None:
+                bits.append(f"chosen LR {c(key + '.lr', 'T_e3', wh, 'chosen_lr', 'g')}")
+            if r.get("extra_would_win") is not None:
+                bits.append(f"{xl} would have won: {fmt(r['extra_would_win'])}")
+            if r.get("validity"):
+                bits.append(f"validity {r['validity']}")
+            L.append(f"- Arm {r['arm']}, {r['label']}: " + "; ".join(bits) + f". Seed {r.get('seed')}, git "
+                     f"{short(r.get('git_hash'))}{' (dirty)' if r.get('git_dirty') else ''}; files `{r.get('source')}`.")
+        for cid, spec in (("E3.a", "+.3f"), ("E3.b", "+.3f"), ("E3.seed", ".3f"), ("G5", "")):
+            r = tec.find(id=cid)
+            if r is None:
+                continue
+            k_ = "e3." + cid.lower().replace("e3.", "")
+            hv = f"E3 {cid}: {r['statement']}" if cid in ("E3.a", "E3.b") else None
+            val = (f", value {c(k_ + '.value', 'T_e3_checks', {'id': cid}, 'value', spec, headline=hv)}"
+                   if r.get("value") is not None else "")
+            hd = "Gate G5 verdict (E3)" if cid == "G5" else None
+            L.append(f"- {cid}: {r['statement']}{val} ({r.get('threshold', '')}): **"
+                     f"{c(k_ + '.verdict', 'T_e3_checks', {'id': cid}, 'verdict', '', headline=hd)}**"
+                     + (f"; {r['note']}" if r.get("note") else "") + ".")
+        alt = [r for r in tec.rows if r["id"].endswith(("(V1)", "(mean)"))]
+        if alt and any(r.get("value") is not None for r in alt):
+            bits = []
+            for r in alt:
+                if r.get("value") is None:
+                    continue
+                kk = "e3." + r["id"].lower().replace("e3.", "").replace(" (", ".").rstrip(")") + ".value"
+                bits.append(f"{r['id']} {c(kk, 'T_e3_checks', {'id': r['id']}, 'value', '+.3f')} ({r['verdict']})")
+            L.append("- Reported without changing the verdict: " + "; ".join(bits) + ".")
+        r = tec.find(id="E3.lr")
+        if r is not None:
+            L.append(f"- E3.lr (Section 8): {r['statement']}: **{r['verdict']}**" + (f"; {r['note']}" if r.get("note") else "") + ".")
+        vr = [r for r in tec.rows if r["id"].startswith("E3.valid.")]
+        if vr:
+            L.append("- Validity (Section 7): " + "; ".join(f"arm {r['id'].replace('E3.valid.', '')} {r['verdict']}" for r in vr)
+                     + " (conditions in `T_e3_checks`).")
+        rs = reasons(["E3"])
+        if rs and any(r["status"] == NOT_RUN for r in te3.rows):
+            L.append("- " + " | ".join(rs) + ".")
+    L.append("")
     # ---------------------------------------------------------------- D
     L += ["## D: data-free readout (P5, gate G4)", ""]
     if ctx["d"]:
@@ -4039,6 +5237,41 @@ def build_index(P, ctx, R: Registry) -> list[str]:
         L.append(f"- {NOT_RUN}: no `runs/a/*/A*_s*.csv`." + (" " + " | ".join(rs) + "." if rs else ""))
     L.append("- A6 and A7: zero-shot from the M1 rows of `T_main_zeroshot`; latency from M2 (`T_latency`).")
     L.append("")
+    L += ["## SB: strong compression baselines, zero-shot", ""]
+    tsb = T["T_strong_baselines"]
+    if tsb.rows:
+        sbg = sorted({short(r["_git"]) for r in tsb.rows if r.get("experiment") == "SB"})
+        L.append(f"- Runs: {', '.join('`' + P.rel(f) + '`' for f in ctx['sb_files'])} (scripts/strong_baselines.py, "
+                 f"mirror/baselines.py), git {', '.join(sbg)}. Each method compresses the MLPs of blocks 1 to k at the MLP "
+                 f"weight count of {LABEL_MIRROR_MLP} at the same k and fit seed; {LABEL_MIRROR_MLP} and SVD are the "
+                 f"canonical {CANONICAL_RUN} values. Table `T_strong_baselines`.")
+        for (model, k, fs) in dict.fromkeys((r["model"], r["k"], r["fit_seed"]) for r in tsb.rows):
+            ms = MODEL_SHORT.get(model, model)
+            bits = []
+            for r in [r for r in tsb.rows if (r["model"], r["k"], r["fit_seed"]) == (model, k, fs)]:
+                wh = {"model": model, "k": k, "fit_seed": fs, "method": r["method"]}
+                key = f"sb.{ms}.k{k}.s{fs}.{r['method']}"
+                if r.get("top1") is None:
+                    bits.append(f"{r['label']}: {r.get('status', NOT_RUN)}")
+                    continue
+                hl = f"Strong baseline {r['label']}, k = {k}: k-NN top-1" if r.get("experiment") == "SB" else None
+                b = f"{r['label']} ({r['experiment']}) {c(key + '.top1', 'T_strong_baselines', wh, 'top1', headline=hl)}"
+                if r.get("experiment") == "SB" and r.get("ratio_to_mirror") is not None:
+                    b += (f" at {c(key + '.ratio', 'T_strong_baselines', wh, 'ratio_to_mirror', '.4f')} of the Mirror budget"
+                          + ("" if r.get("within_1pct") else ", NOT within 1%"))
+                if r.get("mirror_minus_this") is not None:
+                    b += f", Mirror minus this {c(key + '.mirror_minus', 'T_strong_baselines', wh, 'mirror_minus_this', '+.2f')}"
+                bits.append(b)
+            L.append(f"- {MODEL_LABEL.get(model, model)}, k = {k}, fit seed {fs}, k-NN top-1 (%): " + "; ".join(bits) + ".")
+        sl = [r for r in tsb.rows if r["method"] == "slicegpt" and r.get("basis_params_not_counted")]
+        if sl:
+            L.append("- Not counted in any MLP budget: SliceGPT-style slicing's change of stream basis between blocks ("
+                     + ", ".join(f"k = {r['k']}: {fmt(r['basis_params_not_counted'], ',d')}" for r in sl)
+                     + " parameters, d x d per block), as Mirror V-local's basis rotations are not counted.")
+    else:
+        rs = reasons(["Strong baselines", "strong baselines"])
+        L.append(f"- {NOT_RUN}: no `runs/sb/SB_s*.csv`." + (" " + " | ".join(rs) + "." if rs else ""))
+    L.append("")
     L += ["## F4: symmetry versus low rank (P2)", ""]
     tf, tp = T["T_f4"], T["T_f4_p2"]
     if tf.rows or ctx["f4"]:
@@ -4149,6 +5382,38 @@ def build_index(P, ctx, R: Registry) -> list[str]:
         L.append(f"- {NOT_RUN}: no `runs/{P.m2}/m2_latency.csv`." + (" " + " | ".join(rs) + "." if rs else "")
                  + " The cost columns of `T_main_zeroshot` are analytic counts from `tables/cost_model.md`, not measured "
                  "latency.")
+    tl2, tdv = T["T_latency_5090"], T["T_latency_devices"]
+    if tl2.rows:
+        mb = ctx.get("m2b_meta") or {}
+        ci = str(mb.get("check_images") or "not recorded")
+        L.append(f"- Second device: `runs/{M2_SECOND}/` (scripts/m2_latency.py, same arguments as the primary run): model "
+                 f"{mb.get('model')}, seed {mb.get('seed')}, git {short((mb.get('git') or {}).get('git_hash'))}, "
+                 f"{mb.get('date')}, device {(mb.get('env') or {}).get('gpu') or (mb.get('env') or {}).get('device')}; "
+                 f"equivalence check images: {ci}"
+                 + (" (the validation cache could not be loaded on that machine, so scripts/m2_latency.py fell back to "
+                    "random images; the checks test the implementation, not accuracy)" if ci.startswith("random") else "")
+                 + ". Tables `T_latency_5090`, `T_latency_checks_5090`, `T_latency_devices`.")
+        ck2 = T["T_latency_checks_5090"]
+        if ck2.rows:
+            n2 = R.put("m2_5090.checks.n_pass", sum(1 for r in ck2.rows if r.get("pass")), "d",
+                       source=f"runs/{M2_SECOND}/m2_checks.csv", git_hash=ck2.rows[0].get("_git"), seed=ck2.rows[0].get("_seed"),
+                       derived="number of rows with pass = True in m2_checks.csv")
+            L.append(f"- Second device checks: {n2} of {len(ck2.rows)} pass (`T_latency_checks_5090`).")
+        modes2 = sorted({r["mode"] for r in tdv.rows})
+        if modes2:
+            mode2 = "compile" if "compile" in modes2 else modes2[0]
+            bmax = max(r["batch"] for r in tdv.rows if r["mode"] == mode2)
+            for k in sorted({r["k"] for r in tdv.rows if r["k"] and r["mode"] == mode2 and r["batch"] == bmax}):
+                bits = []
+                for r in [r for r in tdv.rows if r["k"] == k and r["mode"] == mode2 and r["batch"] == bmax]:
+                    wh = {"model": r["model"], "variant": r["variant"], "k": k, "batch": bmax, "mode": mode2}
+                    key = f"m2dev.{r['variant']}.k{k}.b{bmax}.{mode2}"
+                    bits.append(f"{r['variant']} {c(key + '.first', 'T_latency_devices', wh, 'speedup_1', '.3f')}x / "
+                                f"{c(key + '.second', 'T_latency_devices', wh, 'speedup_2', '.3f')}x")
+                L.append(f"- k = {k}, batch {bmax}, {mode2}: measured speed-up against dense, "
+                         f"{tdv.rows[0]['device_1']} / {tdv.rows[0]['device_2']}: " + "; ".join(bits) + ".")
+    else:
+        L.append(f"- Second device (`runs/{M2_SECOND}/`): {NOT_RUN}.")
     # M2 profile (scripts/m2_profile.py): where the time goes
     tpf = T["T_latency_profile"]
     pm_ = ctx.get("prof_meta") or {}
@@ -4280,9 +5545,103 @@ def build_index(P, ctx, R: Registry) -> list[str]:
         for model, miss in si["missing"].items():
             L.append(f"- ADE20K, {MODEL_LABEL.get(model, model)}: variants named in `{si['meta'][model]['file']}` without a "
                      f"row: {', '.join(miss)} ({NOT_RUN}).")
+        for r in T["T_tier2_seg_rerun"].rows:
+            ms = MODEL_SHORT.get(r["model"], r["model"])
+            wh = {"model": r["model"], "variant": r["variant"]}
+            key = f"t2segrerun.{ms}.{r['variant']}"
+            if r.get("diff_mIoU") is not None:
+                hl = f"ADE20K run-to-run difference, {r['variant']} (mIoU)"
+                L.append(f"- ADE20K rerun (run-to-run spread), {r['model_label']} {r['variant']}: mIoU "
+                         f"{c(key + '.first', 'T_tier2_seg_rerun', wh, 'first_mIoU', '.3f')} in `runs/t2_seg` and "
+                         f"{c(key + '.rerun', 'T_tier2_seg_rerun', wh, 'rerun_mIoU', '.3f')} in `runs/t2_seg_rerun` "
+                         f"(difference {c(key + '.diff', 'T_tier2_seg_rerun', wh, 'diff_mIoU', '+.3f', headline=hl)}). "
+                         "Table `T_tier2_seg_rerun`.")
+            else:
+                L.append(f"- ADE20K rerun of {r['variant']} in `runs/t2_seg_rerun` has no first run in `runs/t2_seg`.")
     else:
         rs = reasons(["ADE20K"])
         L.append(f"- ADE20K linear segmentation: {NOT_RUN} (no `{si['csv']}`)." + (" " + " | ".join(rs) + "." if rs else ""))
+    L.append("")
+    # ---------------------------------------------------------------- flip averaging
+    L += ["## Flip averaging: exact invariance at test time against V-exact", ""]
+    tfa = T["T_flipavg"]
+    if tfa.rows:
+        L.append(f"- Run: `runs/t1_flipavg/flipavg.csv` (scripts/flip_avg_baseline.py), git "
+                 f"{', '.join(sorted({short(r['_git']) for r in tfa.rows}))}, seed(s) "
+                 f"{', '.join(sorted({str(r['_seed']) for r in tfa.rows}))}. Table `T_flipavg`.")
+        for r in tfa.rows:
+            ms = MODEL_SHORT.get(r["model"], r["model"])
+            wh = {"model": r["model"], "variant": r["variant"], "mode": r["mode"]}
+            key = f"fa.{ms}.{r['variant']}.{r['mode']}"
+            hl = (f"Flip averaging: {r['variant']} ({r['mode']}) k-NN top-1"
+                  if r["model"] != "tiny" and r.get("exactly_invariant") else None)
+            b = (f"- {r['model_label']} {r['variant']} ({r['mode']}): k-NN {c(key + '.knn', 'T_flipavg', wh, 'knn_top1', headline=hl)}, "
+                 f"flip consistency {c(key + '.flip', 'T_flipavg', wh, 'flip_consistency')}%")
+            if r.get("probe_top1") is not None:
+                b += f", linear probe {c(key + '.probe', 'T_flipavg', wh, 'probe_top1')}"
+            b += f"; {fmt(r.get('forwards_per_image'), 'd')} forward pass(es) per image"
+            if r.get("gflops") is not None:
+                b += f", {c(key + '.gflops', 'T_flipavg', wh, 'gflops', '.2f')} GFLOPs per image"
+            if r.get("rel_cost") is not None:
+                b += f" ({c(key + '.rel_cost', 'T_flipavg', wh, 'rel_cost', '.3f')} of the original's, {r.get('rel_cost_basis')})"
+            if r.get("params") is not None:
+                b += f"; {fmt(r['params'], ',d')} parameters ({fmt(r.get('params_frac'), '.3f')} of the original)"
+            if r.get("note"):
+                b += f" ({r['note']})"
+            L.append(b + ".")
+        for r in [r for r in tfa.rows if r.get("cost_vs_flipavg") is not None]:
+            ms = MODEL_SHORT.get(r["model"], r["model"])
+            wh = {"model": r["model"], "variant": r["variant"], "mode": r["mode"]}
+            key = f"fa.{ms}.{r['variant']}.{r['mode']}"
+            L.append(f"- {r['variant']} ({r['mode']}) against the flip-averaged original: "
+                     f"{c(key + '.cost_vs_fa', 'T_flipavg', wh, 'cost_vs_flipavg', '.3f')} of its GFLOPs per image and "
+                     f"{c(key + '.params_vs_fa', 'T_flipavg', wh, 'params_vs_flipavg', '.3f')} of its parameters; top-1 "
+                     f"difference k-NN {c(key + '.minus_fa_knn', 'T_flipavg', wh, 'minus_flipavg_knn', '+.2f')}"
+                     + (f", linear probe {c(key + '.minus_fa_probe', 'T_flipavg', wh, 'minus_flipavg_probe', '+.2f')}"
+                        if r.get("minus_flipavg_probe") is not None else "") + " points.")
+    else:
+        rs = reasons(["flip-averaging", "flip averaging"])
+        L.append(f"- {NOT_RUN}: no `runs/t1_flipavg/flipavg.csv`." + (" " + " | ".join(rs) + "." if rs else ""))
+    L.append("")
+    # ---------------------------------------------------------------- F7
+    L += ["## F7: visuals (teaser)", ""]
+    tf7, f7i = T["T_f7"], ctx["f7_info"]
+    fm = f7i.get("meta") or {}
+    if tf7.rows or fm:
+        env = fm.get("env") or {}
+        im = fm.get("images") or {}
+        L.append(f"- Run: `{f7i['dir']}/` (scripts/f7_visuals.py), model {fm.get('model')}, fit seed "
+                 f"{(fm.get('fit_run') or {}).get('fit_seed')}, seed {fm.get('seed')}, git "
+                 f"{short((fm.get('git') or {}).get('git_hash'))}, {fm.get('date')}, device {env.get('gpu') or env.get('device')}; "
+                 f"{fmt(im.get('n'), ',d')} images ({im.get('description')}). Tables `T_f7`, `T_f7_layer0`; draft "
+                 "captions in `runs/f7/F7_SUMMARY.md`." + (" TINY smoke test, not a result." if fm.get("tiny") else ""))
+        for r in tf7.rows:
+            ms = MODEL_SHORT.get(r["model"], r["model"])
+            wh = {"model": r["model"], "block": r["block"]}
+            key = f"f7.{ms}.b{r['block']}"
+            L.append(f"- Block {r['block']}: twin correlation median {c(key + '.twin_r', 'T_f7', wh, 'twin_r_median', '.3f')} "
+                     f"against {c(key + '.rand_r', 'T_f7', wh, 'rand_r_median', '.3f')} for a random partner, over "
+                     f"{fmt(r.get('n_pairs'), ',d')} twin pairs; twin above random for "
+                     f"{c(key + '.frac', 'T_f7', wh, 'frac_twin_gt_rand', '.3f')} of the paired neurons.")
+        l0 = T["T_f7_layer0"]
+        if l0.rows:
+            bits = []
+            for r in l0.rows:
+                wh = {"operator": r["operator"], "parity": r["parity"]}
+                key = f"f7.l0.{'fit' if 'fitted' in r['operator'] else 'null'}.{r['parity']}"
+                bits.append(f"{r['operator']}, {r['parity']}: energy {c(key + '.energy', 'T_f7_layer0', wh, 'energy_share', '.3f')}, "
+                            f"symmetric fraction {c(key + '.sym', 'T_f7_layer0', wh, 'sym_fraction', '.3f')}")
+            L.append("- Layer-0 filters by parity: " + "; ".join(bits) + ".")
+        figs = f7i.get("figures") or {}
+        if figs:
+            L.append("- Figures (drawn by scripts/f7_visuals.py, not by the collector): "
+                     + ", ".join(f"`{d}/{stem}.pdf`" for stem, d in figs.items()) + ".")
+        else:
+            L.append("- Figures fig0_teaser, figF7_twins_full and figF7_layer0_filters are not on this machine; "
+                     "`python scripts/f7_visuals.py --replot runs/f7` draws them into `results/paper/figures_paper/`.")
+    else:
+        rs = reasons(["F7"])
+        L.append(f"- {NOT_RUN}: no `runs/f7/f7_blocks.csv`." + (" " + " | ".join(rs) + "." if rs else ""))
     L.append("")
     # ---------------------------------------------------------------- inputs
     L += ["## Inputs found and missing", ""]
@@ -4456,14 +5815,23 @@ def main(argv=None) -> dict:
     T["T_healing_vexact"], vx_info = build_healing_vexact(P, m1, {m_: a_["depth"] for m_, a_ in archs.items()})
     T["T_tier2"], T["T_tier2_transfer"] = build_tier2(P, T["T_main_zeroshot"], T["T_healing"], m1, x2, T["T_ablations"],
                                                       T["T_healing_vexact"])
-    T["T_tier2_seg"], T["T_tier2_seg_classes"], seg_info = build_tier2_seg(P, plan_text)
+    T["T_tier2_seg"], T["T_tier2_seg_classes"], T["T_tier2_seg_rerun"], seg_info = build_tier2_seg(P, plan_text)
     add_linear_to_healing(T["T_healing"], T["T_tier2"])
     vexact_device_notes(T["T_healing_vexact"], T["T_main_zeroshot"])
     T["T_latency"], T["T_latency_checks"], m2_meta = build_latency(P, T["T_main_zeroshot"], archs, m1)
+    T["T_latency_5090"], T["T_latency_checks_5090"], m2b_meta = build_latency(P, T["T_main_zeroshot"], archs, m1,
+                                                                             sub=M2_SECOND, suffix="_5090")
+    T["T_latency_devices"] = build_latency_devices(T["T_latency"], T["T_latency_5090"], m2_meta, m2b_meta)
     T["T_latency_profile"], T["T_latency_profile_triton"], prof_meta = build_latency_profile(P)
     T["T_f4"], T["T_f4_p2"], f4_files, _ = build_f4(P)
+    th3 = parse_prereg_e3(P)
+    commits["PREREG_E3.md"] = th3.get("commit")
+    T["T_e3"], T["T_e3_checks"], e3_info = build_e3(P, T["T_tier2"], th3)
+    T["T_strong_baselines"], sb_files = build_strong_baselines(P, T["T_main_zeroshot"], archs)
+    T["T_flipavg"] = build_flipavg(P)
+    T["T_f7"], T["T_f7_layer0"], f7_info = build_f7(P)
     T["T_prereg"] = build_prereg(P, e1, e1b, f3, d_free, T["T_healing_p3"], T["T_generality_p4"], x1, status, th,
-                                 commits, f4)
+                                 commits, f4, T["T_e3_checks"], th3)
 
     # ------------------------------------------------------------- external scripts (F1, F2)
     f1res, f2res = [], []
@@ -4540,7 +5908,7 @@ def main(argv=None) -> dict:
             for f in (Path(fr["out"]) / "plots").glob("*.png"):
                 shutil.copy2(f, fdir / f"ext_{fr['tag']}_{f.name}")
 
-    for sub, tag in (("f4", "f4"), (P.m2, "m2")):
+    for sub, tag in (("f4", "f4"), (P.m2, "m2"), (M2_SECOND, "m2_5090")):
         for f in sorted((P.runs / sub / "plots").glob("*.png")) if (P.runs / sub / "plots").is_dir() else []:
             shutil.copy2(f, fdir / f"ext_{tag}_{f.name}")
 
@@ -4556,6 +5924,11 @@ def main(argv=None) -> dict:
     groups = [
         ("T_main_zeroshot", "Main zero-shot table", ["T_main_zeroshot"]),
         ("T_healing", "Healing (M3 pilot and V-exact healing)", ["T_healing", "T_healing_p3", "T_healing_vexact"]),
+        ("T_e3", "E3: matched healed baselines at full conversion (PREREG_E3.md, gate G5)", ["T_e3_checks", "T_e3"]),
+        ("T_strong_baselines", "Strong compression baselines, zero-shot (scripts/strong_baselines.py)",
+         ["T_strong_baselines"]),
+        ("T_flipavg", "Flip averaging against exact equivariance (scripts/flip_avg_baseline.py)", ["T_flipavg"]),
+        ("T_f7", "F7 visuals: mirror twins and layer-0 filters (scripts/f7_visuals.py)", ["T_f7", "T_f7_layer0"]),
         ("T_generality", "Generality (G)", ["T_generality", "T_generality_p4"]),
         ("T_structure_per_layer", "Structure per layer (F1 style)", ["T_structure_summary"]),
         ("T_prereg", "Pre-registered checks", ["T_prereg"]),
@@ -4563,8 +5936,10 @@ def main(argv=None) -> dict:
         ("T_e1_history", "E1 and E1b (earlier protocol)", ["T_e1_history"]),
         ("T_attention", "Attention conversion (M1)", ["T_attention", "T_attention_vexact", "T_attention_conversion"]),
         ("T_ablations", "Ablations (A1 to A5)", ["T_ablations_seeds", "T_ablations", "T_ablations_a2_extra"]),
-        ("T_tier2", "Tier 2: linear probes, transfer and ADE20K segmentation", ["T_tier2", "T_tier2_transfer", "T_tier2_seg"]),
-        ("T_latency", "M2: latency and analytic cost", ["T_latency", "T_latency_checks"]),
+        ("T_tier2", "Tier 2: linear probes, transfer and ADE20K segmentation",
+         ["T_tier2", "T_tier2_transfer", "T_tier2_seg", "T_tier2_seg_rerun"]),
+        ("T_latency", "M2: latency and analytic cost", ["T_latency", "T_latency_checks", "T_latency_devices",
+                                                        "T_latency_5090", "T_latency_checks_5090"]),
         ("T_latency_profile", "M2 profile: where the time goes", ["T_latency_profile", "T_latency_profile_triton"]),
         ("T_f4", "F4: symmetry against low rank (P2)", ["T_f4_p2", "T_f4"]),
         ("T_f1_ranges", "F1 ranges (scripts/f1_tax.py)", ["T_f1_ranges"]),
@@ -4734,6 +6109,38 @@ def main(argv=None) -> dict:
             dev.append(f"V-exact healing k = {r['k']}: the fp32 flip check is not 100% ({fmt(r.get('flip_fp32'), '.2f')}%).")
     if prof_meta and (prof_meta.get("tiny") or prof_meta.get("device_type") == "cpu"):
         dev.append("M2 profile: `runs/m2_profile/` holds a CPU smoke test (operator self times), not a GPU measurement.")
+    for meta_, sub_ in ((m2_meta, P.m2), (m2b_meta, M2_SECOND)):
+        if meta_ and str(meta_.get("check_images", "")).startswith("random"):
+            dev.append(f"M2 (`runs/{sub_}/`): the equivalence checks used {meta_['check_images']}, not validation images "
+                       "(scripts/m2_latency.py falls back to them when the validation cache cannot be loaded); timings are "
+                       "unaffected (random inputs in every run).")
+    for r in T["T_strong_baselines"].rows:
+        if r.get("experiment") == "SB" and r.get("within_1pct") is False:
+            dev.append(f"Strong baselines: {r['label']} k = {r['k']} keeps {fmt(r.get('ratio_to_mirror'), '.4f')} of the "
+                       "Mirror budget (plan: within 1%).")
+    if th3.get("exists") and not th3.get("active"):
+        dev.append("E3: PREREG_E3.md is not marked ACTIVE (signed off); its checks are not pre-registered verdicts yet.")
+    for k_, r in e3_info["rows"].items():
+        if r.get("tiny"):
+            dev.append(f"E3 arm {r['arm']}: `{r['dir']}` holds a TINY smoke-test run, not a result.")
+        if r.get("validity") == FAIL:
+            dev.append(f"E3 arm {r['arm']} fails a validity condition (PREREG_E3.md Section 7: invalid, fix and rerun that "
+                       f"arm): {r.get('validity_detail')}.")
+        if r.get("linear_note") and k_ != "v0_a100":
+            dev.append(f"E3 arm {r['arm']}, linear probe: {r['linear_note']}.")
+        if r.get("extra_win_matches_recorded") is False:
+            dev.append(f"E3 arm {r['arm']}: the run's own flag for the extra learning rate differs from the collector's "
+                       "recomputation from lr_extra.json (T_e3).")
+    lr_ = T["T_e3_checks"].find(id="E3.lr")
+    if lr_ is not None and str(lr_["verdict"]).startswith("yes"):
+        dev.append(f"E3 (PREREG_E3.md Section 8): the extra learning rate would have won for arm(s) "
+                   f"{lr_['verdict'].replace('yes: ', '')}; the main comparison is flagged as possibly under-tuned.")
+    for r in T["T_flipavg"].rows:
+        if r["model"] == "tiny":
+            dev.append("Flip averaging: `runs/t1_flipavg/` holds TINY smoke-test rows, not results.")
+            break
+    if (f7_info.get("meta") or {}).get("tiny"):
+        dev.append("F7: `runs/f7/` holds a TINY smoke-test run, not a result.")
     inv = []
 
     def inv_add(path, what):
@@ -4781,6 +6188,29 @@ def main(argv=None) -> dict:
     for f in ("m2_profile.csv", "m2_submodules.csv", "m2_triton.csv", "m2_top_kernels.csv", "M2_PROFILE.md",
               "m2_profile_meta.json"):
         inv_add(f"runs/m2_profile/{f}", "M2 profile (scripts/m2_profile.py)")
+    inv_add("PREREG_E3.md", "E3 pre-registration (ACTIVE once signed off)")
+    for key_, arm_, _lab, kind_, sub_, t2sub_ in E3_ARMS:
+        d_ = e3_info["rows"][key_]["dir"]
+        fs_ = ["summary.json", "knn.json", "final/metrics.json", "lr_selection/lr_selection.json"]
+        if kind_ == "vexact":
+            fs_ += ["exactness.json", "flipcheck.json"]
+        if key_ not in ("v0", "v0_a100"):
+            fs_.append("lr_extra.json")
+        for fn in fs_:
+            inv_add(f"{d_}/{fn}", f"E3 arm {arm_}")
+        if t2sub_:
+            inv_add(f"runs/{t2sub_}/t2_linear.csv", f"E3 arm {arm_}: Tier-2 linear probe")
+    if e3_info.get("k") is not None:
+        inv_add(f"runs/{E3_LR_PROBE}/k{e3_info['k']}/lr_extra.json", "E3 Section 8: learning-rate probe of arm 1")
+    for f in sb_files or [P.runs / "sb" / "SB_s0.csv"]:
+        inv_add(P.rel(f), "strong baselines, zero-shot (scripts/strong_baselines.py)")
+    inv_add("runs/t1_flipavg/flipavg.csv", "flip-averaging baseline (scripts/flip_avg_baseline.py)")
+    for f in ("m2_latency.csv", "m2_checks.csv", "m2_meta.json"):
+        inv_add(f"runs/{M2_SECOND}/{f}", "M2 latency, second device")
+    inv_add("runs/t2_seg_rerun/t2_ade20k.csv", "Tier 2 ADE20K rerun (run-to-run spread)")
+    for f in ("f7_blocks.csv", "f7_meta.json", "F7_SUMMARY.md"):
+        inv_add(f"runs/f7/{f}", "F7 visuals (scripts/f7_visuals.py)")
+    inv_add("results/paper/figures_paper/fig0_teaser.pdf", "F7 teaser figure (drawn by scripts/f7_visuals.py)")
     inv_add("runs/t2/t2_linear.csv", "Tier 2 ImageNet linear probe")
     inv_add("runs/t2/t2_transfer.csv", "Tier 2 transfer probes")
     inv_add("runs/t2_seg/t2_ade20k.csv", "Tier 2 ADE20K linear segmentation (scripts/tier2_ade20k.py)")
@@ -4800,7 +6230,8 @@ def main(argv=None) -> dict:
            "e1": e1, "e1b": e1b, "x1": x1, "x1b": x1b, "x2": x2, "g": g, "x4": x4, "m1": m1, "m3": m3, "d": d_free,
            "f4": f4, "f1": f1res, "f2": f2res, "a_files": a_files, "inventory": inv, "deviations": dev,
            "plan_text": plan_text, "m2_meta": m2_meta, "f4_files": f4_files, "figs_dir": fdir, "seg_info": seg_info,
-           "vx_info": vx_info, "prof_meta": prof_meta}
+           "vx_info": vx_info, "prof_meta": prof_meta, "e3_info": e3_info, "sb_files": sb_files, "f7_info": f7_info,
+           "m2b_meta": m2b_meta}
 
     # ------------------------------------------------------------- INDEX and numbers
     R = Registry()
@@ -4810,7 +6241,8 @@ def main(argv=None) -> dict:
     meta = {"written_by": "scripts/collect_results.py", "date": ctx["date"], "git": git, "args": vars(a),
             "root": str(P.root), "artifacts": str(P.artifacts), "seed": None,
             "seed_note": "no randomness in the collector; F2 null draws use f2_drift.py's own --seed (default 0)",
-            "prereg_thresholds": th, "prereg_commits": commits, "figures": figs,
+            "prereg_thresholds": th, "prereg_e3": th3, "e3_values": e3_info.get("values"), "prereg_commits": commits,
+            "figures": figs,
             "tables": {k: len(v.rows) for k, v in T.items()},
             "f1": [{k: str(v) if isinstance(v, Path) else v for k, v in fr.items() if k != "meta"} for fr in f1res],
             "f2": [{k: str(v) if isinstance(v, Path) else v for k, v in fr.items() if k != "meta"} for fr in f2res],

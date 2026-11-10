@@ -1,0 +1,78 @@
+{
+  "experiment": "Tier 2 ImageNet linear probe",
+  "model": "tiny",
+  "variants": [
+    "healed_svd_k4"
+  ],
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "variants": "healed_svd_k4",
+    "out": "tiny_out/runs/e3/t2_svd_sym",
+    "operators": null,
+    "m1_structure": null,
+    "heal_dir": "tiny_out/runs/e3/svd_sym",
+    "heal_config": null,
+    "vexact_dir": null,
+    "vexact_checkpoint": null,
+    "vexact_config": null,
+    "random_seed": 1,
+    "seed": 0,
+    "cache_dir": "cache",
+    "img_size": 224,
+    "batch_size": 256,
+    "num_workers": 6,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-3,1e-2",
+    "no_wd_refine": true,
+    "holdout_frac": 0.1,
+    "max_iter": 60,
+    "history_size": 20,
+    "tol_grad": 1e-06,
+    "probe_tf32": false,
+    "skip_probe": false,
+    "force_features": false,
+    "force_probe": false,
+    "memory_fraction": null,
+    "device": null,
+    "tiny": true,
+    "tiny_classes": 4,
+    "tiny_bank_per_class": 20,
+    "tiny_val_per_class": 8
+  },
+  "paths": {
+    "operators": null,
+    "m1_structure": null,
+    "heal_dir": "tiny_out/runs/e3/svd_sym",
+    "vexact_dir": null,
+    "vexact_checkpoint": null,
+    "vexact_config": null
+  },
+  "git": {
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "git_dirty": false
+  },
+  "env": {
+    "python": "3.12.4",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.11.0+cpu",
+    "numpy": "2.4.4",
+    "device": "cpu"
+  },
+  "seed": 0,
+  "feature_recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+  "timing": {
+    "stages": {
+      "load": 11.31
+    },
+    "variants": {
+      "healed_svd_k4": {
+        "build healed_svd_k4": 0.63,
+        "extract healed_svd_k4 bank": 0.22,
+        "extract healed_svd_k4 val": 0.04,
+        "probe healed_svd_k4": 0.67
+      }
+    },
+    "total_s": 15.63
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "experiment": "F7",
+  "date": "2026-11-09 23:57:18",
+  "git": {
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "git_dirty": false
+  },
+  "seed": 0,
+  "config": {
+    "model": "dinov2_vitb14_reg",
+    "fit_run": null,
+    "blocks": null,
+    "pairs": 8,
+    "images": 5000,
+    "rows": "bank",
+    "rank_by": "weight",
+    "topk": 8,
+    "context": 1,
+    "teaser_pairs": 2,
+    "teaser_patches": 4,
+    "full_patches": 6,
+    "filters": 6,
+    "full_filters": 12,
+    "out": "tiny_out/runs/f7",
+    "fig_dir": null,
+    "cache_dir": "cache",
+    "device": "cuda",
+    "amp": "bf16",
+    "batch_size": 32,
+    "num_workers": 4,
+    "seed": 0,
+    "allow_model_mismatch": false,
+    "tiny": true,
+    "replot": null,
+    "blocks_list": [
+      1,
+      2,
+      4
+    ]
+  },
+  "env": {
+    "python": "3.12.4",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.11.0+cpu",
+    "numpy": "2.4.4",
+    "device": "cpu"
+  },
+  "model": "tiny",
+  "tiny": true,
+  "amp": "none",
+  "fit_run": {
+    "npz": "tiny_out/runs\\f7\\tiny_fit\\results\\e1_operators.npz",
+    "sha256": "5900d1632802dac9ca3201750d4790d19a5749d4c79e3cae90fb5ce763d2edc7",
+    "model": "tiny",
+    "fit_seed": 0,
+    "model_mismatch": false,
+    "load_checks": {},
+    "run_git": null,
+    "max_abs_change_from_cleaning": 1.2904399215862838e-08
+  },
+  "images": {
+    "source": "bank",
+    "description": "k-NN bank rows (disjoint from the fit images)",
+    "n": 40,
+    "pool": 40,
+    "seed": 0,
+    "rows_sha256_of_int64": "3293e7ecaec9fabd2ee0f27fda6731d8d52dbc2d2df57c868212f7c9b070ce83"
+  },
+  "blocks": [
+    1,
+    2,
+    4
+  ],
+  "block_numbering": "1-based as in e1_mlp.csv; block b = model.blocks[b - 1]",
+  "random_partner_seed": "seed * 1000 + block",
+  "layer0_null_seed": 7,
+  "definitions": {
+    "rank": "w_uv = 2 S_uv - S_uu - S_vv from the fit run (match_scores, self_corr)",
+    "twin_r": "corr(at_v, a_u) and corr(at_u, a_v) averaged; post-GELU, patch tokens, float64 sums",
+    "top_patches": "top-k images by the neuron's largest patch activation, one patch per image",
+    "layer0": "right singular vectors of V^T W_c per parity subspace of A_0; symmetric-energy fraction"
+  },
+  "layer0": {
+    "d": 64,
+    "patch": 14,
+    "d_plus": 34,
+    "d_minus": 30,
+    "all_sym_fraction": 0.5014673897983735,
+    "breaking_share": 0.41699751247889827,
+    "breaking_share_null": 0.49294896689110834,
+    "a0_row_max_sq_median": 0.10565877650581165,
+    "null_seed": 7,
+    "fitted_even_dim": 34,
+    "fitted_even_energy_share": 0.5213164546828138,
+    "fitted_even_sym_fraction": 0.5810159324156279,
+    "fitted_odd_dim": 30,
+    "fitted_odd_energy_share": 0.47868354531718593,
+    "fitted_odd_sym_fraction": 0.41483402916147744,
+    "null_even_dim": 34,
+    "null_even_energy_share": 0.52880454788342,
+    "null_even_sym_fraction": 0.508054415323545,
+    "null_odd_dim": 30,
+    "null_odd_energy_share": 0.47119545211658,
+    "null_odd_sym_fraction": 0.4940750241906658
+  },
+  "timing": {
+    "stages": {
+      "load": 24.0,
+      "paired pass": 0.13,
+      "analysis": 0.15,
+      "figures": 15.28
+    },
+    "total_s": 40.16
+  },
+  "outputs": {
+    "tiny_out/runs\\f7\\f7_pairs.csv": "0f06e5ff4cb8cc2278dbd9e94bd172b150ff248c6263f5eb6544687191d74a36",
+    "tiny_out/runs\\f7\\f7_blocks.csv": "91d428ceb3fe6f8ebbc4ab5b5b5d5605c7425dce375c25bdefbd1eb111ede318",
+    "tiny_out/runs\\f7\\f7_all_pairs.csv": "95c69cb7679041ed491bde95ccd1c8417da9e76be10951eb06c03f7b86fc85c8",
+    "tiny_out/runs\\f7\\f7_top_patches.csv": "12239433c7b45c0736293784547a2fce4bf79e5c90f5c7cdef70695d891f9f19",
+    "tiny_out/runs\\f7\\f7_layer0_filters.csv": "fd24ead593eaee7c49e72dcbaabc3cf15a24a1e8122ce975df29673ad55102f8",
+    "tiny_out/runs\\f7\\f7_layer0.npz": "d7b5fd8aa20991688a4ddd6913e56990ae0576faf6870fcceecff35452f124e6",
+    "tiny_out/runs\\f7\\f7_crops.npz": "135eb3eed726d8e322ad2eecc17f4e197dfff3370d17883a4ed019bab3e5a00f",
+    "tiny_out/runs\\f7\\F7_SUMMARY.md": "85bc0436185f6f8d67be71bfa0d9376c95365bdb912a5a2e61b108aa2aac4c4c",
+    "tiny_out/runs\\f7\\figures\\fig0_teaser.pdf": "bf8a241dccea4a301fce8370f5c3c637e5982b1d920e20074c60b7dfaa7a5244",
+    "tiny_out/runs\\f7\\figures\\fig0_teaser.png": "258c0c1f2f22253fe3acbb6096f4ed478bd673906caf30a9df61873b2e272b61",
+    "tiny_out/runs\\f7\\figures\\figF7_twins_full.pdf": "655431a3894984bc0b4905d84231194be34d75ba1ea08287f3b333710e995fb5",
+    "tiny_out/runs\\f7\\figures\\figF7_twins_full.png": "f049728dead7ecb115792a3295417a201bcfc8767ad6b04bcf3adc054d00207e",
+    "tiny_out/runs\\f7\\figures\\figF7_layer0_filters.pdf": "1a959b572b6d4827949a9ea8d39be0112bd18e711ae9a2980ecd243f797b52ec",
+    "tiny_out/runs\\f7\\figures\\figF7_layer0_filters.png": "aaa1b59e32c98d622b755e39a0c8f00dba96b5b0acb45c154b579f19df79b895"
+  }
+}

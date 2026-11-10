@@ -1,0 +1,600 @@
+{
+  "method": "vexact",
+  "k": 4,
+  "depth": 4,
+  "blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "seed": 1,
+  "date": "2026-11-09 23:49:28",
+  "method_info": {
+    "mlp_params_kept": 68288,
+    "attn_params_kept": 32896,
+    "converted_params_dense": 196608,
+    "converted_params_kept": 101184,
+    "converted_kept_frac": 0.5146484375,
+    "model_params_original": 304424,
+    "model_params": 209000,
+    "model_params_frac": 0.6865424539458124,
+    "d_plus": 36,
+    "d_minus": 28
+  },
+  "structure": {
+    "span_source": "tiny random span operator (smoke test)",
+    "span_sha256": null,
+    "operators_source": "tiny random structure (smoke test)",
+    "heads_source": "tiny random head structure (smoke test)"
+  },
+  "lr_extra": {
+    "chosen_lr": 0.0001,
+    "extra_lrs": [
+      0.003
+    ],
+    "extra_would_win": false,
+    "winning_extra_lrs": [],
+    "best_lr_with_extra": 0.0001
+  },
+  "reg_perm": [],
+  "teacher": {
+    "type": "VExactTeacher",
+    "k": 4,
+    "even_head": true,
+    "symmetrise": true,
+    "block_targets": "centred, symmetrised with A*",
+    "final_target": "symmetrised",
+    "d_plus": 36,
+    "reg_perm": []
+  },
+  "embeddings": "trained, re-projected every step",
+  "data": {
+    "n_train": 32,
+    "n_heldout": 8
+  },
+  "deviations": {
+    "embeddings_trained": true,
+    "extra_trainable_tensors": [
+      "cls_token",
+      "pos_embed",
+      "patch_embed.proj.weight",
+      "patch_embed.proj.bias"
+    ],
+    "extra_trainable_params": 38848,
+    "n_trainable": 237760,
+    "symmetrised_targets": true,
+    "block_targets": "centred, symmetrised with A*",
+    "final_target": "symmetrised",
+    "full_conversion": true,
+    "normaliser": "fixed"
+  },
+  "lr_selection": {
+    "best_lr": 0.0001,
+    "lrs": [
+      0.0001,
+      0.001
+    ],
+    "budget_steps": 2,
+    "seed": 1,
+    "trials": [
+      {
+        "lr": 0.0001,
+        "heldout_loss": 0.9821739906017545,
+        "heldout_terms": {
+          "total": 0.9821739906017545,
+          "block0": 0.0022482647572375013,
+          "block1": 0.003598700384706602,
+          "block2": 0.005037960411571552,
+          "block3": 0.006584840484392985,
+          "cls": 0.42990862260500795,
+          "patch": 0.5347956019588379
+        },
+        "heldout_initial": 1.2482153221057704,
+        "train_loss_last": 1.1111118445405737,
+        "diverged": false
+      },
+      {
+        "lr": 0.001,
+        "heldout_loss": 1.1648942385959724,
+        "heldout_terms": {
+          "total": 1.1648942385959724,
+          "block0": 0.02638259150115811,
+          "block1": 0.027467483197072328,
+          "block2": 0.03062868082964069,
+          "block3": 0.03635503776320207,
+          "cls": 0.5056012054450019,
+          "patch": 0.5384592398598973
+        },
+        "heldout_initial": 1.2482153221057704,
+        "train_loss_last": 1.7280376330018044,
+        "diverged": false
+      }
+    ],
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "git_dirty": false
+  },
+  "final": {
+    "config": {
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "seed": 1,
+      "lr": 0.0001,
+      "epochs": 1.0,
+      "max_steps": null,
+      "batch_size": 8,
+      "micro_batch": 4,
+      "weight_decay": 0.05,
+      "decay_1d": false,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08,
+      "warmup_frac": 0.05,
+      "warmup_steps": null,
+      "min_lr_ratio": 0.0,
+      "grad_clip": null,
+      "crop_size": 56,
+      "crop_scale": [
+        0.35,
+        1.0
+      ],
+      "crop_ratio": [
+        0.75,
+        1.3333333333333333
+      ],
+      "hflip_p": 0.5,
+      "w_cls": 1.0,
+      "w_patch": 1.0,
+      "w_block": 1.0,
+      "normaliser": "fixed",
+      "calib_images": 8,
+      "train_scope": "all",
+      "grad_checkpoint": false,
+      "amp": "auto",
+      "share_prefix": true,
+      "eval_every": 0,
+      "eval_batch": null,
+      "max_heldout": null,
+      "log_every": 0,
+      "prefetch": 0,
+      "save_checkpoint": true,
+      "checkpoint_path": null
+    },
+    "seed": 1,
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "git_dirty": false,
+    "env": {
+      "python": "3.12.4",
+      "platform": "Windows-11-10.0.26300-SP0",
+      "torch": "2.11.0+cpu",
+      "numpy": "2.4.4",
+      "device": "cpu"
+    },
+    "constraints": [
+      {
+        "type": "MirrorMLPConstraint",
+        "blocks": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "n_pairs": [
+          85,
+          85,
+          85,
+          85
+        ],
+        "n_self": [
+          86,
+          86,
+          86,
+          86
+        ],
+        "d_plus_in": [
+          36,
+          36,
+          36,
+          36
+        ],
+        "d_plus_out": [
+          36,
+          36,
+          36,
+          36
+        ]
+      },
+      {
+        "type": "MirrorAttnConstraint",
+        "blocks": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "n_head_pairs": [
+          1,
+          2,
+          1,
+          2
+        ],
+        "n_self_heads": [
+          2,
+          0,
+          2,
+          0
+        ],
+        "d_plus_in": [
+          36,
+          36,
+          36,
+          36
+        ],
+        "d_plus_out": [
+          36,
+          36,
+          36,
+          36
+        ]
+      },
+      {
+        "type": "VExactEmbeddings",
+        "blocks": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "d_plus": 36,
+        "embeddings": "trained, re-projected every step",
+        "reg_perm": []
+      }
+    ],
+    "constraint_checks": {
+      "0:MirrorMLPConstraint": {
+        "max_rel_violation": 4.0783228019304267e-08,
+        "per_block": [
+          3.448372628918972e-08,
+          3.502900190211714e-08,
+          4.0783228019304267e-08,
+          3.5291079785187495e-08
+        ]
+      },
+      "1:MirrorAttnConstraint": {
+        "max_rel_violation": 1.7887865769139954e-08,
+        "per_block": [
+          1.772600604014944e-08,
+          1.77067544599639e-08,
+          1.7887865769139954e-08,
+          1.7527543908024722e-08
+        ]
+      },
+      "2:VExactEmbeddings": {
+        "max_share": 3.2130963217800656e-16,
+        "shares": {
+          "patch_embed.weight": 3.2130963217800656e-16,
+          "patch_embed.bias": 2.1716107348895103e-16,
+          "pos_embed.patches": 2.934385963994207e-16,
+          "pos_embed.cls": 3.16212809502985e-16,
+          "cls_token": 1.8510862612171896e-16
+        },
+        "embeddings_train": true,
+        "even_head_max_abs_err": 2.9580465188416838e-08
+      }
+    },
+    "n_trainable": 237760,
+    "n_trainable_tensors": 36,
+    "trainable_names": [
+      "cls_token",
+      "pos_embed",
+      "patch_embed.proj.weight",
+      "patch_embed.proj.bias",
+      "blocks.0.attn.qkv.weight",
+      "blocks.0.attn.qkv.bias",
+      "blocks.0.attn.proj.weight",
+      "blocks.0.attn.proj.bias",
+      "blocks.0.mlp.fc1.weight",
+      "blocks.0.mlp.fc1.bias",
+      "blocks.0.mlp.fc2.weight",
+      "blocks.0.mlp.fc2.bias",
+      "blocks.1.attn.qkv.weight",
+      "blocks.1.attn.qkv.bias",
+      "blocks.1.attn.proj.weight",
+      "blocks.1.attn.proj.bias",
+      "blocks.1.mlp.fc1.weight",
+      "blocks.1.mlp.fc1.bias",
+      "blocks.1.mlp.fc2.weight",
+      "blocks.1.mlp.fc2.bias",
+      "blocks.2.attn.qkv.weight",
+      "blocks.2.attn.qkv.bias",
+      "blocks.2.attn.proj.weight",
+      "blocks.2.attn.proj.bias",
+      "blocks.2.mlp.fc1.weight",
+      "blocks.2.mlp.fc1.bias",
+      "blocks.2.mlp.fc2.weight",
+      "blocks.2.mlp.fc2.bias",
+      "blocks.3.attn.qkv.weight",
+      "blocks.3.attn.qkv.bias",
+      "blocks.3.attn.proj.weight",
+      "blocks.3.attn.proj.bias",
+      "blocks.3.mlp.fc1.weight",
+      "blocks.3.mlp.fc1.bias",
+      "blocks.3.mlp.fc2.weight",
+      "blocks.3.mlp.fc2.bias"
+    ],
+    "amp": "none",
+    "share_prefix_used": false,
+    "first_grad_block": 0,
+    "normalisers": {
+      "block0": 0.20500948774153316,
+      "block1": 0.2065384516410898,
+      "block2": 0.20728671935126844,
+      "block3": 0.20814929572003565,
+      "cls": 1.1842531868451653,
+      "patch": 0.5985849683365779
+    },
+    "weights": {
+      "cls": 1.0,
+      "patch": 1.0,
+      "block0": 1.0,
+      "block1": 1.0,
+      "block2": 1.0,
+      "block3": 1.0
+    },
+    "total_steps": 4,
+    "steps_done": 4,
+    "warmup_steps": 0,
+    "steps_per_epoch": 4,
+    "images_seen": 32,
+    "diverged": false,
+    "heldout_images": 8,
+    "heldout_initial": {
+      "total": 1.2482153221057704,
+      "block0": 0.001548432748381509,
+      "block1": 0.0032797071218082117,
+      "block2": 0.004989663859520882,
+      "block3": 0.00644272932999704,
+      "cls": 0.68940237549267,
+      "patch": 0.5425524135533927
+    },
+    "heldout_final": {
+      "total": 0.9151661114362593,
+      "block0": 0.003211068718383198,
+      "block1": 0.0044477773332294605,
+      "block2": 0.005727207329999771,
+      "block3": 0.0074121534153992604,
+      "cls": 0.36364470168535057,
+      "patch": 0.530723202953897
+    },
+    "train_loss_first": 1.3213840803946368,
+    "train_loss_last": 0.9959179286379367,
+    "train_loss_last10_mean": 1.112557400672813,
+    "seconds_total": 1.28,
+    "seconds_train": 1.12,
+    "peak_memory_gb": null,
+    "checkpoint": "tiny_out/runs\\e3\\vexact_s1\\k4\\final\\trained_blocks.pt"
+  },
+  "knn": {
+    "protocol": "tiny synthetic",
+    "amp": "bf16",
+    "k": 20,
+    "temperature": 0.07,
+    "seed": 1,
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "original": {
+      "top1": 62.5,
+      "flip_consistency": 25.0,
+      "n_bank": 32,
+      "n_query": 16,
+      "source": "computed"
+    },
+    "zero_shot": {
+      "top1": 31.25,
+      "flip_consistency": 100.0,
+      "n_bank": 32,
+      "n_query": 16,
+      "drop_points": 31.25
+    },
+    "healed": {
+      "top1": 37.5,
+      "flip_consistency": 100.0,
+      "n_bank": 32,
+      "n_query": 16,
+      "drop_points": 25.0
+    }
+  },
+  "exactness": {
+    "k": 4,
+    "tol": 0.0001,
+    "max_rel_inside": 1.1543488704819943e-06,
+    "pass": true,
+    "n_images": 8,
+    "dtype": "torch.float32",
+    "rows": [
+      {
+        "layer": 0,
+        "in_span": true,
+        "max_abs_err": 1.8890970754359415e-06,
+        "max_abs_ref": 1.6768772602081299,
+        "rel_max": 1.1265565585888329e-06,
+        "rel_fro": 6.279349150743052e-07
+      },
+      {
+        "layer": 1,
+        "in_span": true,
+        "max_abs_err": 1.9296547133507147e-06,
+        "max_abs_ref": 1.6842739582061768,
+        "rel_max": 1.1456893363154998e-06,
+        "rel_fro": 6.300956759788431e-07
+      },
+      {
+        "layer": 2,
+        "in_span": true,
+        "max_abs_err": 1.9809662362701985e-06,
+        "max_abs_ref": 1.7160897254943848,
+        "rel_max": 1.1543488704819943e-06,
+        "rel_fro": 6.331885623378877e-07
+      },
+      {
+        "layer": 3,
+        "in_span": true,
+        "max_abs_err": 1.9391078129871175e-06,
+        "max_abs_ref": 1.7697619199752808,
+        "rel_max": 1.0956885166871498e-06,
+        "rel_fro": 6.363040996644887e-07
+      },
+      {
+        "layer": 4,
+        "in_span": true,
+        "max_abs_err": 1.952537452609704e-06,
+        "max_abs_ref": 1.7859082221984863,
+        "rel_max": 1.0933022359940164e-06,
+        "rel_fro": 6.381013286900742e-07
+      }
+    ],
+    "seed": 1,
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632"
+  },
+  "flipcheck": {
+    "flip_consistency": 100.0,
+    "pass": true,
+    "top1_subset": 62.5,
+    "max_abs_unit_feature_diff": 1.4901161193847656e-07,
+    "cls_feature_rel_max": 3.1691584597611e-07,
+    "n_bank": 32,
+    "n_query": 16,
+    "knn_k": 20,
+    "temperature": 0.07,
+    "dtype": "torch.float32",
+    "tf32_matmul": false,
+    "tf32_cudnn": false,
+    "protocol": "tiny synthetic",
+    "seed": 1,
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632"
+  },
+  "config": {
+    "seed": 1,
+    "method": "vexact",
+    "k": 4,
+    "model": {
+      "hub_repo": "facebookresearch/dinov2",
+      "name": "dinov2_vitb14_reg",
+      "img_size": 224
+    },
+    "structure": {
+      "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "heads": "runs/m1/m1_structure.npz",
+      "attn_a_out": "auto",
+      "mode": "per_layer",
+      "attention": true
+    },
+    "vexact": {
+      "train_embeddings": true,
+      "symmetrise_targets": true,
+      "final_target": "symmetrised"
+    },
+    "data": {
+      "images": "cache/heal256_uint8.npy",
+      "index": "cache/train_index.npz",
+      "meta": "cache/train_meta.json",
+      "train_key": "heal_rows",
+      "heldout_key": "healval_rows",
+      "image_size": 64,
+      "n_train": 32,
+      "n_heldout": 8
+    },
+    "heal": {
+      "epochs": 1,
+      "batch_size": 8,
+      "micro_batch": 4,
+      "weight_decay": 0.05,
+      "warmup_frac": 0.05,
+      "min_lr_ratio": 0.0,
+      "crop_size": 56,
+      "crop_scale": [
+        0.35,
+        1.0
+      ],
+      "hflip_p": 0.5,
+      "w_cls": 1.0,
+      "w_patch": 1.0,
+      "w_block": 1.0,
+      "normaliser": "fixed",
+      "calib_images": 8,
+      "grad_checkpoint": false,
+      "amp": "auto",
+      "eval_every": 0,
+      "log_every": 0,
+      "prefetch": 0
+    },
+    "lr_selection": {
+      "lrs": [
+        0.0001,
+        0.001
+      ],
+      "budget_steps": 2,
+      "extra_lrs": [
+        0.003
+      ]
+    },
+    "knn": {
+      "enabled": true,
+      "cache_dir": "cache",
+      "k": 20,
+      "temperature": 0.07,
+      "amp": "bf16",
+      "batch_size": 16,
+      "num_workers": 0,
+      "zero_shot": true,
+      "num_classes": 4,
+      "bank_per_class": 8,
+      "query_per_class": 4
+    },
+    "checks": {
+      "cache_dir": "cache",
+      "exact_images": 8,
+      "exact_tol": 0.0001,
+      "flip_check": true,
+      "flip_bank_per_class": 10,
+      "flip_queries": 5000,
+      "batch_size": 16,
+      "num_workers": 0,
+      "num_classes": 4,
+      "bank_per_class": 8,
+      "query_per_class": 4,
+      "probe_per_class": 2
+    },
+    "compute": {
+      "device": "cpu",
+      "gpu_memory_fraction": 0.25,
+      "tf32": false
+    },
+    "out_dir": "tiny_out/runs/e3/vexact_s1",
+    "tiny_mode": true,
+    "config_path": "configs/e3_vexact_s1.yaml"
+  },
+  "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+  "git_dirty": false,
+  "env": {
+    "python": "3.12.4",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.11.0+cpu",
+    "numpy": "2.4.4",
+    "device": "cpu"
+  },
+  "timing": {
+    "stages": {
+      "load": 11.47,
+      "heal": 5.38,
+      "knn": 0.31,
+      "checks": 0.15
+    },
+    "total_s": 17.52
+  }
+}

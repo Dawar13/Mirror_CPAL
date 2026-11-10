@@ -1,0 +1,256 @@
+{
+  "experiment": "strong baselines, zero-shot (M3-grid methods)",
+  "model": "tiny",
+  "ks": [
+    1,
+    2
+  ],
+  "methods": [
+    "asvd",
+    "slicegpt",
+    "prune_act"
+  ],
+  "fit_seed": 0,
+  "seed": 0,
+  "git": {
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "git_dirty": false
+  },
+  "env": {
+    "python": "3.12.4",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.11.0+cpu",
+    "numpy": "2.4.4",
+    "device": "cpu"
+  },
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "fit_run": null,
+    "fit_seed": null,
+    "ks": "1,2",
+    "methods": "asvd,slicegpt,prune_act",
+    "out": "tiny_out/sb",
+    "queries": null,
+    "asvd_damp": 1e-06,
+    "cache_dir": "cache",
+    "top_k": 10,
+    "batch_size": 128,
+    "stats_batch_size": 16,
+    "num_workers": 4,
+    "tiny": true
+  },
+  "fit_run": "tiny_out/sb\\tiny_fit\\results\\e1_operators.npz",
+  "structure_meta": {
+    "fit_seed": 0,
+    "model": "tiny",
+    "protocol": "tiny",
+    "run_git": null,
+    "operator_mode": null,
+    "shared_layers": null,
+    "center": true,
+    "max_abs_change_from_cleaning": 1.2904399215862838e-08,
+    "checks": {}
+  },
+  "original_knn": {
+    "top1": 69.9999988079071,
+    "flip_consistency": 44.999998807907104,
+    "source": "computed"
+  },
+  "knn": {
+    "k": 20,
+    "temperature": 0.07,
+    "amp": null
+  },
+  "budgets": {
+    "asvd_k1": {
+      "method": "asvd",
+      "blocks": [
+        1
+      ],
+      "allocation": [
+        [
+          25,
+          25
+        ]
+      ],
+      "params_kept": 16000,
+      "mirror_budget": 16448,
+      "ratio_to_mirror": 0.9727626459143969,
+      "within_1pct": false,
+      "params_dense": 32768,
+      "mirror_eq_per_block": [
+        [
+          8224,
+          8224
+        ]
+      ]
+    },
+    "slicegpt_k1": {
+      "method": "slicegpt",
+      "blocks": [
+        1
+      ],
+      "allocation": [
+        [
+          32,
+          32
+        ]
+      ],
+      "params_kept": 16384,
+      "mirror_budget": 16448,
+      "ratio_to_mirror": 0.9961089494163424,
+      "within_1pct": true,
+      "params_dense": 32768,
+      "mirror_eq_per_block": [
+        [
+          8224,
+          8224
+        ]
+      ]
+    },
+    "prune_act_k1": {
+      "method": "prune_act",
+      "blocks": [
+        1
+      ],
+      "allocation": [
+        128
+      ],
+      "params_kept": 16384,
+      "mirror_budget": 16448,
+      "ratio_to_mirror": 0.9961089494163424,
+      "within_1pct": true,
+      "params_dense": 32768,
+      "mirror_eq_per_block": [
+        [
+          8224,
+          8224
+        ]
+      ]
+    },
+    "asvd_k2": {
+      "method": "asvd",
+      "blocks": [
+        1,
+        2
+      ],
+      "allocation": [
+        [
+          25,
+          25
+        ],
+        [
+          25,
+          25
+        ]
+      ],
+      "params_kept": 32000,
+      "mirror_budget": 32936,
+      "ratio_to_mirror": 0.9715812484819043,
+      "within_1pct": false,
+      "params_dense": 65536,
+      "mirror_eq_per_block": [
+        [
+          8224,
+          8224
+        ],
+        [
+          8244,
+          8244
+        ]
+      ]
+    },
+    "slicegpt_k2": {
+      "method": "slicegpt",
+      "blocks": [
+        1,
+        2
+      ],
+      "allocation": [
+        [
+          32,
+          32
+        ],
+        [
+          32,
+          32
+        ]
+      ],
+      "params_kept": 32768,
+      "mirror_budget": 32936,
+      "ratio_to_mirror": 0.99489919844547,
+      "within_1pct": true,
+      "params_dense": 65536,
+      "mirror_eq_per_block": [
+        [
+          8224,
+          8224
+        ],
+        [
+          8244,
+          8244
+        ]
+      ]
+    },
+    "prune_act_k2": {
+      "method": "prune_act",
+      "blocks": [
+        1,
+        2
+      ],
+      "allocation": [
+        128,
+        128
+      ],
+      "params_kept": 32768,
+      "mirror_budget": 32936,
+      "ratio_to_mirror": 0.99489919844547,
+      "within_1pct": true,
+      "params_dense": 65536,
+      "mirror_eq_per_block": [
+        [
+          8224,
+          8224
+        ],
+        [
+          8244,
+          8244
+        ]
+      ]
+    }
+  },
+  "param_tolerance": 0.01,
+  "data_checks": {
+    "fit_role": "fit0 (train)",
+    "n_fit_images": 10,
+    "fit_bank_overlap": 0,
+    "queries": "synthetic (tiny)"
+  },
+  "statistics": {
+    "statistics": [
+      "M1",
+      "M2",
+      "S",
+      "abs_g"
+    ],
+    "blocks": [
+      1,
+      2
+    ],
+    "n_images": 10,
+    "n_tokens": 170,
+    "model_form": "folded copy (mirror/fold.py, final affine kept in model)",
+    "fold_eps": [
+      1e-06
+    ],
+    "tokens": "all (CLS, registers, patches), fit images only, no mirrors",
+    "precision": "fp32 forward, float64 sums",
+    "max_rel_channel_mean_of_folded_stream": 2.2453905026939816e-07,
+    "time_s": 0.1
+  },
+  "asvd_damp": 1e-06,
+  "rows_added": 6,
+  "rows_total": 6,
+  "elapsed_s": 2.7,
+  "date": "2026-11-09 23:47:26"
+}

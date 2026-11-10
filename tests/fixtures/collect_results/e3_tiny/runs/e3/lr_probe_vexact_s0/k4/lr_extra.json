@@ -1,0 +1,74 @@
+{
+  "check": "secondary learning-rate check (PREREG_E3.md): would an extra rate have won the short selection?",
+  "rule": "an extra rate would have won if its held-out loss after the short budget is below every grid rate's (ties go to the grid); the chosen rate is never changed",
+  "chosen_lr": 0.0001,
+  "grid_lrs": [
+    0.0001,
+    0.001
+  ],
+  "grid": [
+    {
+      "lr": 0.0001,
+      "heldout_loss": 1.1045854853830388,
+      "diverged": false
+    },
+    {
+      "lr": 0.001,
+      "heldout_loss": 1.3967066698201611,
+      "diverged": false
+    }
+  ],
+  "extra_lrs": [
+    0.003
+  ],
+  "extra": [
+    {
+      "lr": 0.003,
+      "heldout_loss": 2.2830700018923253,
+      "heldout_terms": {
+        "total": 2.2830700018923253,
+        "block0": 0.219043455484889,
+        "block1": 0.20330377067160485,
+        "block2": 0.19384625523927124,
+        "block3": 0.2017196805220006,
+        "cls": 0.7693009297503659,
+        "patch": 0.6958559102241939
+      },
+      "heldout_initial": 1.2722120840895428,
+      "train_loss_last": 4.499751076102257,
+      "diverged": false
+    }
+  ],
+  "extra_would_win": false,
+  "winning_extra_lrs": [],
+  "best_lr_with_extra": 0.0001,
+  "budget_steps": 2,
+  "seed": 0,
+  "n_heldout": 8,
+  "probe_only": true,
+  "method": "vexact",
+  "k": 4,
+  "config_path": "configs/m3_vexact.yaml",
+  "reference": {
+    "run": "tiny_out/runs\\m3_vexact_5090\\k4",
+    "best_lr": 0.0001,
+    "seed": 0,
+    "budget_steps": 2,
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "grid": [
+      {
+        "lr": 0.0001,
+        "heldout_loss": 1.1045854853830388
+      },
+      {
+        "lr": 0.001,
+        "heldout_loss": 1.3967066698201611
+      }
+    ],
+    "same_best_lr": true,
+    "max_rel_diff_heldout_loss": 0.0
+  },
+  "timing_s": 13.56,
+  "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+  "git_dirty": false
+}

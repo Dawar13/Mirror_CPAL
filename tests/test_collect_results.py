@@ -18,7 +18,8 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 MAIN_TABLES = ["T_main_zeroshot", "T_healing", "T_generality", "T_structure_per_layer", "T_prereg", "T_x_checks",
-               "T_e1_history", "T_attention", "T_ablations", "T_tier2", "T_latency", "T_latency_profile", "T_f4"]
+               "T_e1_history", "T_attention", "T_ablations", "T_tier2", "T_latency", "T_latency_profile", "T_f4",
+               "T_e3", "T_strong_baselines", "T_flipavg", "T_f7"]
 # Real outputs of the scripts, copied without their binary files (heads, checkpoints, confusion matrices):
 #   t2_seg/      runs/t2_seg_smoke (scripts/tier2_ade20k.py, 50-iteration smoke test on the A100, 20 val images)
 #   m3_vexact/   scripts/heal_vexact.py --config configs/m3_vexact.yaml --tiny (k4: full conversion of the
@@ -70,8 +71,9 @@ def test_main_tables_exist(package):
     for p in list((out / "tables").glob("*.md")) + [out / "INDEX.md"]:
         assert "—" not in p.read_text(encoding="utf-8"), f"em-dash in {p.name}"
     idx = (out / "INDEX.md").read_text(encoding="utf-8")
-    for exp in ("E1:", "E1b:", "X1:", "X1b:", "X2:", "X3:", "X4:", "F1:", "F2:", "F3:", "G:", "M1:", "M3:", "D:",
-                "A:", "F4:", "M2:", "Tier 2:", "Deviations from the plan", "Numbers for the paper"):
+    for exp in ("E1:", "E1b:", "X1:", "X1b:", "X2:", "X3:", "X4:", "F1:", "F2:", "F3:", "G:", "M1:", "M3:", "E3:", "D:",
+                "A:", "SB:", "F4:", "M2:", "Tier 2:", "Flip averaging:", "F7:", "Deviations from the plan",
+                "Numbers for the paper"):
         _section(idx, exp)
 
 
@@ -198,8 +200,16 @@ def test_missing_inputs_are_handled(tmp_path):
     for name in MAIN_TABLES:
         assert (out / "tables" / f"{name}.md").is_file(), name
     idx = (out / "INDEX.md").read_text(encoding="utf-8")
-    for heading in ("E1:", "M1:", "D:", "A:", "F4:"):
+    for heading in ("E1:", "M1:", "D:", "A:", "F4:", "SB:", "Flip averaging:", "F7:"):
         assert "not run" in _section(idx, heading), heading
+    # E3 without its pre-registration file, and the second-device M2 run: not run, nothing fails
+    assert "not run: no `PREREG_E3.md`" in _section(idx, "E3:")
+    assert "Second device (`runs/m2_5090/`): not run" in _section(idx, "M2:")
+    for name in ("T_e3", "T_e3_checks", "T_strong_baselines", "T_flipavg", "T_f7", "T_latency_5090", "T_latency_devices",
+                 "T_tier2_seg_rerun"):
+        assert (out / "tables" / f"{name}.csv").is_file(), name
+    g5 = pd.read_csv(out / "tables" / "T_e3_checks.csv").set_index("id")
+    assert g5.loc["G5", "verdict"] == "pending" and g5.loc["E3.a", "verdict"] == "pending"
     heal = pd.read_csv(out / "tables" / "T_healing.csv")
     assert heal.loc[heal["method"] == "svd", "status"].iloc[0] == "not run"
     assert heal.loc[heal["method"] == "random", "status"].iloc[0] == "not run"
@@ -636,6 +646,14 @@ def test_ablations_every_k_and_fit_seed(tmp_path):
     assert math.isclose(e["value"], sum(want[("A1", "per_layer")]) / 3, rel_tol=1e-12) and e["fit_seed"] == "0,1,2"
     seeds = pd.read_csv(out / "tables" / "T_ablations_seeds.csv")
     assert set(seeds["k"]) == {6, 9}
+    # no row twice: one per (ablation, variant, k, fit seed), one seed summary per (ablation, variant, k)
+    keys = [(r["model"], r["ablation"], r["variant"], r["k"], r["fit_seed"]) for r in ta.rows]
+    assert len(keys) == len(set(keys))
+    skeys = [(r["model"], r["ablation"], r["variant"], r["k"]) for r in tas.rows]
+    assert len(skeys) == len(set(skeys))
+    for r in tas.rows:
+        assert r["n_seeds"] == len([x for x in ta.rows if (x["model"], x["ablation"], x["variant"], x["k"]) ==
+                                    (r["model"], r["ablation"], r["variant"], r["k"])])
 
 
 # ------------------------------------------------------------------------------------------------
@@ -827,3 +845,460 @@ def test_timing_outlier_and_ceiling_flags(tmp_path):
     assert not any(r.get("dataset_at_ceiling") for r in X.rows if r["dataset"] == "dtd")
     assert any(n.startswith("flowers102") and "does not separate the methods" in n for n in X.notes)
     assert "flowers102 is at ceiling" in _section(idx, "Tier 2:")
+
+
+# ------------------------------------------------------------------------------------------------
+# E3 (PREREG_E3.md), strong baselines, flip averaging, second-device M2, ADE20K rerun, F7
+# ------------------------------------------------------------------------------------------------
+# Real outputs of the scripts' --tiny CPU modes (paths rewritten to tiny_out/, binaries dropped):
+#   e3_tiny/runs/   scripts/heal.py --config configs/e3_svd_{raw,sym}.yaml --tiny; scripts/heal_vexact.py --config
+#                   configs/e3_vexact_s1.yaml / e3_random.yaml / m3_vexact.yaml --tiny (and --lr-probe-only); the Tier-2
+#                   probes of scripts/tier2_linear.py --tiny on each (runs/e3/t2_*, runs/t2)
+#   sb/             scripts/strong_baselines.py --tiny --ks 1,2
+#   t1_flipavg/     scripts/flip_avg_baseline.py --tiny --variants original --vexact-dir <tiny m3_vexact_5090> --vexact-fp32
+#   f7/             scripts/f7_visuals.py --tiny (f7_blocks.csv, f7_meta.json, F7_SUMMARY.md)
+# They test the file formats only; none of their numbers is a result.
+def _root(tmp_path: Path, name: str) -> Path:
+    root = tmp_path / name
+    (root / "runs").mkdir(parents=True)
+    (root / "results").mkdir()
+    for f in ("PREREG_E2.md", "PAPER_EXPERIMENTS.md", "PREREG_E3.md"):
+        if (ROOT / f).is_file():
+            shutil.copy2(ROOT / f, root / f)
+    return root
+
+
+def _wj(path: Path, obj) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(obj), encoding="utf-8")
+
+
+M_ = "dinov2_vitb14_reg"
+CFG_ = {"model": {"name": M_}, "structure": {"operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz"}}
+
+
+def _lr_extra(extra_loss=2.3, flag=False, ref=False):
+    lx = {"chosen_lr": 1e-4, "grid_lrs": [1e-5, 5e-5, 1e-4],
+          "grid": [{"lr": 1e-5, "heldout_loss": 2.6}, {"lr": 5e-5, "heldout_loss": 2.2}, {"lr": 1e-4, "heldout_loss": 2.1}],
+          "extra_lrs": [2e-4], "extra": [{"lr": 2e-4, "heldout_loss": extra_loss, "diverged": False}],
+          "extra_would_win": flag, "budget_steps": 100, "seed": 0, "git_hash": "fixturehash"}
+    if ref:
+        lx["reference"] = {"run": "runs/m3_vexact_5090/k12", "same_best_lr": True, "max_rel_diff_heldout_loss": 1e-6}
+    return lx
+
+
+def _vexact_arm(d: Path, top1, seed=0, method="vexact", steps=780, lx=None, mlp=1000, attn=500):
+    """A healing run in scripts/heal_vexact.py's format (synthetic numbers)."""
+    knn = {"protocol": "v2", "amp": "bf16", "seed": seed, "git_hash": "fixturehash",
+           "original": {"top1": 72.0, "flip_consistency": 96.0}, "zero_shot": {"top1": 50.0, "flip_consistency": 98.0},
+           "healed": {"top1": top1, "flip_consistency": 99.7}}
+    met = {"steps_done": steps, "total_steps": 780, "diverged": False, "seed": seed, "git_hash": "fixturehash",
+           "heldout_initial": {"total": 3.0}, "heldout_final": {"total": 1.0}}
+    summ = {"method": method, "k": 12, "depth": 12, "blocks": list(range(12)), "seed": seed, "git_hash": "fixturehash",
+            "config": CFG_, "env": {"gpu": "fixture GPU"},
+            "method_info": {"mlp_params_kept": mlp, "attn_params_kept": attn, "converted_params_kept": mlp + attn,
+                            "converted_params_dense": 3000, "model_params": 2000, "model_params_original": 4000,
+                            "model_params_frac": 0.5},
+            "teacher": {"block_targets": "centred, symmetrised with A*", "final_target": "symmetrised"}}
+    if method == "vexact_random":
+        summ["random_structure"] = {"seed": 1, "agreement_with_fitted_A": 0.678}
+    _wj(d / "knn.json", knn)
+    _wj(d / "final" / "metrics.json", met)
+    _wj(d / "summary.json", summ)
+    _wj(d / "exactness.json", {"tol": 1e-4, "max_rel_inside": 9e-6, "pass": True, "seed": seed})
+    _wj(d / "flipcheck.json", {"flip_consistency": 100.0, "pass": True, "n_query": 5000, "seed": seed})
+    _wj(d / "lr_selection" / "lr_selection.json", {"best_lr": 1e-4, "seed": seed, "budget_steps": 100,
+                                                   "trials": [{"lr": 1e-4, "heldout_loss": 2.1}]})
+    (d / "SUMMARY.md").write_text("fixture\n", encoding="utf-8")
+    if lx is not None:
+        _wj(d / "lr_extra.json", lx)
+
+
+def _svd_arm(d: Path, top1, steps=780, lx=None, final="raw"):
+    """A healing run in scripts/heal.py's format (synthetic numbers). Its own MLP rank check reads full rank (float32
+    product, as mirror/heal.py LowRankMLP.check records it); the attention check is float64 and equal."""
+    _wj(d / "knn.json", {"protocol": "v2", "amp": "bf16", "seed": 0, "git_hash": "fixturehash",
+                         "original": {"top1": 72.0, "flip_consistency": 96.0},
+                         "zero_shot": {"top1": 30.0, "flip_consistency": 80.0},
+                         "healed": {"top1": top1, "flip_consistency": 97.0}})
+    _wj(d / "final" / "metrics.json", {
+        "steps_done": steps, "total_steps": 780, "diverged": False, "seed": 0, "git_hash": "fixturehash",
+        "heldout_initial": {"total": 3.0}, "heldout_final": {"total": 1.2},
+        "constraint_checks": {"0:LowRankMLP": {"numerical_ranks": [[768, 768]], "target_ranks": [[310, 327]]},
+                              "1:LowRankAttention": {"numerical_ranks": [[195, 195, 194, 206]],
+                                                     "target_ranks": [[195, 195, 194, 206]]}}})
+    _wj(d / "summary.json", {"method": "svd", "blocks": list(range(12)), "seed": 0, "git_hash": "fixturehash",
+                             "config": CFG_, "env": {"gpu": "fixture GPU"},
+                             "method_info": {"mlp_params_kept": 995, "attn_params_kept": 498, "mlp_params_dense": 2000,
+                                             "attn_params_dense": 1000,
+                                             "vexact_match": {"max_block_rel_gap_mlp": 0.002, "max_block_rel_gap_attn": 0.003}},
+                             "targets": {"type": final, "final_target": final, "block_targets": "raw"}})
+    _wj(d / "lr_selection" / "lr_selection.json", {"best_lr": 1e-4, "seed": 0, "budget_steps": 100,
+                                                   "trials": [{"lr": 1e-4, "heldout_loss": 2.1}]})
+    if lx is not None:
+        _wj(d / "lr_extra.json", lx)
+
+
+def _t2(folder: Path, rows: list, variants: dict) -> None:
+    """t2_linear.csv rows and probe/<model>/<variant>_variant.json files in scripts/tier2_linear.py's format."""
+    _write_csv(folder / "t2_linear.csv", rows)
+    for var, info in variants.items():
+        _wj(folder / "probe" / M_ / f"{var}_variant.json", {"info": info, "sources": {}})
+
+
+def _t2row(var, fam, meth, k, top1):
+    return {"model": M_, "variant": var, "label": var, "family": fam, "method": meth, "k": k, "top1": top1, "top5": 90.0,
+            "knn_check_top1": top1 - 2, "chosen_wd": 0.001, "wd_at_grid_edge": False, "model_params": 2000 if k else 4000,
+            "git_hash": "fixturehash", "seed": 0, "date": "fixture"}
+
+
+RANKS64 = {"0:LowRankMLP": {"numerical_ranks": [[310, 327]], "target_ranks": [[310, 327]],
+                            "note": "ranks of U V formed in float64 from the factors"},
+           "1:LowRankAttention": {"numerical_ranks": [[195, 195, 194, 206]], "target_ranks": [[195, 195, 194, 206]]}}
+
+
+def _e3_root(tmp_path, name, V0, V1, R, S3a, S3b, raw_steps=780, sym_extra=2.3, sym_flag=False) -> Path:
+    """Every E3 arm at k = 12 with the given healed k-NN values (synthetic fixtures, not results)."""
+    root = _root(tmp_path, name)
+    r = root / "runs"
+    _vexact_arm(r / "m3_vexact_5090" / "k12", V0)
+    _wj(r / "e3" / "lr_probe_vexact_s0" / "k12" / "lr_extra.json", _lr_extra(ref=True))
+    _vexact_arm(r / "e3" / "vexact_s1" / "k12", V1, seed=1, lx=_lr_extra())
+    _vexact_arm(r / "e3" / "random" / "k12", R, method="vexact_random", lx=_lr_extra())
+    _svd_arm(r / "e3" / "svd_raw" / "svd", S3a, steps=raw_steps, lx=_lr_extra())
+    _svd_arm(r / "e3" / "svd_sym" / "svd", S3b, lx=_lr_extra(sym_extra, sym_flag), final="flip_average")
+    _t2(r / "t2", [_t2row("original", "original", "original", 0, 75.0), _t2row("healed_vexact_k12", "healed_vexact", "vexact", 12, 74.0)],
+        {"healed_vexact_k12": {"vexact_run": "/workspace/Mirror_CPAL/runs/m3_vexact_5090/k12"}})   # as the VM records it
+    _t2(r / "e3" / "t2_vexact_s1", [_t2row("healed_vexact_k12", "healed_vexact", "vexact", 12, 73.9)],
+        {"healed_vexact_k12": {"vexact_run": "runs/e3/vexact_s1/k12"}})
+    _t2(r / "e3" / "t2_random", [_t2row("healed_vexact_k12", "healed_vexact", "vexact", 12, 70.0)],
+        {"healed_vexact_k12": {"vexact_run": "runs/e3/random/k12"}})
+    for arm, top in (("svd_raw", 71.0), ("svd_sym", 71.5)):
+        _t2(r / "e3" / f"t2_{arm}", [_t2row("healed_svd_k12", "healed", "svd", 12, top)],
+            {"healed_svd_k12": {"constraint_checks": RANKS64}})
+        _wj(r / "e3" / f"t2_{arm}" / "probe" / M_ / "healed_svd_k12_variant.json",
+            {"info": {"constraint_checks": RANKS64}, "sources": {"heal_run": f"runs/e3/{arm}/svd"}})
+    return root
+
+
+def test_e3_check_rule_unit():
+    """PREREG_E3.md Sections 7 and 12: difference >= bar AND difference > s; a missed bar fails whatever s is."""
+    assert CR.e3_check(3.334, 2.0, 0.218) == ("PASS", True, True)
+    assert CR.e3_check(1.898, 3.0, 0.218) == ("FAIL", False, True)
+    assert CR.e3_check(3.334, 2.0, 3.338) == ("FAIL", True, False)          # the seed condition binds
+    assert CR.e3_check(3.334, 2.0, 3.334) == ("FAIL", True, False)          # equal to s is not larger than s
+    assert CR.e3_check(3.334, 2.0, None) == ("pending", True, None)        # bar met, s unknown
+    assert CR.e3_check(1.5, 2.0, None) == ("FAIL", False, None)            # bar missed: fails before s is known
+    assert CR.e3_check(None, 2.0, 0.1) == ("pending", None, None)
+    assert CR.e3_check(70.338 - 67.338, 3.0, 0.218)[0] == "PASS"           # exactly at the bar, float rounding absorbed
+    assert CR.e3_check(70.336 - 67.338, 3.0, 0.218)[0] == "FAIL"           # one query (0.002 points) short
+    assert CR.lr_txt(2e-4) == "2e-4" and CR.lr_txt(1e-5) == "1e-5"
+
+
+def test_e3_g5_hand_computed(tmp_path):
+    """Gate G5 on synthetic arms, values computed by hand:
+    V0 70.338, V1 70.120 -> s = 0.218; R 67.004 -> E3.a = 3.334 >= 2.0 and > s: PASS;
+    3a 67.900, 3b 68.440 -> S = 68.440 (3b) -> E3.b = 1.898 < 3.0: FAIL; G5 FAIL.
+    With V1: E3.a 3.116 (would PASS), E3.b 1.680 (would FAIL); with the mean 70.229: 3.225, 1.789."""
+    root = _e3_root(tmp_path, "s1", 70.338, 70.120, 67.004, 67.900, 68.440)
+    out, res, idx, numbers = _run(root, tmp_path, "out_s1")
+    C = res["tables"]["T_e3_checks"]
+    a, b, s, g = (C.find(id=i) for i in ("E3.a", "E3.b", "E3.seed", "G5"))
+    assert math.isclose(s["value"], 0.218, abs_tol=1e-9)
+    assert math.isclose(a["value"], 3.334, abs_tol=1e-9) and a["verdict"] == "PASS" and a["meets_bar"] and a["exceeds_s"]
+    assert math.isclose(b["value"], 1.898, abs_tol=1e-9) and b["verdict"] == "FAIL" and b["S_arm"] == "3b"
+    assert math.isclose(a["max_baseline"], 68.338, abs_tol=1e-9) and math.isclose(b["max_baseline"], 67.338, abs_tol=1e-9)
+    assert g["verdict"] == "FAIL" and "report as is, stop" in g["note"]
+    for cid, v, verdict in (("E3.a (V1)", 3.116, "would PASS"), ("E3.b (V1)", 1.680, "would FAIL"),
+                            ("E3.a (mean)", 3.225, "would PASS"), ("E3.b (mean)", 1.789, "would FAIL")):
+        r = C.find(id=cid)
+        assert math.isclose(r["value"], v, abs_tol=1e-9) and r["verdict"] == verdict, cid
+    assert C.find(id="E3.lr")["verdict"] == "no"
+    for arm in ("1", "2", "3a", "3b", "4"):
+        assert C.find(id=f"E3.valid.{arm}")["verdict"] == "PASS", (arm, C.find(id=f"E3.valid.{arm}")["note"])
+    # arms: linear probes from the right runs, parameter ratios, the float64 rank check of the Tier-2 rebuild
+    T = res["tables"]["T_e3"]
+    v0, raw, rnd = T.find(arm="1"), T.find(arm="3a"), T.find(arm="4")
+    assert v0["healed_top1"] == 70.338 and v0["linear_top1"] == 74.0 and v0["linear_same_run"] is True
+    assert v0["extra_would_win"] is False and v0["probe_same_best_lr"] is True
+    assert raw["linear_top1"] == 71.0 and raw["rebuild_mlp_ranks_equal"] is True and raw["attn_ranks_equal"] is True
+    assert raw["mlp_ranks_equal_recorded"] is False                     # the healing run's float32 check, not used
+    assert math.isclose(raw["kept_vs_vexact"], (995 + 498) / 1500) and raw["converted_params_dense"] == 3000
+    assert rnd["random_structure_seed"] == 1 and rnd["linear_top1"] == 70.0
+    assert T.find(arm="1 (A100)")["status"] == "not run"
+    # T_prereg, INDEX, numbers
+    pre = pd.read_csv(out / "tables" / "T_prereg.csv").set_index("id")
+    assert pre.loc["G5", "verdict"] == "FAIL" and pre.loc["G5", "prereg_file"] == "PREREG_E3.md"
+    assert pre.loc["E3.a", "verdict"] == "PASS" and pre.loc["E3.b", "verdict"] == "FAIL"
+    sec = _section(idx, "E3:")
+    assert "G5: gate G5" in sec and "**FAIL**" in sec and "E3.a (V1) +3.116 (would PASS)" in sec
+    assert numbers["e3.g5.verdict"]["value"] == "FAIL" and math.isclose(numbers["e3.a.value"]["value"], 3.334, abs_tol=1e-9)
+    assert numbers["e3.v0.healed"]["locator"]["file"] == "runs/m3_vexact_5090/k12/knn.json"
+    assert numbers["e3.v1.linear"]["locator"]["file"] == "runs/e3/t2_vexact_s1/t2_linear.csv"
+    # T_tier2 takes the Tier-1 value of the healed V-exact probe from the run it rebuilt (runs/m3_vexact_5090)
+    t2 = res["tables"]["T_tier2"].find(model=M_, variant="healed_vexact_k12")
+    assert t2["tier1_knn_top1"] == 70.338 and t2["healing_run"] == "runs/m3_vexact_5090/k12"
+
+
+def test_e3_g5_pass_at_the_bar_and_seed_condition(tmp_path):
+    """S = 67.338 puts E3.b exactly at the bar (70.338 - 67.338 = 3.000): PASS, so G5 PASS. With V1 = 67.000 the
+    seed difference s = 3.338 exceeds both differences: E3.a and E3.b FAIL on the seed condition, G5 FAIL."""
+    root = _e3_root(tmp_path, "s2", 70.338, 70.120, 67.004, 67.100, 67.338)
+    out, res, idx, numbers = _run(root, tmp_path, "out_s2")
+    C = res["tables"]["T_e3_checks"]
+    assert C.find(id="E3.b")["verdict"] == "PASS" and math.isclose(C.find(id="E3.b")["value"], 3.0, abs_tol=1e-9)
+    assert C.find(id="G5")["verdict"] == "PASS" and "credited to the mirror structure" in C.find(id="G5")["note"]
+    root = _e3_root(tmp_path, "s3", 70.338, 67.000, 67.004, 67.100, 67.338)
+    out, res, idx, numbers = _run(root, tmp_path, "out_s3")
+    C = res["tables"]["T_e3_checks"]
+    a, b = C.find(id="E3.a"), C.find(id="E3.b")
+    assert math.isclose(C.find(id="E3.seed")["value"], 3.338, abs_tol=1e-9)
+    assert (a["verdict"], a["meets_bar"], a["exceeds_s"]) == ("FAIL", True, False)
+    assert (b["verdict"], b["meets_bar"], b["exceeds_s"]) == ("FAIL", True, False)
+    assert C.find(id="G5")["verdict"] == "FAIL"
+
+
+def test_e3_validity_and_learning_rate_check(tmp_path):
+    """Arm 3a stops at 779 of 780 steps: invalid (Section 7), so E3.b stays pending although its value passes; the 2e-4
+    trial of arm 3b beats the grid (2.0 < 2.1) while the run's own flag says no: E3.lr flags it, the mismatch is noted."""
+    root = _e3_root(tmp_path, "s4", 70.338, 70.120, 67.004, 67.100, 67.338, raw_steps=779, sym_extra=2.0, sym_flag=False)
+    out, res, idx, numbers = _run(root, tmp_path, "out_s4")
+    C = res["tables"]["T_e3_checks"]
+    assert C.find(id="E3.valid.3a")["verdict"] == "FAIL" and "steps 779 of 780" in C.find(id="E3.valid.3a")["note"]
+    b = C.find(id="E3.b")
+    assert b["verdict"] == "pending" and "fail a validity condition" in b["note"] and "computed value PASS" in b["note"]
+    assert C.find(id="E3.a")["verdict"] == "PASS" and C.find(id="G5")["verdict"] == "pending"
+    lr = C.find(id="E3.lr")
+    assert lr["verdict"] == "yes: 3b" and lr["value"] == 1 and "possibly under-tuned" in lr["note"]
+    assert "differs from the run's own" in lr["note"]
+    sym = res["tables"]["T_e3"].find(arm="3b")
+    assert sym["extra_would_win"] is True and sym["extra_would_win_recorded"] is False and sym["grid_best_heldout_loss"] == 2.1
+    dev = res["meta"]["deviations"]
+    assert any("E3 arm 3a fails a validity condition" in d for d in dev)
+    assert any("possibly under-tuned" in d for d in dev)
+
+
+def test_e3_from_tiny_runs(tmp_path):
+    """The real output formats of scripts/heal.py, heal_vexact.py (incl. --lr-probe-only) and tier2_linear.py (--tiny):
+    every arm is read, the Tier-2 rebuild is matched to its run, the 2e-4 flag is recomputed, and no verdict is given
+    on TINY inputs."""
+    root = _root(tmp_path, "tiny")
+    shutil.copytree(FIX / "e3_tiny" / "runs", root / "runs", dirs_exist_ok=True)
+    out, res, idx, numbers = _run(root, tmp_path, "out_tiny")
+    T, C = res["tables"]["T_e3"], res["tables"]["T_e3_checks"]
+    assert res["ctx"]["e3_info"]["k"] == 4
+    for arm, rel in (("1", "m3_vexact_5090/k4"), ("2", "e3/vexact_s1/k4"), ("3a", "e3/svd_raw/svd"), ("3b", "e3/svd_sym/svd"),
+                     ("4", "e3/random/k4")):
+        r = T.find(arm=arm)
+        knn = json.loads((root / "runs" / rel / "knn.json").read_text(encoding="utf-8"))
+        assert r["healed_top1"] == knn["healed"]["top1"] and "TINY" in r["status"], arm
+        lin = r.get("linear_top1")
+        assert lin is not None and r["linear_same_run"] is True, arm
+        lx = root / "runs" / (rel if arm != "1" else "e3/lr_probe_vexact_s0/k4") / "lr_extra.json"
+        rec = json.loads(lx.read_text(encoding="utf-8"))
+        assert r["extra_would_win"] == rec["extra_would_win"] and r["extra_win_matches_recorded"] is True, arm
+    assert T.find(arm="3a")["rebuild_mlp_ranks_equal"] is True and T.find(arm="3a")["mlp_ranks_equal_recorded"] is False
+    assert T.find(arm="4")["random_structure_seed"] == 1
+    assert T.find(arm="1")["probe_same_best_lr"] is True
+    for cid in ("E3.a", "E3.b", "G5"):
+        assert C.find(id=cid)["verdict"] == "pending", cid
+    assert "TINY smoke-test inputs" in C.find(id="E3.a")["note"]
+    assert any("TINY smoke-test run" in d and "E3 arm" in d for d in res["meta"]["deviations"])
+    assert "- [x] `runs/e3/svd_raw/svd/lr_extra.json`" in idx
+
+
+def test_e3_absent(tmp_path):
+    root = _root(tmp_path, "none")
+    out, res, idx, numbers = _run(root, tmp_path, "out_none")
+    T, C = res["tables"]["T_e3"], res["tables"]["T_e3_checks"]
+    assert {r["status"] for r in T.rows} == {"not run"} and len(T.rows) == len(CR.E3_ARMS)
+    assert {C.find(id=i)["verdict"] for i in ("E3.a", "E3.b", "E3.seed", "G5", "E3.lr")} == {"pending"}
+    sec = _section(idx, "E3:")
+    if (ROOT / "PREREG_E3.md").is_file():
+        assert "Arm 3a" in sec and "not run (no files under `runs/e3/svd_raw/svd/`" in sec
+        assert "E3.a V0 - R >= 2.0" in sec and "E3.b V0 - S >= 3.0" in sec
+    assert not any(k.startswith("e3.") and k.endswith(".healed") for k in numbers)
+    assert "- [ ] `runs/e3/random/k12/knn.json`" in idx
+
+
+def _sb_row(k, m, top1, kept, budget, ratio, within=True):
+    info = {"baseline": m, "mirror_budget": budget, "within_1pct": within, "bias_params": 10, "allocation": [[1, 1]]}
+    if m == "slicegpt":
+        info["basis_change_params"] = k * 768 * 768
+    return {"model": M_, "ablation": "SB", "variant": m, "k": k, "fit_seed": 0, "top1": top1, "flip_consistency": 90.0,
+            "top1_original": 79.0, "flip_original": 96.0, "drop_points": 79.0 - top1, "mlp_params_kept": kept,
+            "mlp_params_dense": 2 * 3072 * 768 * k, "params_vs_mirror_first_k": ratio, "n_query": 50000, "n_fit_images": 2000,
+            "seed": 0, "git_hash": "fixturehash", "git_dirty": False, "info": json.dumps(info)}
+
+
+def test_strong_baselines_against_canonical_x2(tmp_path):
+    """build_strong_baselines with a hand-built T_main_zeroshot: the canonical X2 Mirror and SVD rows of the same k and fit
+    seed sit next to each strong baseline, with the margins and budget ratios. Synthetic numbers."""
+    root = _root(tmp_path, "sb")
+    d, k, budget = 768, 6, 30_000_000
+    _write_csv(root / "runs" / "sb" / "SB_s0.csv", [
+        _sb_row(6, "asvd", 70.0, 29_900_000, budget, 29_900_000 / budget),
+        _sb_row(6, "slicegpt", 50.0, 29_950_000, budget, 29_950_000 / budget),
+        _sb_row(6, "prune_act", 60.0, 29_000_000, budget, 29_000_000 / budget, within=False),
+        _sb_row(9, "asvd", 65.0, 44_000_000, 44_100_000, 44_000_000 / 44_100_000)])
+    Tm = CR.Table("T_main_zeroshot", "t", ["model", "k", "variant"], [])
+    src = "runs/x2/perlayer_reg_s0/results/e1_surgery.csv"
+
+    def rec(top1, var, cost):
+        return {"top1": top1, "flip": 91.0, "drop": 79.0 - top1, "src": src, "where": {"k": k, "variant": var},
+                "git": "x2hash", "seed": 0, "fit_seed": 0, "cost": cost}
+
+    Tm.add({"model": M_, "k": 0, "variant": "original", "status": "ok", "experiment": "X2",
+            "_per_seed": {0: {"top1": 79.0, "src": src, "where": {"k": 0, "variant": "original"}}}})
+    Tm.add({"model": M_, "k": 6, "variant": "mirror_mlp", "status": "ok", "experiment": "X2",
+            "_per_seed": {0: rec(77.0, "surgery", {"matrix_params_kept": budget + 6 * 4 * d * d, "rotation_params": 6 * d * d})}})
+    Tm.add({"model": M_, "k": 6, "variant": "svd_mlp", "status": "ok", "experiment": "X2",
+            "_per_seed": {0: rec(9.0, "svd", {"matrix_params_kept": 29_800_000 + 6 * 4 * d * d, "rotation_params": 0})}})
+    T, files = CR.build_strong_baselines(CR.Paths(root), Tm, {M_: {"d": d}})
+    mir, svd = T.find(model=M_, k=6, fit_seed=0, method="mirror"), T.find(model=M_, k=6, fit_seed=0, method="svd")
+    assert mir["top1"] == 77.0 and mir["mlp_params_kept"] == budget and mir["ratio_to_mirror"] == 1.0
+    assert mir["basis_params_not_counted"] == 6 * d * d and mir["mlp_params_kept_cost_model"] == budget
+    assert svd["mlp_params_kept"] == 29_800_000 and math.isclose(svd["ratio_to_mirror"], 29_800_000 / budget)
+    asvd = T.find(model=M_, k=6, fit_seed=0, method="asvd")
+    assert math.isclose(asvd["mirror_minus_this"], 7.0) and math.isclose(asvd["this_minus_svd"], 61.0)
+    assert asvd["_loc"]["top1"]["file"] == "runs/sb/SB_s0.csv" and asvd["drop_points"] == 9.0
+    sl = T.find(model=M_, k=6, fit_seed=0, method="slicegpt")
+    assert sl["basis_params_not_counted"] == 6 * d * d and sl["within_1pct"] is True
+    assert T.find(model=M_, k=6, fit_seed=0, method="prune_act")["within_1pct"] is False
+    assert T.find(model=M_, k=9, fit_seed=0, method="mirror")["status"] == "not run"
+    assert T.find(model=M_, k=9, fit_seed=0, method="asvd")["top1"] == 65.0
+    assert [r["method"] for r in T.rows if r["k"] == 6] == ["mirror", "svd", "asvd", "slicegpt", "prune_act"]
+
+
+def test_strong_baselines_tiny_format(tmp_path):
+    root = _root(tmp_path, "sbtiny")
+    shutil.copytree(FIX / "sb", root / "runs" / "sb")
+    out, res, idx, numbers = _run(root, tmp_path, "out_sbtiny")
+    T = res["tables"]["T_strong_baselines"]
+    src = pd.read_csv(FIX / "sb" / "SB_s0.csv")
+    sb = [r for r in T.rows if r["experiment"] == "SB"]
+    assert len(sb) == len(src)
+    for r in sb:
+        s = src[(src["variant"] == r["method"]) & (src["k"] == r["k"])].iloc[0]
+        assert r["top1"] == float(s["top1"]) and r["ratio_to_mirror"] == float(s["params_vs_mirror_first_k"])
+        assert r["mirror_budget"] == json.loads(s["info"])["mirror_budget"]
+    assert {r["status"] for r in T.rows if r["experiment"] != "SB"} == {"not run"}    # no X2 rows for the tiny model
+    assert "SB:" in idx and "Activation-aware SVD" in _section(idx, "SB:")
+    off = [r for r in sb if not r["within_1pct"]]
+    assert off and any("Strong baselines:" in d and "within 1%" in d for d in res["meta"]["deviations"])
+
+
+def test_flipavg_tiny_format(tmp_path):
+    root = _root(tmp_path, "fa")
+    shutil.copytree(FIX / "t1_flipavg", root / "runs" / "t1_flipavg")
+    out, res, idx, numbers = _run(root, tmp_path, "out_fa")
+    T = res["tables"]["T_flipavg"]
+    src = pd.read_csv(FIX / "t1_flipavg" / "flipavg.csv")
+    assert len(T.rows) == len(src)
+    o, fa = T.find(model="tiny", variant="original", mode="plain"), T.find(model="tiny", variant="original", mode="flipavg")
+    vx = T.find(model="tiny", variant="healed_vexact_k4", mode="plain")
+    assert o["rel_cost"] == 1.0 and math.isclose(fa["rel_cost"], fa["gflops"] / o["gflops"]) and fa["forwards_per_image"] == 2
+    assert fa["exactly_invariant"] and vx["exactly_invariant"] and not o["exactly_invariant"]
+    assert math.isclose(vx["minus_flipavg_knn"], vx["knn_top1"] - fa["knn_top1"])
+    assert math.isclose(vx["minus_flipavg_probe"], vx["probe_top1"] - fa["probe_top1"])
+    assert math.isclose(vx["cost_vs_flipavg"], vx["gflops"] / fa["gflops"])
+    assert math.isclose(vx["params_vs_flipavg"], vx["params"] / fa["params"])
+    assert vx["label"] == CR.METHOD_LABEL[("healed_vexact", "vexact")]
+    sec = _section(idx, "Flip averaging:")
+    assert "against the flip-averaged original" in sec and "TINY" in sec
+    assert any(d.startswith("Flip averaging:") for d in res["meta"]["deviations"])
+
+
+def test_latency_second_device(tmp_path):
+    if not all((ROOT / "runs" / d / "m2_latency.csv").is_file() for d in ("m2_clean", "m2_5090")):
+        pytest.skip("needs runs/m2_clean and runs/m2_5090")
+    root = _root(tmp_path, "m2b")
+    for d in ("m2_clean", "m2_5090"):
+        shutil.copytree(ROOT / "runs" / d, root / "runs" / d)
+    out, res, idx, numbers = _run(root, tmp_path, "out_m2b")
+    L1, L2, D = (res["tables"][n] for n in ("T_latency", "T_latency_5090", "T_latency_devices"))
+    lat2 = pd.read_csv(ROOT / "runs" / "m2_5090" / "m2_latency.csv")
+    assert len(L2.rows) == len(lat2) and len(res["tables"]["T_latency_checks_5090"].rows) > 0
+    meta2 = json.loads((ROOT / "runs" / "m2_5090" / "m2_meta.json").read_text(encoding="utf-8"))
+    assert any(meta2["env"]["gpu"] in n for n in L2.notes)
+    for r in D.rows:
+        a = L1.find(model=r["model"], variant=r["variant"], k=r["k"], batch=r["batch"], mode=r["mode"])
+        b = L2.find(model=r["model"], variant=r["variant"], k=r["k"], batch=r["batch"], mode=r["mode"])
+        assert r["speedup_1"] == a["speedup_vs_dense"] and r["speedup_2"] == b["speedup_vs_dense"]
+        assert math.isclose(r["speedup_diff"], b["speedup_vs_dense"] - a["speedup_vs_dense"])
+    assert len(D.rows) == len(lat2)
+    sec = _section(idx, "M2:")
+    assert "Second device: `runs/m2_5090/`" in sec and "measured speed-up against dense" in sec
+    if str(meta2.get("check_images", "")).startswith("random"):
+        assert "fell back to random images" in sec
+        assert any("runs/m2_5090/" in d and "random normal images" in d for d in res["meta"]["deviations"])
+
+
+def test_tier2_seg_rerun_and_healed_rows(tmp_path):
+    """ADE20K: healed k = 9 and V-exact k = 12 rows with margins, and a rerun of the original giving the run-to-run
+    spread (mIoU of the rerun: synthetic, the first run's plus 0.07)."""
+    root = _root(tmp_path, "seg")
+    shutil.copytree(FIX / "t2_seg", root / "runs" / "t2_seg")
+    f = root / "runs" / "t2_seg" / "t2_ade20k.csv"
+    df = pd.read_csv(f)
+    o = df[df["variant"] == "original"].iloc[0]
+    extra = []
+    for var, fam, meth, k, miou in (("healed_mirror_k9", "healed", "mirror", 9, 40.0), ("healed_svd_k9", "healed", "svd", 9, 38.5),
+                                    ("healed_random_k9", "healed", "random", 9, 30.25),
+                                    ("healed_vexact_k12", "healed_vexact", "vexact", 12, 39.0)):
+        r = o.copy()
+        r["variant"], r["family"], r["method"], r["k"], r["mIoU"] = var, fam, meth, k, miou
+        extra.append(r)
+    pd.concat([df, pd.DataFrame(extra)], ignore_index=True).to_csv(f, index=False)
+    rr = o.copy()
+    rr["mIoU"] = o["mIoU"] + 0.07
+    _write_csv(root / "runs" / "t2_seg_rerun" / "t2_ade20k.csv", [rr.to_dict()])
+    out, res, idx, numbers = _run(root, tmp_path, "out_seg")
+    T, R = res["tables"]["T_tier2_seg"], res["tables"]["T_tier2_seg_rerun"]
+    hm = T.find(model=o["model"], variant="healed_mirror_k9")
+    assert math.isclose(hm["margin_svd_miou"], 1.5) and math.isclose(hm["margin_random_miou"], 9.75)
+    assert T.find(model=o["model"], variant="healed_vexact_k12")["mIoU"] == 39.0
+    assert len(R.rows) == 1 and math.isclose(R.rows[0]["diff_mIoU"], 0.07, abs_tol=1e-9)
+    first = T.find(model=o["model"], variant="original")
+    assert math.isclose(first["rerun_minus_first_mIoU"], 0.07, abs_tol=1e-9) and first["rerun_mIoU"] == float(rr["mIoU"])
+    assert any(n.startswith("Run-to-run spread") for n in T.notes)
+    sec = _section(idx, "Tier 2:")
+    assert "ADE20K rerun (run-to-run spread)" in sec and "healed_mirror_k9" in sec
+    assert numbers[f"t2segrerun.{CR.MODEL_SHORT.get(o['model'], o['model'])}.original.diff"]["value"] == R.rows[0]["diff_mIoU"]
+
+
+def test_f7_tiny_format(tmp_path):
+    root = _root(tmp_path, "f7")
+    shutil.copytree(FIX / "f7", root / "runs" / "f7")
+    (root / "runs" / "f7" / "figures").mkdir()
+    (root / "runs" / "f7" / "figures" / "fig0_teaser.pdf").write_bytes(b"%PDF-fixture")
+    out, res, idx, numbers = _run(root, tmp_path, "out_f7")
+    B, L0 = res["tables"]["T_f7"], res["tables"]["T_f7_layer0"]
+    src = pd.read_csv(FIX / "f7" / "f7_blocks.csv")
+    assert len(B.rows) == len(src)
+    for _, s in src.iterrows():
+        r = B.find(model=s["model"], block=int(s["block"]))
+        assert r["twin_r_median"] == s["pairs_twin_corr_median"] and r["rand_r_median"] == s["pairs_rand_corr_median"]
+    meta = json.loads((FIX / "f7" / "f7_meta.json").read_text(encoding="utf-8"))
+    assert len(L0.rows) == 4
+    assert L0.find(operator="A_0 (fitted)", parity="even")["sym_fraction"] == meta["layer0"]["fitted_even_sym_fraction"]
+    sec = _section(idx, "F7:")
+    assert "TINY smoke test" in sec and "fig0_teaser.pdf" in sec and "Block 1: twin correlation median" in sec
+
+
+def test_make_figures_e3_and_teaser(tmp_path):
+    """scripts/make_figures.py draws the E3 figure from the collector's tables and lists the F7 teaser files."""
+    root = _e3_root(tmp_path, "fig", 70.338, 70.120, 67.004, 67.900, 68.440)
+    out, res, idx, numbers = _run(root, tmp_path, "out_fig")
+    spec = importlib.util.spec_from_file_location("make_figures_t", ROOT / "scripts" / "make_figures.py")
+    mf = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mf)
+    figs = tmp_path / "figs"
+    figs.mkdir()
+    (figs / "fig0_teaser.pdf").write_bytes(b"%PDF-fixture")
+    mf.main(["--tables", str(out / "tables"), "--out", str(figs)])
+    assert (figs / "fig8_e3.pdf").is_file() and (figs / "fig8_e3.png").is_file()
+    md = (figs / "FIGURES.md").read_text(encoding="utf-8")
+    assert "Figure 8. E3" in md and "E3.b (V0 minus the better SVD arm): +1.90, FAIL" in md and "gate G5: FAIL" in md
+    assert "Figure 0 (teaser, F7)" in md and "fig0_teaser.pdf" in md
+    assert "—" not in md

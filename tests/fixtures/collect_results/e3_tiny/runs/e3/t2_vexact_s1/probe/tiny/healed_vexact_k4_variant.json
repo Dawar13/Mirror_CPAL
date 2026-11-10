@@ -1,0 +1,180 @@
+{
+  "info": {
+    "variant": "healed_vexact_k4",
+    "label": "healed Mirror V-exact, MLP + attention, k = 4 (scripts/heal_vexact.py)",
+    "family": "healed_vexact",
+    "method": "vexact",
+    "k": 4,
+    "blocks": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "model_params_original": 304424,
+    "builder": "scripts/heal_vexact.load_vexact_structure + mirror.heal_vexact.build_vexact_student (as scripts/heal_vexact.py make_student) + mirror.heal.load_trained_blocks",
+    "vexact_run": "tiny_out/runs\\e3\\vexact_s1\\k4",
+    "checkpoint": "tiny_out/runs\\e3\\vexact_s1\\k4\\final\\trained_blocks.pt",
+    "heal_config_source": "tiny_out/runs\\e3\\vexact_s1\\k4\\summary.json",
+    "heal_seed": 1,
+    "structure": {
+      "span_source": "tiny random span operator (smoke test)",
+      "span_sha256": null,
+      "operators_source": "tiny random structure (smoke test)",
+      "heads_source": "tiny random head structure (smoke test)"
+    },
+    "reg_perm": [],
+    "d_plus": 36,
+    "d_minus": 28,
+    "train_embeddings": true,
+    "even_head": true,
+    "feature": "feature [CLS, mean patch token] after the student's own final norm (RMSNorm, even head y (I + A*)/2, affine), the forward of the k-NN feature of scripts/heal_vexact.py; exactly mirror-invariant in fp32 (bf16 forward passes round the mirrored computation differently)",
+    "checkpoint_meta": {
+      "seed": 1,
+      "lr": 0.0001,
+      "steps": 4,
+      "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+      "git_dirty": false
+    },
+    "checkpoint_check": {
+      "scope": "all",
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_tensors": 49,
+      "n_model_tensors": 49,
+      "model_tensors_not_in_checkpoint": [],
+      "all_equal": true
+    },
+    "constraint_checks": {
+      "0:MirrorMLPConstraint": {
+        "max_rel_violation": 4.0783228019304267e-08,
+        "per_block": [
+          3.448372628918972e-08,
+          3.502900190211714e-08,
+          4.0783228019304267e-08,
+          3.5291079785187495e-08
+        ]
+      },
+      "1:MirrorAttnConstraint": {
+        "max_rel_violation": 1.7887865769139954e-08,
+        "per_block": [
+          1.772600604014944e-08,
+          1.77067544599639e-08,
+          1.7887865769139954e-08,
+          1.7527543908024722e-08
+        ]
+      },
+      "2:VExactEmbeddings": {
+        "max_share": 3.2130963217800656e-16,
+        "shares": {
+          "patch_embed.weight": 3.2130963217800656e-16,
+          "patch_embed.bias": 2.1716107348895103e-16,
+          "pos_embed.patches": 2.934385963994207e-16,
+          "pos_embed.cls": 3.16212809502985e-16,
+          "cls_token": 1.8510862612171896e-16
+        },
+        "embeddings_train": true,
+        "even_head_max_abs_err": 2.9580465188416838e-08
+      }
+    },
+    "vexact_checks": {
+      "pass": true,
+      "full_conversion": true,
+      "tol": 0.0001,
+      "protocol": "tiny synthetic",
+      "n_images": 8,
+      "dtype": "torch.float32",
+      "tf32_matmul": false,
+      "span_exact_max_rel_inside": 1.1543488704819943e-06,
+      "span_exact_pass": true,
+      "span_exact_rows": [
+        {
+          "layer": 0,
+          "in_span": true,
+          "max_abs_err": 1.8890970754359415e-06,
+          "max_abs_ref": 1.6768772602081299,
+          "rel_max": 1.1265565585888329e-06,
+          "rel_fro": 6.279349150743052e-07
+        },
+        {
+          "layer": 1,
+          "in_span": true,
+          "max_abs_err": 1.9296547133507147e-06,
+          "max_abs_ref": 1.6842739582061768,
+          "rel_max": 1.1456893363154998e-06,
+          "rel_fro": 6.300956759788431e-07
+        },
+        {
+          "layer": 2,
+          "in_span": true,
+          "max_abs_err": 1.9809662362701985e-06,
+          "max_abs_ref": 1.7160897254943848,
+          "rel_max": 1.1543488704819943e-06,
+          "rel_fro": 6.331885623378877e-07
+        },
+        {
+          "layer": 3,
+          "in_span": true,
+          "max_abs_err": 1.9391078129871175e-06,
+          "max_abs_ref": 1.7697619199752808,
+          "rel_max": 1.0956885166871498e-06,
+          "rel_fro": 6.363040996644887e-07
+        },
+        {
+          "layer": 4,
+          "in_span": true,
+          "max_abs_err": 1.952537452609704e-06,
+          "max_abs_ref": 1.7859082221984863,
+          "rel_max": 1.0933022359940164e-06,
+          "rel_fro": 6.381013286900742e-07
+        }
+      ],
+      "probe_feature_flip": {
+        "rel_max": 3.1691584597611e-07,
+        "first_part_rel_max": 3.1691584597611e-07,
+        "mean_patch_rel_max": 4.651042608718121e-07,
+        "knn_cls_feature_rel_max": 3.1691584597611e-07,
+        "n_images": 8
+      },
+      "recorded_after_healing": {
+        "exactness.json:max_rel_inside": 1.1543488704819943e-06,
+        "flipcheck.json:cls_feature_rel_max": 3.1691584597611e-07
+      }
+    },
+    "param_counts": {
+      "mlp_params_kept": 68288,
+      "attn_params_kept": 32896,
+      "converted_params_dense": 196608,
+      "converted_params_kept": 101184,
+      "converted_kept_frac": 0.5146484375,
+      "model_params_original": 304424,
+      "model_params": 209000,
+      "model_params_frac": 0.6865424539458124,
+      "d_plus": 36,
+      "d_minus": 28
+    },
+    "mlp_params_kept": 68288,
+    "attn_params_kept": 32896,
+    "recorded_knn_healed_top1": 37.5,
+    "recorded_knn_precision": "fp32",
+    "healed_px": 56,
+    "built_px": 56,
+    "position_grid": null,
+    "converted_params_dense": 196608,
+    "converted_params_kept": 101184,
+    "model_params": 209000
+  },
+  "sources": {
+    "vexact_run": "tiny_out/runs\\e3\\vexact_s1\\k4",
+    "checkpoint": "tiny_out/runs\\e3\\vexact_s1\\k4\\final\\trained_blocks.pt",
+    "checkpoint_sha256": "6c4f7f10251a730b758b46d5ab399da900a927083c4ebd20ce6f7adbac2cd66a"
+  },
+  "git": {
+    "git_hash": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "git_dirty": false
+  }
+}
