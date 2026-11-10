@@ -1,107 +1,70 @@
-# Mirror Surgery: E1 go/kill experiment
+# Mirror Surgery
 
-Does pretrained DINOv2 ViT-B contain one residual mirror operator and mirror-twin MLP neurons, so
-that projecting early-block MLPs onto mirror-equivariant weights costs little accuracy and clearly
-less than an equal-size SVD cut? See `PROJECT_CONTEXT.md` and `E1_INSTRUCTIONS.md`.
+Vision transformers trained with left-right flip augmentation tend to learn many of their features
+twice, once for each mirror orientation. This project measures that duplication (the *symmetry tax*)
+and removes it from released checkpoints without retraining, by tying each pair of mirror-twin
+neurons together so that the pair is stored and computed once.
+
+> Status: research code for a paper in preparation. Experiments are still running, so code and
+> results may change.
+
+## The idea in brief
+
+1. Pass images and their mirror images through a pretrained model and fit, for each layer, a
+   *mirror operator*: the exact way the internal features change when the image is flipped.
+2. Find *mirror-twin* neurons: pairs where one neuron responds to the mirrored image the way its
+   twin responds to the original.
+3. Project the weights onto an exactly mirror-symmetric form. Twins become exact mirror images of
+   each other, so each pair is stored once. Nothing is switched off: both neurons still fire, they
+   just share their weights.
+4. Optionally, use one operator across the whole network. The result gives exactly the same output
+   for an image and its mirror, by construction; a short distillation then recovers accuracy.
+
+## Early findings (DINOv2 ViT-B, ImageNet)
+
+- In the first block, roughly three quarters of the MLP neurons form mirror-twin pairs. The effect
+  fades with depth.
+- Across the first half of the network, around 40% of the MLP weights are redundant mirror copies.
+- Converting the MLPs of the first half with no retraining keeps k-NN accuracy within about 2
+  points of the original, while low-rank (SVD) compression at the same parameter count collapses.
+- Converting every block gives an exactly mirror-invariant model with about three quarters of the
+  parameters. After a short distillation it is within about 1 point of the original.
+- The same structure appears in other flip-trained ViTs (DeiT-III, MAE) and is much weaker in
+  SigLIP2.
+
+Pass and fail thresholds for each gated experiment were committed to this repository before the
+runs.
 
 ## Layout
 
 ```
-mirror/adapters.py   one interface over DINOv2 (torch.hub) and a tiny random timm ViT (tests)
-mirror/data.py       ImageNet-val cache (uint8 memmap), class-balanced splits, synthetic data
-mirror/stats.py      streaming float64 statistics of each batch and its mirror (hooks, un-flip)
-mirror/fit.py        closed-form involution fit, random-involution nulls, shared operator
-mirror/matching.py   mirror-twin neuron matching (networkx max-weight matching, parallel)
-mirror/surgery.py    folding, projection, breaking share, surgery, rank-matched SVD baseline
-mirror/knn.py        weighted k-NN (k 20, T 0.07) and flip consistency
-mirror/report.py     decision table, plots, E1_REPORT.md
-scripts/build_cache.py   B1: download validation shards and build the cache
-scripts/sanity_b2.py     B2: folding and identity-surgery checks on the real model
-scripts/run_e1.py        B3: the experiment (add --tiny for the CPU pipeline test)
-configs/e1.yaml          all settings, decision thresholds and the --tiny overrides
-tests/                   pytest, CPU only (tiny random ViT, synthetic data)
+mirror/    library: data, feature statistics, operator fitting, twin matching, surgery,
+           attention, baselines, distillation, evaluation
+scripts/   experiment entry points and results collection
+configs/   settings for each experiment (YAML)
+jobs/      GPU job lists for the scheduler in scripts/vm_sched.sh
+tests/     CPU-only tests (tiny random ViT, synthetic data)
+runs/      raw outputs of each experiment
+results/   reports, tables and figures
 ```
 
-## Phase B on the VM
-
-Accept the ImageNet-1k terms first at https://huggingface.co/datasets/ILSVRC/imagenet-1k
-(gated; approval can take a while).
-
-### B0. Setup
+## Setup
 
 ```bash
-git clone <private repo url> Mirror_CPAL && cd Mirror_CPAL
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-# if torch.cuda.is_available() is False (driver too old for the newest wheel), see requirements.txt:
-pip uninstall -y torch torchvision && pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
-export HF_HOME=/path/on/vm/big_disk/hf        # every download goes under here (hub weights too)
-python -c "from huggingface_hub import login; login()"   # paste a read token
-nvidia-smi                                     # check what the CVPR job is using
-pytest -q                                      # 25 tests, about 1 minute; all must pass
+export HF_HOME=/path/to/big_disk/hf   # every download (datasets, model weights) goes here
+pytest -q                             # CPU only
 ```
 
-Every GPU script caps itself with `torch.cuda.set_per_process_memory_fraction(0.2)`.
+ImageNet-1k on Hugging Face is gated, so accept its terms first. The image caches are built with
+`scripts/build_cache.py` (validation) and `scripts/build_train_cache.py` (training subsets). The
+newest PyTorch wheel may need a newer GPU driver than you have; `requirements.txt` shows the
+CUDA 12.8 install.
 
-### B1. Data cache (no GPU needed, about 7.5 GB in `cache/` plus 6.7 GB under `$HF_HOME`)
+## Conventions
 
-```bash
-python scripts/build_cache.py --config configs/e1.yaml
-```
-
-Downloads only `data/validation-*.parquet` (14 shards) from `ILSVRC/imagenet-1k`, then writes
-`cache/val224_uint8.npy` (resize 256 bicubic, centre crop 224), `cache/val_labels.npy`,
-`cache/splits.npz` (fit 2,000 / held-out 1,000 / bank 39,000 / queries 8,000) and
-`cache/meta.json`. The DINOv2 weights are fetched by torch.hub on first use, into
-`$HF_HOME/torch_hub`.
-
-### B2. Sanity on the real model
-
-```bash
-python scripts/sanity_b2.py --config configs/e1.yaml
-```
-
-Must print `B2 SANITY PASS`: block-0 folding max abs difference below 1e-4 in fp32, and
-identity surgery (A = I, P = I on all blocks) gives identical k-NN top-1. Writes
-`results/sanity_b2.json`.
-
-### B3. Run E1
-
-```bash
-python scripts/run_e1.py --config configs/e1.yaml 2>&1 | tee results/e1_log.txt
-```
-
-Outputs: `results/e1_layers.csv`, `results/e1_mlp.csv`, `results/e1_surgery.csv`,
-`results/e1_meta.json` (config, seed, git hash, timings), `results/e1_operators.npz`
-(A per layer, shared A, neuron permutations), `plots/equivariance_vs_depth.png`,
-`plots/breaking_share_vs_depth.png` and `results/E1_REPORT.md`, which applies the decision
-table and prints GO, PIVOT, KILL or AMBER. Commit the report and plots.
-
-## Notes and choices
-
-- Layer l is the output of block l (layer 0 = tokens entering block 1). "Blocks 1 to 6" in the
-  decision table means layers 1 to 6 for the residual checks and the first six MLPs.
-- The decision table does not say how to combine blocks 1 to 6. The report uses the mean of the
-  per-layer relative errors (rows 1 and 2) and the larger of the mean fc1 and fc2 breaking
-  shares (row 4), and says so in the report. Thresholds are exactly those in `E1_INSTRUCTIONS.md`.
-- The table can leave a case undecided (for example row 1 between 3x and 5x with no KILL cell).
-  The report then prints AMBER and lists the open rows instead of forcing GO, PIVOT or KILL.
-- Residual tokens are channel-centred before the fit; the resulting all-ones null direction
-  is assigned +1, so the operator stays an exact involution and commutes with LayerNorm.
-- Besides the specified shared operator (plain sum of C over layers 1 to 12), the report also
-  shows the error of a scale-normalised fit as a diagnostic; decisions use the specified one.
-- Neuron matching runs networkx's exact blossom algorithm per block in parallel processes.
-  Measured on a laptop CPU at h = 3072: about 45 s with clear structure, about 5 min for pure noise.
-- `--tiny` writes to `tiny_out/` (git-ignored) so it never overwrites real results.
-
-## Laptop (Phase A) environment
-
-This laptop had too little free disk for a fresh 2 GB CPU PyTorch install, so the venv reuses the
-system packages and adds only timm:
-
-```bash
-python -m venv --system-site-packages .venv
-.venv/Scripts/python -m pip install --no-cache-dir timm
-.venv/Scripts/python -m pytest -q
-.venv/Scripts/python scripts/run_e1.py --tiny
-```
+- Operators are fitted on ImageNet training images, evaluation uses the validation set, and
+  distillation uses training images only.
+- Every run logs its config, seed and git commit.
+- GPU scripts cap their memory per process so that several jobs can share one GPU.
