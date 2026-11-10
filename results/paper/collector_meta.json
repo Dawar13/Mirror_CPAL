@@ -1,8 +1,8 @@
 {
   "written_by": "scripts/collect_results.py",
-  "date": "2026-11-09 13:52:17",
+  "date": "2026-11-10 10:15:28",
   "git": {
-    "git_hash": "9742d391ee50a5d80223bb743d3a79906291d446",
+    "git_hash": "80cbf81c13534befef8a8b95a5d1e4a473f8219f",
     "git_dirty": true
   },
   "args": {
@@ -30,11 +30,38 @@
     "p5_cos": 0.8,
     "p5_pairs_pct": 70.0
   },
+  "prereg_e3": {
+    "file": "PREREG_E3.md",
+    "exists": true,
+    "active": true,
+    "commit": "aeb57bed186c589ac3e266a67d514718cb201632",
+    "commit_source": "the commit that signed PREREG_E3.md off (first commit with \"ACTIVE: signed off\")",
+    "bar_a": 2.0,
+    "bar_b": 3.0,
+    "steps": 780.0,
+    "tol": 0.0001,
+    "flip_pct": 100.0,
+    "block_pct": 1.0,
+    "extra_lr": 0.0002,
+    "k": 12
+  },
+  "e3_values": {
+    "V0": 78.33799719810486,
+    "V1": null,
+    "R": null,
+    "S3a": null,
+    "S3b": null,
+    "S": null,
+    "S_arm": null,
+    "s": null,
+    "G5": "pending"
+  },
   "prereg_commits": {
     "E1_INSTRUCTIONS.md": "153b21cd0671535614d6669b1d25711dc3d378c0",
     "E1B_PREREG.md": "93bd945766e6774a8a7fdf0b3961e2e061137e84",
     "PREREG_E2.md": "9804f0670ea630e03b1bde285943f7d735b90ccd",
-    "PAPER_EXPERIMENTS.md": "b8902116c1972c5080ca0bc88a3dac0091e50881"
+    "PAPER_EXPERIMENTS.md": "b8902116c1972c5080ca0bc88a3dac0091e50881",
+    "PREREG_E3.md": "aeb57bed186c589ac3e266a67d514718cb201632"
   },
   "figures": {
     "fig_accuracy_vs_k.png": true,
@@ -56,21 +83,31 @@
     "T_attention": 12,
     "T_attention_vexact": 3,
     "T_attention_conversion": 7,
-    "T_ablations": 64,
+    "T_ablations": 80,
     "T_ablations_seeds": 38,
     "T_ablations_a2_extra": 12,
     "T_healing_vexact": 2,
-    "T_tier2": 15,
+    "T_tier2": 16,
     "T_tier2_transfer": 28,
-    "T_tier2_seg": 3,
-    "T_tier2_seg_classes": 450,
+    "T_tier2_seg": 5,
+    "T_tier2_seg_classes": 750,
+    "T_tier2_seg_rerun": 0,
     "T_latency": 102,
     "T_latency_checks": 48,
-    "T_latency_profile": 0,
-    "T_latency_profile_triton": 0,
+    "T_latency_5090": 102,
+    "T_latency_checks_5090": 48,
+    "T_latency_devices": 102,
+    "T_latency_profile": 22,
+    "T_latency_profile_triton": 45,
     "T_f4": 36,
     "T_f4_p2": 8,
-    "T_prereg": 46,
+    "T_e3": 6,
+    "T_e3_checks": 14,
+    "T_strong_baselines": 0,
+    "T_flipavg": 1,
+    "T_f7": 0,
+    "T_f7_layer0": 0,
+    "T_prereg": 51,
     "T_f1_ranges": 14,
     "T_f2_drift": 9
   },
@@ -300,7 +337,7 @@
     {
       "path": "runs/g/mae_b16_s0/results/e1_meta.json",
       "what": "G run (meta)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/g/mae_b16_s0/results/e1_surgery.csv",
@@ -528,7 +565,17 @@
       "present": true
     },
     {
+      "path": "runs/a/dinov2_vitb14_reg/A4_s1.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
       "path": "runs/a/dinov2_vitb14_reg/A5_s0.csv",
+      "what": "ablation rows (every k and fit seed in the file)",
+      "present": true
+    },
+    {
+      "path": "runs/a/dinov2_vitb14_reg/A5_s1.csv",
       "what": "ablation rows (every k and fit seed in the file)",
       "present": true
     },
@@ -550,31 +597,291 @@
     {
       "path": "runs/m2_profile/m2_profile.csv",
       "what": "M2 profile (scripts/m2_profile.py)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/m2_profile/m2_submodules.csv",
       "what": "M2 profile (scripts/m2_profile.py)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/m2_profile/m2_triton.csv",
       "what": "M2 profile (scripts/m2_profile.py)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/m2_profile/m2_top_kernels.csv",
       "what": "M2 profile (scripts/m2_profile.py)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/m2_profile/M2_PROFILE.md",
       "what": "M2 profile (scripts/m2_profile.py)",
-      "present": false
+      "present": true
     },
     {
       "path": "runs/m2_profile/m2_profile_meta.json",
       "what": "M2 profile (scripts/m2_profile.py)",
+      "present": true
+    },
+    {
+      "path": "PREREG_E3.md",
+      "what": "E3 pre-registration (ACTIVE once signed off)",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact_5090/k12/summary.json",
+      "what": "E3 arm 1",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact_5090/k12/knn.json",
+      "what": "E3 arm 1",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact_5090/k12/final/metrics.json",
+      "what": "E3 arm 1",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact_5090/k12/lr_selection/lr_selection.json",
+      "what": "E3 arm 1",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact_5090/k12/exactness.json",
+      "what": "E3 arm 1",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact_5090/k12/flipcheck.json",
+      "what": "E3 arm 1",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/summary.json",
+      "what": "E3 arm 1 (A100)",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/knn.json",
+      "what": "E3 arm 1 (A100)",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/final/metrics.json",
+      "what": "E3 arm 1 (A100)",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/lr_selection/lr_selection.json",
+      "what": "E3 arm 1 (A100)",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/exactness.json",
+      "what": "E3 arm 1 (A100)",
+      "present": true
+    },
+    {
+      "path": "runs/m3_vexact/k12/flipcheck.json",
+      "what": "E3 arm 1 (A100)",
+      "present": true
+    },
+    {
+      "path": "runs/e3/vexact_s1/k12/summary.json",
+      "what": "E3 arm 2",
+      "present": false
+    },
+    {
+      "path": "runs/e3/vexact_s1/k12/knn.json",
+      "what": "E3 arm 2",
+      "present": false
+    },
+    {
+      "path": "runs/e3/vexact_s1/k12/final/metrics.json",
+      "what": "E3 arm 2",
+      "present": false
+    },
+    {
+      "path": "runs/e3/vexact_s1/k12/lr_selection/lr_selection.json",
+      "what": "E3 arm 2",
+      "present": false
+    },
+    {
+      "path": "runs/e3/vexact_s1/k12/exactness.json",
+      "what": "E3 arm 2",
+      "present": false
+    },
+    {
+      "path": "runs/e3/vexact_s1/k12/flipcheck.json",
+      "what": "E3 arm 2",
+      "present": false
+    },
+    {
+      "path": "runs/e3/vexact_s1/k12/lr_extra.json",
+      "what": "E3 arm 2",
+      "present": false
+    },
+    {
+      "path": "runs/e3/t2_vexact_s1/t2_linear.csv",
+      "what": "E3 arm 2: Tier-2 linear probe",
+      "present": false
+    },
+    {
+      "path": "runs/e3/svd_raw/svd/summary.json",
+      "what": "E3 arm 3a",
+      "present": false
+    },
+    {
+      "path": "runs/e3/svd_raw/svd/knn.json",
+      "what": "E3 arm 3a",
+      "present": false
+    },
+    {
+      "path": "runs/e3/svd_raw/svd/final/metrics.json",
+      "what": "E3 arm 3a",
+      "present": false
+    },
+    {
+      "path": "runs/e3/svd_raw/svd/lr_selection/lr_selection.json",
+      "what": "E3 arm 3a",
+      "present": false
+    },
+    {
+      "path": "runs/e3/svd_raw/svd/lr_extra.json",
+      "what": "E3 arm 3a",
+      "present": false
+    },
+    {
+      "path": "runs/e3/t2_svd_raw/t2_linear.csv",
+      "what": "E3 arm 3a: Tier-2 linear probe",
+      "present": false
+    },
+    {
+      "path": "runs/e3/svd_sym/svd/summary.json",
+      "what": "E3 arm 3b",
+      "present": false
+    },
+    {
+      "path": "runs/e3/svd_sym/svd/knn.json",
+      "what": "E3 arm 3b",
+      "present": false
+    },
+    {
+      "path": "runs/e3/svd_sym/svd/final/metrics.json",
+      "what": "E3 arm 3b",
+      "present": false
+    },
+    {
+      "path": "runs/e3/svd_sym/svd/lr_selection/lr_selection.json",
+      "what": "E3 arm 3b",
+      "present": false
+    },
+    {
+      "path": "runs/e3/svd_sym/svd/lr_extra.json",
+      "what": "E3 arm 3b",
+      "present": false
+    },
+    {
+      "path": "runs/e3/t2_svd_sym/t2_linear.csv",
+      "what": "E3 arm 3b: Tier-2 linear probe",
+      "present": false
+    },
+    {
+      "path": "runs/e3/random/k12/summary.json",
+      "what": "E3 arm 4",
+      "present": false
+    },
+    {
+      "path": "runs/e3/random/k12/knn.json",
+      "what": "E3 arm 4",
+      "present": false
+    },
+    {
+      "path": "runs/e3/random/k12/final/metrics.json",
+      "what": "E3 arm 4",
+      "present": false
+    },
+    {
+      "path": "runs/e3/random/k12/lr_selection/lr_selection.json",
+      "what": "E3 arm 4",
+      "present": false
+    },
+    {
+      "path": "runs/e3/random/k12/exactness.json",
+      "what": "E3 arm 4",
+      "present": false
+    },
+    {
+      "path": "runs/e3/random/k12/flipcheck.json",
+      "what": "E3 arm 4",
+      "present": false
+    },
+    {
+      "path": "runs/e3/random/k12/lr_extra.json",
+      "what": "E3 arm 4",
+      "present": false
+    },
+    {
+      "path": "runs/e3/t2_random/t2_linear.csv",
+      "what": "E3 arm 4: Tier-2 linear probe",
+      "present": false
+    },
+    {
+      "path": "runs/e3/lr_probe_vexact_s0/k12/lr_extra.json",
+      "what": "E3 Section 8: learning-rate probe of arm 1",
+      "present": false
+    },
+    {
+      "path": "runs/sb/SB_s0.csv",
+      "what": "strong baselines, zero-shot (scripts/strong_baselines.py)",
+      "present": false
+    },
+    {
+      "path": "runs/t1_flipavg/flipavg.csv",
+      "what": "flip-averaging baseline (scripts/flip_avg_baseline.py)",
+      "present": true
+    },
+    {
+      "path": "runs/m2_5090/m2_latency.csv",
+      "what": "M2 latency, second device",
+      "present": true
+    },
+    {
+      "path": "runs/m2_5090/m2_checks.csv",
+      "what": "M2 latency, second device",
+      "present": true
+    },
+    {
+      "path": "runs/m2_5090/m2_meta.json",
+      "what": "M2 latency, second device",
+      "present": true
+    },
+    {
+      "path": "runs/t2_seg_rerun/t2_ade20k.csv",
+      "what": "Tier 2 ADE20K rerun (run-to-run spread)",
+      "present": false
+    },
+    {
+      "path": "runs/f7/f7_blocks.csv",
+      "what": "F7 visuals (scripts/f7_visuals.py)",
+      "present": false
+    },
+    {
+      "path": "runs/f7/f7_meta.json",
+      "what": "F7 visuals (scripts/f7_visuals.py)",
+      "present": false
+    },
+    {
+      "path": "runs/f7/F7_SUMMARY.md",
+      "what": "F7 visuals (scripts/f7_visuals.py)",
+      "present": false
+    },
+    {
+      "path": "results/paper/figures_paper/fig0_teaser.pdf",
+      "what": "F7 teaser figure (drawn by scripts/f7_visuals.py)",
       "present": false
     },
     {
@@ -672,7 +979,6 @@
     "P4: P4.siglip2 fails as worded (SigLIP2 breaking share minus DINOv2-reg breaking share (row 4 definition, fit seed 0)).",
     "P5: FAIL (runs/d/d_datafree.json).",
     "G4: FAIL (runs/d/d_datafree.json).",
-    "G: the MAE run has no e1_meta.json (its k-NN run was stopped); its decision rows are recomputed with mirror.report.decide and its git hash is not recorded.",
     "X2: `runs/x2/shared16_plain_s0` is partial (missing e1_meta.json).",
     "Tier 2: DINOv2-reg dtd healed_vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
     "Tier 2: DINOv2-reg dtd vexact_k6: the chosen weight decay 0.0316 is at the edge of the grid.",
@@ -714,8 +1020,9 @@
     "Tier 2: DINOv2 random_k6: the probed model is not the model behind its Tier-1 number (a different random draw; T_tier2 notes).",
     "Tier 2: DINOv2-reg mirror_mlp_k6: the probed model is not the model behind its Tier-1 number (rebuilt from the float32 operator file, a numerical difference; T_tier2 notes).",
     "Tier 2: DINOv2-reg random_k6: the probed model is not the model behind its Tier-1 number (a different random draw; T_tier2 notes).",
-    "V-exact healing k = 6: run on NVIDIA GeForce RTX 5090, which measures its own original; compare within the row (T_healing_vexact notes)."
+    "V-exact healing k = 6: run on NVIDIA GeForce RTX 5090, which measures its own original; compare within the row (T_healing_vexact notes).",
+    "M2 (`runs/m2_5090/`): the equivalence checks used random normal images (seed 0), not validation images (scripts/m2_latency.py falls back to them when the validation cache cannot be loaded); timings are unaffected (random inputs in every run)."
   ],
-  "n_numbers": 814,
-  "elapsed_s": 23.2
+  "n_numbers": 1034,
+  "elapsed_s": 29.5
 }
