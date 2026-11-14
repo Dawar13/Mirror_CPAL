@@ -963,6 +963,7 @@ class TinyProtocol:
     (fit0..fit2, bank) and the same attributes used by fit_subset_rows."""
 
     ROLES = {"fit0": 2, "fit1": 2, "fit2": 2, "heldout": 2, "bank": 8, "query": 4}
+    MSEL_PER_CLASS = 2   # method-selection queries: a separate synthetic set (other seed), so ROLES stay as before
 
     def __init__(self, img_size: int = 56, num_classes: int = 5, seed: int = 0, batch_size: int = 32,
                  stats_batch_size: int = 8):
@@ -974,6 +975,8 @@ class TinyProtocol:
         self.train_labels = self.val_labels = labels
         self.index = {f"{r}_rows": sp[r] for r in ("fit0", "fit1", "fit2", "bank")}
         self.heldout_idx, self.query_idx = sp["heldout"], sp["query"]
+        self.msel_images, self.msel_labels = synthetic_dataset(num_classes, self.MSEL_PER_CLASS, img_size,
+                                                               seed=seed + 101)
         self.num_classes = num_classes
         self.bs, self.sbs, self.nw, self.pin = batch_size, stats_batch_size, 0, False
 
@@ -994,6 +997,12 @@ class TinyProtocol:
     def query_loader(self, n: int | None = None):
         rows = self.query_idx if n is None else self.query_idx[:int(n)]
         return self._loader(rows, self.bs)
+
+    def msel_loader(self):
+        from .data import make_loader
+
+        return make_loader(self.msel_images, self.msel_labels, np.arange(len(self.msel_labels)), self.bs,
+                           self.nw, self.pin)
 
 
 def build_runtime(model_name: str, tiny: bool, device, cache_dir, batch_size: int = 128,

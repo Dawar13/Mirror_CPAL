@@ -1,0 +1,57 @@
+# H100 job file B: CORE-01 controlled-training grid with its structure measurements, MUST-11 downstream tasks, and the
+# cheap upside runs UP-01 and UP-03. Launch beside job file A once gate C (MUST-12) is reported and the epoch rule is
+# applied (PREREG_NEXT_PHASE.md, MUST-12):
+#   . ~/.mirror_env.sh; export MW=8; export CORE_EPOCHS=100     # or 60 if the MUST-12 run took over 25 minutes
+#   If CORE_EPOCHS=100, the MUST-12 pilot runs are CORE-01's seed-0 none and LR runs (same recipe): link them first,
+#     mkdir -p runs/CORE-01 && ln -s ../MUST-12/vit_s8_none_s0 runs/CORE-01/vit_s8_none_s0 \
+#       && ln -s ../MUST-12/vit_s8_LR_s0 runs/CORE-01/vit_s8_LR_s0
+#   PAR=4 setsid nohup bash scripts/h100_sched.sh jobs/h100_B_core.txt > logs/q_B.log 2>&1 < /dev/null &
+# Training runs use about 8 to 11 GB each (estimate) and share the GPU; locks "ctrain" are not used, so up to PAR runs
+# overlap. Measurements are CPU-heavy (neuron matchings) and start as soon as a run has finished.
+
+# ---- CORE-01 grid: none, LR, UD x 3 seeds; LR+UD, R90 x 2 seeds (13 runs).
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition UD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition none --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition LR --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition R90 --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition LRUD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition UD --seed 1 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition LR --seed 1 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition none --seed 1 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition UD --seed 2 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition LR --seed 2 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition none --seed 2 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition R90 --seed 1 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --condition LRUD --seed 1 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+
+# ---- CORE-01 measurements: every checkpoint of every run, as each run finishes (final-epoch file as the trigger).
+runs/CORE-01/vit_s8_UD_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_UD_s0 CORE-01
+runs/CORE-01/vit_s8_none_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_none_s0 CORE-01
+runs/CORE-01/vit_s8_LR_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_LR_s0 CORE-01
+runs/CORE-01/vit_s8_R90_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_R90_s0 CORE-01
+runs/CORE-01/vit_s8_LRUD_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_LRUD_s0 CORE-01
+runs/CORE-01/vit_s8_UD_s1/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_UD_s1 CORE-01
+runs/CORE-01/vit_s8_LR_s1/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_LR_s1 CORE-01
+runs/CORE-01/vit_s8_none_s1/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_none_s1 CORE-01
+runs/CORE-01/vit_s8_UD_s2/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_UD_s2 CORE-01
+runs/CORE-01/vit_s8_LR_s2/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_LR_s2 CORE-01
+runs/CORE-01/vit_s8_none_s2/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_none_s2 CORE-01
+runs/CORE-01/vit_s8_R90_s1/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_R90_s1 CORE-01
+runs/CORE-01/vit_s8_LRUD_s1/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_LRUD_s1 CORE-01
+
+# ---- MUST-11 downstream (after the heals they need; gate-B best read from gate_b.json).
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2/metrics.json runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @12000 | bash scripts/h100_must11.sh linear
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @12000 | bash scripts/h100_must11.sh transfer
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @16000 | bash scripts/h100_must11.sh ade20k
+
+# ---- UP-01 (UD dose) and UP-03 (ViT-Ti/8), after the CORE-01 grid in priority.
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --exp UP-01 --condition UD_p0.1 --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @12000 | python scripts/train_controlled.py --exp UP-01 --condition UD_p0.25 --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+cache/in100_meta.json @8000 | python scripts/train_controlled.py --exp UP-03 --arch vit_ti8 --condition none --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.12
+cache/in100_meta.json @8000 | python scripts/train_controlled.py --exp UP-03 --arch vit_ti8 --condition LR --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.12
+cache/in100_meta.json @8000 | python scripts/train_controlled.py --exp UP-03 --arch vit_ti8 --condition UD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.12
+runs/UP-01/vit_s8_UD_p0.1_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/UP-01/vit_s8_UD_p0.1_s0 UP-01
+runs/UP-01/vit_s8_UD_p0.25_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/UP-01/vit_s8_UD_p0.25_s0 UP-01
+runs/UP-03/vit_ti8_none_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/UP-03/vit_ti8_none_s0 UP-03
+runs/UP-03/vit_ti8_LR_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/UP-03/vit_ti8_LR_s0 UP-03
+runs/UP-03/vit_ti8_UD_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/UP-03/vit_ti8_UD_s0 UP-03

@@ -92,6 +92,37 @@ the relative change the re-projection made to the interpolated grid, the span ex
 re-projection, and the exactness at 448 px of the model used (fp32, TF32 off, --vexact-check-images training
 crops, bar 1e-4; at full conversion also the image-versus-mirror probe feature). If a check fails the run stops.
 
+Full tokens for Mirror-exact (MUST-11). A Mirror-exact model at full conversion carries the even head
+y -> y (I + A*)/2 inside its final norm (mirror.m1.install_even_head), which projects every token. The even
+part is for invariant use (the CLS); dense tasks use the full tokens (PROJECT_NEXT_PHASE.md Section 4.5). So
+for a model with an even head the head sees the final RMSNorm output followed by the final affine, with the
+even projection bypassed (the odd, orientation-carrying components kept); --even-tokens restores the
+even-projected tokens. Models without an even head are unaffected. The choice is part of the run settings of
+the variants that can carry an even head (V-exact and healed V-exact at full conversion, --healed-run) and
+is recorded in the final_tokens column.
+
+Any healed model (MUST-11): --healed-run [NAME=]DIR (repeatable) adds a variant loaded with
+mirror.heal_structured.load_healed_model (scripts/tier2_linear.VariantFactory._build_healed_run). When the
+loader's info names A* or the model has an even head, its position grid is moved to the crop size as above
+and its span exactness is checked on the --vexact-check-images training crops (the run stops above 1e-4).
+
+Mask equivariance (MUST-11, --mask-eq; off by default, so the protocol above is unchanged): after evaluation,
+the share of pixels where mask(mirror x) equals mirror(mask x) on the validation images (all, or
+--mask-eq-images), in fp32 without autocast (TF32 off), for
+  raw          the trained head (BatchNorm, 1 x 1 conv) as evaluated above;
+  symmetrised  (head(z) + head(T z)) / 2, where z = affine(n) are the final-norm patch tokens the head sees,
+               n the normalised tokens before the final affine, and T z = affine(n A). A is the model's own
+               span operator A* = 2 P - I when it has an even head (Mirror-exact at full conversion), and
+               otherwise A_L, the per-layer operator of the last stream layer from the model's X2 operator
+               file (--operators; fit seed 0). For a model whose normalised tokens are exactly A-equivariant
+               (the mirror's aligned tokens are n A), head(z) + head(T z) takes the same value on the image and
+               on its mirror at aligned positions, so the symmetrised head gives exactly mirrored logits.
+The window layout is made flip-symmetric (the mirrored image uses the mirrored windows; bottom and right
+padding mirrored with it), so the number tests the model and the head, not the layout. Pixels differing only
+through rounding show up as near-ties (the largest top-2 margin among differing pixels is recorded). The same
+pass also scores mIoU of both heads on the original images (fp32). Results: seg/<model>/<variant>_maskeq.json
+and the mask_eq_* columns of t2_ade20k.csv; a finished variant is not retrained (its saved head is reused).
+
 Outputs under --out (default runs/t2_seg): t2_ade20k.csv (one row per model and variant: mIoU, aAcc, mAcc,
 iterations, seed, git hash, timings and more), T2_ADE20K.md, seg/<model>/<variant>.json (row, settings,
 per-class IoU and accuracy, training history, variant provenance, V-exact checks), <variant>_head.pt (the
@@ -525,10 +556,13 @@ class ValImages(Dataset):
 # ----------------------------------------------------------------------------------------------
 # Backbone features and head
 # ----------------------------------------------------------------------------------------------
-def make_feature_fn(adapter, model, device, amp: str | None = "bf16"):
+def make_feature_fn(adapter, model, device, amp: str | None = "bf16", full_tokens: bool = False):
     """uint8 images [B, 3, H, W] on `device` -> float32 patch-token map [B, d, H/p, W/p]: the last block's
     tokens after the final norm, CLS and registers dropped (adapter.n_prefix_tokens), row-major grid.
-    bf16 autocast on CUDA only. Call under torch.no_grad()."""
+    bf16 autocast on CUDA only. Call under torch.no_grad(). With `full_tokens` a model with an even head
+    (Mirror-exact at full conversion) gives its full tokens: the final norm without the even projection
+    (scripts/tier2_linear.final_norm_tokens); other models are unaffected. main() passes full_tokens unless
+    --even-tokens."""
     device = torch.device(device)
     use_amp = amp == "bf16" and device.type == "cuda"
     p, ps = int(adapter.n_prefix_tokens), int(adapter.patch_size)
@@ -537,7 +571,7 @@ def make_feature_fn(adapter, model, device, amp: str | None = "bf16"):
         x = normalize_for(adapter, x_uint8)
         ctx = torch.autocast("cuda", dtype=torch.bfloat16) if use_amp else contextlib.nullcontext()
         with ctx:
-            t = model.norm(adapter.forward_tokens(x, model))
+            t = T2.final_norm_tokens(model, adapter.forward_tokens(x, model), skip_even=full_tokens)
         B, _, H, W = x.shape
         gh, gw = H // ps, W // ps
         pt = t[:, p:]
@@ -684,15 +718,18 @@ def sliding_windows(h: int, w: int, crop: int, stride: int) -> list:
 
 
 @torch.no_grad()
-def slide_logits(logit_fn, x: torch.Tensor, crop: int, stride: int, num_classes: int, batch: int = 16) -> tuple:
+def slide_logits(logit_fn, x: torch.Tensor, crop: int, stride: int, num_classes: int, batch: int = 16,
+                 windows=None) -> tuple:
     """x [1, 3, h, w] -> (logits [1, C, h, w] float32, count [h, w]). logit_fn maps windows [n, 3, crop, crop]
     to logits [n, C, crop, crop]. Each pixel gets the mean of the logits of the windows that contain it
-    (count = how many). An image smaller than the window is zero-padded at the bottom and right first."""
+    (count = how many). An image smaller than the window is zero-padded at the bottom and right first.
+    `windows` (top-left corners on the padded image) replaces the sliding_windows layout when given (the
+    mask-equivariance check passes the mirrored layout for the mirrored image)."""
     _, _, h, w = x.shape
     ph, pw = max(h, crop), max(w, crop)
     if (ph, pw) != (h, w):
         x = F.pad(x, (0, pw - w, 0, ph - h))
-    wins = sliding_windows(ph, pw, crop, stride)
+    wins = sliding_windows(ph, pw, crop, stride) if windows is None else [(int(y), int(c)) for y, c in windows]
     acc = torch.zeros(1, num_classes, ph, pw, dtype=torch.float32, device=x.device)
     cnt = torch.zeros(ph, pw, dtype=torch.float32, device=x.device)
     for s in range(0, len(wins), batch):
@@ -793,6 +830,237 @@ def vexact_checks(factory, adapter, model, v, x: torch.Tensor, contrast_px: int 
 
 
 # ----------------------------------------------------------------------------------------------
+# Mask equivariance (MUST-11): mask(mirror x) against mirror(mask x), raw and symmetrised head
+# ----------------------------------------------------------------------------------------------
+MASK_EQ_RECIPE = "t2seg-maskeq-v1"
+
+
+def split_final_norm(model: nn.Module, skip_even: bool = False) -> tuple:
+    """(pre, affine, description): model.norm(t) = affine(pre(t)), with pre the normalisation without the final
+    affine. nn.LayerNorm: pre = layer_norm without affine, affine = (gamma, beta). Folded models
+    (mirror.fold, final_norm_affine=False; V-exact): model.norm = Sequential(rms, [even,] affine), pre = every
+    child before `affine` (without `even` when skip_even: the full tokens). Anything else raises
+    NotImplementedError."""
+    norm = model.norm
+    if isinstance(norm, nn.LayerNorm):
+        w, b = norm.weight, norm.bias
+
+        def pre(t):
+            return F.layer_norm(t, norm.normalized_shape, None, None, norm.eps)
+
+        def affine(n):
+            n = n * w if w is not None else n
+            return n + b if b is not None else n
+
+        return pre, affine, "LayerNorm without its affine, then the affine (gamma, beta)"
+    if isinstance(norm, nn.Sequential) and hasattr(norm, "affine"):
+        names = [n for n, _ in norm.named_children()]
+        if names[-1] != "affine":
+            raise NotImplementedError(f"final norm children {names}: the affine must come last")
+        mods = [m for n, m in norm.named_children() if n != "affine" and not (skip_even and n == "even")]
+        names = [n for n in names if not (skip_even and n == "even")]
+
+        def pre(t):
+            for mod in mods:
+                t = mod(t)
+            return t
+
+        return pre, norm.affine, f"folded final norm: {' then '.join(names[:-1])}, then the affine"
+    raise NotImplementedError(f"final norm {type(norm).__name__}: no affine to separate")
+
+
+def mask_eq_operator(model: nn.Module, factory, full_tokens: bool = True) -> tuple:
+    """(A, description) for the symmetrised head (head(z) + head(T z)) / 2, T z = affine(pre(t) A):
+    - a model with an even head (Mirror-exact at full conversion): its own span operator A* (2 P - I). With
+      full tokens (the default, even projection bypassed) the normalised tokens are exactly A*-equivariant, so
+      the symmetrised head is exactly mask-equivariant and the raw head is not; with even tokens
+      (--even-tokens) they are invariant, T is the identity up to rounding and both heads are exact;
+    - any other model (the original, V-local, SVD, random, partial spans, other healed models): A_L, the
+      per-layer operator fitted on the last stream layer (the output of the last block) in the X2 operator
+      file of this model (fit seed 0; --operators). The normalised final tokens of the original are close to
+      A_L-equivariant (A_L 1 = 1 and A_L is orthogonal, so it commutes with LayerNorm's centring and scaling).
+    (None, reason) when no operator is available; the symmetrised head is then skipped."""
+    from mirror.heal import exact_involution
+
+    even = getattr(getattr(model, "norm", None), "even", None)
+    if even is not None and hasattr(even, "P"):
+        P = even.P.detach().double().cpu().numpy()
+        return (exact_involution(2.0 * P - np.eye(P.shape[0])),
+                "A* of the model's even head (full tokens: exactly A*-equivariant before the final affine)" if full_tokens
+                else "A* of the model's even head (even tokens: invariant, symmetrised head = raw head up to rounding)")
+    if factory.operators is None or not Path(factory.operators).exists():
+        return None, "no operator file (pass --operators): symmetrised head not computed"
+    st = factory.structure()
+    return (np.asarray(st.A_layers[-1], dtype=np.float64),
+            f"A_L: last-layer per-layer operator (layer {len(st.A_layers) - 1}) from {factory.operators}")
+
+
+def make_pair_feature_fn(adapter, model, device, A=None, full_tokens: bool = True):
+    """uint8 windows [B, 3, H, W] -> (z, z_T) patch-token maps [B, d, H/p, W/p] in the model's dtype, no
+    autocast (fp32 with TF32 off in main): z = model.norm(tokens) as the head sees it, z_T = affine(pre(t) A),
+    the same tokens with A applied before the final affine (None without A). `full_tokens` (default, as main's
+    default): a model with an even head gives its full tokens (even projection bypassed), as make_feature_fn.
+    Call under torch.no_grad()."""
+    pre, affine, _ = split_final_norm(model, skip_even=full_tokens)
+    device = torch.device(device)
+    p, ps = int(adapter.n_prefix_tokens), int(adapter.patch_size)
+    A_t = None
+    if A is not None:
+        A_t = torch.as_tensor(np.asarray(A, dtype=np.float64), dtype=next(model.parameters()).dtype, device=device)
+
+    def to_map(t, B, gh, gw):
+        pt = t[:, p:]
+        if pt.shape[1] != gh * gw:
+            raise RuntimeError(f"{pt.shape[1]} patch tokens for a {gh} x {gw} grid")
+        return pt.transpose(1, 2).reshape(B, pt.shape[-1], gh, gw)
+
+    def fn(x_uint8: torch.Tensor):
+        x = normalize_for(adapter, x_uint8).to(next(model.parameters()).dtype)
+        B, _, H, W = x.shape
+        n = pre(adapter.forward_tokens(x, model))
+        z = to_map(affine(n), B, H // ps, W // ps)
+        zT = to_map(affine(n @ A_t), B, H // ps, W // ps) if A_t is not None else None
+        return z, zT
+
+    fn.has_sym = A_t is not None
+    return fn
+
+
+@torch.no_grad()
+def mask_equivariance(head, pair_fn, store: RaggedStore, crop: int, stride: int, lut: np.ndarray, num_classes: int,
+                      device, eval_batch: int = 16, max_images: int | None = None, log_every: int = 250) -> dict:
+    """Share of pixels where mask(mirror x) equals mirror(mask x), for the raw head and (if pair_fn.has_sym) the
+    symmetrised head (head(z) + head(z_T)) / 2, on the first `max_images` validation images (default all).
+
+    The evaluation pipeline of `evaluate` is made flip-symmetric so that only the model and the head are tested:
+    the image is padded at the bottom and right to at least crop x crop (as slide_logits does), the original
+    uses the sliding_windows layout and the mirrored canvas uses the mirrored layout (column pw - crop - c);
+    window logits are averaged per pixel, cropped to the image (the mirrored image occupies the right part of
+    its canvas) and upsampled bilinearly (align_corners False, flip-symmetric) to the label resolution. Pixels
+    counted: every pixel at label resolution (and separately the labelled ones). Also returned per head: mIoU of
+    the original images' masks in this precision, the largest |logits(mirror x) - mirror(logits x)| relative to
+    the largest |logit|, and the largest top-2 logit margin among differing pixels (small values mean the
+    differences are near-ties, that is rounding)."""
+    device = torch.device(device)
+    head.eval()
+    n = len(store) if max_images is None else min(int(max_images), len(store))
+    heads = ["raw", "sym"] if getattr(pair_fn, "has_sym", False) else ["raw"]
+    C = int(num_classes)
+    st = {h: {"eq": 0, "n": 0, "eq_lab": 0, "n_lab": 0, "logit_diff": 0.0, "logit_ref": 0.0, "margin_diff": 0.0}
+          for h in heads}
+    conf = {h: torch.zeros(C * C, dtype=torch.int64, device=device) for h in heads}
+
+    def logit_fn(xb):
+        z, zT = pair_fn(xb)
+        raw = head(z)
+        outs = [raw] if len(heads) == 1 else [raw, 0.5 * (raw + head(zT))]
+        return F.interpolate(torch.cat(outs, 1), size=(crop, crop), mode="bilinear", align_corners=False)
+
+    t0 = time.time()
+    for i in range(n):
+        img = torch.from_numpy(np.array(store.image(i))).to(device).permute(2, 0, 1)[None]
+        lab = torch.from_numpy(lut[store.label(i)]).to(device).long()
+        h, w = img.shape[-2:]
+        ph, pw = max(h, crop), max(w, crop)
+        xp = F.pad(img, (0, pw - w, 0, ph - h)) if (ph, pw) != (h, w) else img
+        wins = sliding_windows(ph, pw, crop, stride)
+        lo, _ = slide_logits(logit_fn, xp, crop, stride, C * len(heads), eval_batch, windows=wins)
+        lm, _ = slide_logits(logit_fn, xp.flip(-1), crop, stride, C * len(heads), eval_batch,
+                             windows=[(y, pw - crop - c) for y, c in wins])
+        lo, lm = lo[:, :, :h, :w], lm[:, :, :h, pw - w:]
+        if tuple(lo.shape[-2:]) != tuple(lab.shape):
+            lo = F.interpolate(lo, size=tuple(lab.shape), mode="bilinear", align_corners=False)
+            lm = F.interpolate(lm, size=tuple(lab.shape), mode="bilinear", align_corners=False)
+        labelled = (lab != IGNORE).flip(-1)
+        for j, hname in enumerate(heads):
+            lj, lmj = lo[:, j * C:(j + 1) * C], lm[:, j * C:(j + 1) * C]
+            pred = lj.argmax(1)[0]
+            eq = lmj.argmax(1)[0] == pred.flip(-1)                 # in the mirrored image's coordinates
+            s = st[hname]
+            s["eq"] += int(eq.sum())
+            s["n"] += int(eq.numel())
+            s["eq_lab"] += int((eq & labelled).sum())
+            s["n_lab"] += int(labelled.sum())
+            s["logit_diff"] = max(s["logit_diff"], float((lmj - lj.flip(-1)).abs().max()))
+            s["logit_ref"] = max(s["logit_ref"], float(lj.abs().max()))
+            if not bool(eq.all()):
+                top2 = lj.topk(2, dim=1).values[0]
+                margin = (top2[0] - top2[1]).flip(-1)
+                s["margin_diff"] = max(s["margin_diff"], float(margin[~eq].max()))
+            confusion_update(conf[hname], pred, lab, C)
+        if log_every and (i + 1) % log_every == 0:
+            log(f"  mask equivariance {i + 1}/{n} images, {(i + 1) / max(time.time() - t0, 1e-9):.1f} img/s")
+    out = {"n_images": int(n), "heads": heads, "seconds": round(time.time() - t0, 1)}
+    for hname in heads:
+        s = st[hname]
+        m = seg_metrics(conf[hname].view(C, C).cpu().numpy())
+        out[hname] = {"share": 100.0 * s["eq"] / max(s["n"], 1), "n_pixels": s["n"], "n_differ": s["n"] - s["eq"],
+                      "share_labelled": 100.0 * s["eq_lab"] / max(s["n_lab"], 1), "n_labelled": s["n_lab"],
+                      "max_logit_diff": s["logit_diff"],
+                      "max_logit_diff_rel": s["logit_diff"] / s["logit_ref"] if s["logit_ref"] > 0 else float("nan"),
+                      "max_margin_of_differing_pixels": s["margin_diff"] if s["n"] > s["eq"] else None,
+                      "mIoU": m["mIoU"], "aAcc": m["aAcc"], "mAcc": m["mAcc"]}
+    return out
+
+
+def mask_eq_fields(res: dict, operator: str | None, precision: str) -> dict:
+    """The row columns of a mask-equivariance result (None for the symmetrised head when it was skipped)."""
+    r, s = res["raw"], res.get("sym") or {}
+    return {"mask_eq_raw": r["share"], "mask_eq_sym": s.get("share"), "mask_eq_raw_n_differ": r["n_differ"],
+            "mask_eq_sym_n_differ": s.get("n_differ"), "mask_eq_n_pixels": r["n_pixels"],
+            "mask_eq_n_images": res["n_images"], "mask_eq_raw_logit_diff_rel": r["max_logit_diff_rel"],
+            "mask_eq_sym_logit_diff_rel": s.get("max_logit_diff_rel"), "mask_eq_mIoU_raw": r["mIoU"],
+            "mask_eq_mIoU_sym": s.get("mIoU"), "mask_eq_operator": operator, "mask_eq_precision": precision}
+
+
+def mask_eq_path(vdir: Path, v) -> Path:
+    return Path(vdir) / f"{v.name}_maskeq.json"
+
+
+def mask_eq_settings(a, settings_j: dict, factory) -> dict:
+    """Everything that changes a mask-equivariance result: the variant's run settings (so a retrained head
+    invalidates it), the recipe, the images, the precision and the operator file (A_L)."""
+    ops = factory.operators
+    op_file = {"path": str(ops), "sha256": T2.sha256(ops)} if ops is not None and Path(ops).exists() else None
+    return T2._jsonable({"recipe": MASK_EQ_RECIPE, "run": settings_j, "max_images": a.mask_eq_images,
+                         "operator_file": op_file, "precision": "fp32 (no autocast, TF32 off)",
+                         "final_tokens": "even" if a.even_tokens else "full"})
+
+
+def mask_eq_reusable(a, v, vdir: Path, settings_j: dict, factory):
+    """The saved mask-equivariance fields of this variant if they were made with the same settings, else None."""
+    path = mask_eq_path(vdir, v)
+    if path.exists() and not a.force:
+        prev = json.loads(path.read_text(encoding="utf-8"))
+        if prev.get("settings") == mask_eq_settings(a, settings_j, factory):
+            return prev["fields"]
+    return None
+
+
+def run_mask_eq(a, v, adapter, model, factory, head, data, lut, C, device, vdir: Path, settings_j: dict) -> dict:
+    """Compute (or reuse) the mask-equivariance result of one variant and write <variant>_maskeq.json."""
+    done = mask_eq_reusable(a, v, vdir, settings_j, factory)
+    if done is not None:
+        log(f"  mask equivariance done before ({mask_eq_path(vdir, v).name}); reusing")
+        return done
+    A, desc = mask_eq_operator(model, factory, full_tokens=not a.even_tokens)
+    ms = mask_eq_settings(a, settings_j, factory)
+    path = mask_eq_path(vdir, v)
+    if A is None:
+        log(f"WARNING: {v.name}: {desc}")
+    pair_fn = make_pair_feature_fn(adapter, model, device, A, full_tokens=not a.even_tokens)
+    res = mask_equivariance(head, pair_fn, data["val"], a.crop, a.eval_stride, lut, C, device, a.eval_batch,
+                            a.mask_eq_images)
+    fields = mask_eq_fields(res, desc, "fp32 (no autocast, TF32 off)")
+    log(f"  {v.name}: mask equivariance (fp32, {res['n_images']} images): raw head {fields['mask_eq_raw']:.4f}% "
+        f"({fields['mask_eq_raw_n_differ']} pixels differ)"
+        + (f", symmetrised head {fields['mask_eq_sym']:.4f}% ({fields['mask_eq_sym_n_differ']} differ)"
+           if fields["mask_eq_sym"] is not None else ", symmetrised head skipped"))
+    T2.write_json(path, {"fields": fields, "result": res, "settings": ms, "operator": desc})
+    return fields
+
+
+# ----------------------------------------------------------------------------------------------
 # Tiny synthetic data (CPU smoke test and tests)
 # ----------------------------------------------------------------------------------------------
 TINY_ENTRY = {"name": "tiny synthetic segmentation", "hf_id": "local/tiny_seg", "revision": "none",
@@ -854,7 +1122,10 @@ CSV_COLUMNS = ["model", "variant", "label", "family", "method", "k", "mIoU", "aA
                "vexact_grid", "vexact_grid_interpolation", "vexact_grid_reproj_rel_change",
                "vexact_rel_err_without_reprojection", "converted_params_kept", "converted_params_dense", "model_params",
                "t_build_s", "t_check_s", "t_train_s", "t_eval_s", "t_total_s", "train_img_per_s",
-               "resumed_from_iter", "peak_mem_gb", "amp", "hf_id", "hf_revision", "git_hash", "git_dirty", "date"]
+               "resumed_from_iter", "peak_mem_gb", "amp", "hf_id", "hf_revision", "git_hash", "git_dirty", "date",
+               "mask_eq_raw", "mask_eq_sym", "mask_eq_raw_n_differ", "mask_eq_sym_n_differ", "mask_eq_n_pixels",
+               "mask_eq_n_images", "mask_eq_raw_logit_diff_rel", "mask_eq_sym_logit_diff_rel", "mask_eq_mIoU_raw",
+               "mask_eq_mIoU_sym", "mask_eq_operator", "mask_eq_precision"]
 
 
 def _f(x, nd=2) -> str:
@@ -875,6 +1146,11 @@ def write_tables(out: Path) -> list:
     for p in sorted((Path(out) / "seg").glob("*/*.json")):
         r = json.loads(p.read_text(encoding="utf-8"))
         if "row" in r:
+            me = p.with_name(f"{p.stem}_maskeq.json")          # --mask-eq result of the same run settings
+            if me.exists():
+                m = json.loads(me.read_text(encoding="utf-8"))
+                if (m.get("settings") or {}).get("run") == r.get("settings"):
+                    r["row"] = {**r["row"], **m["fields"]}
             rows.append(r["row"])
     if not rows:
         return rows
@@ -940,6 +1216,28 @@ def write_summary(path: Path, rows: list) -> None:
             lines.append(f"| {r['variant']} | {r['label']} | {_f(r['mIoU'])} | {_f(r['aAcc'])} | {_f(r['mAcc'])} | "
                          f"{delta} | {'; '.join(notes) or '-'} |")
         lines.append("")
+    me = [r for r in rows if r.get("mask_eq_raw") is not None]
+    if me:
+        lines += ["## Mask equivariance (MUST-11)", "",
+                  "Share of pixels where the mask of the mirrored image equals the mirrored mask (all pixels at label "
+                  "resolution), fp32 without autocast, TF32 off, with a flip-symmetric window layout (the mirrored "
+                  "image uses the mirrored windows), so only the model and the head are tested. Raw: the trained "
+                  "linear head. Symmetrised: (head(z) + head(T z)) / 2 with T applying the operator in the last "
+                  "column to the normalised final tokens before the final affine. Mirror-exact models with an even "
+                  "head use their full tokens (even projection bypassed) unless the run used --even-tokens; their "
+                  "tokens are then exactly A*-equivariant, so the symmetrised head is exact and the raw head is "
+                  "not. mIoU columns: the same pass "
+                  "scored on the original images (fp32), beside the bf16 protocol mIoU of the main table.", "",
+                  "| Model | Variant | Raw head (%) | Pixels differing | Symmetrised head (%) | Pixels differing | "
+                  "mIoU raw / symmetrised (fp32) | Images | Operator |",
+                  "|---|---|---|---|---|---|---|---|---|"]
+        for r in me:
+            sym = "-" if r.get("mask_eq_sym") is None else f"{r['mask_eq_sym']:.4f}"
+            lines.append(f"| {r['model']} | {r['variant']} | {r['mask_eq_raw']:.4f} | {int(r['mask_eq_raw_n_differ']):,} | "
+                         f"{sym} | {'-' if r.get('mask_eq_sym_n_differ') is None else format(int(r['mask_eq_sym_n_differ']), ',')} | "
+                         f"{_f(r.get('mask_eq_mIoU_raw'))} / {_f(r.get('mask_eq_mIoU_sym'))} | {r['mask_eq_n_images']} | "
+                         f"{r.get('mask_eq_operator')} |")
+        lines.append("")
     if any(r.get("method") == "vexact" for r in rows):
         c = r0["crop"]
         lines += ["V-exact: `mirror.m1.build_vexact` projects the position embedding on the grid in use, and "
@@ -992,6 +1290,18 @@ def parse_args(argv=None):
                    help="fallback config when <vexact-dir>/k<K>/summary.json is missing (default configs/m3_vexact.yaml)")
     p.add_argument("--vexact-check-images", type=int, default=None,
                    help="training crops for the exactness checks of healed V-exact variants (8)")
+    p.add_argument("--healed-run", action="append", default=None, metavar="[NAME=]DIR",
+                   help="a healed model through mirror.heal_structured.load_healed_model, as in scripts/tier2_linear.py "
+                        "(repeatable; checked on --vexact-check-images crops when it is exactly equivariant)")
+    p.add_argument("--mask-eq", action="store_true",
+                   help="MUST-11: also measure mask equivariance (raw and symmetrised head, fp32) after evaluation; "
+                        "results in seg/<model>/<variant>_maskeq.json and the mask_eq_* columns. Finished variants "
+                        "are not retrained: their saved head is reused")
+    p.add_argument("--mask-eq-images", type=int, default=None, help="validation images for --mask-eq (default all)")
+    p.add_argument("--even-tokens", action="store_true",
+                   help="Mirror-exact models with an even head: use the even-projected final tokens (the old "
+                        "behaviour) instead of the full tokens (default: final RMSNorm then affine, even projection "
+                        "bypassed). Other models are unaffected")
     p.add_argument("--random-seed", type=int, default=1)
     p.add_argument("--seed", type=int, default=0, help="crop schedule and head initialisation (same for every variant)")
     p.add_argument("--crop", type=int, default=None, help="crop and evaluation size, px (448)")
@@ -1039,8 +1349,10 @@ def build_seg_adapter(model_name: str, tiny: bool, device, crop: int):
     return T2.build_adapter(model_name, False, device, crop)
 
 
-def run_settings(a, v, model_name: str, sources: dict, data_meta: dict, entry: dict) -> dict:
-    """Everything that changes a variant's result; a finished result is reused only if this matches."""
+def run_settings(a, v, model_name: str, sources: dict, data_meta: dict, entry: dict, depth: int | None = None) -> dict:
+    """Everything that changes a variant's result; a finished result is reused only if this matches. For
+    variants that can carry an even head (scripts/tier2_linear.may_have_even_head, given `depth`) it includes
+    the final-token choice (full by default, even with --even-tokens); other variants' settings are unchanged."""
     return {"recipe": RECIPE, "model": model_name, "variant": v.name, "crop": a.crop, "iters": a.iters,
             "batch": a.batch_size, "lr": a.lr, "weight_decay": a.weight_decay, "warmup": a.warmup_iters,
             "min_lr_ratio": a.min_lr_ratio, "bn": not a.no_bn, "head_init_std": a.head_init_std, "seed": a.seed,
@@ -1048,13 +1360,16 @@ def run_settings(a, v, model_name: str, sources: dict, data_meta: dict, entry: d
             "dataset": {"hf_id": entry["hf_id"], "revision": entry["revision"], "counts": data_meta.get("counts"),
                         "short_side": data_meta.get("short_side")},
             "random_seed": a.random_seed if v.method == "random" else None, "sources": sources,
-            **({"healed_vexact_grid": HEALED_VEXACT_GRID} if v.family == "healed_vexact" else {})}
+            **({"healed_vexact_grid": HEALED_VEXACT_GRID} if v.family == "healed_vexact" else {}),
+            **({"healed_run_grid": HEALED_VEXACT_GRID} if v.family == "healed_run" else {}),
+            **({"final_tokens": "even" if a.even_tokens else "full"}
+               if depth is not None and T2.may_have_even_head(v, depth) else {})}
 
 
 def main(argv=None) -> dict:
     a = parse_args(argv)
     tiny = a.tiny
-    variants = T2.parse_variants(a.variants)
+    variants = T2.variants_from_args(a)
     T2.check_vexact_checkpoint_arg(variants, a.vexact_checkpoint)
     model_name = "tiny" if tiny else a.model
     out = Path(a.out) if a.out else REPO_ROOT / ("tiny_out/t2_seg" if tiny else "runs/t2_seg")
@@ -1090,13 +1405,13 @@ def main(argv=None) -> dict:
     with timer.stage("load"):
         adapter = build_seg_adapter(a.model, tiny, device, a.crop)
         paths = T2.resolve_paths(a)
-        if tiny and paths["operators"] is None and any(v.family in ("mlp", "m1") for v in variants):
+        if tiny and paths["operators"] is None and (any(v.family in ("mlp", "m1") for v in variants) or a.mask_eq):
             from mirror import variants as V
 
             V.load_or_make_structure(None, True, adapter, V.TinyProtocol(img_size=a.crop), device, out)
             paths["operators"] = str(out / "tiny_fit" / "results" / "e1_operators.npz")
         factory = T2.make_factory(adapter, a, tiny, paths)
-        if any(v.family == "healed_vexact" for v in variants):
+        if any(v.family in ("healed_vexact", "healed_run") for v in variants):
             # Healed V-exact students are checked at the segmentation size (fp32, TF32 off) on training crops.
             factory.check_xs = check_crops(data["train"], a.vexact_check_images, a.crop, a.seed, lut, adapter, device)
             factory.check_label = f"ADE20K training crops at {a.crop} px"
@@ -1112,7 +1427,7 @@ def main(argv=None) -> dict:
         t_var = time.time()
         log(f"=== {v.name}: {v.label}")
         sources = factory.sources(v)                 # fails early when a needed file is missing
-        settings = run_settings(a, v, model_name, sources, data["meta"], entry)
+        settings = run_settings(a, v, model_name, sources, data["meta"], entry, depth=adapter.depth)
         settings_j = T2._jsonable(settings)
         vdir = out / "seg" / model_name
         vdir.mkdir(parents=True, exist_ok=True)
@@ -1121,7 +1436,28 @@ def main(argv=None) -> dict:
             prev = json.loads(vjson.read_text(encoding="utf-8"))
             if "row" in prev and prev.get("settings") == settings_j:
                 log(f"  finished before ({vjson.name}): mIoU {prev['row']['mIoU']:.2f}; skipping")
-                results.append(prev["row"])
+                fields = None
+                if a.mask_eq:
+                    fields = mask_eq_reusable(a, v, vdir, settings_j, factory)
+                    hp = torch.load(head_path, map_location="cpu", weights_only=True) if head_path.exists() else {}
+                    if fields is None and hp.get("settings") != settings_j:
+                        log(f"WARNING: {v.name}: no trained head with these settings ({head_path.name}); "
+                            "mask equivariance skipped")
+                    elif fields is None:
+                        model, info = factory.build(v)
+                        model.eval()
+                        head = LinearSegHead(adapter.embed_dim, C, bn=not a.no_bn, init_std=a.head_init_std,
+                                             seed=a.seed).to(device)
+                        head.load_state_dict(hp["head"])
+                        fields = run_mask_eq(a, v, adapter, model, factory, head, data, lut, C, device, vdir,
+                                             settings_j)
+                        del head
+                        if model is not adapter.model:
+                            del model
+                        T2.free_memory(device)
+                results.append({**prev["row"], **(fields or {})})
+                if a.mask_eq:
+                    write_tables(out)
                 continue
             log(f"  {vjson.name} was made with other settings; recomputing")
         if device.type == "cuda":
@@ -1132,7 +1468,7 @@ def main(argv=None) -> dict:
             model, info = factory.build(v)
             model.eval()
         t_build = time.time() - t0
-        feature_fn = make_feature_fn(adapter, model, device, amp)
+        feature_fn = make_feature_fn(adapter, model, device, amp, full_tokens=not a.even_tokens)
 
         t0, checks = time.time(), None
         if v.family == "healed_vexact":
@@ -1224,9 +1560,14 @@ def main(argv=None) -> dict:
                "resumed_from_iter": int(train_res.get("start_iter") or 0),
                "peak_mem_gb": round(torch.cuda.max_memory_allocated(device) / 2 ** 30, 2) if device.type == "cuda" else None,
                "amp": a.amp, "hf_id": entry["hf_id"], "hf_revision": entry["revision"], "git_hash": git["git_hash"],
-               "git_dirty": git["git_dirty"], "date": time.strftime("%Y-%m-%d %H:%M:%S"), **healed_vx}
+               "git_dirty": git["git_dirty"], "date": time.strftime("%Y-%m-%d %H:%M:%S"), **healed_vx,
+               **({"final_tokens": "even-projected" if a.even_tokens else "full (even projection bypassed)"}
+                  if T2.has_even_head(model) else {})}
         if v.family == "healed_vexact":
             checks = {"healed": info["vexact_checks"], "position_grid": info.get("position_grid")}
+        if v.family == "healed_run":
+            row["notes"] = T2.healed_run_note(info)
+            checks = {"healed_run": info.get("healed_run_checks"), "position_grid": info.get("position_grid")}
         T2.write_json(vjson, {
             "row": row, "settings": settings,
             "metrics": {"mIoU": ev["mIoU"], "aAcc": ev["aAcc"], "mAcc": ev["mAcc"], "per_class_iou": ev["iou"],
@@ -1237,6 +1578,10 @@ def main(argv=None) -> dict:
             "train": train_res, "train_cfg": asdict(cfg), "vexact_checks": checks, "variant_info": info,
             "sources": sources, "dataset": {k: v_ for k, v_ in data["meta"].items() if k != "decode"},
             "timing": vt.stages, "git": git, "env": env_info(device)})
+        if a.mask_eq:
+            with vt.stage(f"mask equivariance {v.name}"):
+                row = {**row, **run_mask_eq(a, v, adapter, model, factory, head, data, lut, C, device, vdir,
+                                            settings_j)}
         results.append(row)
         run_timing[v.name] = vt.stages
         write_tables(out)

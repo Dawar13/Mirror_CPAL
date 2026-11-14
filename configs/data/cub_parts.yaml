@@ -1,0 +1,116 @@
+# CUB-200-2011 part annotations, for CORE-06 (facing direction from beak and tail).
+# Every field was read from the cited source on 2026-11-14; nothing downloaded except small text files.
+# Anything not confirmed is marked (verify).
+dataset: CUB-200-2011
+citation: >-
+  Wah, C., Branson, S., Welinder, P., Perona, P. and Belongie, S. (2011). The Caltech-UCSD
+  Birds-200-2011 Dataset. California Institute of Technology, Technical Report CNS-TR-2011-001.
+  (BibTeX on the Caltech dataset page.)
+homepage: https://www.vision.caltech.edu/datasets/cub_200_2011/
+download:
+  official_url: https://data.caltech.edu/records/65de6-vp158/files/CUB_200_2011.tgz?download=1
+  api_content_url: https://data.caltech.edu/api/records/65de6-vp158/files/CUB_200_2011.tgz/content
+  record: "CaltechDATA record 65de6-vp158 (old id 20098 redirects here), DOI 10.22002/D1.20098, published 2022-04-11, rights cc-by (record metadata)"
+  file: CUB_200_2011.tgz
+  size_bytes: 1150585339                    # CaltechDATA files API; the homepage says "Images and annotations (1.1 GB)"
+  md5: 97eceeb196236b17998738112f37df78     # CaltechDATA files API checksum
+  segmentations: "separate download, CaltechDATA record 20097 (homepage: 'Segmentations (37 MB)')"
+  terms: "Homepage: \"We do not own the copyrights to these images. Their use is restricted to non-commercial research and educational purposes.\""
+  where: download on the VM under $HF_HOME (nothing on the laptop)
+counts:
+  images: 11788
+  classes: 200
+  parts_per_image: 15
+  part_locs_lines: 176820                   # = 11788 x 15, counted in the mirror below
+parts_txt:
+  path_in_archive: CUB_200_2011/parts/parts.txt
+  format: "<part_id> <part_name>, one per line, space separated (part names can contain a space)"
+  ids:                                      # verbatim, sha256 of the file 411a4ab5c7622c1b93bf84dd1e9f69a8a2feaecd79753ed13cfc27ec0c2aeef0
+    1: back
+    2: beak
+    3: belly
+    4: breast
+    5: crown
+    6: forehead
+    7: left eye
+    8: left leg
+    9: left wing
+    10: nape
+    11: right eye
+    12: right leg
+    13: right wing
+    14: tail
+    15: throat
+  for_core06:
+    beak: 2
+    tail: 14
+  left_right_pairs:                         # swap these IDs when an image is mirrored
+    - [7, 11]                               # left eye, right eye
+    - [8, 12]                               # left leg, right leg
+    - [9, 13]                               # left wing, right wing
+  unpaired: [1, 2, 3, 4, 5, 6, 10, 14, 15]
+  sources:
+    - url: https://raw.githubusercontent.com/shreyanavale/CUB_200_2011/279d719bb013274fff7bce4532f98db7b005c790/parts/parts.txt
+      kind: verbatim copy of parts/parts.txt in a GitHub mirror of the extracted archive (commit 279d719bb013274fff7bce4532f98db7b005c790, 2024-03-10)
+    - url: https://github.com/dahyun-kang/cub-200-2011-part-visualizer/blob/2038a04269fe9daef43fa8d893c79bed9753db81/viz.py#L27
+      kind: >-
+        independent repository; viz.py line 27 lists the same 15 names in the same order
+        (part_label_dict = ['back', 'beak', ..., 'tail', 'throat']), indexed by part ID minus 1
+  caveat: >-
+    Neither source is Caltech itself. The technical report shows the 15 parts only in a figure
+    (Fig. 2a), not as text. Confirm against parts/parts.txt after downloading the archive on the
+    VM (a one-line check: its sha256 should be 411a4ab5...aeef0 if line endings match).
+part_locs_txt:
+  path_in_archive: CUB_200_2011/parts/part_locs.txt
+  format: "<image_id> <part_id> <x> <y> <visible>"
+  readme_quote: |-
+    The set of all ground truth part locations is contained in the file parts/part_locs.txt, with each line corresponding to the annotation of a particular part in a particular image:
+
+    <image_id> <part_id> <x> <y> <visible>
+
+    where <image_id> and <part_id> correspond to the IDs in images.txt and parts/parts.txt, respectively.  <x> and <y> denote the pixel location of the center of the part.  <visible> is 0 if the part is not visible in the image and 1 otherwise.
+  observed: >-
+    Coordinates are floats (for example "1 2 312.0 182.0 1"); parts that are not visible are
+    written as x = 0.0, y = 0.0, visible = 0 (for example "1 1 0.0 0.0 0"). Filter on visible == 1,
+    never on the coordinates.
+  pixel_convention: >-
+    Pixel coordinates of the original image (the README does not say whether the origin is 0 or 1
+    based (verify); it matters only at the one-pixel level, below the 10 percent threshold).
+bounding_boxes_txt:
+  path_in_archive: CUB_200_2011/bounding_boxes.txt
+  format: "<image_id> <x> <y> <width> <height>"
+  readme_quote: |-
+    Each image contains a single bounding box label.  Bounding box labels are contained in the file bounding_boxes.txt, with each line corresponding to one image:
+
+    <image_id> <x> <y> <width> <height>
+
+    where <image_id> corresponds to the ID in images.txt, and <x>, <y>, <width>, and <height> are all measured in pixels
+  observed: "floats, 11788 lines (for example \"1 60.0 27.0 325.0 304.0\")"
+other_files:
+  images_txt: "<image_id> <image_name>"
+  train_test_split_txt: "<image_id> <is_training_image>  (1 = train, 0 = test)"
+  classes_txt: "<class_id> <class_name>"
+  image_class_labels_txt: "<image_id> <class_id>"
+  part_click_locs_txt: "<image_id> <part_id> <x> <y> <visible> <time>  (per MTurk worker)"
+readme_source: https://github.com/shreyanavale/CUB_200_2011/blob/279d719bb013274fff7bce4532f98db7b005c790/README   # the README file in the mirror; that it is byte-identical to the archive's README is not checked (verify on VM)
+core06_facing_rule:
+  definition: >-
+    facing = sign(x_beak - x_tail), using part 2 (beak) and part 14 (tail), only when both have
+    visible == 1 and |x_beak - x_tail| > 0.1 * bbox_width (bounding_boxes.txt width). Otherwise the
+    image gets no facing label.
+  sign_convention: "+1 means the beak is to the right of the tail in the image (bird faces right); fix this in code and log it (convention choice, not from a source)"
+  mirror_rule: >-
+    For a horizontally mirrored image of width W: x' = W - x (or W - 1 - x, depending on the
+    pixel convention above), so facing flips sign and the 10 percent test is unchanged. Swap the
+    left and right part IDs (pairs above) if any left or right part is used. Image width W comes
+    from the image file, not from the annotation files.
+warnings:
+  - >-
+    ImageNet overlap. The Caltech homepage says: "Warning: Images in this dataset overlap with
+    images in ImageNet. Exercise caution when using networks pretrained with ImageNet (or any
+    network pretrained with images from Flickr) as the test set of CUB may overlap with the
+    training set of the original network." Every model in Section 4.2 saw ImageNet or web data,
+    so CORE-06 should say this in the paper; the even/odd comparison is within one model, so the
+    overlap affects absolute accuracy more than the comparison.
+  - "The dataset README (as mirrored) says '322 binary attribute labels'; the homepage says 312 binary attributes. Not used by CORE-06."
+verified_on: "2026-11-14"

@@ -1,0 +1,61 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: clip_b16
+role: language-supervised (candidate no-flip control)
+registry_name: null    # not yet in mirror/adapters_timm.py MODEL_REGISTRY
+source:
+  kind: timm
+  timm_name: vit_base_patch16_clip_224.openai
+  hf_repo: timm/vit_base_patch16_clip_224.openai
+  timm_note: >-
+    timm default_cfgs note for this tag: "natively QuickGELU, use quickgelu model variant for
+    original results". timm registers vit_base_patch16_clip_quickgelu_224 (act_layer='quick_gelu')
+    but no pretrained tag for it was found in vision_transformer.py at the commit below, so the
+    adapter must build the QuickGELU architecture and load the .openai weights into it (verify the
+    mechanism on the VM, for example timm.create_model with pretrained_cfg_overlay).
+revision:
+  value: 977e3dd0ec55ab8da155f2fbeb6b5f54948b6e3d
+  kind: Hugging Face commit of timm/vit_base_patch16_clip_224.openai (API sha, lastModified 2025-01-21)
+  timm_code_commit: 43b549bfe9d680bc94284cfd0b611152d18e97d7
+  alt_hf_repo: {repo: openai/clip-vit-base-patch16, sha: 57c216476eefef5ab752ec549e440a49ae4ae5f3, note: transformers format, not used}
+architecture:
+  patch_size: 16
+  image_size: 224
+  blocks: 12
+  width: 768
+  heads: 12
+  mlp_hidden: 3072
+  mlp_type: QuickGELU MLP in the original model (timm's plain tag uses GELU, see timm_note)
+  registers: 0
+  cls_token: 1
+  layerscale: false
+  other: "pre_norm=True (LayerNorm before the blocks), LayerNorm eps=1e-5, projection head to 512 (num_classes=512)"
+  preprocessing: "OpenAI CLIP mean (0.48145466, 0.4578275, 0.40821073) and std (0.26862954, 0.26130258, 0.27577711), bicubic, crop_pct 0.9 (timm config.json)"
+  arch_source: https://github.com/huggingface/pytorch-image-models/blob/43b549bfe9d680bc94284cfd0b611152d18e97d7/timm/models/vision_transformer.py
+training_data: >-
+  400 million web image-text pairs (paper: "a dataset of 400 million (image, text) pairs collected
+  from the internet"); not released.
+recipe_flip: "no"
+recipe_quote: |-
+  A random square crop from resized images is the only data augmentation used during training.
+recipe_quote_section: Section 2.3 "Selecting an Efficient Pre-Training Method"
+recipe_quote_context: >-
+  Preceded by "We also simplify the image transformation function tv." It applies to all CLIP
+  models in the paper.
+recipe_source_url: https://arxiv.org/abs/2103.00020
+recipe_certainty: >-
+  Medium to high. The sentence is explicit, but it cannot be checked against code: the openai/CLIP
+  package at commit d05afc436d78f1c48dc0dbf8e5980a9d471f35f6 holds only clip.py, model.py,
+  simple_tokenizer.py and the vocabulary (no training script).
+other_augmentations:
+  - random square crop from resized images (only augmentation)
+notes:
+  - >-
+    "No flip augmentation" is not the same as "no mirror symmetry in the data": web photos of
+    left-facing and right-facing objects both occur, and captions rarely encode left or right.
+    The training distribution may still be close to mirror symmetric (not measured here).
+  - Differs from the flip-trained ViT-B models in data, objective, activation (QuickGELU) and pre-norm, so it is not a flips-only contrast.
+papers:
+  - "Radford et al., Learning Transferable Visual Models From Natural Language Supervision, arXiv 2103.00020"
+verified_on: "2026-11-14"

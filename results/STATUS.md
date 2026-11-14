@@ -1,5 +1,63 @@
 # STATUS (paper experiments)
 
+## Next phase (PROJECT_NEXT_PHASE.md, adopted 14 November 2026)
+
+Updated 2026-11-14. PROJECT_NEXT_PHASE.md now defines the remaining work (MUST, CORE and UP experiments) and supersedes
+PAPER_EXPERIMENTS.md and the old job lists. Nothing of the new phase has run on a GPU yet. Gate A (pre-registration
+signed off and committed, MUST-00 clean) is the next step.
+
+**Done without a GPU**
+- MUST-00 audit: `results/MUST-00/audit.md`. 48 claims of Section 3: 38 match, 2 mismatch (transfer gap of the 6-block
+  healed exact model is 0.86 on CIFAR-100, not "about 0.5"; SigLIP2's pre-registered P4 check failed), 8 need context
+  (operator-fit 10.6x and 0.16 are plain DINOv2 under the E1b protocol; the registers model gives 13.1x and 0.17; full
+  conversion flip consistency is 100% in the fp32 check on 5,000 queries and 99.76% with bf16 features on 50,000).
+- MUST-01 law check: `results/MUST-01/` (predicted and achieved savings agree on all 144 blocks of 7 models; DINOv2-S
+  and L checked on counts only, their structure files are not on the laptop). To be rerun from the committed code.
+- Model recipes (`configs/models/*.yaml`, `docs/model_recipes.md`): flips verified for DINOv2, DeiT-III, MAE, DINO v1,
+  EVA-02, ConvNeXt, ResNet-50; CLIP verified without flips; DINOv3 probably without; SigLIP2 unknown.
+- Data IDs: `configs/data/` (CUB part IDs, ImageNet-100 list checked against 3 sources, ImageNet-V2 and Sketch).
+- Citations and novelty: `docs/references_check.md`, `docs/refs.bib`, `docs/novelty_check_2026-11.md` (closest:
+  Bökman and Kahl 2023, Rahman et al. CVPR 2026, Shahverdi et al. ICML 2026; risk medium-low; 5 citation descriptions
+  to correct).
+- Pre-registration draft: `PREREG_NEXT_PHASE.md` (not committed; waits for Dawar's sign-off, Section 9 lists the
+  choices). Deviations log: `notes/decisions.md`.
+
+**Code written for the GPU phase** (CPU tests pass; nothing run on real data)
+- MUST-02 `scripts/must02_exactness.py`, `docs/exactness.md`; MUST-03/04 `mirror/groups.py`, `mirror/group_stats.py`,
+  `scripts/measure_groups.py`; MUST-05/06 `scripts/must05_twins.py`, `scripts/must06_visibility.py`; MUST-07/08
+  `mirror/budget.py`, `mirror/baselines.py` (6 new compressors), `mirror/mirror_family.py`,
+  `scripts/must07_compressors.py`; MUST-09/10 `mirror/heal_structured.py`, `scripts/must09_heal.py`,
+  `scripts/must10_flipavg.py` (resumable heals; float64 rank check replaces the float32 one noted below); MUST-11
+  options in the Tier-2 scripts (`--healed-run`, `--mask-eq`, full tokens for dense tasks); MUST-12/CORE-01/UP-01/UP-03
+  `mirror/controlled.py`, `scripts/train_controlled.py`, `scripts/build_imagenet100.py`.
+- H100 tooling: `scripts/h100_bootstrap.sh`, `scripts/h100_data.sh`, `scripts/h100_sched.sh` (locks, done markers,
+  headroom, restart-safe), `scripts/ship_h100.sh`, `scripts/pull_h100.sh`, `scripts/upload_structures_h100.sh`,
+  `scripts/check_disjoint.py`; method-selection set (10k train images) in `scripts/build_train_cache.py --msel`.
+- Not yet written (Phase 2 and 3, to be written while Phase 1 runs): CORE-02 group surgery on controlled models,
+  CORE-03 stacking, CORE-04 adapters for CLIP, DINO v1, DINOv3, EVA-02, DINOv2-g (SwiGLU), ConvNeXt and ResNet-50,
+  CORE-05 analysis, CORE-06 CUB probes, CORE-07 ImageNet-V2 probe, UP-02, UP-04 to UP-07.
+
+**H100 run plan** (one H100 80 GB; needs at least 32 CPU cores and 128 GB RAM, because neuron matchings are CPU-bound
+and MUST-07 holds its images in RAM; 500 GB disk, about 290 GB used by data)
+1. Laptop: `FIRST=1 bash scripts/ship_h100.sh`, then `bash scripts/upload_structures_h100.sh` (about 385 MB of
+   earlier operator files, the canonical fit-seed structures; Section 9 item 10 of the pre-registration).
+2. VM: `scripts/h100_bootstrap.sh`, then `scripts/h100_data.sh --optional` (about 1 to 1.5 h, estimate).
+3. VM: job file A `jobs/h100_A_phase1.txt` (Phase 1 and every MUST-09 heal; jobs start as their data arrive), then
+   job file B `jobs/h100_B_core.txt` after gate C (CORE-01 grid, its measurements, MUST-11, UP-01, UP-03), then job
+   file Q `jobs/h100_Q_latency.txt` alone on a quiet GPU.
+4. Concurrency: at most one heal or pilot run at a time (lock "heal"); MUST-07 invocations one at a time (shared CSV);
+   measurements and controlled-training runs overlap with them, 8 GB of GPU memory kept free.
+
+Estimated single-job H100 hours (estimates from the agents' FLOP counts and the 5090 and A100 timings; to be replaced by
+the first timed job of each kind): MUST-02 0.3, MUST-04 0.5 GPU (1 to 3 h wall each, CPU), MUST-05 0.5, MUST-06 0.2,
+MUST-07 1.9 plus MUST-08 0.15, MUST-09 9 heals at 0.6 to 0.9 each, MUST-10 1.0, MUST-11 1.5, MUST-12 0.5, CORE-01 3 to
+5, UP-01 and UP-03 1.5, timings 0.5: about 17 to 23 in all, against the plan's 19.5 and the 18-hour working limit.
+With 3 to 4 jobs overlapping, wall time is expected at about 14 to 18 hours after the data are ready. Over budget
+items and cuts: MUST-09 heals (about twice the plan's 0.5 h each: learning-rate trials, two full k-NN curve points
+and the fp32 pass) and MUST-07 (1.9 against 1.5); cut order as in PROJECT_NEXT_PHASE.md Section 9.
+
+## Earlier phase
+
 Updated 2026-11-10 about 04:00 UTC. **The RTX 5090 in South Korea (vast.ai instance 59906003) stopped answering some time after 18:45 UTC on 9 November (connection refused on both ssh routes at 03:55 UTC on 10 November); its disk holds the caches, the E3 run in progress and the first finished E3 arm (healed SVD, raw targets, not yet pulled). Dawar to check the vast.ai console (balance, instance state) and restart it.** History: the A100 went offline at about 21:40 UTC on 8 November; work moved to a 5090 in Estonia at about 04:30 UTC on 9 November; that GPU was taken by another renter after a stop, so its /workspace was copied with vast.ai's instance copy to the South Korea 5090 (9 November, about 15:40 to 19:00 UTC). Same code, torch build, seeds and ImageNet subsets throughout; results run on two GPUs agree to within 0.03 points. Every result that was on the Estonian disk has been pulled and committed (7821764).
 committed as 9804f06 before any gated run. Every number below is in `results/paper/` (tables, `numbers.json`
 with source file, seed and commit for each value); raw outputs in `runs/`; large artefacts (operators,

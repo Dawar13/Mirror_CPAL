@@ -1,0 +1,55 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: mae_b16
+role: masked reconstruction
+registry_name: mae_b16                    # key already in mirror/adapters_timm.py; used by configs/g_mae_b16.yaml
+source:
+  kind: timm
+  timm_name: vit_base_patch16_224.mae
+  hf_repo: timm/vit_base_patch16_224.mae
+  original_weights_url: https://dl.fbaipublicfiles.com/mae/pretrain/mae_pretrain_vit_base.pth   # url in timm default_cfgs
+  weights_bytes: 343249461                  # HEAD on the original URL, 2026-11-14
+  licence: cc-by-nc-4.0                     # timm pretrained_cfg and HF card
+revision:
+  value: a64dffd137c0cc3b09d9a1f55fa70fbddd3bf53a
+  kind: Hugging Face commit of timm/vit_base_patch16_224.mae (API sha, lastModified 2025-01-21)
+  timm_code_commit: 43b549bfe9d680bc94284cfd0b611152d18e97d7
+  alt_hf_repo: {repo: facebook/vit-mae-base, sha: 25b184bea5538bf5c4c852c79d221195fdd2778d, note: transformers format, not used}
+architecture:
+  patch_size: 16
+  image_size: 224
+  blocks: 12
+  width: 768
+  heads: 12
+  mlp_hidden: 3072
+  mlp_type: GELU MLP
+  registers: 0
+  cls_token: 1
+  layerscale: false
+  other: encoder only after pre-training; no fine-tuning (num_classes=0)
+  arch_source: https://github.com/huggingface/pytorch-image-models/blob/43b549bfe9d680bc94284cfd0b611152d18e97d7/timm/models/vision_transformer.py
+training_data: ImageNet-1k train, self-supervised (paper Section 4 "We do self-supervised pre-training on the ImageNet-1K (IN1K) [13] training set.")
+recipe_flip: "yes"
+recipe_quote: |-
+  transforms.RandomHorizontalFlip(),
+recipe_source_url: https://github.com/facebookresearch/mae/blob/efb2a8062c206524e35e47d04501ed4f544c0ae8/main_pretrain.py#L123-L127
+recipe_paper_quote: |-
+  Our MAE works well using cropping-only augmentation, either fixed-size or random-size (both having random horizontal flipping).
+recipe_paper_source: arXiv 2111.06377, Section 4.1 "Main Properties", paragraph "Data augmentation" (Table 1e)
+recipe_certainty: >-
+  High. The paper and the code agree. The released checkpoints are "converted from TF/TPU to
+  PT/GPU" (MAE README), and PRETRAIN.md says "The exact same hyper-parameters and configs
+  (initialization, augmentation, etc.) are used as our TF/TPU implementation."
+other_augmentations:
+  - "RandomResizedCrop(args.input_size, scale=(0.2, 1.0), interpolation=3) (bicubic)"
+  - "no colour jitter: the paper says adding it degrades results"
+  - random masking (75 percent) acts as the main augmentation in MAE
+notes:
+  - >-
+    The paper's Table 1e ablation includes a "none" row ("only center-crop, no flipping"), but the
+    released model uses the default (random-size crop with flipping).
+  - The plan uses the Tier-2 ImageNet linear probe as MAE's accuracy measure.
+papers:
+  - "He et al., Masked Autoencoders Are Scalable Vision Learners, arXiv 2111.06377"
+verified_on: "2026-11-14"

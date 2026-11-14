@@ -1,0 +1,77 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: dinov2_vitb14_reg
+role: main
+registry_name: dinov2_vitb14_reg          # key already in mirror/adapters_timm.py MODEL_REGISTRY
+source:
+  kind: torch_hub
+  hub_repo: facebookresearch/dinov2
+  entry_point: dinov2_vitb14_reg
+  entry_point_code: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/hub/backbones.py
+  weights_url: https://dl.fbaipublicfiles.com/dinov2/dinov2_vitb14/dinov2_vitb14_reg4_pretrain.pth
+  weights_bytes: 346393545                  # HTTP HEAD Content-Length, 2026-11-14
+  weights_last_modified: "Fri, 27 Oct 2023 10:37:00 GMT"
+revision:
+  value: 7764ea0f912e53c92e82eb78a2a1631e92725fc8
+  kind: >-
+    GitHub commit of facebookresearch/dinov2 (default branch) on 2026-11-14. This pins the hub code
+    only. torch.hub pulls the default branch unless a ref is given, so log the commit of the VM's hub
+    cache with each run (verify on VM). The weights are fixed by the URL above; record their sha256
+    on the VM.
+  hf_mirror:
+    repo: facebook/dinov2-with-registers-base
+    sha: a1d738ccfa7ae170945f210395d99dde8adb1805
+    note: Hugging Face transformers conversion; not what mirror/adapters_timm.py loads.
+architecture:
+  patch_size: 14
+  image_size_hub_default: 518               # _make_dinov2_model(img_size=518); the repo runs at 224 (16 x 16 grid)
+  blocks: 12
+  width: 768
+  heads: 12
+  mlp_hidden: 3072                          # block.py line 76: mlp_hidden_dim = int(dim * mlp_ratio), mlp_ratio=4
+  mlp_type: GELU MLP (fc1, act, fc2)
+  registers: 4                              # num_register_tokens=4 in dinov2_vitb14_reg
+  cls_token: 1
+  layerscale: true                          # init_values=1.0 in _make_dinov2_model
+  arch_source: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/models/vision_transformer.py
+training_data: LVD-142M
+training_data_quote: |-
+  DINOv2 ViT-B/14 model with registers (optionally) pretrained on the LVD-142M dataset.
+training_data_source_url: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/hub/backbones.py
+recipe_flip: "yes"
+recipe_quote: |-
+  transforms.RandomHorizontalFlip(p=0.5),
+recipe_quote_context: >-
+  Lines 49 (global crops) and 58 (local crops) of DataAugmentationDINO, under the comment
+  "# random resized crop and flip". dinov2/train/train.py (line 184) builds DataAugmentationDINO
+  for training.
+recipe_source_url: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/data/augmentations.py#L43-L60
+recipe_certainty: >-
+  High for the public code. The DINOv2 paper (arXiv 2304.07193) does not state the pre-training
+  flip in its text, and no source says the released weights came from exactly this file
+  (inferred from the official repository, not stated).
+other_augmentations:
+  - RandomResizedCrop, bicubic, global and local crops (multi-crop)
+  - "ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1), applied with p=0.8"
+  - RandomGrayscale(p=0.2)
+  - "GaussianBlur: p=1.0 on global crop 1, p=0.1 on global crop 2, p=0.5 on local crops"
+  - RandomSolarize(threshold=128, p=0.2) on global crop 2
+notes:
+  - >-
+    Paper resolution schedule: "we increase the resolution of images to 518 × 518 during a short
+    period at the end of pretraining" (arXiv 2304.07193; the multiplication sign is lost in PDF
+    text extraction).
+  - >-
+    The registers paper (Darcet et al., arXiv 2309.16588, Section 3.1) says of its own study runs:
+    "We run this method on ImageNet-22k with the ViT-L configuration. We use the official
+    repository". The released *_reg hub weights are documented as LVD-142M (quote above).
+  - Hub variant uses interpolate_antialias=True and interpolate_offset=0.0 (plain models use False and 0.1).
+  - >-
+    DINOv2 paper, Section 5 "Model distillation": "For smaller models, we distill them from our
+    largest model, the ViT-g, instead of training them from scratch." and "we leverage the same
+    training loop with a few exceptions" (the exceptions listed do not mention augmentation).
+papers:
+  - "Oquab et al., DINOv2: Learning Robust Visual Features without Supervision, arXiv 2304.07193"
+  - "Darcet et al., Vision Transformers Need Registers, arXiv 2309.16588"
+verified_on: "2026-11-14"

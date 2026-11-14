@@ -73,6 +73,7 @@ __all__ = [
     "LowRankMLP", "exact_involution", "configure_trainable", "sample_crop_params", "crop_resize_flip",
     "augment_batch", "centre_view", "distill_terms", "lr_at", "evaluate_heldout", "heal", "select_lr",
     "probe_extra_lrs", "heal_with_lr_selection", "trained_state_dict", "save_trained_blocks", "load_trained_blocks",
+    "load_train_state", "TRAIN_STATE_FORMAT",
 ]
 
 
@@ -198,18 +199,24 @@ def _prefetched(fn: Callable, items: Iterable, depth: int):
             yield fut.result()
 
 
-def _step_rows(train_rows: np.ndarray, batch_size: int, total_steps: int, seed: int):
+def _step_rows(train_rows: np.ndarray, batch_size: int, total_steps: int, seed: int, start: int = 0):
     """Rows of every optimiser step: a fresh seeded permutation per epoch, last partial batch dropped.
-    Rows are sorted within a batch (sequential memmap reads)."""
+    Rows are sorted within a batch (sequential memmap reads). With `start` > 0 the first `start` steps are
+    skipped (resume after an interruption): the rows of every later step are those of an uninterrupted run."""
     n = len(train_rows)
     per_epoch = n // batch_size
     step, epoch = 0, 0
     while step < total_steps:
+        if step + per_epoch <= start:          # a whole epoch before the resume point: nothing to yield
+            step += per_epoch
+            epoch += 1
+            continue
         perm = np.random.default_rng([int(seed), 104729, epoch]).permutation(n)
         for k in range(per_epoch):
             if step >= total_steps:
                 return
-            yield np.sort(train_rows[perm[k * batch_size:(k + 1) * batch_size]])
+            if step >= start:
+                yield np.sort(train_rows[perm[k * batch_size:(k + 1) * batch_size]])
             step += 1
         epoch += 1
 
@@ -454,6 +461,40 @@ class LowRankLinear(nn.Module):
             m.bias.copy_(linear.bias)
         return m
 
+    @classmethod
+    @torch.no_grad()
+    def from_factors(cls, U: torch.Tensor, V: torch.Tensor, bias: torch.Tensor | None = None,
+                     dtype=None) -> "LowRankLinear":
+        """Start from given factors (U [out, r], V [r, in]); the rank is r."""
+        if U.ndim != 2 or V.ndim != 2 or U.shape[1] != V.shape[0]:
+            raise ValueError(f"factor shapes {tuple(U.shape)} and {tuple(V.shape)} do not form U V")
+        dt = dtype or (U.dtype if U.is_floating_point() else torch.float32)
+        m = cls(int(V.shape[1]), int(U.shape[0]), int(U.shape[1]), bias=bias is not None, device=U.device, dtype=dt)
+        m.U.copy_(U)
+        m.V.copy_(V)
+        if bias is not None:
+            m.bias.copy_(bias)
+        return m
+
+    @classmethod
+    @torch.no_grad()
+    def from_weight(cls, W: torch.Tensor, rank: int, bias: torch.Tensor | None = None,
+                    dtype=None) -> "LowRankLinear":
+        """Balanced factors of the rank-r truncated SVD of a dense weight W [out, in] (computed in float64), as
+        from_linear; `dtype` defaults to W's dtype."""
+        dt = dtype or W.dtype
+        W64 = W.detach().to(torch.float64)
+        U, S, Vh = torch.linalg.svd(W64, full_matrices=False)
+        root = S[:rank].sqrt()
+        return cls.from_factors((U[:, :rank] * root).to(dt), (root[:, None] * Vh[:rank]).to(dt),
+                                None if bias is None else bias.detach().to(dt), dtype=dt)
+
+    @torch.no_grad()
+    def rank64(self) -> int:
+        """Numerical rank of U V formed in float64 from the factors (a product formed in float32 carries rounding
+        noise in every direction and reads full rank; results/STATUS.md, E3 validity)."""
+        return int(torch.linalg.matrix_rank(self.U.detach().to(torch.float64) @ self.V.detach().to(torch.float64)))
+
     @property
     def weight(self) -> torch.Tensor:
         """Dense weight U V (so surgery.fold_mlp and analysis code keep working)."""
@@ -513,12 +554,20 @@ class LowRankMLP:
 
     @torch.no_grad()
     def check(self, model: nn.Module) -> dict:
+        """Numerical ranks of U V formed in float64 from the factors (LowRankLinear.rank64). Until 2026-11-14 this
+        check formed U V in float32 first, and the rounding noise made every matrix read full rank (results/STATUS.md,
+        E3 validity); the E3 SVD arms already run recorded that float32 reading."""
+        def rank(lin):
+            if isinstance(lin, LowRankLinear):
+                return lin.rank64()
+            return int(torch.linalg.matrix_rank(lin.weight.to(torch.float64)))
+
         ranks = []
         for b in self.blocks:
             mlp = model.blocks[b].mlp
-            ranks.append([int(torch.linalg.matrix_rank(getattr(mlp, n).weight.to(torch.float64)))
-                          for n in ("fc1", "fc2")])
-        return {"numerical_ranks": ranks, "target_ranks": [list(r) for r in self.ranks]}
+            ranks.append([rank(getattr(mlp, n)) for n in ("fc1", "fc2")])
+        return {"numerical_ranks": ranks, "target_ranks": [list(r) for r in self.ranks],
+                "rank_precision": "float64 product of the factors"}
 
     def describe(self) -> dict:
         return {"type": "LowRankMLP", "blocks": self.blocks, "ranks": [list(r) for r in self.ranks],
@@ -756,13 +805,23 @@ def lr_at(step: int, base_lr: float, total_steps: int, warmup_steps: int, min_lr
 
 
 class _CsvLog:
-    def __init__(self, path: Path | None, columns: list):
+    """CSV log, one row per write. With `keep_until` (resume) the rows of an existing file whose step is at most
+    `keep_until` are kept and later rows dropped, so the resumed run continues the file without duplicates."""
+
+    def __init__(self, path: Path | None, columns: list, keep_until: int | None = None):
         self.columns = columns
         self.fh = None
         if path is not None:
+            kept = []
+            if keep_until is not None and Path(path).exists():
+                with open(path, newline="", encoding="utf-8") as fh:
+                    kept = [r for r in csv.DictReader(fh) if r.get("step") not in (None, "")
+                            and int(float(r["step"])) <= int(keep_until)]
             self.fh = open(path, "w", newline="", encoding="utf-8")
             self.w = csv.DictWriter(self.fh, fieldnames=columns)
             self.w.writeheader()
+            for r in kept:
+                self.w.writerow({k: r.get(k) for k in self.columns})
             self.fh.flush()
 
     def write(self, row: dict) -> None:
@@ -811,6 +870,55 @@ def save_trained_blocks(model: nn.Module, blocks: Sequence[int], path, scope: st
     return path
 
 
+TRAIN_STATE_FORMAT = "mirror.heal train state v1"
+
+
+def _rng_states(device: torch.device) -> dict:
+    import random
+
+    out = {"torch": torch.get_rng_state(), "numpy": np.random.get_state(), "python": random.getstate()}
+    if device.type == "cuda":
+        out["cuda"] = torch.cuda.get_rng_state_all()
+    return out
+
+
+def _restore_rng_states(states: dict, device: torch.device) -> None:
+    import random
+
+    torch.set_rng_state(states["torch"])
+    np.random.set_state(states["numpy"])
+    random.setstate(states["python"])
+    if device.type == "cuda" and states.get("cuda") is not None:
+        torch.cuda.set_rng_state_all(states["cuda"])
+
+
+def _save_train_state(path, payload: dict) -> None:
+    """Atomic write: a file that exists is always a complete training state."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".partial")
+    torch.save(payload, tmp)
+    import os
+
+    os.replace(tmp, path)
+
+
+def _state_identity(cfg: "HealConfig", total: int, n_trainable: int) -> dict:
+    """What a saved training state must agree on with the run that resumes it."""
+    return {"config": _jsonable(asdict(cfg)), "total_steps": int(total), "n_trainable": int(n_trainable)}
+
+
+def load_train_state(path) -> dict | None:
+    """The training state heal() writes every `state_every` steps (None if the file does not exist)."""
+    path = Path(path)
+    if not path.exists():
+        return None
+    st = torch.load(path, map_location="cpu", weights_only=False)   # our own file: RNG states need pickle
+    if st.get("format") != TRAIN_STATE_FORMAT:
+        raise ValueError(f"{path} is not a {TRAIN_STATE_FORMAT!r} file")
+    return st
+
+
 def load_trained_blocks(model: nn.Module, path) -> dict:
     """Load a checkpoint from `save_trained_blocks` into a student of the same structure (for the
     SVD arm, install LowRankMLP first). Returns the checkpoint's meta."""
@@ -829,12 +937,29 @@ def load_trained_blocks(model: nn.Module, path) -> dict:
 # Trainer
 # ----------------------------------------------------------------------------------------------
 def heal(teacher_adapter, student_model: nn.Module, data: HealData, cfg, constraints: Sequence = (),
-         out_dir=None) -> dict:
+         out_dir=None, *, step_hook: Callable | None = None, hook_steps: Iterable = (), state_path=None,
+         state_every: int = 0, resume: bool = False) -> dict:
     """Distil the teacher (teacher_adapter.model) into `student_model` in place.
 
     Writes to out_dir (if given): train_log.csv (one row per step), heldout_log.csv, metrics.json
     (config, seed, git hash, environment, losses, constraint checks) and the trained blocks'
     state_dict. Returns the metrics plus "history" (per-step training loss).
+
+    Optional (MUST-09; all off by default, and then nothing changes):
+      step_hook, hook_steps  step_hook(step, student) runs at step 0 (before the first optimiser step) if 0 is
+                             in hook_steps, and after every optimiser step whose count is in hook_steps (after
+                             the constraints, the logs and the training state of that step). The student is in
+                             eval mode; the hook must not change it. Its time is left out of the step timings.
+      state_path, state_every
+                             every `state_every` optimiser steps the full training state (student state_dict,
+                             optimiser, augmentation generator, RNGs, step, loss history, normalisers, the
+                             initial held-out loss) is written atomically to state_path.
+      resume                 if state_path holds a state of the same run (same config, budget and trainable
+                             set), training continues from it: the data order, crops, flips, schedule and
+                             optimiser continue exactly, so the final state equals that of an uninterrupted
+                             run (bit for bit on a deterministic device). The logs keep their rows up to the
+                             saved step. A hook step equal to the saved step runs again (the hook skips work
+                             it has finished).
     """
     cfg = as_config(cfg)
     t0 = time.time()
@@ -872,9 +997,11 @@ def heal(teacher_adapter, student_model: nn.Module, data: HealData, cfg, constra
     trainable = configure_trainable(student, blocks, cfg.train_scope, constraints)
     if not trainable:
         raise ValueError("no trainable parameters")
-    with torch.no_grad():
-        for c in constraints:
-            c(student)
+    state = load_train_state(state_path) if (resume and state_path is not None) else None
+    if state is None:
+        with torch.no_grad():
+            for c in constraints:
+                c(student)
     plan = _make_plan(teacher, student, cfg, teacher_adapter.n_prefix_tokens)
     weights = _term_weights(cfg)
     names = term_names(blocks)
@@ -899,9 +1026,19 @@ def heal(teacher_adapter, student_model: nn.Module, data: HealData, cfg, constra
     opt_kw = {"fused": True} if device.type == "cuda" and model_dtype == torch.float32 else {}
     opt = torch.optim.AdamW(groups, lr=float(cfg.lr), betas=tuple(cfg.betas), eps=float(cfg.eps), **opt_kw)
     params = [p for _, p in trainable]
+    n_trainable = int(sum(p.numel() for p in params))
+    identity = _state_identity(cfg, total, n_trainable)
+    if state is not None:
+        if state["identity"] != _jsonable(identity):
+            raise ValueError(f"{state_path} was saved by another run (config, budget or trainable set differ); "
+                             "remove it or start without resume")
+        if not 0 < int(state["step"]) < total:
+            raise ValueError(f"{state_path}: saved step {state['step']} is outside 1..{total - 1}")
 
     normalisers = None
-    if cfg.normaliser == "fixed":
+    if state is not None:
+        normalisers = state["normalisers"]
+    elif cfg.normaliser == "fixed":
         sorted_train = np.sort(data.train_rows)
         n_cal = max(1, min(int(cfg.calib_images), n_train))
         calib = sorted_train[np.linspace(0, n_train - 1, n_cal).round().astype(np.int64)]
@@ -918,26 +1055,53 @@ def heal(teacher_adapter, student_model: nn.Module, data: HealData, cfg, constra
 
     if device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(device)
-    held_initial = held_eval()
+    start_step, history, t_offset = 0, [], 0.0
+    if state is not None:                     # resume: everything below continues the saved run
+        student.load_state_dict(state["model"])
+        opt.load_state_dict(state["optimizer"])
+        held_initial = state["held_initial"]
+        history = [float(h) for h in state["history"]]
+        start_step = int(state["step"])
+        t_offset = float(state.get("seconds_train", 0.0))
+    else:
+        held_initial = held_eval()
+    keep = start_step if state is not None else None
     train_log = _CsvLog(out / "train_log.csv" if out else None,
-                        ["step", "epoch", "lr", "loss", *names, "grad_norm", "seconds"])
-    held_log = _CsvLog(out / "heldout_log.csv" if out and has_held else None, ["step", "total", *names])
-    if held_initial is not None:
+                        ["step", "epoch", "lr", "loss", *names, "grad_norm", "seconds"], keep_until=keep)
+    held_log = _CsvLog(out / "heldout_log.csv" if out and has_held else None, ["step", "total", *names],
+                       keep_until=keep)
+    if held_initial is not None and state is None:
         held_log.write({"step": 0, **held_initial})
-    n_trainable = int(sum(p.numel() for p in params))
     log(f"heal: {total} steps x {B} images (micro {mb}), lr {cfg.lr:g}, warm-up {warmup}, amp {amp_mode}, "
         f"{n_trainable:,} trainable parameters, share_prefix {plan.share}, checkpointing {plan.checkpoint}"
-        + (f", held-out {held_initial['total']:.5f}" if held_initial else ""))
+        + (f", held-out {held_initial['total']:.5f}" if held_initial else "")
+        + (f"; resumed from the training state at step {start_step}" if state is not None else ""))
 
     gen = torch.Generator().manual_seed(int(cfg.seed) + 7919)  # augmentation draws (CPU)
+    if state is not None:
+        gen.set_state(state["gen"])
+        _restore_rng_states(state["rng"], device)
     pin = device.type == "cuda"
     reader = _prefetched(lambda rows: _read_rows(data.images, rows, pin),
-                         _step_rows(data.train_rows, B, total, int(cfg.seed)), int(cfg.prefetch))
+                         _step_rows(data.train_rows, B, total, int(cfg.seed), start_step), int(cfg.prefetch))
     S = data.image_size
-    history, diverged, steps_done = [], False, 0
+    diverged, steps_done = False, start_step
+    hook_set = {int(s) for s in hook_steps} if step_hook is not None else set()
+    hook_time = [0.0]
+
+    def run_hook(s: int) -> None:
+        th = time.time()
+        step_hook(int(s), student)
+        hook_time[0] += time.time() - th
+
+    def elapsed() -> float:
+        return t_offset + time.time() - t_loop - hook_time[0]
+
     t_loop = time.time()
+    if start_step in hook_set:
+        run_hook(start_step)
     try:
-        for step, batch in zip(range(total), reader):
+        for step, batch in zip(range(start_step, total), reader):
             lr_now = lr_at(step, float(cfg.lr), total, warmup, cfg.min_lr_ratio)
             for g in opt.param_groups:
                 g["lr"] = lr_now
@@ -972,13 +1136,22 @@ def heal(teacher_adapter, student_model: nn.Module, data: HealData, cfg, constra
             steps_done = step + 1
             train_log.write({"step": steps_done, "epoch": round(steps_done / per_epoch, 4), "lr": lr_now,
                              "loss": loss_val, **term_vals, "grad_norm": float(gn),
-                             "seconds": round(time.time() - t_loop, 3)})
+                             "seconds": round(elapsed(), 3)})
             if cfg.eval_every and has_held and steps_done % int(cfg.eval_every) == 0 and steps_done < total:
                 held_log.write({"step": steps_done, **held_eval()})
             if cfg.log_every and steps_done % int(cfg.log_every) == 0:
-                el = time.time() - t_loop
+                el = elapsed() - t_offset
+                n_run = steps_done - start_step
                 log(f"heal: step {steps_done}/{total} loss {loss_val:.5f} lr {lr_now:.2e} "
-                    f"({el / steps_done:.2f} s/step, ETA {(total - steps_done) * el / steps_done / 60:.1f} min)")
+                    f"({el / n_run:.2f} s/step, ETA {(total - steps_done) * el / n_run / 60:.1f} min)")
+            if state_path is not None and state_every and steps_done % int(state_every) == 0 and steps_done < total:
+                _save_train_state(state_path, {
+                    "format": TRAIN_STATE_FORMAT, "identity": _jsonable(identity), "step": steps_done,
+                    "model": student.state_dict(), "optimizer": opt.state_dict(), "gen": gen.get_state(),
+                    "rng": _rng_states(device), "history": list(history), "held_initial": held_initial,
+                    "normalisers": normalisers, "seconds_train": elapsed()})
+            if steps_done in hook_set:
+                run_hook(steps_done)
     finally:
         train_log.close()
 
@@ -1013,10 +1186,15 @@ def heal(teacher_adapter, student_model: nn.Module, data: HealData, cfg, constra
         "train_loss_first": history[0] if history else None,
         "train_loss_last": history[-1] if history else None,
         "train_loss_last10_mean": float(np.mean(finite[-10:])) if finite else None,
-        "seconds_total": round(time.time() - t0, 2), "seconds_train": round(time.time() - t_loop, 2),
+        "seconds_total": round(time.time() - t0, 2), "seconds_train": round(elapsed(), 2),
         "peak_memory_gb": (torch.cuda.max_memory_allocated(device) / 2 ** 30) if device.type == "cuda" else None,
         "checkpoint": str(ckpt) if ckpt else None,
     }
+    if step_hook is not None or state_path is not None:
+        metrics.update({"resumed_from_step": start_step if state is not None else None,
+                        "hook_steps": sorted(hook_set), "hook_seconds": round(hook_time[0], 2),
+                        "state_path": str(state_path) if state_path is not None else None,
+                        "state_every": int(state_every or 0)})
     if out is not None:
         _write_json(out / "metrics.json", metrics)
     log(f"heal: done {steps_done} steps in {metrics['seconds_train']:.1f} s; "
@@ -1027,15 +1205,47 @@ def heal(teacher_adapter, student_model: nn.Module, data: HealData, cfg, constra
 # ----------------------------------------------------------------------------------------------
 # Learning-rate selection
 # ----------------------------------------------------------------------------------------------
+def _finished_trial(tdir: Path, tcfg: HealConfig, budget_steps: int) -> dict | None:
+    """A selection trial already finished in `tdir` with exactly this config (metrics.json written by heal()), as
+    the trial dict _lr_trial returns, else None. Used with resume=True, so an interrupted selection does not redo
+    finished trials (each trial is deterministic given its config, so the reused result is the one a rerun gives)."""
+    p = Path(tdir) / "metrics.json"
+    if not p.exists():
+        return None
+    try:
+        m = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if m.get("config") != _jsonable(asdict(tcfg)):
+        return None
+    if not (m.get("diverged") or int(m.get("steps_done", -1)) == int(budget_steps)):
+        return None
+    hf = m.get("heldout_final")
+    score = float(hf["total"]) if (hf is not None and not m.get("diverged") and hf.get("total") is not None) else float("inf")
+    if not math.isfinite(score):
+        score = float("inf")
+    hi = m.get("heldout_initial")
+    return {"lr": float(tcfg.lr), "heldout_loss": score, "heldout_terms": hf,
+            "heldout_initial": hi["total"] if hi else None, "train_loss_last": m.get("train_loss_last"),
+            "diverged": bool(m.get("diverged")), "reused": str(p)}
+
+
 def _lr_trial(teacher_adapter, make_student: Callable, data: HealData, cfg: HealConfig, lr: float,
-              budget_steps: int, out: Path | None) -> dict:
+              budget_steps: int, out: Path | None, resume: bool = False) -> dict:
     """One short selection trial: a fresh student, `budget_steps` steps at `lr` with its own warm-up and
     cosine schedule, the config's seed, no checkpoint; scored by the held-out loss at the end (+inf if it
-    diverged). Writes the trial's logs to <out>/lr_<lr>/ when `out` is given."""
-    student, cons = make_student()
+    diverged). Writes the trial's logs to <out>/lr_<lr>/ when `out` is given. With `resume`, a trial that
+    already finished there with the same config is read back instead of run again."""
     tcfg = replace(cfg, lr=float(lr), max_steps=int(budget_steps), save_checkpoint=False,
                    checkpoint_path=None, eval_every=0)
-    res = heal(teacher_adapter, student, data, tcfg, cons, out / f"lr_{float(lr):.0e}" if out else None)
+    tdir = out / f"lr_{float(lr):.0e}" if out else None
+    if resume and tdir is not None:
+        done = _finished_trial(tdir, tcfg, budget_steps)
+        if done is not None:
+            log(f"lr trial {float(lr):.0e}: finished before ({done['reused']}); reusing it")
+            return done
+    student, cons = make_student()
+    res = heal(teacher_adapter, student, data, tcfg, cons, tdir)
     hf = res["heldout_final"]
     score = float(hf["total"]) if (hf is not None and not res["diverged"]) else float("inf")
     if not math.isfinite(score):
@@ -1051,18 +1261,19 @@ def _lr_trial(teacher_adapter, make_student: Callable, data: HealData, cfg: Heal
 
 
 def select_lr(teacher_adapter, make_student: Callable, data: HealData, cfg, lrs: Sequence[float] = DEFAULT_LRS,
-              budget_steps: int = 100, out_dir=None) -> dict:
+              budget_steps: int = 100, out_dir=None, resume: bool = False) -> dict:
     """Short run per learning rate; pick the lowest distillation loss on the held-out train rows.
 
     `make_student()` must return a fresh (student_model, constraints) each call. Every trial uses
     the same seed, so data order and augmentation are identical; each trial has its own warm-up and
     cosine schedule over `budget_steps`. Diverged trials score +inf; ties go to the earlier rate.
+    With `resume` (and out_dir), trials that finished before with the same config are read back.
     """
     if data.heldout_rows is None or len(data.heldout_rows) == 0:
         raise ValueError("learning-rate selection needs held-out train rows")
     cfg = as_config(cfg)
     out = Path(out_dir) if out_dir is not None else None
-    trials = [_lr_trial(teacher_adapter, make_student, data, cfg, lr, budget_steps, out) for lr in lrs]
+    trials = [_lr_trial(teacher_adapter, make_student, data, cfg, lr, budget_steps, out, resume) for lr in lrs]
     if all(not math.isfinite(t["heldout_loss"]) for t in trials):
         raise RuntimeError("every learning rate diverged")
     best = min(range(len(trials)), key=lambda i: (trials[i]["heldout_loss"], i))
@@ -1077,7 +1288,8 @@ def select_lr(teacher_adapter, make_student: Callable, data: HealData, cfg, lrs:
 
 
 def probe_extra_lrs(teacher_adapter, make_student: Callable, data: HealData, cfg, selection: dict,
-                    extra_lrs: Sequence[float], out_dir=None, extra_info: dict | None = None) -> dict:
+                    extra_lrs: Sequence[float], out_dir=None, extra_info: dict | None = None,
+                    resume: bool = False) -> dict:
     """Secondary learning-rate check (E3, PREREG_E3.md): the short selection trial of select_lr at each rate
     in `extra_lrs` (same seed, so the same data order and augmentation, the same budget and the same held-out
     train rows as the grid in `selection`), compared with the grid's trials. It never changes the chosen
@@ -1099,8 +1311,8 @@ def probe_extra_lrs(teacher_adapter, make_student: Callable, data: HealData, cfg
         raise ValueError("the grid was selected with another seed")
     grid = [{"lr": float(t["lr"]), "heldout_loss": float(t["heldout_loss"]), "diverged": bool(t["diverged"])}
             for t in selection["trials"]]
-    trials = [_lr_trial(teacher_adapter, make_student, data, cfg, lr, budget, out / "lr_extra" if out else None)
-              for lr in extra_lrs]
+    trials = [_lr_trial(teacher_adapter, make_student, data, cfg, lr, budget, out / "lr_extra" if out else None,
+                        resume) for lr in extra_lrs]
     grid_best = min(t["heldout_loss"] for t in grid)
     winners = [t["lr"] for t in trials if t["heldout_loss"] < grid_best]
     everything = grid + [{"lr": t["lr"], "heldout_loss": t["heldout_loss"]} for t in trials]

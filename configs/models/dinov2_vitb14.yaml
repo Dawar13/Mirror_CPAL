@@ -1,0 +1,58 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: dinov2_vitb14
+role: main (plain, no registers)
+registry_name: dinov2_vitb14              # key already in mirror/adapters_timm.py MODEL_REGISTRY
+source:
+  kind: torch_hub
+  hub_repo: facebookresearch/dinov2
+  entry_point: dinov2_vitb14
+  entry_point_code: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/hub/backbones.py
+  weights_url: https://dl.fbaipublicfiles.com/dinov2/dinov2_vitb14/dinov2_vitb14_pretrain.pth
+  weights_bytes: 346378731                  # HTTP HEAD Content-Length, 2026-11-14
+  weights_last_modified: "Thu, 13 Apr 2023 22:01:34 GMT"
+revision:
+  value: 7764ea0f912e53c92e82eb78a2a1631e92725fc8
+  kind: >-
+    GitHub commit of facebookresearch/dinov2 (default branch) on 2026-11-14; pins the hub code only.
+    Log the VM hub-cache commit with each run (verify on VM). Weights fixed by URL; record sha256 on the VM.
+  hf_mirror:
+    repo: facebook/dinov2-base
+    sha: f9e44c814b77203eaa57a6bdbbd535f21ede1415
+    note: Hugging Face transformers conversion; not what mirror/adapters_timm.py loads.
+architecture:
+  patch_size: 14
+  image_size_hub_default: 518
+  blocks: 12
+  width: 768
+  heads: 12
+  mlp_hidden: 3072
+  mlp_type: GELU MLP (fc1, act, fc2)
+  registers: 0
+  cls_token: 1
+  layerscale: true
+  arch_source: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/models/vision_transformer.py
+training_data: LVD-142M
+training_data_quote: |-
+  DINOv2 ViT-B/14 model (optionally) pretrained on the LVD-142M dataset.
+training_data_source_url: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/hub/backbones.py
+recipe_flip: "yes"
+recipe_quote: |-
+  transforms.RandomHorizontalFlip(p=0.5),
+recipe_quote_context: Lines 49 (global crops) and 58 (local crops) of DataAugmentationDINO.
+recipe_source_url: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/data/augmentations.py#L43-L60
+recipe_certainty: >-
+  High for the public code; the paper text does not state the flip. That the released weights
+  used exactly this file is inferred from the official repository, not stated.
+other_augmentations:
+  - same as dinov2_vitb14_reg.yaml (multi-crop RandomResizedCrop, ColorJitter p=0.8, RandomGrayscale 0.2, GaussianBlur, RandomSolarize 0.2)
+notes:
+  - Same training code as the registers variant; differs by num_register_tokens=0, interpolate_antialias=False, interpolate_offset=0.1.
+  - >-
+    DINOv2 paper, Section 5 "Model distillation": "For smaller models, we distill them from our
+    largest model, the ViT-g, instead of training them from scratch." and "we leverage the same
+    training loop with a few exceptions".
+papers:
+  - "Oquab et al., DINOv2: Learning Robust Visual Features without Supervision, arXiv 2304.07193"
+verified_on: "2026-11-14"

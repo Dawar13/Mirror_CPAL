@@ -1,0 +1,62 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: resnet50
+role: CNN (structure only, on the 1 x 1 convolutions)
+registry_name: null    # not in mirror/adapters_timm.py; a CNN path is needed
+source:
+  kind: timm (same file as torchvision ResNet50_Weights.IMAGENET1K_V1)
+  timm_name: resnet50.tv_in1k
+  hf_repo: timm/resnet50.tv_in1k
+  torchvision_equivalent: torchvision.models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V1)
+  original_weights_url: https://download.pytorch.org/models/resnet50-0676ba61.pth   # same URL in timm resnet.py and torchvision resnet.py
+  weights_bytes: 102530333                  # HEAD, 2026-11-14
+choice: >-
+  torchvision IMAGENET1K_V1 (acc@1 76.130 in torchvision's metadata). Chosen over IMAGENET1K_V2
+  because V1's recipe is the plain reference script: RandomResizedCrop plus RandomHorizontalFlip,
+  90 epochs, no auto-augment. V2's recipe (pytorch/vision issue 3995, comment 1013906621) adds
+  --auto-augment ta_wide, and torchvision's TrivialAugmentWide samples Rotate from 0 to 135
+  degrees with random sign (autoaugment.py line 414), plus mixup, cutmix, random erasing and
+  repeated augmentation. Large rotations would confound the R90 and UD controls; V1 is a clean
+  "horizontal flip only" geometric recipe.
+revision:
+  value: 78f3ecfdb38e06d9b8397f662e7ab8fee96026fa
+  kind: Hugging Face commit of timm/resnet50.tv_in1k (API sha, lastModified 2025-01-21)
+  timm_code_commit: 43b549bfe9d680bc94284cfd0b611152d18e97d7
+  torchvision_code_commit: 4260301135e34180d865426765487113f84e7707
+architecture:
+  patch_size: null
+  image_size: 224
+  blocks: 16                                # bottleneck blocks, layers (3, 4, 6, 3)
+  width: "stage output channels 256, 512, 1024, 2048 (bottleneck widths 64, 128, 256, 512; expansion 4)"
+  mlp_hidden: null
+  mlp_type: "bottleneck: 1 x 1 conv (reduce), 3 x 3 conv, 1 x 1 conv (expand); CORE-04 uses the 1 x 1 convolutions"
+  registers: 0
+  arch_source: https://github.com/huggingface/pytorch-image-models/blob/43b549bfe9d680bc94284cfd0b611152d18e97d7/timm/models/resnet.py
+training_data: ImageNet-1k (timm card "Trained on ImageNet-1k, original torchvision model weight.")
+recipe_flip: "yes"
+recipe_quote: |-
+              transforms.append(T.RandomHorizontalFlip(hflip_prob))
+recipe_quote_context: >-
+  torchvision references/classification/presets.py, ClassificationPresetTrain: hflip_prob=0.5 by
+  default (line 28), applied at lines 46-47 after RandomResizedCrop. train.py builds this preset
+  without overriding hflip_prob; with default arguments --auto-augment is None, --mixup-alpha and
+  --cutmix-alpha are 0.0, --random-erase is 0.0 and --epochs is 90. The IMAGENET1K_V1 metadata in
+  torchvision/models/resnet.py gives "recipe":
+  "https://github.com/pytorch/vision/tree/main/references/classification#resnet", whose ResNet
+  command is "torchrun --nproc_per_node=8 train.py --model $MODEL" (defaults only).
+recipe_source_url: https://github.com/pytorch/vision/blob/4260301135e34180d865426765487113f84e7707/references/classification/presets.py#L17-L48
+recipe_certainty: >-
+  High that the documented recipe flips. The current presets.py is newer than the V1 weight file
+  (Last-Modified Tue, 30 Mar 2021), and no source read says which script version produced it
+  (verify). The older pytorch/examples imagenet/main.py also uses transforms.RandomResizedCrop(224)
+  then transforms.RandomHorizontalFlip() (lines 247-248, commit
+  42068585f7da9a2f8656f793d21c30ee6806c6b9), so every candidate script flips.
+other_augmentations:
+  - RandomResizedCrop(224), bilinear
+  - none else in the V1 default recipe
+notes:
+  - "V2 alternative for reference: timm resnet50.tv2_in1k, HF sha 10eea9779fc8a753af919714889bd7f60fba412d, URL https://download.pytorch.org/models/resnet50-11ad3fa6.pth, trained at 176 px; recipe also flips (same presets.py default)."
+papers:
+  - "He et al., Deep Residual Learning for Image Recognition, arXiv 1512.03385 (from the timm card; paper not opened, verify before citing details)"
+verified_on: "2026-11-14"

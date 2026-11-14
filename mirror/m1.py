@@ -50,7 +50,8 @@ from .surgery import apply_surgery_two, equivariant_param_count, perm_trace, svd
 
 __all__ = [
     "centre_projector", "fit_span_operator", "span_operator_report", "EvenProject", "materialise_pos_embed",
-    "project_embeddings", "install_even_head", "build_vexact", "register_info", "RegisterScores",
+    "project_embeddings", "install_even_head", "VEXACT_COMPONENTS", "vexact_components", "build_vexact",
+    "register_info", "RegisterScores",
     "match_registers", "align_mirror_tokens", "stream_equivariance", "feature_invariance",
     "random_involution_fixing_ones", "random_head_structure", "random_head_maps_like",
     "matched_random_structure", "random_register_pairing_like", "matched_random_span_structure",
@@ -267,17 +268,41 @@ def install_even_head(model: nn.Module, A) -> None:
                                             ("affine", norm.affine)]))
 
 
+VEXACT_COMPONENTS = ("mlp", "attn")
+
+
+def vexact_components(components) -> tuple:
+    """Normalise a component selection for build_vexact: a subset of ("mlp", "attn"), given as a
+    sequence or a string such as "mlp", "attn" or "mlp+attn"; returned in the order ("mlp", "attn")."""
+    if isinstance(components, str):
+        components = [c for c in components.replace(",", "+").split("+") if c.strip()]
+    comps = {str(c).strip() for c in components}
+    bad = comps - set(VEXACT_COMPONENTS)
+    if bad or not comps:
+        raise ValueError(f"components must be a non-empty subset of {VEXACT_COMPONENTS}, got {sorted(comps)}")
+    return tuple(c for c in VEXACT_COMPONENTS if c in comps)
+
+
 @torch.no_grad()
 def build_vexact(adapter, A, blocks, perms, head_maps, reg_perm=None, even_head: bool = False,
-                 model: nn.Module | None = None, gauge: bool = True):
+                 model: nn.Module | None = None, gauge: bool = True, components=VEXACT_COMPONENTS):
     """V-exact conversion of `blocks` (contiguous) with one operator A (a deep copy; the original is
     untouched). `perms` and `head_maps` are aligned with `blocks`. Returns (model, info); info holds
     the head maps valid after surgery, the embedding breaking shares (span starting at block 0) and
-    whether the position embedding was materialised."""
+    whether the position embedding was materialised.
+
+    `components` (default both) chooses what is projected inside the span: "mlp" (fc1, fc2) and/or
+    "attn" (Wq, Wk, Wv, Wo). A component left out stays as folded (fold_layernorm_full), so it is the
+    same function as the original; its `perms` (MLP) or `head_maps` (attention) may then be None. The
+    model is folded, the embeddings projected (span starting at block 0) and the even head installed
+    exactly as with both components. With one component only the model is not exactly equivariant;
+    MUST-08 uses this to measure each component's share of the saving and of the accuracy cost."""
+    comps = vexact_components(components)
     blocks = [int(b) for b in blocks]
     if not blocks or blocks != list(range(blocks[0], blocks[0] + len(blocks))):
         raise ValueError("V-exact needs a contiguous, non-empty span of blocks")
-    if len(perms) != len(blocks) or len(head_maps) != len(blocks):
+    if ("mlp" in comps and (perms is None or len(perms) != len(blocks))) or \
+            ("attn" in comps and (head_maps is None or len(head_maps) != len(blocks))):
         raise ValueError("one perm and one HeadMaps per block")
     A = exact_involution(A)
     m = copy.deepcopy(adapter.model if model is None else model)
@@ -285,13 +310,16 @@ def build_vexact(adapter, A, blocks, perms, head_maps, reg_perm=None, even_head:
     fold_layernorm_full(m, final_norm_affine=False)
     emb = project_embeddings(m, adapter, A, reg_perm) if blocks[0] == 0 else None
     k = len(blocks)
-    apply_surgery_two(m, blocks, [A] * k, [A] * k, list(perms))
-    maps_after = apply_attention_surgery(m, blocks, [A] * k, [A] * k, list(head_maps), gauge=gauge)
+    if "mlp" in comps:
+        apply_surgery_two(m, blocks, [A] * k, [A] * k, list(perms))
+    maps_after = (apply_attention_surgery(m, blocks, [A] * k, [A] * k, list(head_maps), gauge=gauge)
+                  if "attn" in comps else None)
     if even_head:
         install_even_head(m, A)
     m.eval()
     return m, {"maps_after": maps_after, "embedding_shares": emb, "pos_materialised": materialised,
-               "even_head": bool(even_head), "blocks": blocks, "d_plus": int((involution_trace64(A) + A.shape[0]) // 2)}
+               "even_head": bool(even_head), "blocks": blocks, "d_plus": int((involution_trace64(A) + A.shape[0]) // 2),
+               "components": list(comps)}
 
 
 # ----------------------------------------------------------------------------------------------

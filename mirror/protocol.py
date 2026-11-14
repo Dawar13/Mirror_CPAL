@@ -3,6 +3,11 @@
 - Fit sets: ImageNet train, 3 fixed seeds x 2,000 images (cache/train224_uint8.npy, roles fit0..fit2).
 - Held-out operator errors: validation, the first image of each class (1,000 images).
 - k-NN: bank = 100 train images per class (100k, role "bank"); queries = all 50k validation images.
+- Method selection (PROJECT_NEXT_PHASE.md, Section 4.1): 10 train images per class (10k, role "msel") in
+  cache/msel224_uint8.npy with cache/msel_index.npz (msel_labels, msel_source = (shard, row) per image),
+  drawn from train shards that none of the other roles use, so disjoint from fit, bank, heal and LR
+  selection by construction. Used only as k-NN queries against the bank to choose methods and
+  hyperparameters; validation is never used for any choice.
 """
 from __future__ import annotations
 
@@ -26,6 +31,21 @@ class Protocol:
         self.val, self.val_labels, _, _ = load_val_cache(cache)
         self.heldout_idx = make_splits(self.val_labels, {"heldout": 1})["heldout"]
         self.bs, self.sbs, self.nw, self.pin = batch_size, stats_batch_size, num_workers, pin
+        self.cache = cache
+        self._msel = None
+
+    def msel_loader(self):
+        """Method-selection queries (10k train images, 224 px, disjoint from every other role)."""
+        if self._msel is None:
+            path = self.cache / "msel224_uint8.npy"
+            if not path.exists():
+                raise FileNotFoundError(f"{path} missing: run scripts/build_train_cache.py --msel")
+            images = np.load(path, mmap_mode="r")
+            with np.load(self.cache / "msel_index.npz") as z:
+                labels = np.asarray(z["msel_labels"], dtype=np.int64)
+            self._msel = (images, labels)
+        images, labels = self._msel
+        return make_loader(images, labels, np.arange(len(labels)), self.bs, self.nw, self.pin)
 
     def fit_loader(self, seed: int):
         return make_loader(self.train, self.train_labels, self.index[f"fit{seed}_rows"], self.sbs, self.nw, self.pin)

@@ -596,3 +596,158 @@ def test_cli_tiny_vexact_checks_and_other_families(tmp_path):
     assert rows["original"]["vexact_max_rel_err"] is None
     assert rows["svd_mlp_k2"]["converted_params_kept"] < rows["svd_mlp_k2"]["converted_params_dense"]
     assert "rebuilt at 56 px" in (out / "T2_ADE20K.md").read_text(encoding="utf-8")
+
+
+# ---------------------------------------------------------------- MUST-11: mask equivariance and --healed-run
+SEG_SIZES = ((56, 84), (70, 56), (42, 60), (56, 56))
+
+
+def _seg_store(seed=0):
+    """Validation-like store: images of several sizes (one smaller than the 56 px window, so it is padded) and one
+    label map at twice the image resolution (logits are upsampled to it)."""
+    imgs, labs = S.synthetic_seg_dataset(len(SEG_SIZES), 4, SEG_SIZES, seed=seed)
+    labs[0] = np.kron(labs[0], np.ones((2, 2), dtype=np.uint8))
+    return S.RaggedStore.from_arrays(imgs, labs)
+
+
+def _random_head(dim, num_classes=4, seed=0, dtype=torch.float64):
+    head = S.LinearSegHead(dim, num_classes, bn=True, init_std=0.5, seed=seed)
+    g = torch.Generator().manual_seed(seed + 1)
+    with torch.no_grad():
+        head.bn.running_mean.copy_(0.3 * torch.randn(dim, generator=g))
+        head.bn.running_var.copy_(0.5 + torch.rand(dim, generator=g))
+        head.bn.weight.copy_(1.0 + 0.2 * torch.randn(dim, generator=g))
+        head.bn.bias.copy_(0.1 * torch.randn(dim, generator=g))
+        head.conv.bias.copy_(0.1 * torch.randn(num_classes, generator=g))
+    return head.to(dtype).eval()
+
+
+def test_mask_equivariance_symmetrised_head_is_exact_on_an_equivariant_model():
+    ad = TimmTinyAdapter(img_size=56, seed=0, randomise=True, dtype=torch.float64)
+    A, perms, maps = _structure(ad, seed=5)
+    L = ad.depth
+    store, lut = _seg_store(), S.label_lut(4)
+    head = _random_head(ad.embed_dim)
+
+    def run(model, A_, full_tokens=True):
+        return S.mask_equivariance(head, S.make_pair_feature_fn(ad, model, "cpu", A_, full_tokens=full_tokens), store,
+                                   56, 42, lut, 4, "cpu", eval_batch=4)
+
+    n_pixels = 4 * 56 * 84 + sum(h * w for h, w in SEG_SIZES[1:])
+    # Exactly A*-equivariant final tokens (no even head): only the symmetrised head is exactly mask-equivariant.
+    m_eq, _ = build_vexact(ad, A, list(range(L)), perms, maps, even_head=False)
+    r = run(m_eq, A)
+    assert r["heads"] == ["raw", "sym"] and r["n_images"] == 4 and r["raw"]["n_pixels"] == n_pixels
+    assert r["sym"]["share"] == 100.0 and r["sym"]["n_differ"] == 0 and r["sym"]["max_logit_diff_rel"] < 1e-6
+    assert r["sym"]["max_margin_of_differing_pixels"] is None
+    assert r["raw"]["share"] < 100.0 and r["raw"]["max_logit_diff_rel"] > 1e-3
+    assert 0 <= r["sym"]["mIoU"] <= 100 and r["raw"]["share_labelled"] <= 100
+    # Even head (Mirror-exact at full conversion), full tokens (the default: even projection bypassed): the
+    # operator comes from the even head (A* = 2 P - I), the symmetrised head is exact and the raw head is not.
+    m_inv, _ = build_vexact(ad, A, list(range(L)), perms, maps, even_head=True)
+    A_even, desc = S.mask_eq_operator(m_inv, factory=None)
+    assert np.abs(A_even - A).max() < 1e-12 and "even head" in desc and "full tokens" in desc
+    r = run(m_inv, A_even)
+    assert r["sym"]["share"] == 100.0 and r["sym"]["n_differ"] == 0
+    assert r["raw"]["share"] < 100.0 and r["raw"]["max_logit_diff_rel"] > 1e-3
+    # ... and the full tokens are those of the model without the even head (the feature map main() uses).
+    x = torch.from_numpy(np.stack([store.image(3)])).permute(0, 3, 1, 2)
+    with torch.no_grad():
+        assert torch.allclose(S.make_feature_fn(ad, m_inv, "cpu", None, full_tokens=True)(x),
+                              S.make_feature_fn(ad, m_eq, "cpu", None)(x), rtol=0, atol=1e-6)
+    # Even tokens (--even-tokens, the old behaviour): invariant, so both heads are exact.
+    r = run(m_inv, A_even, full_tokens=False)
+    assert r["raw"]["share"] == 100.0 and r["sym"]["share"] == 100.0
+    assert "even tokens" in S.mask_eq_operator(m_inv, factory=None, full_tokens=False)[1]
+    # The original model is not exactly equivariant: the raw head is not either; without an operator only raw.
+    r = run(ad.model, None)
+    assert r["heads"] == ["raw"] and r["raw"]["share"] < 100.0
+    from types import SimpleNamespace
+
+    assert S.mask_eq_operator(ad.model, SimpleNamespace(operators=None))[0] is None
+    # split_final_norm reproduces model.norm for a LayerNorm and for the folded norms.
+    t = torch.randn(2, ad.n_tokens, ad.embed_dim, dtype=torch.float64)
+    for model in (ad.model, m_eq, m_inv):
+        pre, aff, _ = S.split_final_norm(model)
+        assert torch.allclose(aff(pre(t)), model.norm(t), rtol=0, atol=1e-12)
+
+
+def test_cli_tiny_mask_eq_on_finished_variants_reuses_heads(tmp_path, monkeypatch):
+    import pandas as pd
+    from test_tier2 import _tiny_m1_structure, _tiny_operators
+
+    ops = _tiny_operators(tmp_path / "ops.npz")
+    m1s = _tiny_m1_structure(tmp_path / "m1_structure.npz", ops, ks=(4,))
+    out = tmp_path / "t2_seg"
+    base = ["--tiny", "--variants", "original,vexact_k4", "--out", str(out), "--operators", str(ops),
+            "--m1-structure", str(m1s), *FAST]
+    res = S.main(base)                                              # the protocol as before: no mask equivariance
+    vdir = out / "seg" / "tiny"
+    assert not list(vdir.glob("*_maskeq.json")) and "mask_eq_raw" not in pd.read_csv(out / "t2_ade20k.csv").columns
+
+    def boom(*a, **k):
+        raise AssertionError("recomputed")
+
+    monkeypatch.setattr(S, "train_head", boom)
+    monkeypatch.setattr(S, "evaluate", boom)
+    res2 = S.main(base + ["--mask-eq"])                             # finished variants: saved heads reused
+    assert [r["mIoU"] for r in res2["rows"]] == [r["mIoU"] for r in res["rows"]]
+    rows = {r["variant"]: r for r in res2["rows"]}
+    vx, orig = rows["vexact_k4"], rows["original"]
+    assert vx["mask_eq_operator"].startswith("A* of the model's even head") and "A_L" in orig["mask_eq_operator"]
+    me = json.loads((vdir / "vexact_k4_maskeq.json").read_text(encoding="utf-8"))
+    h = me["result"]["sym"]                                         # fp32: exact up to near-ties from rounding
+    assert h["share"] > 99.9 and (h["n_differ"] == 0 or h["max_margin_of_differing_pixels"] < 1e-3)
+    assert me["result"]["raw"]["share"] < 100.0                     # full tokens: the raw head is not equivariant
+    assert me["settings"]["final_tokens"] == "full" and vx["final_tokens"] == "full (even projection bypassed)"
+    assert "final_tokens" not in orig and orig["mask_eq_raw"] < 100.0 and orig["mask_eq_sym"] is not None
+    js = json.loads((vdir / "vexact_k4.json").read_text(encoding="utf-8"))
+    assert js["settings"]["final_tokens"] == "full"
+    assert "final_tokens" not in json.loads((vdir / "original.json").read_text(encoding="utf-8"))["settings"]
+    assert me["settings"]["precision"].startswith("fp32") and me["result"]["n_images"] == 4
+    df = pd.read_csv(out / "t2_ade20k.csv")
+    for col in ("mask_eq_raw", "mask_eq_sym", "mask_eq_n_pixels", "mask_eq_operator"):
+        assert col in df.columns and df[col].notna().all()
+    md = (out / "T2_ADE20K.md").read_text(encoding="utf-8")
+    assert "## Mask equivariance (MUST-11)" in md and chr(0x2014) not in md
+    monkeypatch.setattr(S.T2.VariantFactory, "build", boom)        # third run: everything reused
+    res3 = S.main(base + ["--mask-eq"])
+    assert [r["mask_eq_raw"] for r in res3["rows"]] == [r["mask_eq_raw"] for r in res2["rows"]]
+
+
+def test_cli_healed_run_on_the_mock_moved_checked_and_mask_eq(tmp_path, monkeypatch):
+    """--healed-run with a Mirror-exact model built at 56 px on the DINOv2 mock (4 registers, two paired), segmented
+    at 84 px: the grid is moved and re-projected, the span exactness is checked on 84 px crops, and mask
+    equivariance is measured."""
+    import types
+
+    ad56 = _mock_adapter(56, torch.float32)
+    A, perms, maps = _structure(ad56, seed=11)
+    model56, _ = build_vexact(ad56, A, list(range(ad56.depth)), perms, maps, reg_perm=[1, 0, 2, 3], even_head=True)
+    calls = []
+
+    def load_healed_model(run_dir, device):
+        calls.append(Path(run_dir))
+        return ad56, copy.deepcopy(model56), {"method": "mirror_exact", "seed": 0}
+
+    fake = types.ModuleType("mirror.heal_structured")
+    fake.load_healed_model = load_healed_model
+    monkeypatch.setitem(sys.modules, "mirror.heal_structured", fake)
+    monkeypatch.setattr(S, "build_seg_adapter", lambda model, tiny, device, crop: _mock_adapter(crop, torch.float32))
+    run = tmp_path / "runs" / "vexact_s0"
+    run.mkdir(parents=True)
+    out = tmp_path / "t2_seg"
+    res = S.main(["--tiny", "--variants", "", "--healed-run", f"vx={run}", "--crop", "84", "--out", str(out),
+                  "--mask-eq", *FAST])
+    r = res["rows"][0]
+    assert calls == [run] and r["variant"] == "vx" and r["family"] == "healed_run" and 0 <= r["mIoU"] <= 100
+    assert "load_healed_model" in r["notes"] and "position grid 4 x 4 interpolated to 6 x 6" in r["notes"]
+    js = json.loads((out / "seg" / "tiny" / "vx.json").read_text(encoding="utf-8"))
+    info = js["variant_info"]
+    assert info["reg_perm"] == [1, 0, 2, 3] and info["healed_k"] == ad56.depth
+    assert info["healed_run_checks"]["pass"] and info["healed_run_checks"]["span_exact_max_rel_inside"] < 1e-4
+    assert info["healed_run_checks"]["protocol"] == "ADE20K training crops at 84 px"
+    assert info["position_grid"]["eval_grid"] == [6, 6] and info["position_grid"]["reprojection_rel_change"] > 0
+    assert js["settings"]["healed_run_grid"] == S.HEALED_VEXACT_GRID
+    assert r["mask_eq_sym"] > 99.9 and r["mask_eq_raw"] < 100.0 and "even head" in r["mask_eq_operator"]
+    assert r["final_tokens"] == "full (even projection bypassed)" and js["settings"]["final_tokens"] == "full"

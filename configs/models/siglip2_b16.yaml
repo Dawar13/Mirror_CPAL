@@ -1,0 +1,68 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: siglip2_b16
+role: language-supervised
+registry_name: siglip2_b16                # key already in mirror/adapters_timm.py; used by configs/g_siglip2_b16.yaml
+source:
+  kind: timm
+  timm_name: vit_base_patch16_siglip_224.v2_webli
+  hf_repo: timm/vit_base_patch16_siglip_224.v2_webli
+revision:
+  value: 4c3661e5ac879a276ddc5ddc6d3f0ecc78fd5d82
+  kind: Hugging Face commit of timm/vit_base_patch16_siglip_224.v2_webli (API sha, lastModified 2025-02-21)
+  timm_code_commit: 43b549bfe9d680bc94284cfd0b611152d18e97d7
+  alt_hf_repo: {repo: google/siglip2-base-patch16-224, sha: 75de2d55ec2d0b4efc50b3e9ad70dba96a7b2fa2, note: transformers format, not used}
+architecture:
+  patch_size: 16
+  image_size: 224
+  blocks: 12
+  width: 768
+  heads: 12
+  mlp_hidden: 3072                          # timm default mlp_ratio=4 (no override in vit_base_patch16_siglip_224)
+  mlp_type: GELU MLP
+  registers: 0
+  cls_token: 0                              # class_token=False
+  pooling: "global_pool='map' (attention-pooling head)"
+  layerscale: false
+  arch_source: https://github.com/huggingface/pytorch-image-models/blob/43b549bfe9d680bc94284cfd0b611152d18e97d7/timm/models/vision_transformer.py
+training_data: WebLI
+training_data_quote: |-
+  We use the WebLI dataset [10] containing 10 billion images and 12 billion alt-texts covering 109 languages.
+recipe_flip: unknown
+recipe_quote: |-
+  We use the original image for computing the SigLIP and LocCa losses from the previous section and apply the additional losses on additional augmented views.
+recipe_quote_2: |-
+  We rely on a single global (teacher) view and 8 local (student) views and otherwise follow the augmentations, loss and hyper parameters from [45].
+recipe_source_url: https://arxiv.org/abs/2502.14786
+recipe_quote_section: Section 2.3 "Training with self-distillation and masked prediction"
+recipe_certainty: >-
+  Unknown. The paper never mentions flips. The image-text (SigLIP) and captioning (LocCa) losses
+  use "the original image". The self-distillation and masked-prediction losses, added during the
+  last 20 percent of training, use augmented views that follow SILC [45] (Naeem et al., ECCV 2024,
+  arXiv 2310.13355). SILC Section 4.1 describes only crops for these views ("two global views
+  cropped between (0.4 - 1.0) of the original image area and eight local views cropped between
+  (0.05 - 0.4)") and says "We resize the original image to (256 256) for the contrastive loss";
+  it does not mention flips. No SigLIP 2 training config is public: big_vision has
+  README_siglip2.md and a demo notebook only.
+other_augmentations:
+  - local and global crops for the self-distillation losses (last 20 percent of training), as in SILC
+  - "50 percent of student patch tokens masked (masked prediction loss, from TIPS)"
+notes:
+  - >-
+    The default checkpoints were trained with a resize to 256 px that does not preserve aspect
+    ratio (Section 2.4.2; paraphrase, the PDF text joins a line-break hyphen), then adapted to
+    other resolutions; per Section 2.4.1 the checkpoints at 95 percent of training are resumed at
+    the target resolution.
+  - >-
+    Section 2.5 "Distillation via active data curation": for ViT-B/16 and ViT-B/32 there is an
+    extra fine-tuning stage in which "we perform implicit "distillation through data" using the
+    ACID method proposed in [61]". Its image augmentation is not described (unknown).
+  - >-
+    big_vision configs/proj/image_text/siglip_lit_coco.py contains flip_lr in its pp string, but
+    that is a LiT demo on COCO, not the SigLIP 2 pre-training recipe.
+  - "big_vision commit read: 0127fb6b337ee2a27bf4e54dea79cff176527356"
+papers:
+  - "Tschannen et al., SigLIP 2, arXiv 2502.14786"
+  - "Naeem et al., SILC: Improving vision language pretraining with self-distillation, ECCV 2024, arXiv 2310.13355"
+verified_on: "2026-11-14"

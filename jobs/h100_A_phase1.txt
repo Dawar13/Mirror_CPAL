@@ -1,0 +1,75 @@
+# H100 job file A: Phase 1 (PROJECT_NEXT_PHASE.md Section 5) plus the MUST-09 heals and the MUST-12 pilot.
+# Launch only after PREREG_NEXT_PHASE.md is signed off and committed (gate A), and after the old operator files are
+# uploaded (see results/STATUS.md, "H100 run plan"). From the repo root on the H100:
+#   . ~/.mirror_env.sh; export MW=8      # neuron-matching processes per job (about CPU count / 4)
+#   PAR=4 setsid nohup bash scripts/h100_sched.sh jobs/h100_A_phase1.txt > logs/q_A.log 2>&1 < /dev/null &
+# Format (scripts/h100_sched.sh): "<needed files> @MiB %lock=<name> %done=<file> | <command>". A job starts when its
+# files exist, its lock is free and the GPU has room; the order below is the priority order.
+# Locks: "heal" = one healing or controlled-pilot run at a time (CLAUDE.md: one healing job at a time; MUST-12 pilot
+# timed without a heal beside it); "must07" = the MUST-07 runner writes shared CSVs, so its invocations run one by one;
+# "must09sum" not needed (heals already hold "heal").
+
+# ---- 1. Canonical structures (results/MUST-07/structure/), from the uploaded operator files where they exist.
+cache/train_index.npz cache/val224_uint8.npy runs/x2/perlayer_reg_s0/results/e1_operators.npz runs/x2/perlayer_reg_s1/results/e1_operators.npz runs/x2/perlayer_reg_s2/results/e1_operators.npz @8000 %lock=must07 %done=results/MUST-07/structure/dinov2_vitb14_reg_s2.npz | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0,1,2 --structure-only --workers $MW --operators-template 'runs/x2/perlayer_reg_s{seed}/results/e1_operators.npz'
+cache/train_index.npz cache/val224_uint8.npy runs/g/deit3_b16_s0/results/e1_operators.npz @8000 %lock=must07 %done=results/MUST-07/structure/deit3_b16_s0.npz | python scripts/must07_compressors.py --model deit3_b16 --fit-seeds 0 --structure-only --workers $MW --operators-template runs/g/deit3_b16_s0/results/e1_operators.npz
+
+# ---- 2. MUST-04 (and MUST-03's GPU acceptance check in the dinov2_vitb14_reg reference_check): CPU-heavy matchings.
+cache/train_index.npz cache/val224_uint8.npy @10000 %done=results/MUST-04/dinov2_vitb14_reg/metrics.json | python scripts/measure_groups.py --model dinov2_vitb14_reg --groups LR,UD,R90,R180 --fit-seed 0 --surgery UD --surgery-blocks 1-6 --reference-run runs/x2/perlayer_reg_s0 --workers $MW --experiment MUST-04 --out results/MUST-04/dinov2_vitb14_reg
+cache/train_index.npz cache/val224_uint8.npy @10000 %done=results/MUST-04/deit3_b16/metrics.json | python scripts/measure_groups.py --model deit3_b16 --groups LR,UD,R90,R180 --fit-seed 0 --surgery UD --surgery-blocks 1-6 --reference-run runs/g/deit3_b16_s0 --workers $MW --experiment MUST-04 --out results/MUST-04/deit3_b16
+
+# ---- 3. MUST-02 exactness on the canonical structure (fp32 with the full fp32 flip check, then float64 audit only).
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz @8000 | python scripts/must02_exactness.py --model dinov2_vitb14_reg --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz @8000 | XFORMERS_DISABLED=1 python scripts/must02_exactness.py --model dinov2_vitb14_reg --dtype float64 --no-flip-check --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+
+# ---- 4. MUST-09 heals that do not wait for gate B (one at a time, lock "heal"). Mirror-exact seed 0 first.
+cache/heal256_uint8.npy cache/msel224_uint8.npy results/MUST-07/structure/dinov2_vitb14_reg_s0.npz @14000 %lock=heal %done=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json | python scripts/must09_heal.py --method mirror_exact --seed 0 --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz --micro-batch 64 --curve-queries 10000 --gpu-frac 0.2
+
+# ---- 5. MUST-12 pilot (controlled training, ViT-S/8, ImageNet-100 64 px): timed with no heal beside it (lock "heal").
+cache/in100_meta.json @12000 %lock=heal %done=runs/MUST-12/vit_s8_none_s0/last_done.flag | python scripts/train_controlled.py --exp MUST-12 --condition none --seed 0 --gpu-frac 0.18
+cache/in100_meta.json @12000 %lock=heal %done=runs/MUST-12/vit_s8_LR_s0/last_done.flag | python scripts/train_controlled.py --exp MUST-12 --condition LR --seed 0 --gpu-frac 0.18
+
+# ---- 6. MUST-07 zero-shot comparison on dinov2_vitb14_reg (lock "must07"); full size first, which writes gate_b.json.
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz cache/msel224_uint8.npy @16000 %lock=must07 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes full --methods mirror_exact
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz cache/msel224_uint8.npy @16000 %lock=must07 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes full --fp32-queries 5000 --fp32-bank-per-class 10
+results/MUST-07/gate_b.json @16000 %lock=must07 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes 6mlp,6both,9both
+
+# ---- 7. More heals not waiting for gate B: Mirror-exact seeds 1 and 2 (learning rate of seed 0), random structure, SVD.
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json @14000 %lock=heal %done=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1/metrics.json | python scripts/must09_heal.py --method mirror_exact --seed 1 --lr-from runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0 --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz --micro-batch 64 --curve-queries 10000 --gpu-frac 0.2
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json @14000 %lock=heal %done=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2/metrics.json | python scripts/must09_heal.py --method mirror_exact --seed 2 --lr-from runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0 --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz --micro-batch 64 --curve-queries 10000 --gpu-frac 0.2
+
+# ---- 8. Gate B heals: best baseline 3 seeds, second best 1 seed (method and hyperparameters read from gate_b.json).
+results/MUST-07/gate_b.json @14000 %lock=heal %done=runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done | bash scripts/h100_heal_gate.sh 1 0
+
+# ---- 9. Twins and visibility (MUST-05 in tf32; MUST-06 on three models). Old per-layer structures where uploaded.
+cache/train_index.npz cache/val224_uint8.npy runs/x2/perlayer_reg_s0/results/e1_operators.npz @14000 %done=results/MUST-05/dinov2_vitb14_reg/metrics.json | python scripts/must05_twins.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s0 --reference-run runs/x2/perlayer_reg_s0 --precision tf32 --workers $MW
+cache/train_index.npz cache/val224_uint8.npy runs/x2/perlayer_reg_s0/results/e1_operators.npz @8000 %done=results/MUST-06/dinov2_vitb14_reg/metrics.json | python scripts/must06_visibility.py --model dinov2_vitb14_reg --fit-run runs/x2/perlayer_reg_s0 --reference-run runs/x2/perlayer_reg_s0 --workers $MW
+cache/train_index.npz cache/val224_uint8.npy runs/g/deit3_b16_s0/results/e1_operators.npz @8000 %done=results/MUST-06/deit3_b16/metrics.json | python scripts/must06_visibility.py --model deit3_b16 --fit-run runs/g/deit3_b16_s0 --reference-run runs/g/deit3_b16_s0 --workers $MW
+
+# ---- 10. Remaining MUST-04 models and the DINOv2-L structure (CPU-heavy, so after the first wave).
+cache/train_index.npz cache/val224_uint8.npy @10000 %done=results/MUST-04/dinov2_vitb14/metrics.json | python scripts/measure_groups.py --model dinov2_vitb14 --groups LR,UD,R90,R180 --fit-seed 0 --surgery UD --surgery-blocks 1-6 --reference-run runs/x2/perlayer_plain_s0 --workers $MW --experiment MUST-04 --out results/MUST-04/dinov2_vitb14
+cache/train_index.npz cache/val224_uint8.npy @16000 %done=results/MUST-04/dinov2_vitl14_reg/metrics.json | python scripts/measure_groups.py --model dinov2_vitl14_reg --groups LR,UD,R90,R180 --fit-seed 0 --surgery UD --surgery-blocks 1-6 --reference-run runs/g/dinov2_l_reg_s0 --workers $MW --experiment MUST-04 --out results/MUST-04/dinov2_vitl14_reg
+cache/train_index.npz cache/val224_uint8.npy @12000 %done=results/MUST-06/dinov2_vitl14_reg/metrics.json | python scripts/must06_visibility.py --model dinov2_vitl14_reg --reference-run runs/g/dinov2_l_reg_s0 --workers $MW --gpu-frac 0.2
+cache/train_index.npz cache/val224_uint8.npy @16000 %lock=must07 %done=results/MUST-07/structure/dinov2_vitl14_reg_s0.npz | python scripts/must07_compressors.py --model dinov2_vitl14_reg --fit-seeds 0 --structure-only --workers $MW
+
+# ---- 11. MUST-07 seeds 1 and 2 (P7.1 needs three fit seeds at 6 blocks), then DeiT-III and DINOv2-L at full size.
+results/MUST-07/gate_b.json results/MUST-07/structure/dinov2_vitb14_reg_s2.npz @16000 %lock=must07 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 1,2 --sizes 6mlp,6both --skip-flip-seeds 1,2 --methods mirror_exact,svd,svdllm,asvd_scale,slicegpt,flap,zipit,pair_actcorr,pair_wcos,pair_random,random_structure
+results/MUST-07/gate_b.json results/MUST-07/structure/dinov2_vitb14_reg_s2.npz @16000 %lock=must07 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 1,2 --sizes 9both,full --methods mirror_exact --fp32-queries 5000 --fp32-bank-per-class 10
+results/MUST-07/gate_b.json results/MUST-07/structure/deit3_b16_s0.npz @16000 %lock=must07 | bash scripts/h100_must07_other.sh deit3_b16
+results/MUST-07/gate_b.json results/MUST-07/structure/dinov2_vitl14_reg_s0.npz @24000 %lock=must07 | bash scripts/h100_must07_other.sh dinov2_vitl14_reg
+
+# ---- 12. MUST-08 component ablation (reuses identical MUST-07 rows).
+results/MUST-07/gate_b.json results/MUST-07/structure/dinov2_vitb14_reg_s2.npz @16000 %lock=must07 | python scripts/must08_components.py --model dinov2_vitb14_reg --fit-seeds 0,1,2 --reuse-from results/MUST-07 --fp32-queries 5000 --fp32-bank-per-class 10
+
+# ---- 13. Remaining heals (lock "heal"): best baseline seeds 1 and 2, second best, random structure, plain SVD.
+runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @14000 %lock=heal %done=runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s1.done | bash scripts/h100_heal_gate.sh 1 1
+runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @14000 %lock=heal %done=runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s2.done | bash scripts/h100_heal_gate.sh 1 2
+results/MUST-07/gate_b.json @14000 %lock=heal %done=runs/MUST-09/dinov2_vitb14_reg/gate_b_rank2_s0.done | bash scripts/h100_heal_gate.sh 2 0
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz @14000 %lock=heal %done=runs/MUST-09/dinov2_vitb14_reg/random_structure/s0/metrics.json | python scripts/must09_heal.py --method random_structure --seed 0 --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz --micro-batch 64 --curve-queries 10000 --gpu-frac 0.2
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz @14000 %lock=heal %done=runs/MUST-09/dinov2_vitb14_reg/svd/s0/metrics.json | python scripts/must09_heal.py --method svd --seed 0 --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz --micro-batch 64 --curve-queries 10000 --gpu-frac 0.2
+
+# ---- 14. MUST-10 (flip averaging against healed Mirror-exact seed 0; accuracy part; timing goes in job file Q).
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json @12000 | python scripts/must10_flipavg.py --healed-run runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0
+
+# ---- 15. MUST-12 measurement (gate C): LR and UD structure of the pilot runs.
+runs/MUST-12/vit_s8_none_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/MUST-12/vit_s8_none_s0 MUST-12
+runs/MUST-12/vit_s8_LR_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/MUST-12/vit_s8_LR_s0 MUST-12

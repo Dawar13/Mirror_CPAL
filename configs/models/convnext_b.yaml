@@ -1,0 +1,65 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: convnext_b
+role: CNN (structure only, on the pointwise MLP layers)
+registry_name: null    # not in mirror/adapters_timm.py; TimmPretrainedAdapter is ViT-only, a CNN path is needed
+source:
+  kind: timm
+  timm_name: convnext_base.fb_in1k
+  hf_repo: timm/convnext_base.fb_in1k
+  original_weights_url: https://dl.fbaipublicfiles.com/convnext/convnext_base_1k_224_ema.pth   # url in timm convnext.py default_cfgs
+  weights_bytes: 354476359                  # HEAD on the original URL, 2026-11-14
+  choice_note: >-
+    Supervised on ImageNet-1k only (EMA weights, 224 px), as Section 4.2 asks. Not the
+    fb_in22k_ft_in1k variant.
+revision:
+  value: 28a94f6353acecb8a5ce70491f9bc29a21d93e2e
+  kind: Hugging Face commit of timm/convnext_base.fb_in1k (API sha, lastModified 2025-01-21)
+  timm_code_commit: 43b549bfe9d680bc94284cfd0b611152d18e97d7
+  convnext_code_commit: 048efcea897d999aed302f2639b6270aedf8d4c8   # facebookresearch/ConvNeXt
+  alt_hf_repo: {repo: facebook/convnext-base-224, sha: 8550c1da008c99b90c9c42f1d4e1cb650d7a8c05, note: transformers format, not used}
+architecture:
+  patch_size: 4                             # stem: 4 x 4 patchify convolution, stride 4 (stem_type 'patch')
+  image_size: "train 224, timm test_input_size 288"
+  blocks: 36                                # depths (3, 3, 27, 3)
+  width: "stage widths 128, 256, 512, 1024"
+  mlp_hidden: "4 x stage width: 512, 1024, 2048, 4096"   # mlp_ratio 4
+  mlp_type: "pointwise MLP (Linear, GELU, Linear) on channels-last tokens after a 7 x 7 depthwise conv (conv_mlp=False)"
+  registers: 0
+  layerscale: true                          # ls_init_value 1e-6
+  arch_source: https://github.com/huggingface/pytorch-image-models/blob/43b549bfe9d680bc94284cfd0b611152d18e97d7/timm/models/convnext.py
+training_data: >-
+  ImageNet-1k (timm card "Dataset: ImageNet-1k"; TRAINING.md ConvNeXt-B command uses
+  --data_path /path/to/imagenet-1k)
+recipe_flip: "yes"
+recipe_quote: |-
+          hflip=0.5,
+recipe_quote_2: |-
+      if hflip > 0.:
+          primary_tfl += [transforms.RandomHorizontalFlip(p=hflip)]
+recipe_quote_context: >-
+  timm 0.3.2 timm/data/transforms_factory.py, transforms_imagenet_train default argument (line 48)
+  and use (lines 73-74). ConvNeXt's datasets.py build_transform calls create_transform without an
+  hflip argument (lines 58-69), so the default 0.5 applies. ConvNeXt's INSTALL.md: "The results in
+  the paper are produced with `torch==1.8.0+cu111 torchvision==0.9.0+cu111 timm==0.3.2`."
+recipe_source_url: https://github.com/facebookresearch/ConvNeXt/blob/048efcea897d999aed302f2639b6270aedf8d4c8/datasets.py#L50-L73
+recipe_timm_source: "timm 0.3.2 wheel https://files.pythonhosted.org/packages/51/2d/39ecc56fbb202e1891c317e8e44667299bc3b0762ea2ed6aaaa2c2f6613c/timm-0.3.2-py3-none-any.whl (sha256 c1598ef61c246e38835a6b834811dcb8d62ae56b644cd54dc3ef9565c8387875, matches PyPI); GitHub has no v0.3.2 tag"
+recipe_paper_quote: |-
+  For data augmentations, we adopt common schemes including Mixup [90], Cutmix [89], RandAugment [14], and Random Erasing [91].
+recipe_paper_source: arXiv 2201.03545, Section 3.1 "Settings", paragraph "Training on ImageNet-1K". The paper does not name flips.
+recipe_certainty: >-
+  High for the code path (timm default), but the flip is implicit: neither the paper nor ConvNeXt's
+  own code names it.
+other_augmentations:
+  - "RandAugment rand-m9-mstd0.5-inc1 (main.py --aa default); timm RandAugment includes Rotate up to +-30 degrees, ShearX/Y, Translate, no flips"
+  - "Mixup 0.8, CutMix 1.0 (main.py defaults)"
+  - "Random Erasing 0.25 (main.py --reprob default)"
+  - "label smoothing 0.1"
+  - "colour jitter: --color_jitter defaults to 0.4, but timm 0.3.2 adds ColorJitter only when no auto-augment policy is set (transforms_factory.py lines 79-107), so it is not applied"
+  - RandomResizedCrop (timm default), bicubic
+notes:
+  - mirror/adapters_timm.py only wraps ViTs; ConvNeXt needs a separate structure-only path (CORE-04 says pointwise MLP layers).
+papers:
+  - "Liu et al., A ConvNet for the 2020s, arXiv 2201.03545"
+verified_on: "2026-11-14"

@@ -1,0 +1,9 @@
+# H100 job file Q: latency and memory timings on a quiet GPU (PROJECT_NEXT_PHASE.md 4.6: batch 1, 64 and 256; bf16;
+# torch.compile; median of 100 runs after warm-up). Run alone, after job files A and B have finished, one job at a time:
+#   . ~/.mirror_env.sh; PAR=1 setsid nohup bash scripts/h100_sched.sh jobs/h100_Q_latency.txt > logs/q_Q.log 2>&1 < /dev/null &
+# Check first that nvidia-smi shows no other process on the GPU.
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json @20000 | python scripts/must09_heal.py --method mirror_exact --seed 0 --latency-only --with-original
+runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @20000 | python scripts/must09_heal.py --from-gate-b results/MUST-07/gate_b.json --gate-rank 1 --seed 0 --latency-only
+runs/MUST-09/dinov2_vitb14_reg/svd/s0/metrics.json @20000 | python scripts/must09_heal.py --method svd --seed 0 --latency-only
+runs/MUST-09/dinov2_vitb14_reg/random_structure/s0/metrics.json @20000 | python scripts/must09_heal.py --method random_structure --seed 0 --latency-only
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json @20000 | python scripts/must10_flipavg.py --healed-run runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0 --latency-only

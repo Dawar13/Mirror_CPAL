@@ -16,6 +16,13 @@ validation"):
              ViT-B. Models without a CLS token (SigLIP2) use their own pooled embedding instead of the
              CLS token. Forward passes in bf16 autocast (as every Tier-1 number), batch 256; stored as
              float16 npz per variant and split under <out>/features/<model>/ and reused on a rerun.
+  views      for a Mirror-exact model with an even head (full conversion) the final norm projects every
+             token onto the even subspace, so the feature above is [even CLS, mean of even patch tokens]:
+             exactly flip-invariant (view a, the default and the row under the variant's name). With
+             --full-patch-view the same pass also stores the mean of the full patch tokens (final RMSNorm
+             then affine, even projection bypassed) and a second probe, view b = [even CLS, mean of full
+             patch tokens], is reported as <variant>_fullpatch. View b keeps the odd (orientation) part,
+             whose sign flips under a mirror, so it is not invariant. Other models are unaffected
   data       train: mirror.protocol.Protocol.bank_loader(), the 100k bank (100 ImageNet train images
              per class, disjoint from the fit and healing images); test: query_loader(), all 50k
              validation images. Same cached 224 px images (resize 256 bicubic, centre crop 224) for
@@ -75,6 +82,15 @@ Variants (built with the existing code; nothing is reimplemented here):
                               mirror.m1.project_embeddings, as build_vexact projects a materialised
                               grid (a deviation, recorded under "position_grid"). The checks then need
                               images at that size (VariantFactory.check_xs)
+  --healed-run [NAME=]DIR     any healed model (MUST-11): mirror.heal_structured.load_healed_model(DIR, device)
+                              -> (adapter, model, info), imported only when this option is used; variant
+                              NAME (default healedrun_<folder>), family healed_run. Repeatable; --variants may
+                              then be empty. If the info names A* (A_star or A) or the model has an even
+                              head, the model is treated as exactly equivariant (grid moved and checked as
+                              for healed_vexact_k<K> where needed); see VariantFactory._build_healed_run
+
+    python scripts/tier2_linear.py --model dinov2_vitb14_reg --variants original \
+        --healed-run vexact_s0=runs/must09/vexact_s0 --healed-run svd_s0=runs/must09/svd_s0 --out runs/t2
 
 Outputs under --out: t2_linear.csv (one row per model and variant: top-1, top-5, chosen weight
 decay, feature dimension, k-NN check, parameter counts, timings, git hash, seed), T2_LINEAR.md,
@@ -128,6 +144,7 @@ MODEL_DEFAULTS = {
                       "m1_structure": None, "heal_dir": None, "vexact_dir": None},
 }
 DEFAULT_VEXACT_CONFIG = "configs/m3_vexact.yaml"   # fallback when <vexact-dir>/k<K>/summary.json is missing
+HEALED_RUN_WEIGHT_SUFFIXES = (".pt", ".pth", ".safetensors", ".bin")   # hashed to validate cached features
 
 _MEMORY_FRACTION = DEFAULT_MEMORY_FRACTION
 
@@ -160,6 +177,7 @@ VARIANT_LABELS = {
     ("healed", "svd"): "healed SVD, MLP + attention, k = {k} (M3)",
     ("healed", "random"): "healed random structure, MLP + attention, k = {k} (M3)",
     ("healed_vexact", "vexact"): "healed Mirror V-exact, MLP + attention, k = {k} (scripts/heal_vexact.py)",
+    ("healed_run", "run"): "healed model from a run directory (mirror.heal_structured.load_healed_model)",
 }
 
 _PATTERNS = [
@@ -196,6 +214,39 @@ def parse_variants(text: str) -> list:
     if not out:
         raise ValueError("no variants given")
     return out
+
+
+def healed_run_variants(specs) -> tuple:
+    """--healed-run values ("DIR" or "NAME=DIR", repeatable; commas also separate) -> (variants, {name: Path}).
+    Each is a variant of family "healed_run" loaded by mirror.heal_structured.load_healed_model; the default
+    name is healedrun_<last folder of DIR>. k is 0 in the variant name (the run's own span is recorded in the
+    variant info)."""
+    out, dirs = [], {}
+    for spec in specs or []:
+        for part in str(spec).split(","):
+            part = part.strip()
+            if not part:
+                continue
+            name, sep, path = part.partition("=")
+            if not sep:
+                name, path = "", part
+            p = _resolve(path.strip())
+            name = re.sub(r"[^A-Za-z0-9_.-]+", "_", name.strip() or f"healedrun_{p.name}")
+            if name in dirs:
+                raise ValueError(f"--healed-run: two runs named {name!r}; give names as NAME=DIR")
+            dirs[name] = p
+            out.append(VariantName(name, "healed_run", "run", 0))
+    return out, dirs
+
+
+def variants_from_args(a) -> list:
+    """The variants of a run: --variants plus one per --healed-run (--variants may then be empty)."""
+    extra, _ = healed_run_variants(getattr(a, "healed_run", None))
+    named = parse_variants(a.variants) if (a.variants.strip() or not extra) else []
+    clash = {v.name for v in named} & {v.name for v in extra}
+    if clash:
+        raise ValueError(f"--healed-run names clash with --variants: {sorted(clash)}")
+    return named + extra
 
 
 def adapter_at(adapter, img_size: int):
@@ -321,6 +372,69 @@ def probe_feature(adapter, x: torch.Tensor, model=None) -> torch.Tensor:
     p = int(adapter.n_prefix_tokens)
     first = m.forward_head(t, pre_logits=True) if feature_kind(adapter) == "pooled" else t[:, 0]
     return torch.cat([first.float(), t[:, p:].float().mean(dim=1)], dim=-1)
+
+
+FEATURE_RECIPE_PARTS = ("t2v1-parts: [CLS (or pooled) after the final norm, mean patch token after the final norm, "
+                        "mean patch token after the final norm with the even projection bypassed]")
+
+
+def has_even_head(model) -> bool:
+    """True for a Mirror-exact model at full conversion: model.norm = Sequential(rms, even, affine)."""
+    norm = getattr(model, "norm", None)
+    return isinstance(norm, torch.nn.Sequential) and hasattr(norm, "even")
+
+
+def final_norm_tokens(model, tokens: torch.Tensor, skip_even: bool = False) -> torch.Tensor:
+    """model.norm(tokens); with skip_even and an even head, every stage of the final norm except the even
+    projection (rms, then affine): the full tokens, odd (orientation) components kept. PROJECT_NEXT_PHASE.md
+    Section 4.5: the even part is for invariant use (the CLS), the full tokens for equivariant use."""
+    if skip_even and has_even_head(model):
+        for name, mod in model.norm.named_children():
+            if name != "even":
+                tokens = mod(tokens)
+        return tokens
+    return model.norm(tokens)
+
+
+def probe_feature_parts(adapter, x: torch.Tensor, model=None) -> torch.Tensor:
+    """[CLS (or pooled) after the final norm, mean patch token after the final norm, mean patch token with the
+    even projection bypassed], [B, s + 2d]. The first two parts are probe_feature; for a model without an even
+    head the last part equals the second. --full-patch-view probes [first, second] (view a) and [first, third]
+    (view b) from this one pass."""
+    m = adapter.model if model is None else model
+    tokens = adapter.forward_tokens(x, m)
+    t = m.norm(tokens)
+    p = int(adapter.n_prefix_tokens)
+    first = m.forward_head(t, pre_logits=True) if feature_kind(adapter) == "pooled" else t[:, 0]
+    full = final_norm_tokens(m, tokens, skip_even=True)
+    return torch.cat([first.float(), t[:, p:].float().mean(dim=1), full[:, p:].float().mean(dim=1)], dim=-1)
+
+
+def may_have_even_head(v, depth: int) -> bool:
+    """Variants that can carry an even head (full conversion): V-exact at k = depth, healed V-exact at k = depth
+    and any --healed-run model (known only once it is loaded)."""
+    return ((v.family == "m1" and v.method == "vexact" and v.k == int(depth))
+            or (v.family == "healed_vexact" and v.k == int(depth)) or v.family == "healed_run")
+
+
+def probe_views(dim: int, d: int, parts: bool, even_head: bool) -> list:
+    """The probes run on one variant's features: [(name suffix, columns or None, row extras)].
+    Plain features: one view, all columns (unchanged behaviour). Parts features (--full-patch-view) of a model
+    with an even head: view a, [even CLS, mean of even-projected patch tokens] (exactly flip-invariant), under
+    the variant's own name; view b, [even CLS, mean of the full patch tokens] (the odd part of the patch mean
+    changes sign under a flip, so not invariant), under <name>_fullpatch. Parts features without an even head:
+    view a only (it equals the plain feature)."""
+    if not parts:
+        return [("", None, {})]
+    s = int(dim) - 2 * int(d)
+    a = np.arange(s + d)
+    if not even_head:
+        return [("", a, {"patch_mean_tokens": "final norm (no even head)", "feature_flip_invariant": None})]
+    b = np.concatenate([np.arange(s), np.arange(s + d, s + 2 * d)])
+    return [("", a, {"feature_view": "a: even CLS + mean of even-projected patch tokens",
+                     "patch_mean_tokens": "even-projected", "feature_flip_invariant": True}),
+            (FULLPATCH_SUFFIX, b, {"feature_view": "b: even CLS + mean of full patch tokens (even projection bypassed)",
+                               "patch_mean_tokens": "full", "feature_flip_invariant": False})]
 
 
 @torch.no_grad()
@@ -650,8 +764,9 @@ class ProtocolData:
 class VariantFactory:
     def __init__(self, adapter, model_name: str, tiny: bool, operators=None, m1_structure=None, heal_dir=None,
                  heal_config=None, random_seed: int = 1, vexact_dir=None, vexact_checkpoint=None,
-                 vexact_config=None):
+                 vexact_config=None, healed_runs=None):
         self.adapter, self.model_name, self.tiny = adapter, model_name, tiny
+        self.healed_runs = {str(k): Path(p) for k, p in (healed_runs or {}).items()}   # --healed-run: name -> dir
         self.operators = _resolve(operators) if operators else None
         self.m1_structure_path = _resolve(m1_structure) if m1_structure else None
         self.heal_dir = _resolve(heal_dir) if heal_dir else None
@@ -678,6 +793,15 @@ class VariantFactory:
     def heal_run(self, v: VariantName) -> Path:
         return self._need(self.heal_dir, "the M3 healing directory", "--heal-dir") / v.method
 
+    def healed_run_dir(self, v: VariantName) -> Path:
+        """Directory of a --healed-run variant (must exist)."""
+        if v.name not in self.healed_runs:
+            raise KeyError(f"{v.name}: no --healed-run directory registered for this variant")
+        run = self.healed_runs[v.name]
+        if not run.is_dir():
+            raise FileNotFoundError(f"{v.name}: healed run directory {run} not found (--healed-run)")
+        return run
+
     def vexact_run(self, v: VariantName) -> tuple:
         """(run directory, checkpoint) of a healed V-exact variant, in the scripts/heal_vexact.py layout
         <vexact-dir>/k<K>/final/trained_blocks.pt; --vexact-checkpoint names the file directly (its run
@@ -701,6 +825,11 @@ class VariantFactory:
         """Files the variant is built from, with their sha256 (stored with the features)."""
         if v.family == "original":
             return {}
+        if v.family == "healed_run":
+            run = self.healed_run_dir(v)
+            weights = sorted(p for p in run.rglob("*") if p.is_file() and p.suffix in HEALED_RUN_WEIGHT_SUFFIXES)
+            return {"healed_run": str(run),
+                    "weights_sha256": {p.relative_to(run).as_posix(): sha256(p) for p in weights}}
         if v.family == "healed_vexact":
             run, ck = self.vexact_run(v)
             return {"vexact_run": str(run), "checkpoint": str(ck), "checkpoint_sha256": sha256(ck)}
@@ -776,6 +905,8 @@ class VariantFactory:
         """(model, info). The original returns the adapter's own model (not a copy)."""
         ad = self.adapter
         L = ad.depth
+        if v.family == "healed_run":
+            return self._build_healed_run(v)
         if v.family != "original" and not 1 <= v.k <= L:
             raise ValueError(f"{v.name}: k = {v.k} outside 1..{L}")
         d, h = ad.embed_dim, ad.mlp_hidden
@@ -828,6 +959,110 @@ class VariantFactory:
         info.update({"converted_params_dense": dense, "converted_params_kept": kept,
                      "model_params": n_model - dense + kept})
         return m, info
+
+    # ----- any healed model (--healed-run, mirror.heal_structured) ---------------------------------
+    def _build_healed_run(self, v: VariantName):
+        """A --healed-run variant: mirror.heal_structured.load_healed_model(run_dir, device) -> (adapter, model,
+        info), imported here so no other variant needs that module. The loaded adapter must describe the same
+        architecture as this run's adapter (depth, width, prefix tokens, patch size). The model counts as
+        exactly mirror-equivariant when the loader's info names its span operator (A_star or A) or the model
+        carries an even head. Then, if this run's input size needs another position grid than the model holds
+        (DINOv2 at 448 px in scripts/tier2_ade20k.py), the grid is moved as for healed_vexact_k<K>: interpolated
+        with the model's own interpolate_pos_encoding and re-projected with A* (a recorded deviation); and when
+        check images are set (VariantFactory.check_xs) its span exactness is checked in fp32 (bar 1e-4; the run
+        stops above it). Any other model runs as loaded (DINOv2 interpolates its position embedding on the fly,
+        as the original does). Returns (model, info) like build()."""
+        from mirror.heal_structured import load_healed_model
+
+        ad, L = self.adapter, int(self.adapter.depth)
+        run = self.healed_run_dir(v)
+        device = next(ad.model.parameters()).device
+        ad_h, m, hinfo = load_healed_model(run, device)
+        hinfo = hinfo if isinstance(hinfo, dict) else {}
+        for attr in ("depth", "embed_dim", "n_prefix_tokens", "patch_size"):
+            if int(getattr(ad_h, attr)) != int(getattr(ad, attr)):
+                raise ValueError(f"{v.name}: the healed model has {attr} {getattr(ad_h, attr)}, but this run's model "
+                                 f"has {getattr(ad, attr)}")
+        m = m.to(device).float().eval()
+        A, a_src = healed_run_operator(hinfo, m)
+        k = _info_value(hinfo, "k")
+        blocks = _info_value(hinfo, "blocks")
+        if k is None and blocks is not None and [int(b) for b in blocks] == list(range(len(blocks))):
+            k = len(blocks)
+        k = int(k) if k is not None else (L if A is not None and a_src.startswith("even head") else None)
+        grid = checks = None
+        reg_perm = None
+        if A is not None:
+            rp = _info_value(hinfo, "reg_perm")
+            reg_perm = np.asarray(rp, dtype=np.int64) if rp is not None else register_pairing_from_weights(ad, m, A)
+            grid = self._move_healed_run_grid(v, m, A, reg_perm)
+            if self.check_xs is not None and k:
+                from mirror.heal_vexact import span_exactness
+
+                _check_image_sizes(v, self.check_xs, ad)
+                ex = span_exactness(ad, m, [x.to(device) for x in self.check_xs], A, k, reg_perm, tol=1e-4)
+                checks = {"span_exact_max_rel_inside": ex["max_rel_inside"], "pass": bool(ex["pass"]), "tol": 1e-4,
+                          "n_images": ex["n_images"], "dtype": ex["dtype"], "k": int(k),
+                          "protocol": self.check_label or "given check images"}
+                log(f"  {v.name}: span exactness at {ad.img_size} px on {ex['n_images']} check images "
+                    f"{ex['max_rel_inside']:.2e} (bar 1e-4): {'PASS' if ex['pass'] else 'FAIL'}")
+                if not ex["pass"]:
+                    raise RuntimeError(f"{v.name}: the loaded model is not exactly mirror-equivariant at {ad.img_size} px "
+                                       f"(max relative error {ex['max_rel_inside']:.2e} >= 1e-4); not using it")
+        m.eval()
+        for prm in m.parameters():
+            prm.requires_grad_(False)
+        n_model = int(sum(p.numel() for p in ad.model.parameters()))
+        info = {"variant": v.name, "label": v.label, "family": v.family, "method": v.method, "k": v.k, "blocks": [],
+                "model_params_original": n_model,
+                "builder": "mirror.heal_structured.load_healed_model", "healed_run": str(run),
+                "healed_info": small_info(hinfo), "healed_k": k, "exact_operator": a_src if A is not None else None,
+                "even_head": has_even_head(m),
+                "reg_perm": None if reg_perm is None else [int(x) for x in reg_perm], "position_grid": grid,
+                "healed_run_checks": checks}
+        for key in ("converted_params_dense", "converted_params_kept", "model_params", "mlp_params_kept",
+                    "attn_params_kept"):
+            info[key] = hinfo.get(key)
+        pe, pe0 = getattr(m, "pos_embed", None), getattr(ad.model, "pos_embed", None)
+        if grid is None and isinstance(pe, torch.Tensor) and isinstance(pe0, torch.Tensor) and pe.shape != pe0.shape:
+            info["position_grid_note"] = (f"position embedding as loaded ({int(pe.shape[1])} rows; the original model "
+                                          f"has {int(pe0.shape[1])}), used as the model uses it at {ad.img_size} px")
+        log(f"  {v.name}: loaded {run} (load_healed_model); exact operator: {info['exact_operator']}; "
+            + (f"position grid: {grid['deviation']}" if grid else "position grid as loaded"))
+        return m, info
+
+    @torch.no_grad()
+    def _move_healed_run_grid(self, v: VariantName, m, A, reg_perm):
+        """DINOv2 only: if the exact model's position grid does not fit this run's input size, interpolate it with
+        the model's own interpolate_pos_encoding (mirror.m1.materialise_pos_embed) and re-project it with A*
+        (mirror.m1.project_embeddings, position embedding only), in place. Returns the record or None."""
+        from mirror.m1 import materialise_pos_embed, project_embeddings
+
+        ad = self.adapter
+        pe = getattr(m, "pos_embed", None)
+        if not (isinstance(pe, torch.Tensor) and hasattr(m, "interpolate_pos_encoding")
+                and hasattr(m, "prepare_tokens_with_masks")):
+            return None
+        H, W = ad.grid_hw
+        if int(pe.shape[1]) == 1 + H * W:
+            return None
+        work = copy.deepcopy(m)
+        if not materialise_pos_embed(work, ad):
+            return None
+        interp = work.pos_embed.detach().clone()
+        project_embeddings(work, ad, A, reg_perm, write=True)
+        proj = work.pos_embed.detach().clone()
+        del work
+        m.pos_embed = torch.nn.Parameter(proj.to(pe.dtype), requires_grad=False)
+        h0 = int(round(math.sqrt(int(pe.shape[1]) - 1)))
+        den = float(interp[0, 1:].double().norm())
+        return {"deviation": (f"position grid {h0} x {h0} interpolated to {H} x {W} and re-projected with A*; every "
+                              "other tensor as loaded"),
+                "healed_grid": [h0, h0], "eval_grid": [H, W], "eval_px": int(ad.img_size),
+                "interpolation": "model.interpolate_pos_encoding (as mirror.m1.materialise_pos_embed)",
+                "projection": "mirror.m1.project_embeddings (position embedding only)",
+                "reprojection_rel_change": float((proj[0, 1:].double() - interp[0, 1:].double()).norm()) / den
+                if den > 0 else float("nan")}
 
     def _build_healed(self, v: VariantName):
         hm = self.heal()
@@ -1106,6 +1341,85 @@ class VariantFactory:
         return out
 
 
+def _info_value(info: dict, key: str):
+    """info[key], or info["structure"][key] (where mirror.heal_structured.load_healed_model puts the mirror
+    structure: A_star, perms, maps_after, reg_perm, blocks), or info["spec"][key]; None if absent."""
+    for d in (info, info.get("structure"), info.get("spec")):
+        if isinstance(d, dict) and d.get(key) is not None:
+            return d[key]
+    return None
+
+
+def healed_run_operator(info: dict, model) -> tuple:
+    """(A* as an exact float64 involution, where it came from) for a --healed-run model: info["A_star"] or
+    info["A"] (also under info["structure"]), else the model's even head (A* = 2 P - I); (None, reason) when
+    neither exists (the model is then not treated as exactly equivariant)."""
+    from mirror.heal import exact_involution
+
+    for key in ("A_star", "A"):
+        val = _info_value(info, key)
+        if val is not None:
+            return exact_involution(np.asarray(val, dtype=np.float64)), f"loader info[{key!r}]"
+    even = getattr(getattr(model, "norm", None), "even", None)
+    if even is not None and hasattr(even, "P"):
+        P = even.P.detach().double().cpu().numpy()
+        return exact_involution(2.0 * P - np.eye(P.shape[0])), "even head of the model (A* = 2 P - I)"
+    return None, "none (no A* in the loader's info and no even head)"
+
+
+@torch.no_grad()
+def register_pairing_from_weights(adapter, model, A) -> np.ndarray:
+    """Register involution of an exactly equivariant model read from its register tokens: r_j A* = r_pi(j)."""
+    from mirror.m1 import register_info
+
+    reg = register_info(model, adapter)
+    if not reg["R"]:
+        return np.zeros(0, dtype=np.int64)
+    r = getattr(model, reg["name"]).detach().double().cpu()[0]
+    pi = torch.cdist(r @ torch.as_tensor(np.asarray(A, dtype=np.float64)), r).argmin(1).numpy().astype(np.int64)
+    if not np.array_equal(pi[pi], np.arange(len(pi))):
+        raise ValueError(f"the register pairing read from the weights is not an involution: {pi.tolist()}")
+    return pi
+
+
+def small_info(o, max_len: int = 64):
+    """A JSON-friendly summary of a loader's info: scalars and short lists kept, large arrays replaced by their
+    shape (so variant JSON files stay small)."""
+    if isinstance(o, dict):
+        return {str(k): small_info(v, max_len) for k, v in o.items()}
+    if isinstance(o, torch.Tensor):
+        o = o.detach().cpu().numpy()
+    if isinstance(o, np.ndarray):
+        return o.tolist() if o.size <= max_len else f"array of shape {list(o.shape)}"
+    if isinstance(o, (list, tuple)):
+        return [small_info(v, max_len) for v in o] if len(o) <= max_len else f"list of length {len(o)}"
+    if isinstance(o, (str, int, float, bool, np.integer, np.floating)) or o is None:
+        return _jsonable(o)
+    return type(o).__name__                      # objects (constraints, head maps): their type only
+
+
+def healed_run_note(info: dict) -> str:
+    """CSV note of a --healed-run variant."""
+    parts = [f"healed run {info.get('healed_run')} (mirror.heal_structured.load_healed_model)"]
+    hi = info.get("healed_info") or {}
+    for key in ("method", "seed", "k"):
+        if hi.get(key) is not None:
+            parts.append(f"{key} {hi[key]}")
+    if info.get("exact_operator"):
+        parts.append(f"exact operator: {info['exact_operator']}")
+    ch = info.get("healed_run_checks")
+    if ch:
+        parts.append(f"span exactness {ch['span_exact_max_rel_inside']:.1e} on {ch['n_images']} {ch['protocol']} "
+                     f"({'PASS' if ch['pass'] else 'FAIL'})")
+    grid = info.get("position_grid")
+    if grid:
+        parts.append(f"deviation: {grid['deviation']} (re-projection changed the grid by "
+                     f"{grid['reprojection_rel_change']:.1e}, relative)")
+    if info.get("position_grid_note"):
+        parts.append(info["position_grid_note"])
+    return "; ".join(parts)
+
+
 def _check_image_sizes(v: VariantName, xs, adapter) -> None:
     """Healed V-exact check images must be at the adapter's input size."""
     sizes = sorted({tuple(int(s) for s in x.shape[-2:]) for x in xs})
@@ -1167,9 +1481,31 @@ def vexact_feature_note(k: int, depth: int) -> str:
             f"blocks 1..{k} only, so not mirror-invariant")
 
 
+FULLPATCH_SUFFIX = "_fullpatch"
+
+
+def view_label(suffix: str) -> str:
+    """Label addition of a probe view (probe_views)."""
+    return " [view b: even CLS + mean of full patch tokens]" if suffix == FULLPATCH_SUFFIX else ""
+
+
+def view_row_extras(info: dict, vextra: dict) -> dict:
+    """variant_row_extras plus the view's columns (feature_view, patch_mean_tokens, feature_flip_invariant); view b
+    states its feature first in the notes, since the model's feature statement describes view a."""
+    out = {**variant_row_extras(info), **(vextra or {})}
+    if (vextra or {}).get("patch_mean_tokens") == "full":
+        stmt = ("feature view b: [CLS after the final norm (even part), mean of the full patch tokens (final RMSNorm "
+                "then affine, even projection bypassed)]; not flip-invariant (the odd part of the patch mean changes "
+                "sign under a flip)")
+        out["notes"] = stmt + (f"; model as in view a: {out['notes']}" if out.get("notes") else "")
+    return out
+
+
 def variant_row_extras(info: dict) -> dict:
     """Extra CSV columns for variants with checks after loading (healed V-exact): the feature used and the
-    check values. Empty for every other variant."""
+    check values. Empty for every other variant, except --healed-run variants, which get a note."""
+    if (info or {}).get("family") == "healed_run":
+        return {"notes": healed_run_note(info)}
     vc = (info or {}).get("vexact_checks")
     if not vc:
         return {}
@@ -1203,7 +1539,7 @@ CSV_COLUMNS = ["model", "variant", "label", "family", "method", "k", "top1", "to
                "converted_params_kept", "converted_params_dense", "model_params", "t_build_s", "t_extract_s",
                "t_probe_s", "amp", "feature_dtype", "wd_grid", "git_hash", "git_dirty", "seed", "date",
                "vexact_even_head", "vexact_span_exact_rel_max", "vexact_feature_flip_rel_max", "vexact_checks_pass",
-               "notes"]
+               "feature_view", "patch_mean_tokens", "feature_flip_invariant", "notes"]
 
 
 def probe_json_path(out: Path, model_name: str, variant: str) -> Path:
@@ -1258,6 +1594,14 @@ def write_summary(path: Path, rows: list, csv_name: str) -> None:
                   "and of its mirror are equal in fp32 (bf16 forward passes round the mirrored computation differently). "
                   "The loaded student is checked before probing (span exactness and image vs mirror feature, fp32); "
                   "values and the feature statement are in the CSV columns vexact_* and notes.", ""]
+    if any(r.get("patch_mean_tokens") == "full" for r in rows):
+        lines += ["Mirror-exact feature views (--full-patch-view): view a, the variant's own row, is [CLS after the final "
+                  "norm, mean of the even-projected patch tokens], exactly flip-invariant; view b, rows <variant>"
+                  f"{FULLPATCH_SUFFIX}, is [the same CLS, mean of the full patch tokens with the even projection "
+                  "bypassed] (PROJECT_NEXT_PHASE.md Section 4.5: even part for invariant use, full tokens for "
+                  "equivariant use). The odd part of the full patch mean changes sign under a flip, so view b is not "
+                  "invariant. Both come from one feature pass (columns feature_view, patch_mean_tokens, "
+                  "feature_flip_invariant).", ""]
     for model in sorted({r["model"] for r in rows}):
         rs = [r for r in rows if r["model"] == model]
         orig = next((r for r in rs if r["family"] == "original"), None)
@@ -1308,6 +1652,13 @@ def parse_args(argv=None):
                    help="healed V-exact checkpoint file (overrides --vexact-dir; one healed_vexact variant per run)")
     p.add_argument("--vexact-config", default=None,
                    help=f"fallback config when <vexact-dir>/k<K>/summary.json is missing (default {DEFAULT_VEXACT_CONFIG})")
+    p.add_argument("--healed-run", action="append", default=None, metavar="[NAME=]DIR",
+                   help="a healed model loaded with mirror.heal_structured.load_healed_model(DIR, device); repeatable. "
+                        "Adds variant NAME (default healedrun_<folder>) to --variants (which may then be empty)")
+    p.add_argument("--full-patch-view", action="store_true",
+                   help="Mirror-exact models with an even head: also probe view b, [even CLS, mean of the full patch "
+                        "tokens] (row <variant>_fullpatch), beside the default view a [even CLS, even patch mean]; "
+                        "both from one feature pass")
     p.add_argument("--random-seed", type=int, default=1, help="matched random structure (MLP-only variants)")
     p.add_argument("--seed", type=int, default=0, help="global seed and the weight-decay split")
     p.add_argument("--cache-dir", default="cache")
@@ -1341,19 +1692,21 @@ def resolve_paths(a) -> dict:
             "heal_dir": a.heal_dir or d.get("heal_dir"),
             "vexact_dir": getattr(a, "vexact_dir", None) or d.get("vexact_dir"),
             "vexact_checkpoint": getattr(a, "vexact_checkpoint", None),
-            "vexact_config": getattr(a, "vexact_config", None)}
+            "vexact_config": getattr(a, "vexact_config", None),
+            "healed_runs": {k: str(p) for k, p in healed_run_variants(getattr(a, "healed_run", None))[1].items()}}
 
 
 def make_factory(adapter, a, tiny: bool, paths: dict) -> "VariantFactory":
     """The VariantFactory of a run, from the parsed arguments and resolve_paths (both Tier-2 scripts)."""
     return VariantFactory(adapter, a.model, tiny, paths["operators"], paths["m1_structure"], paths["heal_dir"],
                           a.heal_config, a.random_seed, vexact_dir=paths.get("vexact_dir"),
-                          vexact_checkpoint=paths.get("vexact_checkpoint"), vexact_config=paths.get("vexact_config"))
+                          vexact_checkpoint=paths.get("vexact_checkpoint"), vexact_config=paths.get("vexact_config"),
+                          healed_runs=paths.get("healed_runs"))
 
 
 def main(argv=None) -> dict:
     a = parse_args(argv)
-    variants = parse_variants(a.variants)
+    variants = variants_from_args(a)
     check_vexact_checkpoint_arg(variants, a.vexact_checkpoint)
     tiny = a.tiny
     model_name = "tiny" if tiny else a.model
@@ -1400,8 +1753,9 @@ def main(argv=None) -> dict:
         vt = StageTimer()
         log(f"=== {v.name}: {v.label}")
         sources = factory.sources(v)          # fails early when a needed file is missing
-        expect = {"model": model_name, "variant": v.name, "recipe": FEATURE_RECIPE, "amp": a.amp,
-                  "dtype": a.feature_dtype, "sources": sources, "img_size": adapter.img_size}
+        parts = bool(getattr(a, "full_patch_view", False)) and may_have_even_head(v, adapter.depth)
+        expect = {"model": model_name, "variant": v.name, "recipe": FEATURE_RECIPE_PARTS if parts else FEATURE_RECIPE,
+                  "amp": a.amp, "dtype": a.feature_dtype, "sources": sources, "img_size": adapter.img_size}
         feats, model, info = {}, None, None
         t_build = t_extract = 0.0
         for split in SPLITS:
@@ -1421,7 +1775,8 @@ def main(argv=None) -> dict:
                            {"info": info, "sources": sources, "git": git})
             t0 = time.time()
             with vt.stage(f"extract {v.name} {split}"):
-                X, y = extract_features(adapter, data.loader(split), device, model, amp, fdtype, tag=split)
+                X, y = extract_features(adapter, data.loader(split), device, model, amp, fdtype, tag=split,
+                                        feature_fn=probe_feature_parts if parts else None)
             t_extract += time.time() - t0
             meta = {**expect, "split": split, "n": int(X.shape[0]), "dim": int(X.shape[1]), "feature_kind": kind,
                     "git_hash": git["git_hash"], "seed": a.seed, "seconds": round(time.time() - t0, 2),
@@ -1440,51 +1795,59 @@ def main(argv=None) -> dict:
             run_timing[v.name] = vt.stages
             continue
 
-        pj = probe_json_path(out, model_name, v.name)
-        if pj.exists() and not a.force_probe and t_extract == 0.0:
-            prev = json.loads(pj.read_text(encoding="utf-8"))
-            if prev.get("probe_settings") == _jsonable({"grid": grid, "refine": not a.no_wd_refine,
-                                                        "holdout_frac": a.holdout_frac, "seed": a.seed,
-                                                        "solver": solver, "tf32": a.probe_tf32}):
-                log(f"  probe done before ({pj.name}): top-1 {prev['row']['top1']:.2f}; skipping")
-                results.append(prev["row"])
-                continue
-        (Xb, yb, mb), (Xv, yv, mv) = feats["bank"], feats["val"]
-        torch.backends.cuda.matmul.allow_tf32 = bool(a.probe_tf32)
-        t0 = time.time()
-        with vt.stage(f"probe {v.name}"):
-            pr = run_probe(Xb, yb, Xv, yv, data.num_classes, grid, a.holdout_frac, a.seed, not a.no_wd_refine,
-                           device, solver)
-            d_first = int(adapter.embed_dim) if kind == "cls" else int(Xb.shape[1] - adapter.embed_dim)
-            knn = knn_check(Xb, yb, Xv, yv, d_first, data.num_classes, device)
-        t_probe = time.time() - t0
-        torch.backends.cuda.matmul.allow_tf32 = False
-        sel, fin, test = pr["selection"], pr["final"], pr["test"]
-        log(f"  {v.name}: top-1 {test['top1']:.2f}, top-5 {test['top5']:.2f} (wd {sel['chosen_wd']:.3g}); "
-            f"k-NN check {knn:.2f}")
-        row = {"model": model_name, "variant": v.name, "label": v.label, "family": v.family, "method": v.method,
-               "k": v.k, "top1": test["top1"], "top5": test["top5"], "mean_per_class_top1": test["mean_per_class_top1"],
-               "knn_check_top1": knn, "chosen_wd": sel["chosen_wd"], "wd_at_grid_edge": sel["wd_at_grid_edge"],
-               "holdout_top1_at_chosen": sel["holdout_top1_at_chosen"], "final_hit_iter_limit": fin["hit_limit"],
-               "final_lbfgs_iters": fin["n_iter"], "feature_dim": int(Xb.shape[1]), "feature_kind": kind,
-               "n_bank": int(Xb.shape[0]), "n_val": int(Xv.shape[0]), "n_wd_train": sel["n_train"],
-               "n_wd_holdout": sel["n_holdout"], "converted_params_kept": info.get("converted_params_kept"),
-               "converted_params_dense": info.get("converted_params_dense"), "model_params": info.get("model_params"),
-               "t_build_s": round(t_build, 1), "t_extract_s": round(t_extract, 1), "t_probe_s": round(t_probe, 1),
-               "amp": a.amp, "feature_dtype": a.feature_dtype, "wd_grid": a.wd_grid, "git_hash": git["git_hash"],
-               "git_dirty": git["git_dirty"], "seed": a.seed, "date": time.strftime("%Y-%m-%d %H:%M:%S"),
-               **variant_row_extras(info)}
-        np.savez(pj.with_name(f"{v.name}_probe.npz"), W=pr["W"], b=pr["b"], mean=pr["mean"], std=pr["std"],
-                 holdout_positions=pr["holdout_positions"])
-        write_json(pj, {"row": row, "selection": sel, "final": fin, "test": test, "variant_info": info,
-                        "sources": sources, "feature_meta": {"bank": mb, "val": mv},
-                        "probe_settings": {"grid": grid, "refine": not a.no_wd_refine, "holdout_frac": a.holdout_frac,
-                                           "seed": a.seed, "solver": solver, "tf32": a.probe_tf32},
-                        "timing": vt.stages, "git": git, "env": env_info(device)})
-        results.append(row)
+        settings_p = _jsonable({"grid": grid, "refine": not a.no_wd_refine, "holdout_frac": a.holdout_frac,
+                                "seed": a.seed, "solver": solver, "tf32": a.probe_tf32})
+        (Xb_all, yb, mb), (Xv_all, yv, mv) = feats["bank"], feats["val"]
+        for suffix, cols, vextra in probe_views(Xb_all.shape[1], int(adapter.embed_dim), parts,
+                                                bool(info.get("even_head"))):
+            name = v.name + suffix
+            pj = probe_json_path(out, model_name, name)
+            if pj.exists() and not a.force_probe and t_extract == 0.0:
+                prev = json.loads(pj.read_text(encoding="utf-8"))
+                if prev.get("probe_settings") == settings_p:
+                    log(f"  probe done before ({pj.name}): top-1 {prev['row']['top1']:.2f}; skipping")
+                    results.append(prev["row"])
+                    continue
+            Xb = Xb_all if cols is None else Xb_all[:, cols]
+            Xv = Xv_all if cols is None else Xv_all[:, cols]
+            torch.backends.cuda.matmul.allow_tf32 = bool(a.probe_tf32)
+            t0 = time.time()
+            with vt.stage(f"probe {name}"):
+                pr = run_probe(Xb, yb, Xv, yv, data.num_classes, grid, a.holdout_frac, a.seed, not a.no_wd_refine,
+                               device, solver)
+                d_first = int(adapter.embed_dim) if kind == "cls" else int(Xb.shape[1] - adapter.embed_dim)
+                knn = knn_check(Xb, yb, Xv, yv, d_first, data.num_classes, device)
+            t_probe = time.time() - t0
+            torch.backends.cuda.matmul.allow_tf32 = False
+            sel, fin, test = pr["selection"], pr["final"], pr["test"]
+            log(f"  {name}: top-1 {test['top1']:.2f}, top-5 {test['top5']:.2f} (wd {sel['chosen_wd']:.3g}); "
+                f"k-NN check {knn:.2f}" + (f" [{vextra['feature_view']}]" if vextra.get("feature_view") else ""))
+            row = {"model": model_name, "variant": name, "label": v.label + view_label(suffix), "family": v.family,
+                   "method": v.method,
+                   "k": v.k, "top1": test["top1"], "top5": test["top5"], "mean_per_class_top1": test["mean_per_class_top1"],
+                   "knn_check_top1": knn, "chosen_wd": sel["chosen_wd"], "wd_at_grid_edge": sel["wd_at_grid_edge"],
+                   "holdout_top1_at_chosen": sel["holdout_top1_at_chosen"], "final_hit_iter_limit": fin["hit_limit"],
+                   "final_lbfgs_iters": fin["n_iter"], "feature_dim": int(Xb.shape[1]), "feature_kind": kind,
+                   "n_bank": int(Xb.shape[0]), "n_val": int(Xv.shape[0]), "n_wd_train": sel["n_train"],
+                   "n_wd_holdout": sel["n_holdout"], "converted_params_kept": info.get("converted_params_kept"),
+                   "converted_params_dense": info.get("converted_params_dense"), "model_params": info.get("model_params"),
+                   "t_build_s": round(t_build, 1), "t_extract_s": round(t_extract, 1), "t_probe_s": round(t_probe, 1),
+                   "amp": a.amp, "feature_dtype": a.feature_dtype, "wd_grid": a.wd_grid, "git_hash": git["git_hash"],
+                   "git_dirty": git["git_dirty"], "seed": a.seed, "date": time.strftime("%Y-%m-%d %H:%M:%S"),
+                   **view_row_extras(info, vextra)}
+            np.savez(pj.with_name(f"{name}_probe.npz"), W=pr["W"], b=pr["b"], mean=pr["mean"], std=pr["std"],
+                     holdout_positions=pr["holdout_positions"])
+            write_json(pj, {"row": row, "selection": sel, "final": fin, "test": test, "variant_info": info,
+                            "sources": sources, "feature_meta": {"bank": mb, "val": mv},
+                            **({"feature_columns": [int(c) for c in cols]} if cols is not None else {}),
+                            "probe_settings": {"grid": grid, "refine": not a.no_wd_refine, "holdout_frac": a.holdout_frac,
+                                               "seed": a.seed, "solver": solver, "tf32": a.probe_tf32},
+                            "timing": vt.stages, "git": git, "env": env_info(device)})
+            results.append(row)
+            write_tables(out)
+            del Xb, Xv, pr
         run_timing[v.name] = vt.stages
-        write_tables(out)
-        del feats, Xb, Xv, pr
+        del feats, Xb_all, Xv_all
         free_memory(device)
 
     rows = write_tables(out)

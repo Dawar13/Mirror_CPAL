@@ -324,3 +324,120 @@ def test_transfer_cli_tiny_decodes_caches_and_resumes(tmp_path, monkeypatch):
     monkeypatch.setattr(TR.T2, "extract_features", lambda *a, **k: (_ for _ in ()).throw(AssertionError("extracted")))
     res2 = TR.main(args)
     assert [r["top1"] for r in res2["rows"]] == [r["top1"] for r in rows]
+
+
+# ---------------------------------------------------------------- --healed-run (MUST-11): any healed model
+def _fake_heal_structured(monkeypatch, make, calls):
+    """Stand-in for mirror.heal_structured (written separately): load_healed_model(run_dir, device) ->
+    (adapter, model, info) from `make()`."""
+    import sys
+    import types
+
+    def load_healed_model(run_dir, device):
+        calls.append(Path(run_dir))
+        return make()
+
+    fake = types.ModuleType("mirror.heal_structured")
+    fake.load_healed_model = load_healed_model
+    monkeypatch.setitem(sys.modules, "mirror.heal_structured", fake)
+
+
+def _exact_tiny(seed=5, even_head=True):
+    """(adapter, Mirror-exact tiny model with every block converted, structure) in float32."""
+    from mirror.m1 import build_vexact
+
+    ad = TimmTinyAdapter(img_size=56, seed=0)
+    d, h, L = ad.embed_dim, ad.mlp_hidden, ad.depth
+    H, dh = attn_dims(ad.model.blocks[0])
+    A = random_involution_fixing_ones(d, d // 2 + 4, seed=seed)
+    perms = [random_pairing(h, h // 3, seed=seed + 10 + b) for b in range(L)]
+    maps = [random_head_structure(H, dh, 1, seed=seed + 20 + b) for b in range(L)]
+    model, _ = build_vexact(ad, A, list(range(L)), perms, maps, even_head=even_head)
+    return ad, model, A
+
+
+def test_healed_run_variant_names():
+    vs, dirs = T2.healed_run_variants(["runs/must09/vexact_s0", "svd one=runs/must09/svd_s0,x=runs/y"])
+    assert [(v.name, v.family, v.method, v.k) for v in vs] == [
+        ("healedrun_vexact_s0", "healed_run", "run", 0), ("svd_one", "healed_run", "run", 0), ("x", "healed_run", "run", 0)]
+    assert dirs["svd_one"] == T2._resolve("runs/must09/svd_s0") and all(v.label for v in vs)
+    with pytest.raises(ValueError, match="two runs named"):
+        T2.healed_run_variants(["a/k12", "b/k12"])
+    a = T2.parse_args(["--variants", "", "--healed-run", "runs/a"])
+    assert [v.name for v in T2.variants_from_args(a)] == ["healedrun_a"]
+    a = T2.parse_args(["--variants", "original"])
+    assert [v.name for v in T2.variants_from_args(a)] == ["original"]          # unchanged without --healed-run
+    with pytest.raises(ValueError, match="no variants given"):
+        T2.variants_from_args(T2.parse_args(["--variants", ""]))
+    with pytest.raises(ValueError, match="clash"):
+        T2.variants_from_args(T2.parse_args(["--variants", "original", "--healed-run", "original=runs/a"]))
+    # The info layout of mirror.heal_structured.load_healed_model: the mirror structure under info["structure"].
+    hm = random_head_structure(4, 16, 1, seed=0)
+    info = {"method": "mirror_exact", "spec": {"blocks": [0, 1]}, "constraints": [object()],
+            "structure": {"A_star": np.eye(64), "reg_perm": np.array([1, 0]), "maps_after": [hm], "blocks": [0, 1, 2]}}
+    assert T2._info_value(info, "blocks") == [0, 1, 2] and T2._info_value(info, "method") == "mirror_exact"
+    assert T2._info_value(info, "k") is None and T2.healed_run_operator(info, None)[1] == "loader info['A_star']"
+    s = T2.small_info(info)
+    assert s["constraints"] == ["object"] and s["structure"]["maps_after"] == ["HeadMaps"]
+    assert s["structure"]["A_star"] == "array of shape [64, 64]" and s["structure"]["reg_perm"] == [1, 0]
+    json.dumps(s)
+
+
+def test_cli_linear_and_transfer_with_a_healed_run(tmp_path, monkeypatch):
+    calls = []
+    _fake_heal_structured(monkeypatch, lambda: _exact_tiny()[:2] + ({"method": "mirror_exact", "seed": 0,
+                                                                       "big": np.zeros(500)},), calls)
+    run = tmp_path / "runs" / "vexact_s0"
+    (run / "final").mkdir(parents=True)
+    torch.save({"x": torch.zeros(3)}, run / "final" / "student.pt")
+    out = tmp_path / "t2"
+    res = T2.main(["--tiny", "--variants", "original", "--healed-run", f"vx={run}", "--out", str(out), *FAST])
+    rows = {r["variant"]: r for r in res["rows"]}
+    assert list(rows) == ["original", "vx"] and calls == [run]
+    r = rows["vx"]
+    assert r["family"] == "healed_run" and 0 <= r["top1"] <= 100
+    assert "load_healed_model" in r["notes"] and "even head" in r["notes"] and "method mirror_exact" in r["notes"]
+    vj = json.loads((out / "probe" / "tiny" / "vx_variant.json").read_text())
+    assert vj["sources"]["weights_sha256"] == {"final/student.pt": T2.sha256(run / "final" / "student.pt")}
+    assert vj["info"]["healed_info"]["big"] == "array of shape [500]" and vj["info"]["healed_k"] == 4
+    assert vj["info"]["position_grid"] is None and vj["info"]["healed_run_checks"] is None      # 224 px: no check images
+    assert "feature_view" not in r and vj["info"]["even_head"]                 # default: view a only, as before
+    # The features of the exact model are mirror-invariant (the even head), so the probe sees the same thing.
+    ad, model, _ = _exact_tiny()
+    x = normalize_for(ad, torch.from_numpy(synthetic_dataset(2, 2, 56, seed=3)[0]).permute(0, 3, 1, 2))
+    with torch.no_grad():
+        f, ft = T2.probe_feature(ad, x, model), T2.probe_feature(ad, x.flip(-1), model)
+        p, pt = T2.probe_feature_parts(ad, x, model), T2.probe_feature_parts(ad, x.flip(-1), model)
+        p0 = T2.probe_feature_parts(ad, x, ad.model)
+    assert float((f - ft).abs().max() / f.abs().max()) < 1e-5
+    # Parts: [even CLS, even patch mean] is probe_feature (view a); the full patch mean (view b) is not invariant;
+    # for a model without an even head the last part equals the second.
+    assert torch.equal(p[:, :128], f) and float((pt[:, 128:] - p[:, 128:]).abs().max() / p[:, 128:].abs().max()) > 1e-3
+    assert torch.equal(p0[:, 64:128], p0[:, 128:])
+    # --full-patch-view: both views from one feature pass, view b under <variant>_fullpatch.
+    out_v = tmp_path / "t2v"
+    res = T2.main(["--tiny", "--variants", "original", "--healed-run", f"vx={run}", "--full-patch-view", "--out",
+                   str(out_v), *FAST])
+    rows = {r["variant"]: r for r in res["rows"]}
+    assert list(rows) == ["original", "vx", "vx_fullpatch"]
+    a_, b_ = rows["vx"], rows["vx_fullpatch"]
+    assert a_["feature_flip_invariant"] is True and a_["patch_mean_tokens"] == "even-projected"
+    assert b_["feature_flip_invariant"] is False and b_["patch_mean_tokens"] == "full" and b_["feature_dim"] == 128
+    assert b_["notes"].startswith("feature view b") and "view b" in b_["label"] and "feature_view" not in rows["original"]
+    assert a_["top1"] == r["top1"]                                              # view a is the default feature
+    with np.load(out_v / "features" / "tiny" / "vx_bank.npz") as z:
+        assert z["X"].shape[1] == 192 and json.loads(str(z["meta_json"]))["recipe"] == T2.FEATURE_RECIPE_PARTS
+    md = (out_v / "T2_LINEAR.md").read_text(encoding="utf-8")
+    assert "Mirror-exact feature views (--full-patch-view)" in md and chr(0x2014) not in md
+    # Transfer: --variants may be empty when a healed run is given; default name healedrun_<folder>.
+    TR = load_script("tier2_transfer")
+    res = TR.main(["--tiny", "--variants", "", "--healed-run", str(run), "--out", str(tmp_path / "tr"), *FAST])
+    assert [(r["dataset"], r["variant"]) for r in res["rows"]] == [("tiny_synth", "healedrun_vexact_s0")]
+    assert "load_healed_model" in res["rows"][0]["notes"] and len(calls) == 3
+    res = TR.main(["--tiny", "--variants", "", "--healed-run", str(run), "--full-patch-view", "--out",
+                   str(tmp_path / "trv"), *FAST])
+    assert [r["variant"] for r in res["rows"]] == ["healedrun_vexact_s0", "healedrun_vexact_s0_fullpatch"]
+    assert [r["feature_flip_invariant"] for r in res["rows"]] == [True, False]
+    # A missing run directory fails before any work.
+    with pytest.raises(FileNotFoundError, match="healed run directory"):
+        T2.main(["--tiny", "--variants", "", "--healed-run", str(tmp_path / "nope"), "--out", str(out), *FAST])

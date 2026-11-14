@@ -1,0 +1,57 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: dino_b16
+role: self-supervised, older
+registry_name: null    # not yet in mirror/adapters_timm.py MODEL_REGISTRY
+source:
+  kind: timm
+  timm_name: vit_base_patch16_224.dino
+  hf_repo: timm/vit_base_patch16_224.dino
+  original_weights_url: https://dl.fbaipublicfiles.com/dino/dino_vitbase16_pretrain/dino_vitbase16_pretrain.pth   # url in timm default_cfgs
+  weights_bytes: 343242485                  # HEAD on the original URL, 2026-11-14
+  torch_hub_alternative: {hub_repo: facebookresearch/dino, entry_point: dino_vitb16, code_commit: 7c446df5b9f45747937fb0d72314eb9f7b66930a}
+revision:
+  value: 4735e392aa9f07d74d9aa296f7be800da73699df
+  kind: Hugging Face commit of timm/vit_base_patch16_224.dino (API sha, lastModified 2025-01-21)
+  timm_code_commit: 43b549bfe9d680bc94284cfd0b611152d18e97d7
+  alt_hf_repo: {repo: facebook/dino-vitb16, sha: f205d5d8e640a89a2b8ef0369670dfc37cc07fc2, note: transformers format, not used}
+architecture:
+  patch_size: 16
+  image_size: 224
+  blocks: 12
+  width: 768
+  heads: 12
+  mlp_hidden: 3072
+  mlp_type: GELU MLP
+  registers: 0
+  cls_token: 1
+  layerscale: false
+  arch_source: https://github.com/huggingface/pytorch-image-models/blob/43b549bfe9d680bc94284cfd0b611152d18e97d7/timm/models/vision_transformer.py
+training_data: >-
+  ImageNet-1k train without labels (paper, "Implementation details": "We pretrain the models on the
+  ImageNet dataset [60] without labels.")
+recipe_flip: "yes"
+recipe_quote: |-
+  transforms.RandomHorizontalFlip(p=0.5),
+recipe_quote_context: >-
+  First transform of flip_and_color_jitter in DataAugmentationDINO (main_dino.py line 422),
+  applied to both global crops and all local crops.
+recipe_source_url: https://github.com/facebookresearch/dino/blob/7c446df5b9f45747937fb0d72314eb9f7b66930a/main_dino.py#L419-L460
+recipe_paper_quote: |-
+  We follow the data augmentations of BYOL [30] (color jittering, Gaussian blur and solarization) and multi-crop [10] with a bicubic interpolation to adapt the position embeddings to the scales [19, 69].
+recipe_paper_note: The paper sentence does not name flips; the code does.
+recipe_certainty: >-
+  High. The released ViT-B/16 training arguments (args.txt below) use this script's
+  DataAugmentationDINO, which always flips.
+other_augmentations:
+  - "ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1), p=0.8"
+  - RandomGrayscale(p=0.2)
+  - "GaussianBlur: 1.0 on global crop 1, 0.1 on global crop 2, 0.5 on local crops"
+  - Solarization(0.2) on global crop 2
+  - "multi-crop: released ViT-B/16 args use global_crops_scale [0.25, 1.0], local_crops_scale [0.05, 0.25], local_crops_number 10, 400 epochs"
+notes:
+  - "Released training arguments: https://dl.fbaipublicfiles.com/dino/dino_vitbase16_pretrain/args.txt (linked from the DINO README)"
+papers:
+  - "Caron et al., Emerging Properties in Self-Supervised Vision Transformers, arXiv 2104.14294"
+verified_on: "2026-11-14"

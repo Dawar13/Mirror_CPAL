@@ -1,0 +1,90 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: dinov3_b16
+role: optional (candidate no-flip control, see recipe_flip)
+registry_name: null    # not yet in mirror/adapters_timm.py MODEL_REGISTRY
+source:
+  kind: hf_hub (gated) or torch_hub with a signed weights URL; timm mirror also exists
+  official_hf_repo: facebook/dinov3-vitb16-pretrain-lvd1689m      # gated: "manual" (HF API)
+  torch_hub: {hub_repo: facebookresearch/dinov3, entry_point: dinov3_vitb16, code_commit: 6876159a11b4df116f30f667f8c9888617df0751}
+  timm_name: vit_base_patch16_dinov3.lvd1689m
+  timm_hf_repo: timm/vit_base_patch16_dinov3.lvd1689m              # not gated on HF, licence "dinov3"
+access_requirements: >-
+  Official weights: request access through Meta's form
+  (https://ai.meta.com/resources/models-and-libraries/dinov3-downloads/); the README says "once
+  accepted, an e-mail will be sent with the complete list of URLs pointing to all the available
+  model weights", and the URLs are passed to torch.hub.load via weights=. The official HF repo is
+  gated (manual approval). The timm mirror is not gated, but its card and pretrained_cfg carry the
+  DINOv3 licence, which still applies.
+licence:
+  name: DINOv3 License (dated August 14, 2025)
+  url: https://ai.meta.com/resources/models-and-libraries/dinov3-license
+  terms_read: >-
+    Grants "a non-exclusive, worldwide, non-transferable and royalty-free limited license" to use,
+    reproduce, distribute and modify the DINO Materials. Redistribution must "provide a copy of this
+    Agreement" and display "Built with DINOv3". For papers: "If you submit for publication the
+    results of research" you must "acknowledge the use of DINO Materials in your publication."
+revision:
+  value: 5931719e67bbdb9737e363e781fb0c67687896bc
+  kind: Hugging Face commit of facebook/dinov3-vitb16-pretrain-lvd1689m (API sha, lastModified 2025-08-19)
+  timm_mirror_sha: c6a5fb7d12bbd3cf3b0079253141c3332aaed7da      # timm/vit_base_patch16_dinov3.lvd1689m, lastModified 2025-09-24
+  timm_code_commit: 43b549bfe9d680bc94284cfd0b611152d18e97d7
+architecture:
+  patch_size: 16
+  image_size: "hub default img_size=224; timm pretrained_cfg input 256 (dynamic_img_size=True); RoPE, so any size"
+  blocks: 12
+  width: 768
+  heads: 12
+  mlp_hidden: 3072                          # ffn_ratio=4, ffn_layer="mlp"
+  mlp_type: GELU MLP
+  registers: 4                              # n_storage_tokens=4 (timm: num_reg_tokens=4)
+  cls_token: 1
+  layerscale: true                          # layerscale_init=1.0e-05
+  position: "RoPE (pos_embed_rope_base=100), no absolute position embedding"
+  pooling_note: "timm default global_pool is 'avg'; its docstring says pass global_pool='token' to match upstream CLS pooling"
+  arch_source: https://github.com/facebookresearch/dinov3/blob/6876159a11b4df116f30f667f8c9888617df0751/dinov3/hub/backbones.py
+training_data: 'LVD-1689M (timm card "Dataset: LVD-1689M"); ViT-B is distilled from the ViT-7B teacher'
+recipe_flip: "no"
+recipe_flip_confidence: probable (inferred from the teacher and ViT-L student configs; the ViT-B distillation config is not public)
+recipe_quote: |-
+  horizontal_flips: false
+recipe_quote_context: >-
+  Set in every released DINOv3 training config that defines the ViT-7B teacher or a distilled web
+  student: dinov3_vit7b16_pretrain.yaml line 138, dinov3_vit7b16_gram_anchor.yaml line 168,
+  dinov3_vit7b16_high_res_adapt.yaml line 188, dinov3_vitl16_lvd1689m_distilled.yaml line 211.
+  The flag reaches the augmentation through ssl_meta_arch.py line 758
+  (horizontal_flips=cfg.crops.horizontal_flips) and augmentations.py lines 78 and 117:
+  v2.RandomHorizontalFlip(p=0.5 if horizontal_flips else 0.0). The code default
+  (ssl_default_config.yaml line 162) is true, so the released configs switch flips off on purpose.
+recipe_source_url: https://github.com/facebookresearch/dinov3/blob/6876159a11b4df116f30f667f8c9888617df0751/dinov3/configs/train/dinov3_vitl16_lvd1689m_distilled.yaml#L211
+recipe_source_urls_more:
+  - https://github.com/facebookresearch/dinov3/blob/6876159a11b4df116f30f667f8c9888617df0751/dinov3/configs/train/dinov3_vit7b16_pretrain.yaml#L138
+  - https://github.com/facebookresearch/dinov3/blob/6876159a11b4df116f30f667f8c9888617df0751/dinov3/configs/train/dinov3_vit7b16_gram_anchor.yaml#L168
+  - https://github.com/facebookresearch/dinov3/blob/6876159a11b4df116f30f667f8c9888617df0751/dinov3/configs/train/dinov3_vit7b16_high_res_adapt.yaml#L188
+  - https://github.com/facebookresearch/dinov3/blob/6876159a11b4df116f30f667f8c9888617df0751/dinov3/data/augmentations.py#L70-L80
+  - https://github.com/facebookresearch/dinov3/blob/6876159a11b4df116f30f667f8c9888617df0751/dinov3/train/ssl_meta_arch.py#L747-L758
+recipe_paper_quote: |-
+  Remaining hyperparameters can be found in the configuration files in the code release.
+recipe_paper_source: arXiv 2508.10104, Appendix C "Implementation Details". The paper text does not mention flips for pre-training.
+recipe_certainty: >-
+  Medium to high. Teacher (7B, all three stages) and the released ViT-L distillation config all
+  turn flips off. The ViT-B student comes from the multi-student distillation (paper Section 5.2),
+  whose config is not released; the only ViT-B config in the repo
+  (configs/train/multidist_tests/vitb_p16.yaml) is a test stub on ImageNet without a crops block.
+  So "no flips" for ViT-B is inferred from its teacher and its sibling student (verify with the
+  authors or a released ViT-B config if one appears).
+other_augmentations:
+  - "multi-crop: global crops scale [0.32, 1.0] at 256 px, 8 local crops scale [0.05, 0.32] at 112 px (7B pretrain and ViT-L distillation configs)"
+  - "ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1) with p=0.8, RandomGrayscale(p=0.2)"
+  - "GaussianBlur p=1.0 (global crop 1), p=0.1 (global crop 2), p=0.5 (local); RandomSolarize(threshold=128, p=0.2) on global crop 2 (augmentations.py, same values as DINOv2)"
+notes:
+  - >-
+    This is the most important finding of the recipe check: DINOv3 is a same-family, same-size
+    self-supervised ViT-B trained without flips, and so a strong candidate control for CORE-04's
+    recipe prediction against DINOv2 ViT-B. It differs from DINOv2 in more than flips (patch 16,
+    RoPE, LVD-1689M, Gram anchoring, distillation from 7B), so the comparison is not flips-only.
+  - Downstream recipes in the paper (detection, segmentation TTA, depth) do use flips; those do not touch the backbone weights we would load.
+papers:
+  - "Siméoni et al., DINOv3, arXiv 2508.10104"
+verified_on: "2026-11-14"

@@ -1,0 +1,63 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: eva02_b14
+role: optional
+registry_name: null    # not yet in mirror/adapters_timm.py MODEL_REGISTRY
+source:
+  kind: timm
+  timm_name: eva02_base_patch14_224.mim_in22k
+  hf_repo: timm/eva02_base_patch14_224.mim_in22k
+  original: "Yuxin-CV/EVA-02, file eva02/pt/eva02_B_pt_in21k_p14.pt (commented hf_hub_filename in timm eva.py)"
+  choice_note: >-
+    The only EVA-02 B/14 weights at 224 px are the MIM pre-trained ones (no fine-tuning,
+    num_classes=0). The fine-tuned B/14 classifiers in the EVA-02 README run at 448 px.
+revision:
+  value: 0ecfe3fab2be96198054b55157bd448097ba1828
+  kind: Hugging Face commit of timm/eva02_base_patch14_224.mim_in22k (API sha, lastModified 2025-01-21)
+  timm_code_commit: 43b549bfe9d680bc94284cfd0b611152d18e97d7
+  eva_code_commit: 5623d08bb08a8268c7bc18e1d9b8b4bd651fe4d9   # baaivision/EVA
+architecture:
+  patch_size: 14
+  image_size: 224
+  blocks: 12
+  width: 768
+  heads: 12
+  mlp_hidden: 2048                          # mlp_ratio=4*2/3 and hidden_features = int(dim * mlp_ratio) = int(768 * 8/3) = 2048
+  mlp_type: "SwiGLU (swiglu_mlp=True, scale_mlp=True); see dinov2_vitg14_reg.yaml note on SwiGLU hidden units"
+  registers: 0
+  cls_token: 1
+  layerscale: false
+  position: "RoPE (use_rot_pos_emb=True, ref_feat_shape=(16, 16)) plus absolute position embedding (Eva class default use_abs_pos_emb=True; eva02_base_patch14_224 does not override it)"
+  preprocessing: "OpenAI CLIP mean and std, bicubic, crop_pct 0.9 (timm config.json)"
+  arch_source: https://github.com/huggingface/pytorch-image-models/blob/43b549bfe9d680bc94284cfd0b611152d18e97d7/timm/models/eva.py
+training_data: >-
+  ImageNet-21K images for masked image modelling, with an EVA-CLIP vision encoder as the teacher
+  (EVA-02 paper Table 22 "MIM pre-training setting": image data source "IN-21K" for B; MIM
+  teacher "EVA-CLIP vision encoder [44]"). timm card: "Pretrain Dataset: ImageNet-22k".
+recipe_flip: "yes"
+recipe_quote: |-
+  transforms.RandomHorizontalFlip(p=0.5),
+recipe_quote_context: >-
+  First entry of common_transform in DataAugmentationForEVA (EVA-02/asuka/datasets.py line 41),
+  followed by RandomResizedCropAndInterpolationWithTwoResolution; used by
+  build_eva_pretraining_dataset. Hard-coded, not behind a flag.
+recipe_source_url: https://github.com/baaivision/EVA/blob/5623d08bb08a8268c7bc18e1d9b8b4bd651fe4d9/EVA-02/asuka/datasets.py#L34-L53
+recipe_certainty: >-
+  High for the student's input pipeline. The paper's Table 22 lists random resized crop (0.2, 1)
+  but does not name flips; the code does. The MIM target comes from the EVA-CLIP teacher applied
+  to the same flipped crop, so the teacher's own training recipe also shapes what is learnt (not
+  checked here).
+other_augmentations:
+  - "RandomResizedCrop, scale (0.2, 1.0) (run_eva02_pretraining.py --crop_scale default [0.2, 1.0]; paper Table 22 '(0.2, 1)')"
+  - "ColorJitter only if --color_jitter > 0; default 0.0"
+  - block-wise masking (MaskingGenerator), 40 percent mask ratio (paper Table 22)
+notes:
+  - >-
+    The fine-tuning pipeline (datasets.py build_transform) also flips: for linear probing it uses
+    transforms.RandomHorizontalFlip() (line 210), otherwise timm create_transform. Not relevant to
+    the MIM checkpoint, which has no fine-tuning.
+  - The EVA-02 B pre-training command is in a gist linked from EVA-02/asuka/README.md (not opened; the flip is hard-coded, so the command cannot switch it off).
+papers:
+  - "Fang et al., EVA-02: A Visual Representation for Neon Genesis, arXiv 2303.11331"
+verified_on: "2026-11-14"

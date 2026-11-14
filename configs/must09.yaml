@@ -1,0 +1,165 @@
+# MUST-09 (PROJECT_NEXT_PHASE.md, Sections 4.8 and 5): healed full-model comparison, one recipe for every method.
+# The healing recipe below is copied from configs/m3_vexact.yaml (the recipe of the V-exact k = 12 run and of E3), so
+# Mirror-exact, every compressor of MUST-07 and the random-structure control heal the same way:
+#   2 epochs of the 100k heal set (780 steps of 256 images, micro-batch 32), AdamW (weight decay 0.05), 5% linear
+#   warm-up then cosine to 0, bf16 autocast, random resized crop 224 (scale 0.35 to 1) with flips (p = 0.5);
+#   loss: normalised MSE on the final CLS and patch tokens and on the output of every converted block (weight 1 each,
+#   normalisers fixed before training on 1,024 train images);
+#   learning rate from {1e-5, 5e-5, 1e-4} by the held-out loss after 100-step trials on the 5k LR-selection images
+#   (healval); when the best is the top of the grid, one more 100-step trial at 2e-4 is recorded (as E3; it never
+#   changes the chosen rate unless lr_selection.extra_can_win is set).
+# Trainable set (mirror/heal_structured.py): the structured parameters of the converted blocks and the embeddings;
+# Mirror-exact re-projects its weights and embeddings every step, the baselines train freely inside their structure.
+#   python scripts/must09_heal.py --method mirror_exact --seed 0
+#   python scripts/must09_heal.py --method svd --seed 0
+#   python scripts/must09_heal.py --method mirror_exact --seed 0 --latency-only      # after the heal, quiet GPU
+# CPU smoke test: add --tiny.
+experiment: MUST-09
+seed: 0                        # healing seed: data order, crops, flips and the learning-rate trials (--seed)
+
+model:
+  hub_repo: facebookresearch/dinov2
+  name: dinov2_vitb14_reg      # main model (PROJECT_NEXT_PHASE.md, Section 4.2)
+  img_size: 224
+
+components: [mlp, attn]        # full model: every block, MLP and attention
+targets: sym                   # sym: flip-averaged final targets for every method (--targets raw: the teacher's own)
+mirror_builder: auto           # auto: mirror.mirror_family when importable, else mirror.heal_vexact.build_vexact_student
+compressor_builder: auto       # auto: mirror.budget + mirror.baselines.compress when importable; shim: E3 SVD (svd only)
+lowrank_factors: balanced      # low-rank students: balanced factors of the compressed weight for every low-rank
+                               # method (as the E3 SVD arm); given: the compressor's own factors
+
+structure:                     # fitted span structure (A*, neuron pairings, head maps, register pairing)
+  span_structure: null         # a mirror_family SpanStructure file (MUST-07: results/MUST-07/structure/<model>_s0.npz);
+                               # null: the M1 and X2 files below (the source of the V-exact k = 12 run and of E3)
+  operators: runs/x2/perlayer_reg_s0/results/e1_operators.npz
+  heads: runs/m1/m1_structure.npz
+  attn_a_out: auto
+  mode: per_layer
+  attention: true
+  random_seed: 1               # random-structure control: fixed structure seed (as E3); the healing seed is --seed
+  random_fix_ones: true
+
+compressor:
+  fit_seed: 0                  # activation statistics of the compressors: fit set 0 (2,000 train images)
+  cache_dir: cache
+
+data:
+  images: cache/heal256_uint8.npy   # uint8 [105000, 256, 256, 3], train images
+  index: cache/train_index.npz
+  meta: cache/train_meta.json
+  train_key: heal_rows              # 100k heal set
+  heldout_key: healval_rows         # 5k LR-selection set (train images)
+
+heal:                          # mirror/heal.py HealConfig; as configs/m3_vexact.yaml (train_scope is set to all)
+  epochs: 2
+  batch_size: 256
+  micro_batch: 32              # does not change results (fixed normaliser); --micro-batch can raise it on the H100
+  weight_decay: 0.05
+  warmup_frac: 0.05
+  min_lr_ratio: 0.0
+  crop_size: 224
+  crop_scale: [0.35, 1.0]
+  hflip_p: 0.5
+  w_cls: 1.0
+  w_patch: 1.0
+  w_block: 1.0
+  normaliser: fixed
+  calib_images: 1024
+  grad_checkpoint: false
+  amp: auto
+  eval_every: 200
+  log_every: 20
+  prefetch: 2
+
+lr_selection:
+  lrs: [1.0e-5, 5.0e-5, 1.0e-4]
+  budget_steps: 100
+  extra_lrs: [2.0e-4]
+  extra_when: top              # top: only when the chosen rate is the largest of the grid; always; never
+  extra_can_win: false         # false (as E3): the extra trial is recorded and never chosen
+
+curve:
+  steps: [0, 100, 300, 780]    # validation k-NN and flip consistency during the final run
+  queries: 10000               # validation queries at the intermediate steps; full validation at the first and last
+
+knn:                           # paper protocol: 100k bank (train), 50k validation queries, k = 20, T = 0.07
+  cache_dir: cache
+  k: 20
+  temperature: 0.07
+  amp: bf16                    # k-NN top-1 in bf16 as every earlier number
+  fp32_pass: true              # final: fp32 features (bank and all queries, TF32 off) for the flip-consistency claim
+  batch_size: 128
+  num_workers: 4
+
+checks:                        # after healing, fp32 with TF32 off
+  cache_dir: cache
+  exact_images: 64             # validation images for the exactness probe and the raw CLS flip difference
+  exact_tol: 1.0e-4
+  conversion_tol: 1.0e-3       # compressed model against its trainable form (relative CLS feature difference)
+  batch_size: 128
+  num_workers: 4
+
+train_state:
+  every: 50                    # optimiser steps between saved training states (resume after preemption)
+
+latency:                       # --latency-only (PROJECT_NEXT_PHASE.md, Section 4.6)
+  batches: [1, 64, 256]
+  warmup: 20
+  iters: 100
+  compile: true
+  compile_mode: default
+  align: 8                     # even/odd form of Mirror-exact (mirror/efficient.py), as M2
+
+compute:
+  device: cuda
+  gpu_memory_fraction: 0.15    # 12 GB of 80 GB; a heal peaked at 5.4 GB on the 5090 (micro-batch 32)
+  tf32: false
+
+out_root: runs/MUST-09         # runs/MUST-09/<model>/<method>/s<seed>/
+results_root: results/MUST-09  # summary.csv, curves.csv, latency.csv
+
+tiny:
+  tiny_model_seed: 0           # the tiny random ViT is the same for every healing seed
+  curve:
+    steps: [0, 1, 2, 4]
+    queries: 10
+  knn:
+    batch_size: 16
+    num_workers: 0
+  checks:
+    exact_images: 8
+    num_classes: 4
+    bank_per_class: 8
+    query_per_class: 4
+    probe_per_class: 2
+    batch_size: 16
+    num_workers: 0
+  data:
+    image_size: 64
+    n_train: 32
+    n_heldout: 8
+  heal:
+    epochs: 1
+    batch_size: 8
+    micro_batch: 4
+    crop_size: 56
+    calib_images: 8
+    eval_every: 0
+    log_every: 0
+    prefetch: 0
+  lr_selection:
+    lrs: [1.0e-4, 1.0e-3]
+    budget_steps: 2
+    extra_lrs: [3.0e-3]
+  train_state:
+    every: 2
+  latency:
+    batches: [1, 4]
+    warmup: 1
+    iters: 3
+    compile: false
+  compute:
+    device: cpu
+  out_root: tiny_out/MUST-09
+  results_root: tiny_out/results/MUST-09

@@ -1,0 +1,68 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: deit3_b16
+role: supervised
+registry_name: deit3_b16                  # key already in mirror/adapters_timm.py; used by configs/g_deit3_b16.yaml
+source:
+  kind: timm
+  timm_name: deit3_base_patch16_224.fb_in1k
+  hf_repo: timm/deit3_base_patch16_224.fb_in1k
+  original_weights_url: https://dl.fbaipublicfiles.com/deit/deit_3_base_224_1k.pth   # url in timm deit.py default_cfgs
+  weights_bytes: 346399585                  # HEAD on the original URL, 2026-11-14
+revision:
+  value: 19c7b54db6681c96466eaa67507afba7cf8db449
+  kind: Hugging Face commit of timm/deit3_base_patch16_224.fb_in1k (API sha, lastModified 2025-01-21)
+  timm_code_commit: 43b549bfe9d680bc94284cfd0b611152d18e97d7   # huggingface/pytorch-image-models, 2026-11-03
+architecture:
+  patch_size: 16
+  image_size: 224
+  blocks: 12
+  width: 768
+  heads: 12
+  mlp_hidden: 3072                          # timm default mlp_ratio=4
+  mlp_type: GELU MLP
+  registers: 0
+  cls_token: 1
+  layerscale: true                          # init_values=1e-6
+  other: "no_embed_class=True (CLS has no position embedding)"
+  arch_source: https://github.com/huggingface/pytorch-image-models/blob/43b549bfe9d680bc94284cfd0b611152d18e97d7/timm/models/deit.py
+training_data: 'ImageNet-1k (timm model card "Dataset: ImageNet-1k")'
+recipe_flip: "yes"
+recipe_quote: |-
+  In addition to these 3 aumgnentations choices, we include the common color-jitter and horizontal flip.
+recipe_quote_note: '"aumgnentations" is the paper''s own spelling. Section 3.2 "Data-augmentation".'
+recipe_source_url: https://arxiv.org/abs/2204.07118
+recipe_code_quote: |-
+  transforms.RandomHorizontalFlip()
+recipe_code_url: https://github.com/facebookresearch/deit/blob/7e160fe43f0252d17191b71cbb5826254114ea5b/augment.py#L104-L108
+recipe_code_context: >-
+  new_data_aug_generator (3-Augment) appends RandomHorizontalFlip after RandomResizedCrop
+  (line 107) and after Simple Random Crop (line 101). main.py line 243-244 swaps it in when
+  --ThreeAugment is set.
+recipe_certainty: >-
+  High. Both training stages listed for the released ViT-B 224 ImageNet-1k model flip (see notes).
+other_augmentations:
+  - "3-Augment: one of greyscale, solarisation or Gaussian blur, chosen uniformly (RandomChoice over gray_scale, Solarization, GaussianBlur, each p=1.0)"
+  - "ColorJitter(0.3, 0.3, 0.3) from --color-jitter 0.3"
+  - RandomResizedCrop (scale 0.08 to 1.0, bicubic) on ImageNet-1k; Simple Random Crop (--src) only for ImageNet-21k recipes
+  - Mixup 0.8 and CutMix 1.0 (pre-training command)
+notes:
+  - >-
+    README_revenge.md gives the ViT-B ImageNet-1k pre-training command with --input-size 192,
+    --epochs 800, --ThreeAugment, --color-jitter 0.3, then a separate "finetuning for ViT-B, L and
+    H at resolution 224x224" command (20 epochs, --aa rand-m9-mstd0.5-inc1, no --ThreeAugment).
+    The fine-tune uses deit/datasets.py build_transform, which calls timm create_transform without
+    an hflip argument, so timm 0.3.2's default hflip=0.5 applies (timm 0.3.2 wheel,
+    timm/data/transforms_factory.py lines 48 and 73-74). Which stage the released
+    deit_3_base_224_1k.pth comes from is not stated in the files read (verify); the flip answer is
+    the same either way.
+  - >-
+    The fine-tune's RandAugment (timm) includes Rotate (range [-30, 30] degrees at maximum level),
+    ShearX/Y and Translate, but no flips (timm 0.3.2 auto_augment.py _RAND_TRANSFORMS). Relevant to
+    the R90 and UD controls only as small-angle rotations.
+  - "README_revenge.md: https://github.com/facebookresearch/deit/blob/7e160fe43f0252d17191b71cbb5826254114ea5b/README_revenge.md"
+  - "timm 0.3.2 wheel: https://files.pythonhosted.org/packages/51/2d/39ecc56fbb202e1891c317e8e44667299bc3b0762ea2ed6aaaa2c2f6613c/timm-0.3.2-py3-none-any.whl (sha256 c1598ef61c246e38835a6b834811dcb8d62ae56b644cd54dc3ef9565c8387875, matches PyPI); deit/requirements.txt pins timm==0.3.2"
+papers:
+  - "Touvron, Cord, Jégou, DeiT III: Revenge of the ViT, arXiv 2204.07118"
+verified_on: "2026-11-14"

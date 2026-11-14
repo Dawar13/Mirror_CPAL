@@ -12,7 +12,10 @@ scripts/tier2_linear.py.
 Variants and their builders are those of scripts/tier2_linear.py (VariantFactory), including
 healed_vexact_k<K> (--vexact-dir, --vexact-checkpoint, --vexact-config as there): the loaded student
 is checked before any feature is extracted, and the feature statement and check values go to the
-CSV (vexact_* columns and notes).
+CSV (vexact_* columns and notes). --healed-run [NAME=]DIR (repeatable) adds any healed model loaded with
+mirror.heal_structured.load_healed_model, as in scripts/tier2_linear.py (MUST-11). --full-patch-view adds, for
+Mirror-exact models with an even head, view b [even CLS, mean of the full patch tokens] as rows
+<variant>_fullpatch beside the default view a [even CLS, even patch mean] (see scripts/tier2_linear.py).
 
 Data (downloaded on the VM only, under $HF_HOME). Hugging Face dataset ids below were checked on the
 Hugging Face API on 2026-11-08 (not gated, parquet files; split sizes from the dataset cards); the
@@ -294,6 +297,11 @@ def parse_args(argv=None):
     p.add_argument("--vexact-dir", default=None, help="as in scripts/tier2_linear.py")
     p.add_argument("--vexact-checkpoint", default=None, help="as in scripts/tier2_linear.py")
     p.add_argument("--vexact-config", default=None, help="as in scripts/tier2_linear.py")
+    p.add_argument("--healed-run", action="append", default=None, metavar="[NAME=]DIR",
+                   help="a healed model through mirror.heal_structured.load_healed_model, as in scripts/tier2_linear.py")
+    p.add_argument("--full-patch-view", action="store_true",
+                   help="Mirror-exact models with an even head: also probe view b [even CLS, mean of the full patch "
+                        "tokens] (rows <variant>_fullpatch), as in scripts/tier2_linear.py")
     p.add_argument("--random-seed", type=int, default=1)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--img-size", type=int, default=224)
@@ -321,7 +329,7 @@ CSV_COLUMNS = ["model", "dataset", "variant", "label", "family", "method", "k", 
                "chosen_wd", "wd_at_grid_edge", "holdout_top1_at_chosen", "final_hit_iter_limit", "feature_dim",
                "n_train", "n_test", "num_classes", "hf_id", "t_extract_s", "t_probe_s", "git_hash", "git_dirty", "seed",
                "date", "vexact_even_head", "vexact_span_exact_rel_max", "vexact_feature_flip_rel_max",
-               "vexact_checks_pass", "notes"]
+               "vexact_checks_pass", "feature_view", "patch_mean_tokens", "feature_flip_invariant", "notes"]
 
 
 def write_tables(out: Path) -> list:
@@ -379,7 +387,7 @@ def write_tables(out: Path) -> list:
 def main(argv=None) -> dict:
     a = parse_args(argv)
     tiny = a.tiny
-    variants = T2.parse_variants(a.variants)
+    variants = T2.variants_from_args(a)
     T2.check_vexact_checkpoint_arg(variants, a.vexact_checkpoint)
     model_name = "tiny" if tiny else a.model
     out = Path(a.out) if a.out else REPO_ROOT / ("tiny_out/t2" if tiny else "runs/t2")
@@ -445,13 +453,15 @@ def main(argv=None) -> dict:
         vt = StageTimer()
         log(f"=== {v.name}: {v.label}")
         sources = factory.sources(v)
+        parts = bool(a.full_patch_view) and T2.may_have_even_head(v, adapter.depth)
         model, info = None, None
         feats, t_ext = {}, {}
         for d in dsets:
             t_ext[d] = 0.0
             for split in SPLITS:
                 fp = out / "features" / model_name / d / f"{v.name}_{split}.npz"
-                expect = {"model": model_name, "variant": v.name, "recipe": T2.FEATURE_RECIPE, "amp": a.amp,
+                expect = {"model": model_name, "variant": v.name,
+                          "recipe": T2.FEATURE_RECIPE_PARTS if parts else T2.FEATURE_RECIPE, "amp": a.amp,
                           "dtype": a.feature_dtype, "sources": sources, "img_size": adapter.img_size, "dataset": d,
                           "hf_id": registry[d]["hf_id"], "split": split, "n": int(len(dsets[d]["data"][split][1]))}
                 hit = None if a.force_features else T2.cached_features(fp, expect)
@@ -463,7 +473,8 @@ def main(argv=None) -> dict:
                         model, info = factory.build(v)
                 t0 = time.time()
                 with vt.stage(f"extract {v.name} {d} {split}"):
-                    X, y = T2.extract_features(adapter, loader(d, split), device, model, amp, fdtype, tag=f"{d} {split}")
+                    X, y = T2.extract_features(adapter, loader(d, split), device, model, amp, fdtype, tag=f"{d} {split}",
+                                               feature_fn=T2.probe_feature_parts if parts else None)
                 t_ext[d] += time.time() - t0
                 meta = {**expect, "dim": int(X.shape[1]), "feature_kind": kind, "git_hash": git["git_hash"],
                         "seed": a.seed, "seconds": round(time.time() - t0, 2)}
@@ -482,38 +493,45 @@ def main(argv=None) -> dict:
             run_timing[v.name] = vt.stages
             continue
         for d in dsets:
-            pj = out / "probe" / model_name / d / f"{v.name}.json"
-            if pj.exists() and not a.force_probe and t_ext[d] == 0.0:
-                prev = json.loads(pj.read_text(encoding="utf-8"))
-                if prev.get("probe_settings") == T2._jsonable(settings):
-                    log(f"  {d}: probe done before, top-1 {prev['transfer_row']['top1']:.2f}; skipping")
-                    results.append(prev["transfer_row"])
-                    continue
-            (Xt, yt, mt), (Xs, ys, ms) = feats[(d, "train")], feats[(d, "test")]
-            torch.backends.cuda.matmul.allow_tf32 = bool(a.probe_tf32)
-            t0 = time.time()
-            with vt.stage(f"probe {v.name} {d}"):
-                pr = T2.run_probe(Xt, yt, Xs, ys, registry[d]["num_classes"], grid, a.holdout_frac, a.seed,
-                                  not a.no_wd_refine, device, solver)
-            torch.backends.cuda.matmul.allow_tf32 = False
-            sel, fin, test = pr["selection"], pr["final"], pr["test"]
-            log(f"  {v.name} on {d}: top-1 {test['top1']:.2f}, mean per-class {test['mean_per_class_top1']:.2f} "
-                f"(wd {sel['chosen_wd']:.3g})")
-            row = {"model": model_name, "dataset": d, "variant": v.name, "label": v.label, "family": v.family,
-                   "method": v.method, "k": v.k, "top1": test["top1"], "top5": test["top5"],
-                   "mean_per_class_top1": test["mean_per_class_top1"], "chosen_wd": sel["chosen_wd"],
-                   "wd_at_grid_edge": sel["wd_at_grid_edge"], "holdout_top1_at_chosen": sel["holdout_top1_at_chosen"],
-                   "final_hit_iter_limit": fin["hit_limit"], "feature_dim": int(Xt.shape[1]), "n_train": int(len(yt)),
-                   "n_test": int(len(ys)), "num_classes": registry[d]["num_classes"], "hf_id": registry[d]["hf_id"],
-                   "t_extract_s": round(t_ext[d], 1), "t_probe_s": round(time.time() - t0, 1),
-                   "git_hash": git["git_hash"], "git_dirty": git["git_dirty"], "seed": a.seed,
-                   "date": time.strftime("%Y-%m-%d %H:%M:%S"), **T2.variant_row_extras(info)}
-            T2.write_json(pj, {"transfer_row": row, "selection": sel, "final": fin, "test": test, "variant_info": info,
-                               "sources": sources, "dataset_meta": dsets[d]["meta"],
-                               "feature_meta": {"train": mt, "test": ms}, "probe_settings": settings,
-                               "git": git, "env": env_info(device)})
-            results.append(row)
-            write_tables(out)
+            (Xt_all, yt, mt), (Xs_all, ys, ms) = feats[(d, "train")], feats[(d, "test")]
+            for suffix, cols, vextra in T2.probe_views(Xt_all.shape[1], int(adapter.embed_dim), parts,
+                                                       bool(info.get("even_head"))):
+                name = v.name + suffix
+                pj = out / "probe" / model_name / d / f"{name}.json"
+                if pj.exists() and not a.force_probe and t_ext[d] == 0.0:
+                    prev = json.loads(pj.read_text(encoding="utf-8"))
+                    if prev.get("probe_settings") == T2._jsonable(settings):
+                        log(f"  {d}: probe done before, top-1 {prev['transfer_row']['top1']:.2f}; skipping")
+                        results.append(prev["transfer_row"])
+                        continue
+                Xt = Xt_all if cols is None else Xt_all[:, cols]
+                Xs = Xs_all if cols is None else Xs_all[:, cols]
+                torch.backends.cuda.matmul.allow_tf32 = bool(a.probe_tf32)
+                t0 = time.time()
+                with vt.stage(f"probe {name} {d}"):
+                    pr = T2.run_probe(Xt, yt, Xs, ys, registry[d]["num_classes"], grid, a.holdout_frac, a.seed,
+                                      not a.no_wd_refine, device, solver)
+                torch.backends.cuda.matmul.allow_tf32 = False
+                sel, fin, test = pr["selection"], pr["final"], pr["test"]
+                log(f"  {name} on {d}: top-1 {test['top1']:.2f}, mean per-class {test['mean_per_class_top1']:.2f} "
+                    f"(wd {sel['chosen_wd']:.3g})")
+                row = {"model": model_name, "dataset": d, "variant": name, "label": v.label + T2.view_label(suffix),
+                       "family": v.family,
+                       "method": v.method, "k": v.k, "top1": test["top1"], "top5": test["top5"],
+                       "mean_per_class_top1": test["mean_per_class_top1"], "chosen_wd": sel["chosen_wd"],
+                       "wd_at_grid_edge": sel["wd_at_grid_edge"], "holdout_top1_at_chosen": sel["holdout_top1_at_chosen"],
+                       "final_hit_iter_limit": fin["hit_limit"], "feature_dim": int(Xt.shape[1]), "n_train": int(len(yt)),
+                       "n_test": int(len(ys)), "num_classes": registry[d]["num_classes"], "hf_id": registry[d]["hf_id"],
+                       "t_extract_s": round(t_ext[d], 1), "t_probe_s": round(time.time() - t0, 1),
+                       "git_hash": git["git_hash"], "git_dirty": git["git_dirty"], "seed": a.seed,
+                       "date": time.strftime("%Y-%m-%d %H:%M:%S"), **T2.view_row_extras(info, vextra)}
+                T2.write_json(pj, {"transfer_row": row, "selection": sel, "final": fin, "test": test,
+                                   "variant_info": info, "sources": sources, "dataset_meta": dsets[d]["meta"],
+                                   "feature_meta": {"train": mt, "test": ms}, "probe_settings": settings,
+                                   **({"feature_columns": [int(c) for c in cols]} if cols is not None else {}),
+                                   "git": git, "env": env_info(device)})
+                results.append(row)
+                write_tables(out)
         run_timing[v.name] = vt.stages
         del feats
         T2.free_memory(device)

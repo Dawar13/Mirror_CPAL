@@ -1,0 +1,66 @@
+# Provenance record for PROJECT_NEXT_PHASE.md Section 4.2 and CORE-04.
+# Every field was read from the cited source on 2026-11-14 (web, no weights downloaded).
+# Anything not confirmed is marked (verify).
+short_name: dinov2_vitg14_reg
+role: scale
+registry_name: null    # NOT yet in mirror/adapters_timm.py MODEL_REGISTRY (only s, b, l with and without registers)
+source:
+  kind: torch_hub
+  hub_repo: facebookresearch/dinov2
+  entry_point: dinov2_vitg14_reg
+  entry_point_code: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/hub/backbones.py
+  weights_url: https://dl.fbaipublicfiles.com/dinov2/dinov2_vitg14/dinov2_vitg14_reg4_pretrain.pth
+  weights_bytes: 4546140349                 # HTTP HEAD Content-Length, 2026-11-14 (about 4.5 GB)
+  weights_last_modified: "Fri, 27 Oct 2023 10:37:55 GMT"
+revision:
+  value: 7764ea0f912e53c92e82eb78a2a1631e92725fc8
+  kind: >-
+    GitHub commit of facebookresearch/dinov2 (default branch) on 2026-11-14; pins the hub code only.
+    Log the VM hub-cache commit with each run (verify on VM). Weights fixed by URL; record sha256 on the VM.
+  hf_mirror:
+    repo: facebook/dinov2-with-registers-giant
+    sha: 8d0d49f77fb8b5dd78842496ff14afe7dd4d85cb
+    note: Hugging Face transformers conversion; not what mirror/adapters_timm.py loads.
+architecture:
+  patch_size: 14
+  image_size_hub_default: 518
+  blocks: 40
+  width: 1536
+  heads: 24
+  mlp_hidden: 4096
+  mlp_type: >-
+    SwiGLU, not a GELU MLP. dinov2_vitg14_reg passes ffn_layer="swiglufused"; SwiGLUFFNFused sets
+    hidden_features = (int(hidden_features * 2 / 3) + 7) // 8 * 8 with hidden_features = 4 x 1536,
+    giving 4096. Weights: w12 = Linear(1536, 2 x 4096) (gate and value halves), w3 = Linear(4096, 1536);
+    hidden = silu(x1) * x2. With xFormers installed the class inherits xformers.ops.SwiGLU instead
+    of the fallback (verify the state-dict key names on the VM).
+  mlp_source: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/layers/swiglu_ffn.py
+  registers: 4
+  cls_token: 1
+  layerscale: true
+  arch_source: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/models/vision_transformer.py
+training_data: LVD-142M
+training_data_quote: |-
+  DINOv2 ViT-g/14 model with registers (optionally) pretrained on the LVD-142M dataset.
+training_data_source_url: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/hub/backbones.py
+recipe_flip: "yes"
+recipe_quote: |-
+  transforms.RandomHorizontalFlip(p=0.5),
+recipe_quote_context: Lines 49 (global crops) and 58 (local crops) of DataAugmentationDINO.
+recipe_source_url: https://github.com/facebookresearch/dinov2/blob/7764ea0f912e53c92e82eb78a2a1631e92725fc8/dinov2/data/augmentations.py#L43-L60
+recipe_certainty: >-
+  High for the public code; the paper text does not state the flip. ViT-g is the teacher trained
+  from scratch; S, B and L are distilled from it.
+other_augmentations:
+  - same as dinov2_vitb14_reg.yaml
+notes:
+  - >-
+    The SwiGLU MLP changes what a "hidden unit" is: each hidden channel is a product of two
+    projections (silu gate times value), so the twin and operator fits on the MLP hidden layer
+    need a decision on which activation to use (after the product, before w3, is the natural
+    choice). Same issue for EVA-02.
+  - About 4.5 GB of weights; 40 blocks, so k = L/2 = 20.
+papers:
+  - "Oquab et al., DINOv2: Learning Robust Visual Features without Supervision, arXiv 2304.07193"
+  - "Darcet et al., Vision Transformers Need Registers, arXiv 2309.16588"
+verified_on: "2026-11-14"
