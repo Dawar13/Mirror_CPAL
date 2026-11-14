@@ -57,3 +57,12 @@ until [ -z "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2> /dev/
 say "GPU quiet: job file Q (timings) starts"
 PAR=1 bash scripts/h100_sched.sh jobs/h100_Q_latency.txt > logs/q_Q.log 2>&1 < /dev/null
 say "OVERNIGHT_DONE"
+# Optional self-pause (Jarvis Labs): only with AUTO_PAUSE=1, the jl CLI installed and JL_API_KEY and JL_MACHINE_ID set
+# by the owner. Pause keeps everything under /home (results, runs, caches, venv) and stops compute billing; this
+# script never destroys an instance. A grace period leaves time to pull results first.
+if [ "${AUTO_PAUSE:-0}" = "1" ] && command -v jl > /dev/null && [ -n "${JL_MACHINE_ID:-}" ]; then
+  say "auto-pause in ${PAUSE_GRACE_MIN:-30} min (touch logs/NO_PAUSE to cancel)"
+  sleep $(( ${PAUSE_GRACE_MIN:-30} * 60 ))
+  if [ -f logs/NO_PAUSE ]; then say "auto-pause cancelled (logs/NO_PAUSE)"; else
+    say "pausing instance $JL_MACHINE_ID"; jl pause "$JL_MACHINE_ID" --yes; fi
+fi

@@ -9,13 +9,13 @@
 #   H100_HOST=1.2.3.4 H100_PORT=41234 bash scripts/ship_h100.sh             # later
 #
 # Settings: H100_HOST (required), H100_PORT [22], H100_USER [root], H100_KEY [~/.ssh/vast_ed25519],
-# H100_DIR [/workspace/Mirror_CPAL], FIRST [0].
+# H100_DIR [/home/Mirror_CPAL], FIRST [0].
 # Jobs already running keep the code they loaded; jobs started later use the shipped code (they are listed).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 : "${H100_HOST:?set H100_HOST and H100_PORT (vast.ai Connect dialog)}"
 PORT="${H100_PORT:-22}"; RUSER="${H100_USER:-root}"; KEY="${H100_KEY:-$HOME/.ssh/vast_ed25519}"
-DIR="${H100_DIR:-/workspace/Mirror_CPAL}"; FIRST="${FIRST:-0}"
+DIR="${H100_DIR:-/home/Mirror_CPAL}"; FIRST="${FIRST:-0}"
 OPTS=(-o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -o ConnectTimeout=20)
 SSH=(ssh -p "$PORT" -i "$KEY" "${OPTS[@]}" "$RUSER@$H100_HOST")
 SCP=(scp -P "$PORT" -i "$KEY" "${OPTS[@]}")

@@ -43,6 +43,12 @@ images in RAM; at least 300 GB disk, about 290 GB used by data with every option
 `scripts/h100_overnight.sh` starts the data build and job file A together, scores gate C and the epoch rule
 (`scripts/h100_gate_c.py`) when the MUST-12 pilot is measured, starts job file B only if gate C passes, and runs the
 timings (job file Q) on a quiet GPU at the end. It refuses to start while PREREG_NEXT_PHASE.md is a draft.
+Provider: Jarvis Labs (CLI `jl`; pause and resume from the laptop, never destroy without Dawar). Jarvis keeps only
+`/home` across pause and resume, so the repo, venv, caches and HF_HOME live under `/home` (`/home/Mirror_CPAL`,
+`/home/hf`); processes stop on pause, and resume may give a new machine ID and SSH command. After a resume: rerun
+`scripts/h100_bootstrap.sh --skip-tests` (system packages and ~/.mirror_env.sh are outside /home), then
+`scripts/h100_overnight.sh`; every job skips finished work. Optional self-pause at the end: AUTO_PAUSE=1 with the jl
+CLI and JL_API_KEY on the machine (whether an instance can pause itself is not documented; to be tested once).
 1. Laptop: `FIRST=1 bash scripts/ship_h100.sh`, then `bash scripts/upload_structures_h100.sh` (about 385 MB of
    earlier operator files, the canonical fit-seed structures; Section 9 item 10 of the pre-registration).
 2. VM: `scripts/h100_bootstrap.sh`, then `scripts/h100_data.sh --optional` (about 1 to 1.5 h, estimate).

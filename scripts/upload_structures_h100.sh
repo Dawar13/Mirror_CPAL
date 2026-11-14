@@ -8,7 +8,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 : "${H100_HOST:?set H100_HOST and H100_PORT}"
 PORT="${H100_PORT:-22}"; RUSER="${H100_USER:-root}"; KEY="${H100_KEY:-$HOME/.ssh/vast_ed25519}"
-DIR="${H100_DIR:-/workspace/Mirror_CPAL}"
+DIR="${H100_DIR:-/home/Mirror_CPAL}"
 OPTS=(-o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -o ConnectTimeout=20)
 SSH=(ssh -p "$PORT" -i "$KEY" "${OPTS[@]}" "$RUSER@$H100_HOST")
 SCP=(scp -P "$PORT" -i "$KEY" "${OPTS[@]}")

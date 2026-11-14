@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Fresh H100 container (vast.ai style: Ubuntu, root, /workspace): machine checks, system packages, .venv with a
+# Fresh H100 container (Ubuntu, root; Jarvis Labs keeps only /home across pause and resume, so everything lives under /home): machine checks, system packages, .venv with a
 # torch build that matches the driver, requirements, HF_HOME and the Hugging Face login, a GPU smoke test and the
 # CPU test suite. Idempotent: every step checks before it acts, so rerun it after a failure or after copying the
 # machine (it also repairs a .venv whose interpreter links broke in a copy).
 #
-#   cd /workspace/Mirror_CPAL
+#   cd /home/Mirror_CPAL
 #   read -rs HF_TOKEN && export HF_TOKEN       # optional; typed into the ssh session, never written to the repo
-#   bash scripts/h100_bootstrap.sh [--hf-home /workspace/hf] [--skip-tests] [--skip-apt] [--with-git]
+#   bash scripts/h100_bootstrap.sh [--hf-home /home/hf] [--skip-tests] [--skip-apt] [--with-git]
 #
 # Settings (environment, defaults in brackets): TORCH_VERSION [2.11.0], TORCHVISION_VERSION [0.26.0], TORCH_CU
 # [from the driver: cu128 when it supports CUDA 12.8 or newer, the build of the A100 and 5090 runs; cu126 for 12.6
@@ -17,7 +17,7 @@
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 REPO="$(pwd)"
-HF_HOME_SET="${HF_HOME:-/workspace/hf}"; SKIP_TESTS=0; SKIP_APT=0; WITH_GIT=0
+HF_HOME_SET="${HF_HOME:-/home/hf}"; SKIP_TESTS=0; SKIP_APT=0; WITH_GIT=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --hf-home) HF_HOME_SET="$2"; shift 2 ;;

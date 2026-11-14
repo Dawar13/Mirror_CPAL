@@ -9,7 +9,7 @@
 #   DRY_RUN=1 H100_HOST=... bash scripts/pull_h100.sh        # list only
 #
 # Settings: H100_HOST (required), H100_PORT [22], H100_USER [root], H100_KEY [~/.ssh/vast_ed25519],
-# H100_DIR [/workspace/Mirror_CPAL], PULL_MAX_MB [20], PULL_DIRS ["results runs logs"], PULL_DEST [the repo],
+# H100_DIR [/home/Mirror_CPAL], PULL_MAX_MB [20], PULL_DIRS ["results runs logs"], PULL_DEST [the repo],
 # PULL_EXCLUDE [an extended regex on the relative path; default ^results/STATUS\.md$], DRY_RUN [0].
 # The skipped list goes to <PULL_DEST>/logs/pull_h100/skipped_<time>.tsv (size in bytes, reason, path).
 set -euo pipefail
@@ -17,7 +17,7 @@ cd "$(dirname "$0")/.."
 REPO="$(pwd)"
 : "${H100_HOST:?set H100_HOST and H100_PORT (vast.ai Connect dialog)}"
 PORT="${H100_PORT:-22}"; RUSER="${H100_USER:-root}"; KEY="${H100_KEY:-$HOME/.ssh/vast_ed25519}"
-DIR="${H100_DIR:-/workspace/Mirror_CPAL}"; MAX_MB="${PULL_MAX_MB:-20}"; DIRS="${PULL_DIRS:-results runs logs}"
+DIR="${H100_DIR:-/home/Mirror_CPAL}"; MAX_MB="${PULL_MAX_MB:-20}"; DIRS="${PULL_DIRS:-results runs logs}"
 DEST="${PULL_DEST:-$REPO}"; EXCL="${PULL_EXCLUDE:-^results/STATUS\.md$}"; DRY="${DRY_RUN:-0}"
 OPTS=(-o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -o ConnectTimeout=20)
 SSH=(ssh -p "$PORT" -i "$KEY" "${OPTS[@]}" "$RUSER@$H100_HOST")

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Download every model weight the experiments need, once, under $HF_HOME (VM only).
 
-    export HF_HOME=/workspace/hf
+    export HF_HOME=/home/hf
     python scripts/prefetch_models.py                     # all; -> results/data_check/models.json
     python scripts/prefetch_models.py --dry-run           # print the plan, download nothing (laptop safe)
     python scripts/prefetch_models.py --only deit3_b16,dinov2_vitg14_reg

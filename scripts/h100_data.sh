@@ -40,7 +40,7 @@ cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
 [ -f "$HOME/.mirror_env.sh" ] && . "$HOME/.mirror_env.sh"
 if [ -z "${VIRTUAL_ENV:-}" ] && [ -f .venv/bin/activate ]; then . .venv/bin/activate; fi
-export HF_HOME="${HF_HOME:-/workspace/hf}"
+export HF_HOME="${HF_HOME:-/home/hf}"
 export CUDA_VISIBLE_DEVICES=""              # data work never touches the shared GPU
 PY="$(command -v python || command -v python3)"
 
