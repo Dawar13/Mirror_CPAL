@@ -22,8 +22,13 @@ if [ ! -f PREREG_NEXT_PHASE.md ] || head -1 PREREG_NEXT_PHASE.md | grep -q "DRAF
   say "PREREG_NEXT_PHASE.md is missing or still a draft: gate A not met, nothing started"; exit 2
 fi
 
-say "data build and job file A start"
-nohup bash scripts/h100_data.sh ${DATA_ARGS:---optional} > logs/h100_data.log 2>&1 < /dev/null &
+if pgrep -f "scripts/h100_data.sh" > /dev/null; then
+  say "a data build is already running: not starting another (job file A waits for its files)"
+else
+  say "data build starts"
+  nohup bash scripts/h100_data.sh ${DATA_ARGS:---optional} >> logs/h100_data.log 2>&1 < /dev/null &
+fi
+say "job file A starts"
 PAR=${PAR_A:-5} nohup bash scripts/h100_sched.sh jobs/h100_A_phase1.txt > logs/q_A.log 2>&1 < /dev/null &
 pidA=$!
 
