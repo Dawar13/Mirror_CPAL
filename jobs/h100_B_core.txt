@@ -1,6 +1,6 @@
-# H100 job file B: CORE-01 controlled-training grid with its structure measurements, MUST-11 downstream tasks, and the
-# cheap upside runs UP-01 and UP-03. Launch beside job file A once gate C (MUST-12) is reported and the epoch rule is
-# applied (PREREG_NEXT_PHASE.md, MUST-12):
+# H100 job file B: CORE-01 controlled-training grid with its structure measurements, and the cheap upside runs
+# UP-01 and UP-03 (MUST-11 is in job file A). Started by scripts/h100_overnight.sh when gate C passes, with the
+# epoch count of the MUST-12 rule; by hand (PREREG_NEXT_PHASE.md, MUST-12):
 #   . ~/.mirror_env.sh; export MW=8; export CORE_EPOCHS=100     # or 60 if the MUST-12 run took over 25 minutes
 #   If CORE_EPOCHS=100, the MUST-12 pilot runs are CORE-01's seed-0 none and LR runs (same recipe): link them first,
 #     mkdir -p runs/CORE-01 && ln -s ../MUST-12/vit_s8_none_s0 runs/CORE-01/vit_s8_none_s0 \
@@ -38,11 +38,6 @@ runs/CORE-01/vit_s8_LR_s2/last_done.flag @3000 | bash scripts/h100_measure_run.s
 runs/CORE-01/vit_s8_none_s2/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_none_s2 CORE-01
 runs/CORE-01/vit_s8_R90_s1/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_R90_s1 CORE-01
 runs/CORE-01/vit_s8_LRUD_s1/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/CORE-01/vit_s8_LRUD_s1 CORE-01
-
-# ---- MUST-11 downstream (after the heals they need; gate-B best read from gate_b.json).
-runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2/metrics.json runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @12000 | bash scripts/h100_must11.sh linear
-runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @12000 | bash scripts/h100_must11.sh transfer
-runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @16000 | bash scripts/h100_must11.sh ade20k
 
 # ---- UP-01 (UD dose) and UP-03 (ViT-Ti/8), after the CORE-01 grid in priority.
 cache/in100_meta.json @12000 | python scripts/train_controlled.py --exp UP-01 --condition UD_p0.1 --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18

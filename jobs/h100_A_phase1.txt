@@ -73,3 +73,8 @@ runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json @12000 | python scri
 # ---- 15. MUST-12 measurement (gate C): LR and UD structure of the pilot runs.
 runs/MUST-12/vit_s8_none_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/MUST-12/vit_s8_none_s0 MUST-12
 runs/MUST-12/vit_s8_LR_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/MUST-12/vit_s8_LR_s0 MUST-12
+
+# ---- 16. MUST-11 downstream (after the heals they need; gate-B best read from gate_b.json).
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2/metrics.json runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @12000 | bash scripts/h100_must11.sh linear
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @12000 | bash scripts/h100_must11.sh transfer
+runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @16000 | bash scripts/h100_must11.sh ade20k

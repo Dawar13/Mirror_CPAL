@@ -37,8 +37,12 @@ signed off and committed, MUST-00 clean) is the next step.
   CORE-03 stacking, CORE-04 adapters for CLIP, DINO v1, DINOv3, EVA-02, DINOv2-g (SwiGLU), ConvNeXt and ResNet-50,
   CORE-05 analysis, CORE-06 CUB probes, CORE-07 ImageNet-V2 probe, UP-02, UP-04 to UP-07.
 
-**H100 run plan** (one H100 80 GB; needs at least 32 CPU cores and 128 GB RAM, because neuron matchings are CPU-bound
-and MUST-07 holds its images in RAM; 500 GB disk, about 290 GB used by data)
+**GPU run plan** (one H200 141 GB overnight, chosen 14 November; the scripts are named h100_* but run on any single
+Hopper GPU; needs at least 32 CPU cores and 128 GB RAM, because neuron matchings are CPU-bound and MUST-07 holds its
+images in RAM; at least 300 GB disk, about 290 GB used by data with every optional set). Unattended chain:
+`scripts/h100_overnight.sh` starts the data build and job file A together, scores gate C and the epoch rule
+(`scripts/h100_gate_c.py`) when the MUST-12 pilot is measured, starts job file B only if gate C passes, and runs the
+timings (job file Q) on a quiet GPU at the end. It refuses to start while PREREG_NEXT_PHASE.md is a draft.
 1. Laptop: `FIRST=1 bash scripts/ship_h100.sh`, then `bash scripts/upload_structures_h100.sh` (about 385 MB of
    earlier operator files, the canonical fit-seed structures; Section 9 item 10 of the pre-registration).
 2. VM: `scripts/h100_bootstrap.sh`, then `scripts/h100_data.sh --optional` (about 1 to 1.5 h, estimate).
