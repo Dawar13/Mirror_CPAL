@@ -4,13 +4,7 @@
 
 Updated 2026-11-14 about 18:15 UTC. PROJECT_NEXT_PHASE.md now defines the remaining work (MUST, CORE and UP
 experiments) and supersedes PAPER_EXPERIMENTS.md and the old job lists. **PREREG_NEXT_PHASE.md signed off and committed
-(e76fb17); gate A met.** Nothing of the new phase has run on a GPU yet. The GPU run starts on the morning of 15 November
-on Jarvis Labs H200 instance 574587 (IN2), created and set up on 14 November and paused: under /home it keeps the code
-(5af7f8a; ship e76fb17 or later before starting), the venv (torch 2.11.0+cu128, bf16 smoke test 800 TFLOP/s), the
-uploaded structure files and the Tier-2 and model caches; the ImageNet build (raw files on the local disk) restarts.
-Morning steps: `jl resume 574587` (new ID possible), `ship_h100.sh`, Hugging Face token on the machine (a new one: the
-old one was exposed), `h100_bootstrap.sh --hf-home /root/hf` (the CPU tests on Python 3.10 were cut short by the
-pause), then `h100_overnight.sh`.
+(e76fb17); gate A met.** Nothing of the new phase has run on a GPU yet. The GPU run starts on the morning of 15 November on a new Jarvis Labs H200 (instance 574587, set up on 14 November, was deleted by Dawar the same evening, so setup is redone): `jl create --gpu H200 --storage 300`, `ship_h100.sh` (FIRST=1), `upload_structures_h100.sh`, a new Hugging Face token on the machine (the old one was exposed), `h100_bootstrap.sh --hf-home /root/hf`, then `h100_overnight.sh`.
 
 **Done without a GPU**
 - MUST-00 audit: `results/MUST-00/audit.md`. 48 claims of Section 3: 38 match, 2 mismatch (transfer gap of the 6-block
