@@ -804,7 +804,9 @@ def cls_features(adapter, model, loader, device, dtype, flip: bool = False, amp:
             x = mirror(x)
         with ctx:
             f = adapter.cls_feature(x, model)
-        feats.append(f.float() if amp == "bf16" else f.to(dtype))
+        # clone: cls_feature returns a view of the whole token tensor, and .to(dtype) of an fp32 tensor is no copy, so
+        # without it every stored feature kept its batch's [B, N, d] tokens alive (out of memory on the 100k bank)
+        feats.append((f.float() if amp == "bf16" else f.to(dtype)).clone())
         labels.append(torch.as_tensor(y))
     return torch.cat(feats), torch.cat(labels).to(device)
 
