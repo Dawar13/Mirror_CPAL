@@ -1,0 +1,14 @@
+# H200 job file R4 (2026-11-15, about 19:50 UTC): CORE-05 ground truth (single-block MLP surgery drops) on the three
+# scoring models split over parallel processes. Replaces C job 14 (line 32: truth on dinov2_vitl14_reg, deit3_b16,
+# mae_b16 in one serial loop, then --stage score), stopped during dinov2_vitl14_reg blocks 9 to 12 after blocks 1 to 8
+# (rows kept). Each model has its own truth_<model>.csv; DINOv2-L-reg blocks 13 to 24 run in their own folders
+# (runs/C5_shards/<name>) and are merged into results/CORE-05 before scoring. A block's result does not depend on the
+# blocks it shares a data pass with (each variant is its own forward pass on the same batches). Same flags otherwise.
+# The rule was frozen and committed (70a47df) before any of these runs; --stage score runs after the merge.
+#   . ~/.mirror_env.sh; PAR=6 setsid nohup bash scripts/h100_sched.sh jobs/h100_R4_core05.txt > logs/q_R4.log 2>&1 < /dev/null &
+results/CORE-05/rule_committed.flag @16000 | python scripts/core05_why_cheap.py --stage truth --models dinov2_vitl14_reg --blocks 9-12 --gpu-frac 0.2
+results/CORE-05/rule_committed.flag @16000 | python scripts/core05_why_cheap.py --stage truth --models dinov2_vitl14_reg --blocks 13-16 --gpu-frac 0.2 --out runs/C5_shards/l13
+results/CORE-05/rule_committed.flag @16000 | python scripts/core05_why_cheap.py --stage truth --models dinov2_vitl14_reg --blocks 17-20 --gpu-frac 0.2 --out runs/C5_shards/l17
+results/CORE-05/rule_committed.flag @16000 | python scripts/core05_why_cheap.py --stage truth --models dinov2_vitl14_reg --blocks 21-24 --gpu-frac 0.2 --out runs/C5_shards/l21
+results/CORE-05/rule_committed.flag @8000 | python scripts/core05_why_cheap.py --stage truth --models deit3_b16 --gpu-frac 0.2
+results/CORE-05/rule_committed.flag @8000 | python scripts/core05_why_cheap.py --stage truth --models mae_b16 --gpu-frac 0.2
