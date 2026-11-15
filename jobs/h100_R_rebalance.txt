@@ -1,0 +1,35 @@
+# H200 job file R (2026-11-15, about 15:20 UTC): the serial tails split over parallel processes so the GPU work ends
+# sooner (billed per hour). Same scripts, flags and seeds as the jobs they replace; only the order and the process
+# that computes each row change. Replaced (stopped and marked .skip, notes/decisions.md):
+#   A3 job 5  (line 10) MUST-07 dinov2_vitb14_reg seed 0, sizes 6mlp,6both,9both (6mlp and 6both up to FLAP done)
+#   A3 job 7  (line 12) MUST-07 seeds 1,2, sizes 6mlp,6both, 11 methods, --skip-flip-seeds 1,2
+#   A3 job 8  (line 13) MUST-07 seeds 1,2, sizes 9both,full, Mirror-exact, fp32 flags
+#   A3 job 11 (line 16) MUST-08 (now runs beside the shards; rows it cannot reuse are scored again)
+#   A  job 21 (line of h100_must11.sh ade20k) MUST-11 ADE20K: original resumes from its iteration-4000 checkpoint
+# MUST-07 shards write to runs/M7_shards/<name> (seeded with the original row by scripts/must07_shards.py seed);
+# merge afterwards with scripts/must07_shards.py merge, then must07_compressors.py --postprocess-only.
+#   . ~/.mirror_env.sh; export MW=6
+#   PAR=12 setsid nohup bash scripts/h100_sched.sh jobs/h100_R_rebalance.txt > logs/q_R.log 2>&1 < /dev/null &
+#
+# ADE20K: one process per variant (each variant has its own JSON, head and checkpoint; tables are rebuilt from all JSONs)
+results/MUST-07/gate_b.json @12000 | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants original --mask-eq --out results/MUST-11/t2_seg
+results/MUST-07/gate_b.json @12000 | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants "" --healed-run vexact_s0=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0 --mask-eq --out results/MUST-11/t2_seg
+results/MUST-07/gate_b.json @12000 | python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants "" --healed-run best_svdllm_s0=runs/MUST-09/dinov2_vitb14_reg/svdllm/s0 --mask-eq --out results/MUST-11/t2_seg
+# MUST-07 ZipIt shards first (the longest rows)
+runs/M7_shards/z0_6both/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes 6both --methods zipit --out runs/M7_shards/z0_6both
+runs/M7_shards/z0_9both/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes 9both --methods zipit --out runs/M7_shards/z0_9both
+runs/M7_shards/z1_6mlp/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 1 --sizes 6mlp --skip-flip-seeds 1,2 --methods zipit --out runs/M7_shards/z1_6mlp
+runs/M7_shards/z2_6mlp/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 2 --sizes 6mlp --skip-flip-seeds 1,2 --methods zipit --out runs/M7_shards/z2_6mlp
+runs/M7_shards/z1_6both/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 1 --sizes 6both --skip-flip-seeds 1,2 --methods zipit --out runs/M7_shards/z1_6both
+runs/M7_shards/z2_6both/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 2 --sizes 6both --skip-flip-seeds 1,2 --methods zipit --out runs/M7_shards/z2_6both
+# MUST-07 seed 0 at 9both (as A3 job 5), then seeds 1 and 2 (as A3 jobs 7 and 8)
+runs/M7_shards/c0_9a/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes 9both --methods mirror_exact,mirror_local,svd,svdllm --out runs/M7_shards/c0_9a
+runs/M7_shards/c0_9b/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes 9both --methods asvd_scale,slicegpt,flap --out runs/M7_shards/c0_9b
+runs/M7_shards/p0/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes 6both,9both --methods pair_actcorr,pair_wcos,pair_random,random_structure --out runs/M7_shards/p0
+runs/M7_shards/c1/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 1 --sizes 6mlp,6both --skip-flip-seeds 1,2 --methods mirror_exact,svd,svdllm,asvd_scale,slicegpt,flap --out runs/M7_shards/c1
+runs/M7_shards/c2/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 2 --sizes 6mlp,6both --skip-flip-seeds 1,2 --methods mirror_exact,svd,svdllm,asvd_scale,slicegpt,flap --out runs/M7_shards/c2
+runs/M7_shards/p1/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 1 --sizes 6mlp,6both --skip-flip-seeds 1,2 --methods pair_actcorr,pair_wcos,pair_random,random_structure --out runs/M7_shards/p1
+runs/M7_shards/p2/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 2 --sizes 6mlp,6both --skip-flip-seeds 1,2 --methods pair_actcorr,pair_wcos,pair_random,random_structure --out runs/M7_shards/p2
+runs/M7_shards/m8/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 1,2 --sizes 9both,full --methods mirror_exact --fp32-queries 5000 --fp32-bank-per-class 10 --out runs/M7_shards/m8
+# MUST-08 (as A3 job 11, own folder results/MUST-08)
+results/MUST-07/gate_b.json results/MUST-07/structure/dinov2_vitb14_reg_s2.npz @7000 | python scripts/must08_components.py --model dinov2_vitb14_reg --fit-seeds 0,1,2 --reuse-from results/MUST-07 --fp32-queries 5000 --fp32-bank-per-class 10

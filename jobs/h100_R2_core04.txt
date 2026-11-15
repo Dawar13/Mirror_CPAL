@@ -1,0 +1,16 @@
+# H200 job file R2 (2026-11-15, about 15:30 UTC): CORE-04 surgery split into one process per eligible model, beside
+# job file R. Replaces C job 11 (line 27, `core04_generality.py --steps surgery`, all models in one serial loop),
+# stopped during dinov2_vitl14_reg 12both (finished rows are kept and reused). Each model writes its own
+# surgery/rows_<model>.csv and linear_<model>.csv; the shared surgery/status.csv can lose rows when processes
+# finish at different times, so the last line reruns the whole surgery step once: every row is reused, the
+# missing status rows are written and SUMMARY.md and bootstrap.csv are rebuilt. Eligibility is unchanged
+# (--models only limits the loop; the 0.8 threshold still decides).
+#   . ~/.mirror_env.sh; export MW=6
+#   PAR=6 setsid nohup bash scripts/h100_sched.sh jobs/h100_R2_core04.txt > logs/q_R2.log 2>&1 < /dev/null &
+results/MUST-07/gate_b.json @12000 | python scripts/core04_generality.py --steps surgery --models dinov2_vitl14_reg --workers $MW --gpu-frac 0.3 && touch runs/C4_shards/dinov2_vitl14_reg.done
+results/MUST-07/gate_b.json @8000 | python scripts/core04_generality.py --steps surgery --models mae_b16 --workers $MW --gpu-frac 0.3 && touch runs/C4_shards/mae_b16.done
+results/MUST-07/gate_b.json @8000 | python scripts/core04_generality.py --steps surgery --models dinov2_vitb14 --workers $MW --gpu-frac 0.3 && touch runs/C4_shards/dinov2_vitb14.done
+results/MUST-07/gate_b.json @8000 | python scripts/core04_generality.py --steps surgery --models deit3_b16 --workers $MW --gpu-frac 0.3 && touch runs/C4_shards/deit3_b16.done
+results/MUST-07/gate_b.json @8000 | python scripts/core04_generality.py --steps surgery --models siglip2_b16 --workers $MW --gpu-frac 0.3 && touch runs/C4_shards/siglip2_b16.done
+results/MUST-07/gate_b.json @8000 | python scripts/core04_generality.py --steps surgery --models dino_b16 --workers $MW --gpu-frac 0.3 && touch runs/C4_shards/dino_b16.done
+runs/C4_shards/dinov2_vitl14_reg.done runs/C4_shards/mae_b16.done runs/C4_shards/dinov2_vitb14.done runs/C4_shards/deit3_b16.done runs/C4_shards/siglip2_b16.done runs/C4_shards/dino_b16.done @12000 | python scripts/core04_generality.py --steps surgery --workers $MW --gpu-frac 0.3

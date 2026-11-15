@@ -2,7 +2,7 @@
 
 ## Next phase (PROJECT_NEXT_PHASE.md, adopted 14 November 2026)
 
-### Live run on the Jarvis Labs H200 (instance 574820), updated 2026-11-15 about 12:55 UTC
+### Live run on the Jarvis Labs H200 (instance 574820), updated 2026-11-15 about 15:30 UTC
 
 Started 06:56 UTC. Numbers below are read from the result files on the VM; they are pulled and collected at the end.
 
@@ -15,8 +15,9 @@ Started 06:56 UTC. Numbers below are read from the result files on the VM; they 
   0.084. As agreed in advance, CORE-01, CORE-02, UP-01 to UP-04 and CORE-05 P5.2 are dropped and reported.
 
 **Results so far (validation k-NN top-1 unless stated; original 78.94)**
-- MUST-09: healed Mirror-exact 78.32, 78.35, 78.35 (seeds 0 to 2); plain SVD 77.02 (seed 0, more than 1 point
-  below, so no extra seeds); random structure 69.93. SVD-LLM and SliceGPT heals running.
+- MUST-09: healed Mirror-exact 78.32, 78.35, 78.35 (seeds 0 to 2); healed SVD-LLM 78.05 (seed 0; flip consistency
+  95.80% in fp32); healed SliceGPT 77.89 (seed 0; 95.43% in fp32); plain SVD 77.02 (seed 0, more than 1 point below,
+  so no extra seeds); random structure 69.93. SVD-LLM seeds 1 and 2 running (P9.1 is scored on 3-seed means).
 - MUST-07 zero-shot at full size: Mirror-exact 53.88, SVD-LLM 75.80, SliceGPT 68.33, FLAP 65.12, ASVD 57.09.
 - MUST-10 (P10.1 holds): healed Mirror-exact minus flip-averaged original: k-NN -0.68 (CI -0.87 to -0.51), linear
   probe -1.02, at 0.387 of the FLOPs and 0.765 of the parameters.
@@ -31,8 +32,11 @@ Started 06:56 UTC. Numbers below are read from the result files on the VM; they 
   fails.
 
 **Operational notes**: thread oversubscription (28-thread BLAS and OpenMP pools in every job) made CPU work 20 to 60
-times slower until 10:12 UTC; fixed (notes/decisions.md). Expected end of GPU work about 17:00 UTC; then results are
-pulled and the instance is switched off (destroyed, at Dawar's request), not paused.
+times slower until 10:12 UTC; fixed (notes/decisions.md). At 15:16 to 15:22 UTC the three serial tails (MUST-07 on
+DINOv2-B-reg with seeds 1 and 2 and the 9-block size, MUST-11 ADE20K, CORE-04 surgery) were split into parallel
+processes (job files R and R2; shards merged afterwards with scripts/must07_shards.py). Expected end of GPU work
+about 18:00 to 19:00 UTC; then results are pulled and the instance is switched off (destroyed, at Dawar's request),
+not paused.
 
 ### Before the run
 
