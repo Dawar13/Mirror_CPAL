@@ -15,9 +15,13 @@ Started 06:56 UTC. Numbers below are read from the result files on the VM; they 
   0.084. As agreed in advance, CORE-01, CORE-02, UP-01 to UP-04 and CORE-05 P5.2 are dropped and reported.
 
 **Results so far (validation k-NN top-1 unless stated; original 78.94)**
-- MUST-09: healed Mirror-exact 78.32, 78.35, 78.35 (seeds 0 to 2); healed SVD-LLM 78.05 (seed 0; flip consistency
-  95.80% in fp32); healed SliceGPT 77.89 (seed 0; 95.43% in fp32); plain SVD 77.02 (seed 0, more than 1 point below,
-  so no extra seeds); random structure 69.93. SVD-LLM seeds 1 and 2 running (P9.1 is scored on 3-seed means).
+- MUST-09 (results/MUST-09/summary.csv, 17:01 UTC): healed Mirror-exact 78.32, 78.35, 78.35 (seeds 0 to 2, mean
+  78.34; fp32 flip consistency 100.000% on every seed); healed SVD-LLM, the gate-B best, 78.05, 78.07, 78.06 (mean
+  78.06; fp32 flip consistency 95.80, 95.71, 95.73%); healed SliceGPT 77.89 (seed 0; 95.43%); plain SVD 77.02 (seed 0,
+  more than 1 point below, so no extra seeds); random structure 69.93 (100.000%). Read off the summary: P9.1 holds
+  (Mirror-exact minus SVD-LLM, 3-seed means, +0.28 against the bar of -0.5); gate D holds (bar -1.0); P9.2 holds (only
+  Mirror-exact and random structure reach 100% in fp32); P9.3 holds (random structure trails by 8.41, bar 3). Final
+  verdicts and bootstrap intervals come from scripts/collect_next_phase.py after the pull.
 - MUST-07 zero-shot at full size: Mirror-exact 53.88, SVD-LLM 75.80, SliceGPT 68.33, FLAP 65.12, ASVD 57.09.
 - MUST-10 (P10.1 holds): healed Mirror-exact minus flip-averaged original: k-NN -0.68 (CI -0.87 to -0.51), linear
   probe -1.02, at 0.387 of the FLOPs and 0.765 of the parameters.
