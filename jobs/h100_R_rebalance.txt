@@ -50,3 +50,6 @@ runs/M7_shards/p2/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compr
 runs/M7_shards/m8/rows_dinov2_vitb14_reg.csv @7000 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 1,2 --sizes 9both,full --methods mirror_exact --fp32-queries 5000 --fp32-bank-per-class 10 --out runs/M7_shards/m8 --preload loader
 # MUST-08 (as A3 job 11, own folder results/MUST-08)
 results/MUST-07/gate_b.json results/MUST-07/structure/dinov2_vitb14_reg_s2.npz @7000 | python scripts/must08_components.py --model dinov2_vitb14_reg --fit-seeds 0,1,2 --reuse-from results/MUST-07 --fp32-queries 5000 --fp32-bank-per-class 10 --preload loader
+# CORE-05 report again after scoring (C job 27, the report stage, ran at 16:37 as soon as the rule was committed, before
+# C job 14 had scored the rule; this run includes rule_score.json)
+results/CORE-05/rule_score.json @1000 | python scripts/core05_why_cheap.py --stage report
