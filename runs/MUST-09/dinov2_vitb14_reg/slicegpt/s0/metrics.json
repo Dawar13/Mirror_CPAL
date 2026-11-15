@@ -1,0 +1,1110 @@
+{
+  "experiment": "MUST-09",
+  "complete": true,
+  "method": "slicegpt",
+  "family": "compressed",
+  "model": "dinov2_vitb14_reg",
+  "seed": 0,
+  "targets": "sym",
+  "teacher": {
+    "type": "VExactTeacher",
+    "k": 12,
+    "even_head": true,
+    "symmetrise": true,
+    "block_targets": "centred",
+    "final_target": "symmetrised",
+    "d_plus": 700,
+    "reg_perm": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "lr": 0.0001,
+  "lr_selection": {
+    "best_lr": 0.0001,
+    "lrs": [
+      1e-05,
+      5e-05,
+      0.0001
+    ],
+    "budget_steps": 100,
+    "seed": 0,
+    "trials": [
+      {
+        "lr": 1e-05,
+        "heldout_loss": 2.775929039014278,
+        "heldout_terms": {
+          "total": 2.775929039014278,
+          "block0": 0.002346934774037608,
+          "block1": 0.015446587897115466,
+          "block2": 0.03868129502797684,
+          "block3": 0.05128710935910299,
+          "block4": 0.08168279609454593,
+          "block5": 0.12494753086913793,
+          "block6": 0.17778543628129373,
+          "block7": 0.13537451797624112,
+          "block8": 0.19610508178408254,
+          "block9": 0.27406495150984955,
+          "block10": 0.30728097690574363,
+          "block11": 0.3131846666910798,
+          "cls": 0.5943061626323314,
+          "patch": 0.46343499121173976
+        },
+        "heldout_initial": 3.788265848499628,
+        "train_loss_last": 2.7670065388956573,
+        "diverged": false
+      },
+      {
+        "lr": 5e-05,
+        "heldout_loss": 2.4918475616201965,
+        "heldout_terms": {
+          "total": 2.4918475616201965,
+          "block0": 0.002552106302099644,
+          "block1": 0.01563068690145819,
+          "block2": 0.03801902990340244,
+          "block3": 0.04952118779122948,
+          "block4": 0.0778363775088741,
+          "block5": 0.11810025302002197,
+          "block6": 0.16499728709118366,
+          "block7": 0.12245474466956974,
+          "block8": 0.17775954367682317,
+          "block9": 0.24629210095245338,
+          "block10": 0.2767780509532961,
+          "block11": 0.28088513283009925,
+          "cls": 0.5080179973439793,
+          "patch": 0.41300306267570597
+        },
+        "heldout_initial": 3.788265848499628,
+        "train_loss_last": 2.477633228234481,
+        "diverged": false
+      },
+      {
+        "lr": 0.0001,
+        "heldout_loss": 2.4780287388063327,
+        "heldout_terms": {
+          "total": 2.4780287388063327,
+          "block0": 0.004295080963230199,
+          "block1": 0.01869689092062554,
+          "block2": 0.042839997062051535,
+          "block3": 0.053888307316510405,
+          "block4": 0.0831810959072046,
+          "block5": 0.12375851294004483,
+          "block6": 0.1702842767162872,
+          "block7": 0.12489352861912688,
+          "block8": 0.17956681664038307,
+          "block9": 0.24613123657568686,
+          "block10": 0.27451892109719517,
+          "block11": 0.2744147871047261,
+          "cls": 0.4806827644031191,
+          "patch": 0.40087652254014106
+        },
+        "heldout_initial": 3.788265848499628,
+        "train_loss_last": 2.453451883222442,
+        "diverged": false
+      }
+    ],
+    "git_hash": "d572a53fe9508488161b60ce80427fa40b44f7af",
+    "git_dirty": true
+  },
+  "lr_extra": {
+    "chosen_lr": 0.0001,
+    "extra_lrs": [
+      0.0002
+    ],
+    "extra_would_win": false,
+    "winning_extra_lrs": [],
+    "best_lr_with_extra": 0.0001
+  },
+  "lr_grid": [
+    1e-05,
+    5e-05,
+    0.0001
+  ],
+  "total_steps": 780,
+  "curve": [
+    {
+      "step": 0,
+      "knn_top1": 68.28799843788147,
+      "flip_consistency": 86.64999604225159,
+      "n_query": 50000,
+      "n_bank": 100000,
+      "full_validation": true,
+      "amp": "bf16",
+      "feature_flip_max_abs": 0.25040099024772644,
+      "feature_identical_pct": 0.0,
+      "seconds": 1011.5,
+      "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+      "seed": 0
+    },
+    {
+      "step": 100,
+      "knn_top1": 77.38999724388123,
+      "flip_consistency": 94.49999928474426,
+      "n_query": 10000,
+      "n_bank": 100000,
+      "full_validation": false,
+      "amp": "bf16",
+      "feature_flip_max_abs": 0.17372354865074158,
+      "feature_identical_pct": 0.0,
+      "seconds": 427.2,
+      "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+      "seed": 0
+    },
+    {
+      "step": 300,
+      "knn_top1": 77.91000008583069,
+      "flip_consistency": 95.20999789237976,
+      "n_query": 10000,
+      "n_bank": 100000,
+      "full_validation": false,
+      "amp": "bf16",
+      "feature_flip_max_abs": 0.11525728553533554,
+      "feature_identical_pct": 0.0,
+      "seconds": 415.8,
+      "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+      "seed": 0
+    },
+    {
+      "step": 780,
+      "knn_top1": 77.88599729537964,
+      "flip_consistency": 95.39999961853027,
+      "n_query": 50000,
+      "n_bank": 100000,
+      "full_validation": true,
+      "amp": "bf16",
+      "feature_flip_max_abs": 0.1486041396856308,
+      "feature_identical_pct": 0.0,
+      "seconds": 1041.6,
+      "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+      "seed": 0
+    }
+  ],
+  "knn_bf16": {
+    "step": 780,
+    "knn_top1": 77.88599729537964,
+    "flip_consistency": 95.39999961853027,
+    "n_query": 50000,
+    "n_bank": 100000,
+    "full_validation": true,
+    "amp": "bf16",
+    "feature_flip_max_abs": 0.1486041396856308,
+    "feature_identical_pct": 0.0,
+    "seconds": 1041.6,
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "seed": 0
+  },
+  "knn_fp32": {
+    "top1": 77.91599631309509,
+    "flip_consistency": 95.4319953918457,
+    "n_bank": 100000,
+    "n_query": 50000,
+    "feature_flip_max_abs_unit": 0.15632125735282898,
+    "feature_identical_pct": 0.0,
+    "seconds": 2914.3,
+    "precision": "fp32 forward passes for the bank and every query and its mirror, TF32 off"
+  },
+  "knn_original": {
+    "top1": 78.95399928092957,
+    "flip_consistency": 96.27999663352966,
+    "source": "/home/ubuntu/Mirror_CPAL/cache/knn_original/dinov2_vitb14_reg_v2_bf16.json"
+  },
+  "cls_flip_fp32_probe": {
+    "max_abs_diff": 1.3320509195327759,
+    "max_abs_ref": 4.367586135864258,
+    "rel_max": 0.304985609463931,
+    "n_images": 64
+  },
+  "exactness": null,
+  "conversion_check": {
+    "max_abs": 6.723403930664062e-05,
+    "max_ref": 5.791811466217041,
+    "rel_max": 1.1608464760776298e-05,
+    "n_images": 64,
+    "tol": 0.001,
+    "passed": true
+  },
+  "cost": {
+    "arch": {
+      "d": 768,
+      "h": 3072,
+      "depth": 12,
+      "T": 261,
+      "n_patches": 256,
+      "patch": 14,
+      "in_chans": 3,
+      "model_params_dense": 86583552
+    },
+    "per_block": [
+      {
+        "block": 0,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 1,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 2,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 3,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 4,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 5,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 6,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 7,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 8,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 9,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 10,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 11,
+        "mlp_exec": 4032000,
+        "attn_exec": 3225600,
+        "mlp": 3225600,
+        "attn": 1612800,
+        "basis_params": 551250,
+        "rot": 0.934600830078125,
+        "source": "compressor's own per-matrix and basis-change counts"
+      }
+    ],
+    "params_model": 66324696,
+    "params_frac": 0.7660195784067625,
+    "params_basis_change": 6615000,
+    "cost_source": "compressor's own per-matrix and basis-change counts",
+    "params_converted_kept": 58060800,
+    "params_converted_dense": 84934656,
+    "kept_frac_converted": 0.68359375,
+    "gflops": 36.503191152,
+    "gflops_dense": 47.078313984,
+    "gflops_frac": 0.7753716746187204,
+    "params_stored": 97922616,
+    "params_original": 86583552,
+    "cost_model": "scripts/collect_results.analytic_cost: matrices of the converted blocks at the multiply-adds of the method's own efficient form (mirror family: free parameters, as its even/odd form executes them; compressors: their own per-matrix counts) plus basis changes (d^2 units), token mixing 2 T^2 d per block, patch embedding; not norms, softmax, GELU, biases. Parameters: whole model, biases and embeddings dense, basis changes included"
+  },
+  "peak_train_memory_gb": 9.631022453308105,
+  "heldout_initial": {
+    "total": 3.788265848499628,
+    "block0": 0.0020837438310820837,
+    "block1": 0.014911678538928157,
+    "block2": 0.03988418927670442,
+    "block3": 0.05745214680928503,
+    "block4": 0.10253119489864163,
+    "block5": 0.16017115832203027,
+    "block6": 0.2386578436981446,
+    "block7": 0.19339876166710615,
+    "block8": 0.27679031331390863,
+    "block9": 0.3882900353919745,
+    "block10": 0.425692213154959,
+    "block11": 0.4293455445134919,
+    "cls": 0.8253247203398806,
+    "patch": 0.6337323047434913
+  },
+  "heldout_final": {
+    "total": 1.918989130496553,
+    "block0": 0.0026038619398007098,
+    "block1": 0.015321001941861468,
+    "block2": 0.033382356350631776,
+    "block3": 0.04160333751003477,
+    "block4": 0.06323850112788207,
+    "block5": 0.09549934888909298,
+    "block6": 0.13005298571094098,
+    "block7": 0.09440629611337567,
+    "block8": 0.13757054019030598,
+    "block9": 0.18749106379824262,
+    "block10": 0.2132858794538874,
+    "block11": 0.21290455427669194,
+    "cls": 0.37458089324015814,
+    "patch": 0.3170485099536463
+  },
+  "constraint_checks": {
+    "0:StructuredTrainable": {
+      "ok": true,
+      "n_matrices": 72,
+      "kinds": {
+        "slice": 72
+      },
+      "numerical_ranks": [],
+      "target_ranks": [],
+      "per_matrix": [
+        {
+          "block": 0,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "fc1",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 3072,
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "fc2",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 3072,
+          "d_out": 525,
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wq",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wk",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wv",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 525,
+          "d_out": 768,
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wo",
+          "kind": "slice",
+          "basis_unchanged": true,
+          "d_in": 768,
+          "d_out": 525,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "n_trainable": 58791480,
+  "seconds_train": 2630.87,
+  "compressor": {
+    "source": "mirror.baselines.compress",
+    "params_total": 64675800,
+    "budget_total": 64554464,
+    "gap": 0.0018795911619682876,
+    "budget": {
+      "total": 64554464
+    },
+    "fit_seed": 0
+  },
+  "hparams": {
+    "basis": "per_block",
+    "pca": "stream"
+  },
+  "random_structure": null,
+  "timing": {
+    "stages": {
+      "load": 2.44,
+      "compress": 15.58,
+      "structure checks": 3.64,
+      "lr selection": 2306.53,
+      "heal": 5613.33,
+      "final measures": 2916.44
+    },
+    "total_s": 10857.99
+  },
+  "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+  "git_dirty": true,
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  }
+}

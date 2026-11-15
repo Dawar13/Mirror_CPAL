@@ -1,0 +1,159 @@
+{
+  "experiment": "MUST-12",
+  "date_utc": "2026-11-15T07:48:31Z",
+  "git": {
+    "git_hash": "52e29d16766d80933db138b9414e4f69a81e4b7e",
+    "git_dirty": false
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "exp": "MUST-12",
+    "arch": "vit_s8",
+    "condition": "LR",
+    "seed": 0,
+    "epochs": 100,
+    "ckpt_epochs": [
+      0,
+      2,
+      5,
+      10,
+      25,
+      50,
+      100
+    ],
+    "batch_size": 512,
+    "lr": 0.001,
+    "lr_ref_batch": 512,
+    "weight_decay": 0.05,
+    "warmup_epochs": 10.0,
+    "min_lr_ratio": 0.0,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "label_smoothing": 0.1,
+    "drop_path": 0.0,
+    "grad_clip": 0.0,
+    "img_size": 64,
+    "crop_scale": [
+      0.35,
+      1.0
+    ],
+    "crop_ratio": [
+      0.75,
+      1.3333333333333333
+    ],
+    "amp": "auto",
+    "compile": "auto",
+    "eval_batch": 1000,
+    "save_every_min": 5.0,
+    "save_every_epochs": 0,
+    "save_every_steps": 0,
+    "log_every": 50,
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache",
+    "out_root": "/home/ubuntu/Mirror_CPAL/runs",
+    "run_dir": null,
+    "device": "cuda",
+    "stop_after_steps": null,
+    "force_new": false
+  },
+  "seeds": {
+    "train": 0,
+    "init": 0,
+    "data_order": 0,
+    "augmentation": 0
+  },
+  "models": {
+    "vit_s8": {
+      "builder": "mirror.controlled.build_model (timm VisionTransformer)",
+      "embed_dim": 384,
+      "depth": 12,
+      "num_heads": 6,
+      "patch_size": 8,
+      "img_size": 64,
+      "mlp_ratio": 4.0,
+      "qkv_bias": true,
+      "registers": 0,
+      "layerscale": false,
+      "num_classes": 100,
+      "n_params": 21432292
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 1173.35,
+  "extra": {
+    "status": "complete",
+    "steps_per_epoch": 247,
+    "total_steps": 24700,
+    "ckpt_epochs": [
+      0,
+      2,
+      5,
+      10,
+      25,
+      50,
+      100
+    ],
+    "data": {
+      "n_train": 126689,
+      "n_val": 5000,
+      "train_labels_sha": "5f0fe8a1de7fe63a",
+      "val_labels_sha": "c83995efa3948045",
+      "size": 72
+    },
+    "amp": "bf16",
+    "compile": true,
+    "base_lr": 0.001,
+    "warmup_steps": 2470,
+    "timing": {
+      "wall_seconds": 1173.3,
+      "wall_minutes": 19.56,
+      "train_seconds": 956.3,
+      "eval_seconds": 4.9,
+      "first_epoch_seconds": 8.59,
+      "steady_epoch_seconds": 9.716,
+      "steady_images_per_s": 13016.1,
+      "peak_mem_alloc_gib": 7.58,
+      "peak_mem_reserved_gib": 8.402,
+      "overhead_seconds": 212.2,
+      "epochs_run": 100,
+      "projected_minutes_100": 19.79,
+      "projected_minutes_60": 13.32,
+      "rule": "MUST-12: reduce every CORE-01 run to 60 epochs if the pilot run takes over 25 minutes"
+    },
+    "final_val": {
+      "epoch": "100",
+      "step": "24700",
+      "top1_orig": "56.0000",
+      "top1_LR": "56.1400",
+      "top1_UD": "33.7400",
+      "top1_R90": "30.2600",
+      "n_val": "5000",
+      "eval_seconds": "0.66"
+    },
+    "condition_spec": {
+      "p_lr": 0.5,
+      "p_ud": 0.0,
+      "rot90": false
+    },
+    "compile_error": null,
+    "compiled": true,
+    "gpu": {
+      "gpu_free_gib_at_start": 125.35,
+      "gpu_total_gib": 139.8,
+      "gpu_frac_cap": "set by the caller (scripts/train_controlled.py --gpu-frac)"
+    }
+  }
+}

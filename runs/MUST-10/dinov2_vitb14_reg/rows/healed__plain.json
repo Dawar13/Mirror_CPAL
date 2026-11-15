@@ -1,0 +1,69 @@
+{
+  "knn": {
+    "top1": 78.31599712371826,
+    "flip_consistency": 99.7439980506897,
+    "n_bank": 100000,
+    "n_query": 50000,
+    "feature_flip_max_abs": 0.009984355419874191,
+    "feature_identical_pct": 0.0,
+    "amp": "bf16",
+    "seconds": 158.2,
+    "predictions": "/home/ubuntu/Mirror_CPAL/runs/MUST-10/dinov2_vitb14_reg/knn/healed__plain_bf16.npz"
+  },
+  "knn_fp32": {
+    "top1": 78.37199568748474,
+    "flip_consistency": 100.0,
+    "n_bank": 100000,
+    "n_query": 50000,
+    "feature_flip_max_abs": 2.3171305656433105e-06,
+    "feature_identical_pct": 0.0,
+    "amp": "fp32",
+    "seconds": 813.0,
+    "predictions": "/home/ubuntu/Mirror_CPAL/runs/MUST-10/dinov2_vitb14_reg/knn/healed__plain_fp32.npz"
+  },
+  "probe": {
+    "top1": 80.102,
+    "top5": 95.562,
+    "chosen_wd": 0.00316,
+    "wd_at_grid_edge": false,
+    "knn_check_top1": 78.31199765205383,
+    "n_bank": 100000,
+    "n_val": 50000,
+    "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+    "seconds": 121.4,
+    "predictions": "/home/ubuntu/Mirror_CPAL/runs/MUST-10/dinov2_vitb14_reg/features/healed__plain_probe_pred.npz"
+  },
+  "row": {
+    "experiment": "MUST-10",
+    "model": "dinov2_vitb14_reg",
+    "variant": "healed",
+    "mode": "plain",
+    "forwards_per_image": 1,
+    "knn_top1": 78.31599712371826,
+    "knn_amp": "bf16",
+    "flip_consistency": 99.7439980506897,
+    "knn_top1_fp32": 78.37199568748474,
+    "flip_consistency_fp32": 100.0,
+    "feature_flip_max_abs_unit_fp32": 2.3171305656433105e-06,
+    "feature_identical_pct_fp32": 0.0,
+    "probe_top1": 80.102,
+    "probe_top5": 95.562,
+    "probe_wd": 0.00316,
+    "gflops_per_image": 36.43985376,
+    "params": 66203360,
+    "params_frac": 0.7646182036976261,
+    "n_query": 50000,
+    "protocol": "v2",
+    "seed": 0,
+    "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+    "healed_seed": 0,
+    "healed_method": "mirror_exact",
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "git_dirty": true
+  },
+  "settings": {
+    "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+    "protocol": "v2",
+    "seed": 0
+  }
+}

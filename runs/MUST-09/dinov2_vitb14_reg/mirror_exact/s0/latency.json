@@ -1,0 +1,148 @@
+{
+  "experiment": "MUST-09",
+  "method": "mirror_exact",
+  "seed": 0,
+  "targets": "sym",
+  "rows": [
+    {
+      "variant": "original",
+      "batch": 1,
+      "mode": "compile",
+      "latency_ms_median": 2.0385600328445435,
+      "latency_ms_p10": 1.998960018157959,
+      "latency_ms_p90": 2.1351584434509276,
+      "throughput_img_s": 490.5423357116597,
+      "peak_inference_memory_gb": 1.4020867347717285,
+      "compile_s": 8.5,
+      "error": ""
+    },
+    {
+      "variant": "original",
+      "batch": 64,
+      "mode": "compile",
+      "latency_ms_median": 7.924031972885132,
+      "latency_ms_p10": 7.832518243789673,
+      "latency_ms_p90": 8.448153781890872,
+      "throughput_img_s": 8076.69633577938,
+      "peak_inference_memory_gb": 1.531033992767334,
+      "compile_s": 6.0,
+      "error": ""
+    },
+    {
+      "variant": "original",
+      "batch": 256,
+      "mode": "compile",
+      "latency_ms_median": 31.05342388153076,
+      "latency_ms_p10": 30.445977020263673,
+      "latency_ms_p90": 33.029258728027344,
+      "throughput_img_s": 8243.857455997237,
+      "peak_inference_memory_gb": 2.0765981674194336,
+      "compile_s": 6.0,
+      "error": ""
+    },
+    {
+      "variant": "healed_as_stored",
+      "batch": 1,
+      "mode": "compile",
+      "latency_ms_median": 2.0510720014572144,
+      "latency_ms_p10": 2.015478491783142,
+      "latency_ms_p90": 2.1797312259674073,
+      "throughput_img_s": 487.54992476594447,
+      "peak_inference_memory_gb": 1.2490153312683105,
+      "compile_s": 4.4,
+      "error": ""
+    },
+    {
+      "variant": "healed_as_stored",
+      "batch": 64,
+      "mode": "compile",
+      "latency_ms_median": 7.855711936950684,
+      "latency_ms_p10": 7.792185497283936,
+      "latency_ms_p90": 8.649148559570314,
+      "throughput_img_s": 8146.938242346319,
+      "peak_inference_memory_gb": 1.4430885314941406,
+      "compile_s": 4.5,
+      "error": ""
+    },
+    {
+      "variant": "healed_as_stored",
+      "batch": 256,
+      "mode": "compile",
+      "latency_ms_median": 30.540639877319336,
+      "latency_ms_p10": 29.97284851074219,
+      "latency_ms_p90": 33.15274162292481,
+      "throughput_img_s": 8382.27362060333,
+      "peak_inference_memory_gb": 2.2144203186035156,
+      "compile_s": 4.7,
+      "error": ""
+    },
+    {
+      "variant": "healed_even_odd",
+      "batch": 1,
+      "mode": "compile",
+      "latency_ms_median": 3.802783966064453,
+      "latency_ms_p10": 3.722169542312622,
+      "latency_ms_p90": 3.916124701499939,
+      "throughput_img_s": 262.96524044591257,
+      "peak_inference_memory_gb": 1.1242804527282715,
+      "compile_s": 15.8,
+      "error": ""
+    },
+    {
+      "variant": "healed_even_odd",
+      "batch": 64,
+      "mode": "compile",
+      "latency_ms_median": 10.909887790679932,
+      "latency_ms_p10": 10.90197458267212,
+      "latency_ms_p90": 10.92157440185547,
+      "throughput_img_s": 5866.238152758431,
+      "peak_inference_memory_gb": 1.3764944076538086,
+      "compile_s": 19.3,
+      "error": ""
+    },
+    {
+      "variant": "healed_even_odd",
+      "batch": 256,
+      "mode": "compile",
+      "latency_ms_median": 40.68065643310547,
+      "latency_ms_p10": 40.21023750305176,
+      "latency_ms_p90": 41.33982276916504,
+      "throughput_img_s": 6292.917136697677,
+      "peak_inference_memory_gb": 2.1561508178710938,
+      "compile_s": 20.4,
+      "error": ""
+    }
+  ],
+  "even_odd_check": {
+    "max_abs": 8.58306884765625e-05,
+    "rel_max": 2.2495439049732667e-05,
+    "dtype": "fp32",
+    "n_images": 8
+  },
+  "protocol": {
+    "batches": [
+      1,
+      64,
+      256
+    ],
+    "warmup": 20,
+    "iters": 100,
+    "compile": true,
+    "compile_mode": "default",
+    "align": 8,
+    "precision": "bf16 weights and inputs"
+  },
+  "nvidia_smi": "NVIDIA H200, 99 %, 5989 MiB, 143771 MiB, 1875 MHz",
+  "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+  "git_dirty": true,
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "date": "2026-11-15 20:11:50"
+}

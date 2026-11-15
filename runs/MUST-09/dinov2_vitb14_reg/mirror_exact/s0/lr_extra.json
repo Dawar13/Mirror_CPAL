@@ -1,0 +1,67 @@
+{
+  "check": "secondary learning-rate check (PREREG_E3.md): would an extra rate have won the short selection?",
+  "rule": "an extra rate would have won if its held-out loss after the short budget is below every grid rate's (ties go to the grid); the chosen rate is never changed",
+  "chosen_lr": 0.0001,
+  "grid_lrs": [
+    1e-05,
+    5e-05,
+    0.0001
+  ],
+  "grid": [
+    {
+      "lr": 1e-05,
+      "heldout_loss": 2.6715364969414734,
+      "diverged": false
+    },
+    {
+      "lr": 5e-05,
+      "heldout_loss": 2.2274062400061365,
+      "diverged": false
+    },
+    {
+      "lr": 0.0001,
+      "heldout_loss": 2.1715055814708135,
+      "diverged": false
+    }
+  ],
+  "extra_lrs": [
+    0.0002
+  ],
+  "extra": [
+    {
+      "lr": 0.0002,
+      "heldout_loss": 2.5222038937474887,
+      "heldout_terms": {
+        "total": 2.5222038937474887,
+        "block0": 0.05219062357125404,
+        "block1": 0.08978549709478129,
+        "block2": 0.12951485196613266,
+        "block3": 0.13243271775885065,
+        "block4": 0.1729155155509447,
+        "block5": 0.2090769000487165,
+        "block6": 0.2319203817867898,
+        "block7": 0.14641892659436423,
+        "block8": 0.18357346119134654,
+        "block9": 0.22635669790324928,
+        "block10": 0.22369810172265175,
+        "block11": 0.1709797713357614,
+        "cls": 0.26084728236115806,
+        "patch": 0.2924931648614877
+      },
+      "heldout_initial": 7.317107776099902,
+      "train_loss_last": 2.3151310551911592,
+      "diverged": false
+    }
+  ],
+  "extra_would_win": false,
+  "winning_extra_lrs": [],
+  "best_lr_with_extra": 0.0001,
+  "budget_steps": 100,
+  "seed": 0,
+  "n_heldout": 5000,
+  "experiment": "MUST-09",
+  "method": "mirror_exact",
+  "extra_when": "top",
+  "git_hash": "52e29d16766d80933db138b9414e4f69a81e4b7e",
+  "git_dirty": true
+}

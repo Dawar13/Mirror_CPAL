@@ -1,0 +1,76 @@
+{
+  "format": "must09-healed-v1",
+  "family": "mirror",
+  "method": "mirror_exact",
+  "blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": true,
+    "fold": true,
+    "even_head": true
+  },
+  "modules": [],
+  "matrices": [],
+  "mirror": {
+    "d_plus": 700,
+    "structure_file": "structure.npz",
+    "n_pairs": [
+      1168,
+      1116,
+      1013,
+      963,
+      878,
+      672,
+      554,
+      406,
+      155,
+      93,
+      19,
+      17
+    ],
+    "n_head_pairs": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0
+    ],
+    "builder": "mirror.mirror_family.build_mirror_variant"
+  },
+  "trainable": "converted blocks (re-projected with A* after every step) and the embeddings (re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+  "experiment": "MUST-09",
+  "adapter": {
+    "kind": "dinov2",
+    "hub_repo": "facebookresearch/dinov2",
+    "name": "dinov2_vitb14_reg",
+    "img_size": 224
+  },
+  "state_file": "healed_state.pt",
+  "targets": "sym",
+  "seed": 0,
+  "model": "dinov2_vitb14_reg",
+  "hparams": null
+}

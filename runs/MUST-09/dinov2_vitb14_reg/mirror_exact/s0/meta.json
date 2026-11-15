@@ -1,0 +1,222 @@
+{
+  "experiment": "MUST-09",
+  "date_utc": "2026-11-15T08:40:18Z",
+  "git": {
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "config": {
+      "experiment": "MUST-09",
+      "seed": 0,
+      "model": {
+        "hub_repo": "facebookresearch/dinov2",
+        "name": "dinov2_vitb14_reg",
+        "img_size": 224
+      },
+      "components": [
+        "mlp",
+        "attn"
+      ],
+      "targets": "sym",
+      "mirror_builder": "auto",
+      "compressor_builder": "auto",
+      "lowrank_factors": "balanced",
+      "structure": {
+        "span_structure": "results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+        "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+        "heads": "runs/m1/m1_structure.npz",
+        "attn_a_out": "auto",
+        "mode": "per_layer",
+        "attention": true,
+        "random_seed": 1,
+        "random_fix_ones": true
+      },
+      "compressor": {
+        "fit_seed": 0,
+        "cache_dir": "cache"
+      },
+      "data": {
+        "images": "cache/heal256_uint8.npy",
+        "index": "cache/train_index.npz",
+        "meta": "cache/train_meta.json",
+        "train_key": "heal_rows",
+        "heldout_key": "healval_rows"
+      },
+      "heal": {
+        "epochs": 2,
+        "batch_size": 256,
+        "micro_batch": 64,
+        "weight_decay": 0.05,
+        "warmup_frac": 0.05,
+        "min_lr_ratio": 0.0,
+        "crop_size": 224,
+        "crop_scale": [
+          0.35,
+          1.0
+        ],
+        "hflip_p": 0.5,
+        "w_cls": 1.0,
+        "w_patch": 1.0,
+        "w_block": 1.0,
+        "normaliser": "fixed",
+        "calib_images": 1024,
+        "grad_checkpoint": false,
+        "amp": "auto",
+        "eval_every": 200,
+        "log_every": 20,
+        "prefetch": 2
+      },
+      "lr_selection": {
+        "lrs": [
+          1e-05,
+          5e-05,
+          0.0001
+        ],
+        "budget_steps": 100,
+        "extra_lrs": [
+          0.0002
+        ],
+        "extra_when": "top",
+        "extra_can_win": false
+      },
+      "curve": {
+        "steps": [
+          0,
+          100,
+          300,
+          780
+        ],
+        "queries": 10000
+      },
+      "knn": {
+        "cache_dir": "cache",
+        "k": 20,
+        "temperature": 0.07,
+        "amp": "bf16",
+        "fp32_pass": true,
+        "batch_size": 128,
+        "num_workers": 4
+      },
+      "checks": {
+        "cache_dir": "cache",
+        "exact_images": 64,
+        "exact_tol": 0.0001,
+        "conversion_tol": 0.001,
+        "batch_size": 128,
+        "num_workers": 4
+      },
+      "train_state": {
+        "every": 50
+      },
+      "latency": {
+        "batches": [
+          1,
+          64,
+          256
+        ],
+        "warmup": 20,
+        "iters": 100,
+        "compile": true,
+        "compile_mode": "default",
+        "align": 8
+      },
+      "compute": {
+        "device": "cuda",
+        "gpu_memory_fraction": 0.2,
+        "tf32": false
+      },
+      "out_root": "runs/MUST-09",
+      "results_root": "results/MUST-09",
+      "tiny_mode": false,
+      "config_path": "/home/ubuntu/Mirror_CPAL/configs/must09.yaml",
+      "method": "mirror_exact"
+    },
+    "args": {
+      "config": "/home/ubuntu/Mirror_CPAL/configs/must09.yaml",
+      "from_gate_b": null,
+      "gate_rank": 1,
+      "allow_incomplete_gate": false,
+      "method": "mirror_exact",
+      "seed": 0,
+      "hparams_json": null,
+      "targets": null,
+      "tiny": false,
+      "out_root": null,
+      "results_root": null,
+      "gpu_frac": 0.2,
+      "micro_batch": 64,
+      "curve_queries": 10000,
+      "curve_steps": null,
+      "state_every": null,
+      "fresh": false,
+      "keep_state": false,
+      "force": false,
+      "lr": null,
+      "lr_from": null,
+      "max_steps": null,
+      "no_fp32_pass": false,
+      "span_structure": "results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+      "mirror_builder": null,
+      "compressor_builder": null,
+      "latency_only": false,
+      "with_original": false,
+      "latency_batches": null,
+      "latency_iters": null,
+      "latency_warmup": null,
+      "no_compile": false,
+      "device": null
+    }
+  },
+  "seeds": {
+    "heal": 0,
+    "compressor_fit": null,
+    "random_structure": null
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "kind": "dinov2",
+      "hub_repo": "facebookresearch/dinov2",
+      "name": "dinov2_vitb14_reg",
+      "img_size": 224
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 2765.08,
+  "extra": {
+    "targets": "sym",
+    "teacher": {
+      "type": "VExactTeacher",
+      "k": 12,
+      "even_head": true,
+      "symmetrise": true,
+      "block_targets": "centred, symmetrised with A*",
+      "final_target": "symmetrised",
+      "d_plus": 700,
+      "reg_perm": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "builder": "mirror.mirror_family.build_mirror_variant",
+    "n_train": 100000,
+    "n_lr_selection": 5000,
+    "protocol": "v2",
+    "run_dir": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0"
+  }
+}

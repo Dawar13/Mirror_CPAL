@@ -1,0 +1,1255 @@
+{
+  "experiment": "MUST-09",
+  "complete": true,
+  "method": "svdllm",
+  "family": "compressed",
+  "model": "dinov2_vitb14_reg",
+  "seed": 0,
+  "targets": "sym",
+  "teacher": {
+    "type": "VExactTeacher",
+    "k": 12,
+    "even_head": true,
+    "symmetrise": true,
+    "block_targets": "raw (the teacher's own block outputs, not centred or symmetrised)",
+    "final_target": "symmetrised",
+    "d_plus": 700,
+    "reg_perm": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "lr": 0.0001,
+  "lr_selection": {
+    "best_lr": 0.0001,
+    "lrs": [
+      1e-05,
+      5e-05,
+      0.0001
+    ],
+    "budget_steps": 100,
+    "seed": 0,
+    "trials": [
+      {
+        "lr": 1e-05,
+        "heldout_loss": 2.1750865246951236,
+        "heldout_terms": {
+          "total": 2.1750865246951236,
+          "block0": 0.005226506447348792,
+          "block1": 0.026809921273224187,
+          "block2": 0.06684140070663538,
+          "block3": 0.07637994991607785,
+          "block4": 0.11094935734256535,
+          "block5": 0.142867694009908,
+          "block6": 0.17282492367524024,
+          "block7": 0.11923325183051874,
+          "block8": 0.15619679815230866,
+          "block9": 0.2091052605010869,
+          "block10": 0.22575404614281494,
+          "block11": 0.2237593325159632,
+          "cls": 0.335583131900374,
+          "patch": 0.30355495028105767
+        },
+        "heldout_initial": 2.826876123148103,
+        "train_loss_last": 2.0933663012692705,
+        "diverged": false
+      },
+      {
+        "lr": 5e-05,
+        "heldout_loss": 1.951009206296529,
+        "heldout_terms": {
+          "total": 1.951009206296529,
+          "block0": 0.006004064676225739,
+          "block1": 0.025621698388005387,
+          "block2": 0.060234114111108204,
+          "block3": 0.06926808494931426,
+          "block4": 0.10125441478528276,
+          "block5": 0.13051521968060784,
+          "block6": 0.15830779458267558,
+          "block7": 0.10912672775743319,
+          "block8": 0.14228339798743259,
+          "block9": 0.18991690161278493,
+          "block10": 0.20395528870378088,
+          "block11": 0.2014483278466325,
+          "cls": 0.2846378976935656,
+          "patch": 0.26843527352167945
+        },
+        "heldout_initial": 2.826876123148103,
+        "train_loss_last": 1.8755618567811325,
+        "diverged": false
+      },
+      {
+        "lr": 0.0001,
+        "heldout_loss": 1.9023566797985196,
+        "heldout_terms": {
+          "total": 1.9023566797985196,
+          "block0": 0.006432286134256399,
+          "block1": 0.026095538959484375,
+          "block2": 0.060157103041202344,
+          "block3": 0.06902449248114347,
+          "block4": 0.10063735095555526,
+          "block5": 0.12952974606508552,
+          "block6": 0.15682758801884783,
+          "block7": 0.10782923530045477,
+          "block8": 0.14031001376694427,
+          "block9": 0.18663562898862565,
+          "block10": 0.1993764980622214,
+          "block11": 0.194813518043374,
+          "cls": 0.2666026063115616,
+          "patch": 0.2580850736697628
+        },
+        "heldout_initial": 2.826876123148103,
+        "train_loss_last": 1.8239372017560527,
+        "diverged": false
+      }
+    ],
+    "git_hash": "d572a53fe9508488161b60ce80427fa40b44f7af",
+    "git_dirty": true
+  },
+  "lr_extra": {
+    "chosen_lr": 0.0001,
+    "extra_lrs": [
+      0.0002
+    ],
+    "extra_would_win": false,
+    "winning_extra_lrs": [],
+    "best_lr_with_extra": 0.0001
+  },
+  "lr_grid": [
+    1e-05,
+    5e-05,
+    0.0001
+  ],
+  "total_steps": 780,
+  "curve": [
+    {
+      "step": 0,
+      "knn_top1": 75.80399513244629,
+      "flip_consistency": 93.82799863815308,
+      "n_query": 50000,
+      "n_bank": 100000,
+      "full_validation": true,
+      "amp": "bf16",
+      "feature_flip_max_abs": 0.14539873600006104,
+      "feature_identical_pct": 0.0,
+      "seconds": 596.5,
+      "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+      "seed": 0
+    },
+    {
+      "step": 100,
+      "knn_top1": 77.59000062942505,
+      "flip_consistency": 94.70999836921692,
+      "n_query": 10000,
+      "n_bank": 100000,
+      "full_validation": false,
+      "amp": "bf16",
+      "feature_flip_max_abs": 0.07375468313694,
+      "feature_identical_pct": 0.0,
+      "seconds": 309.8,
+      "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+      "seed": 0
+    },
+    {
+      "step": 300,
+      "knn_top1": 78.1499981880188,
+      "flip_consistency": 95.35999894142151,
+      "n_query": 10000,
+      "n_bank": 100000,
+      "full_validation": false,
+      "amp": "bf16",
+      "feature_flip_max_abs": 0.07201763242483139,
+      "feature_identical_pct": 0.0,
+      "seconds": 238.5,
+      "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+      "seed": 0
+    },
+    {
+      "step": 780,
+      "knn_top1": 78.04799675941467,
+      "flip_consistency": 95.81199884414673,
+      "n_query": 50000,
+      "n_bank": 100000,
+      "full_validation": true,
+      "amp": "bf16",
+      "feature_flip_max_abs": 0.12840966880321503,
+      "feature_identical_pct": 0.0,
+      "seconds": 412.2,
+      "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+      "seed": 0
+    }
+  ],
+  "knn_bf16": {
+    "step": 780,
+    "knn_top1": 78.04799675941467,
+    "flip_consistency": 95.81199884414673,
+    "n_query": 50000,
+    "n_bank": 100000,
+    "full_validation": true,
+    "amp": "bf16",
+    "feature_flip_max_abs": 0.12840966880321503,
+    "feature_identical_pct": 0.0,
+    "seconds": 412.2,
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "seed": 0
+  },
+  "knn_fp32": {
+    "top1": 78.06999683380127,
+    "flip_consistency": 95.80399990081787,
+    "n_bank": 100000,
+    "n_query": 50000,
+    "feature_flip_max_abs_unit": 0.1307806372642517,
+    "feature_identical_pct": 0.0,
+    "seconds": 1135.2,
+    "precision": "fp32 forward passes for the bank and every query and its mirror, TF32 off"
+  },
+  "knn_original": {
+    "top1": 78.95399928092957,
+    "flip_consistency": 96.27999663352966,
+    "source": "/home/ubuntu/Mirror_CPAL/cache/knn_original/dinov2_vitb14_reg_v2_bf16.json"
+  },
+  "cls_flip_fp32_probe": {
+    "max_abs_diff": 0.9390729665756226,
+    "max_abs_ref": 4.176229476928711,
+    "rel_max": 0.2248614382335707,
+    "n_images": 64
+  },
+  "exactness": null,
+  "conversion_check": {
+    "max_abs": 6.031990051269531e-05,
+    "max_ref": 4.805368423461914,
+    "rel_max": 1.2552606834095619e-05,
+    "n_images": 64,
+    "tol": 0.001,
+    "passed": true
+  },
+  "cost": {
+    "arch": {
+      "d": 768,
+      "h": 3072,
+      "depth": 12,
+      "T": 261,
+      "n_patches": 256,
+      "patch": 14,
+      "in_chans": 3,
+      "model_params_dense": 86583552
+    },
+    "per_block": [
+      {
+        "block": 0,
+        "mlp_exec": 2826240,
+        "attn_exec": 1508352,
+        "mlp": 2826240,
+        "attn": 1508352,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 1,
+        "mlp_exec": 2895360,
+        "attn_exec": 1511424,
+        "mlp": 2895360,
+        "attn": 1511424,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 2,
+        "mlp_exec": 3018240,
+        "attn_exec": 1625088,
+        "mlp": 3018240,
+        "attn": 1625088,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 3,
+        "mlp_exec": 3087360,
+        "attn_exec": 1824768,
+        "mlp": 3087360,
+        "attn": 1824768,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 4,
+        "mlp_exec": 3194880,
+        "attn_exec": 1754112,
+        "mlp": 3194880,
+        "attn": 1754112,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 5,
+        "mlp_exec": 3456000,
+        "attn_exec": 1766400,
+        "mlp": 3456000,
+        "attn": 1766400,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 6,
+        "mlp_exec": 3601920,
+        "attn_exec": 1797120,
+        "mlp": 3601920,
+        "attn": 1797120,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 7,
+        "mlp_exec": 3786240,
+        "attn_exec": 1852416,
+        "mlp": 3786240,
+        "attn": 1852416,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 8,
+        "mlp_exec": 4108800,
+        "attn_exec": 2036736,
+        "mlp": 4108800,
+        "attn": 2036736,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 9,
+        "mlp_exec": 4185600,
+        "attn_exec": 1926144,
+        "mlp": 4185600,
+        "attn": 1926144,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 10,
+        "mlp_exec": 4277760,
+        "attn_exec": 2116608,
+        "mlp": 4277760,
+        "attn": 2116608,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      },
+      {
+        "block": 11,
+        "mlp_exec": 4277760,
+        "attn_exec": 2119680,
+        "mlp": 4277760,
+        "attn": 2119680,
+        "basis_params": 0,
+        "rot": 0.0,
+        "source": "compressor's own per-matrix and basis-change counts"
+      }
+    ],
+    "params_model": 66203904,
+    "params_frac": 0.7646244866461473,
+    "params_basis_change": 0,
+    "cost_source": "compressor's own per-matrix and basis-change counts",
+    "params_converted_kept": 64555008,
+    "params_converted_dense": 84934656,
+    "kept_frac_converted": 0.7600549768518519,
+    "gflops": 36.440137728,
+    "gflops_dense": 47.078313984,
+    "gflops_frac": 0.7740323440721459,
+    "params_stored": 65349120,
+    "params_original": 86583552,
+    "cost_model": "scripts/collect_results.analytic_cost: matrices of the converted blocks at the multiply-adds of the method's own efficient form (mirror family: free parameters, as its even/odd form executes them; compressors: their own per-matrix counts) plus basis changes (d^2 units), token mixing 2 T^2 d per block, patch embedding; not norms, softmax, GELU, biases. Parameters: whole model, biases and embeddings dense, basis changes included"
+  },
+  "peak_train_memory_gb": 10.638738632202148,
+  "heldout_initial": {
+    "total": 2.826876123148103,
+    "block0": 0.003945997308640868,
+    "block1": 0.030789417675355573,
+    "block2": 0.08838191722417969,
+    "block3": 0.09856218443225805,
+    "block4": 0.13777641434631718,
+    "block5": 0.17907547556972694,
+    "block6": 0.21678898382381423,
+    "block7": 0.1498523553243953,
+    "block8": 0.19550970984665503,
+    "block9": 0.27174961972492007,
+    "block10": 0.2888464449114044,
+    "block11": 0.29367194635293975,
+    "cls": 0.4659902608040524,
+    "patch": 0.4059353958034437
+  },
+  "heldout_final": {
+    "total": 1.3992343535384801,
+    "block0": 0.006874593494484226,
+    "block1": 0.02168680222561315,
+    "block2": 0.04423291432903669,
+    "block3": 0.05064797402384052,
+    "block4": 0.07366868781420056,
+    "block5": 0.09519631620898082,
+    "block6": 0.11702825284601111,
+    "block7": 0.08127337505933888,
+    "block8": 0.10547519696475584,
+    "block9": 0.14083784974368918,
+    "block10": 0.1508105736436992,
+    "block11": 0.14243688674307886,
+    "cls": 0.1808395606581125,
+    "patch": 0.18822536978363844
+  },
+  "constraint_checks": {
+    "0:StructuredTrainable": {
+      "ok": true,
+      "n_matrices": 72,
+      "kinds": {
+        "lowrank": 72
+      },
+      "numerical_ranks": [
+        368,
+        368,
+        255,
+        255,
+        236,
+        236,
+        377,
+        377,
+        257,
+        257,
+        235,
+        235,
+        393,
+        393,
+        274,
+        274,
+        255,
+        255,
+        402,
+        402,
+        301,
+        301,
+        293,
+        293,
+        416,
+        416,
+        290,
+        290,
+        281,
+        281,
+        450,
+        450,
+        294,
+        294,
+        281,
+        281,
+        469,
+        469,
+        296,
+        296,
+        289,
+        289,
+        493,
+        493,
+        300,
+        300,
+        303,
+        303,
+        535,
+        535,
+        331,
+        331,
+        332,
+        332,
+        545,
+        545,
+        310,
+        310,
+        317,
+        317,
+        557,
+        557,
+        341,
+        341,
+        348,
+        348,
+        557,
+        557,
+        343,
+        343,
+        347,
+        347
+      ],
+      "target_ranks": [
+        368,
+        368,
+        255,
+        255,
+        236,
+        236,
+        377,
+        377,
+        257,
+        257,
+        235,
+        235,
+        393,
+        393,
+        274,
+        274,
+        255,
+        255,
+        402,
+        402,
+        301,
+        301,
+        293,
+        293,
+        416,
+        416,
+        290,
+        290,
+        281,
+        281,
+        450,
+        450,
+        294,
+        294,
+        281,
+        281,
+        469,
+        469,
+        296,
+        296,
+        289,
+        289,
+        493,
+        493,
+        300,
+        300,
+        303,
+        303,
+        535,
+        535,
+        331,
+        331,
+        332,
+        332,
+        545,
+        545,
+        310,
+        310,
+        317,
+        317,
+        557,
+        557,
+        341,
+        341,
+        348,
+        348,
+        557,
+        557,
+        343,
+        343,
+        347,
+        347
+      ],
+      "per_matrix": [
+        {
+          "block": 0,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 368,
+          "numerical_rank": 368,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 368,
+          "numerical_rank": 368,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 255,
+          "numerical_rank": 255,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 255,
+          "numerical_rank": 255,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 236,
+          "numerical_rank": 236,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 236,
+          "numerical_rank": 236,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 377,
+          "numerical_rank": 377,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 377,
+          "numerical_rank": 377,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 257,
+          "numerical_rank": 257,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 257,
+          "numerical_rank": 257,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 235,
+          "numerical_rank": 235,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 235,
+          "numerical_rank": 235,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 393,
+          "numerical_rank": 393,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 393,
+          "numerical_rank": 393,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 274,
+          "numerical_rank": 274,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 274,
+          "numerical_rank": 274,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 255,
+          "numerical_rank": 255,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 255,
+          "numerical_rank": 255,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 402,
+          "numerical_rank": 402,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 402,
+          "numerical_rank": 402,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 301,
+          "numerical_rank": 301,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 301,
+          "numerical_rank": 301,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 293,
+          "numerical_rank": 293,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 293,
+          "numerical_rank": 293,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 416,
+          "numerical_rank": 416,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 416,
+          "numerical_rank": 416,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 290,
+          "numerical_rank": 290,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 290,
+          "numerical_rank": 290,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 281,
+          "numerical_rank": 281,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 281,
+          "numerical_rank": 281,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 450,
+          "numerical_rank": 450,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 450,
+          "numerical_rank": 450,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 294,
+          "numerical_rank": 294,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 294,
+          "numerical_rank": 294,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 281,
+          "numerical_rank": 281,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 281,
+          "numerical_rank": 281,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 469,
+          "numerical_rank": 469,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 469,
+          "numerical_rank": 469,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 296,
+          "numerical_rank": 296,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 296,
+          "numerical_rank": 296,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 289,
+          "numerical_rank": 289,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 289,
+          "numerical_rank": 289,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 493,
+          "numerical_rank": 493,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 493,
+          "numerical_rank": 493,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 300,
+          "numerical_rank": 300,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 300,
+          "numerical_rank": 300,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 303,
+          "numerical_rank": 303,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 303,
+          "numerical_rank": 303,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 535,
+          "numerical_rank": 535,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 535,
+          "numerical_rank": 535,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 331,
+          "numerical_rank": 331,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 331,
+          "numerical_rank": 331,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 332,
+          "numerical_rank": 332,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 332,
+          "numerical_rank": 332,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 545,
+          "numerical_rank": 545,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 545,
+          "numerical_rank": 545,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 310,
+          "numerical_rank": 310,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 310,
+          "numerical_rank": 310,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 317,
+          "numerical_rank": 317,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 317,
+          "numerical_rank": 317,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 557,
+          "numerical_rank": 557,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 557,
+          "numerical_rank": 557,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 341,
+          "numerical_rank": 341,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 341,
+          "numerical_rank": 341,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 348,
+          "numerical_rank": 348,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 348,
+          "numerical_rank": 348,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "fc1",
+          "kind": "lowrank",
+          "target_rank": 557,
+          "numerical_rank": 557,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "fc2",
+          "kind": "lowrank",
+          "target_rank": 557,
+          "numerical_rank": 557,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wq",
+          "kind": "lowrank",
+          "target_rank": 343,
+          "numerical_rank": 343,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wk",
+          "kind": "lowrank",
+          "target_rank": 343,
+          "numerical_rank": 343,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wv",
+          "kind": "lowrank",
+          "target_rank": 347,
+          "numerical_rank": 347,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wo",
+          "kind": "lowrank",
+          "target_rank": 347,
+          "numerical_rank": 347,
+          "rank_precision": "float64 product of the factors",
+          "ok": true
+        }
+      ]
+    }
+  },
+  "n_trainable": 65291520,
+  "seconds_train": 1902.47,
+  "compressor": {
+    "source": "mirror.baselines.compress",
+    "params_total": 64555008,
+    "budget_total": 64554464,
+    "gap": 8.426992748324887e-06,
+    "budget": {
+      "total": 64554464
+    },
+    "fit_seed": 0
+  },
+  "hparams": {
+    "damp": 1e-06
+  },
+  "random_structure": null,
+  "timing": {
+    "stages": {
+      "load": 2.26,
+      "compress": 38.8,
+      "structure checks": 25.02,
+      "lr selection": 2656.83,
+      "heal": 3590.72,
+      "final measures": 1136.39
+    },
+    "total_s": 7450.04
+  },
+  "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+  "git_dirty": true,
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  }
+}
