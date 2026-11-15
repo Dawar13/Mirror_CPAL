@@ -105,7 +105,25 @@ ARCHS = {
     "vit_s8": {"embed_dim": 384, "depth": 12, "num_heads": 6},
     "vit_ti8": {"embed_dim": 192, "depth": 12, "num_heads": 3},
     "vit_test8": {"embed_dim": 48, "depth": 3, "num_heads": 3},   # CPU tests and --tiny only
+    # Patch 16 at 96 x 96 (stored at 108 x 108): the MUST-12 pilot rerun after gate C failed at 64 x 64
+    # (PREREG_NEXT_PHASE.md MUST-12, proposed fix; notes/decisions.md, 15 November).
+    "vit_s16": {"embed_dim": 384, "depth": 12, "num_heads": 6, "patch_size": 16},
+    "vit_ti16": {"embed_dim": 192, "depth": 12, "num_heads": 3, "patch_size": 16},
+    "vit_test16": {"embed_dim": 48, "depth": 3, "num_heads": 3, "patch_size": 16},   # CPU tests only
 }
+
+
+def arch_patch_size(arch: str) -> int:
+    """Patch size of an architecture in ARCHS (PATCH_SIZE unless the entry sets its own)."""
+    return int(ARCHS[arch].get("patch_size", PATCH_SIZE))
+
+
+def view_size_for_store(store_size: int) -> int:
+    """Model input size for images stored at `store_size`: the same ratio as 64 of 72 (72 -> 64, 108 -> 96)."""
+    s = int(store_size)
+    if (s * IMG_SIZE) % STORE_SIZE:
+        raise ValueError(f"stored size {s} is not a multiple of {STORE_SIZE // math.gcd(IMG_SIZE, STORE_SIZE)}")
+    return s * IMG_SIZE // STORE_SIZE
 
 # p_lr, p_ud: per-image probabilities of a left-right and an upside-down flip (independent);
 # rot90: per-image rotation by k x 90 degrees counter-clockwise, k uniform over 0..3.
@@ -183,6 +201,23 @@ def _cache_dir(cache_dir) -> Path:
     return default_cache_dir() if cache_dir is None else Path(cache_dir)
 
 
+def _image_file(d: Path, split: str) -> Path:
+    """The cache's image file of a split: in100_<split>72_uint8.npy, else the one in100_<split><S>_uint8.npy
+    present (a cache built with build_imagenet100.py --size S, e.g. 108 for 96 x 96 inputs)."""
+    f = d / (TRAIN_FILE if split == "train" else VAL_FILE)
+    if f.exists():
+        return f
+    cands = sorted(p for p in d.glob(f"in100_{split}*_uint8.npy") if re.fullmatch(rf"in100_{split}\d+_uint8\.npy", p.name))
+    if len(cands) != 1:
+        raise FileNotFoundError(f"{d}: expected one in100_{split}<size>_uint8.npy, found {[p.name for p in cands]}")
+    return cands[0]
+
+
+def cache_store_size(cache_dir=None) -> int:
+    """Stored image size of the cache (72, or the --size it was built with)."""
+    return int(np.load(_image_file(_cache_dir(cache_dir), "train"), mmap_mode="r").shape[1])
+
+
 def load_in100(cache_dir=None, mmap: bool = True) -> dict:
     """{train_images, train_labels, val_images, val_labels, meta} from the cache (images memmapped)."""
     d = _cache_dir(cache_dir)
@@ -194,9 +229,9 @@ def load_in100(cache_dir=None, mmap: bool = True) -> dict:
         raise RuntimeError(f"{meta_path}: the ImageNet-100 build did not finish; rerun the build")
     mode = "r" if mmap else None
     out = {
-        "train_images": np.load(d / TRAIN_FILE, mmap_mode=mode),
+        "train_images": np.load(_image_file(d, "train"), mmap_mode=mode),
         "train_labels": np.load(d / TRAIN_LABELS),
-        "val_images": np.load(d / VAL_FILE, mmap_mode=mode),
+        "val_images": np.load(_image_file(d, "val"), mmap_mode=mode),
         "val_labels": np.load(d / VAL_LABELS),
         "meta": meta,
     }
@@ -237,9 +272,9 @@ def write_synthetic_cache(cache_dir, num_classes: int = 10, train_per_class: int
 
     tr, trl = make(train_per_class)
     va, val = make(val_per_class)
-    np.save(d / TRAIN_FILE, tr)
+    np.save(d / f"in100_train{int(size)}_uint8.npy", tr)
     np.save(d / TRAIN_LABELS, trl)
-    np.save(d / VAL_FILE, va)
+    np.save(d / f"in100_val{int(size)}_uint8.npy", va)
     np.save(d / VAL_LABELS, val)
     np.savez(d / INDEX_FILE, train_src=np.stack([np.zeros(len(trl)), np.arange(len(trl))], 1).astype(np.int64),
              val_src=np.stack([np.zeros(len(val)), np.arange(len(val))], 1).astype(np.int64))
@@ -255,8 +290,9 @@ def write_synthetic_cache(cache_dir, num_classes: int = 10, train_per_class: int
 # Model and adapter
 # ----------------------------------------------------------------------------------------------
 def build_model(arch: str = "vit_s8", num_classes: int = NUM_CLASSES, img_size: int = IMG_SIZE,
-                patch_size: int = PATCH_SIZE, drop_path_rate: float = 0.0) -> nn.Module:
-    """timm VisionTransformer for the controlled study (random init from the global torch RNG)."""
+                patch_size: int | None = None, drop_path_rate: float = 0.0) -> nn.Module:
+    """timm VisionTransformer for the controlled study (random init from the global torch RNG).
+    patch_size None: the architecture's own (arch_patch_size)."""
     from timm.models.vision_transformer import VisionTransformer
 
     from .adapters_timm import check_layout
@@ -264,6 +300,7 @@ def build_model(arch: str = "vit_s8", num_classes: int = NUM_CLASSES, img_size: 
     if arch not in ARCHS:
         raise ValueError(f"unknown arch {arch!r}; known: {sorted(ARCHS)}")
     spec = ARCHS[arch]
+    patch_size = arch_patch_size(arch) if patch_size is None else int(patch_size)
     model = VisionTransformer(img_size=img_size, patch_size=patch_size, num_classes=num_classes,
                               embed_dim=spec["embed_dim"], depth=spec["depth"], num_heads=spec["num_heads"],
                               mlp_ratio=4.0, qkv_bias=True, class_token=True, global_pool="token",
@@ -301,7 +338,7 @@ class ControlledAdapter(ViTAdapter):
         self.has_layerscale = False
         self.mean, self.std = tuple(IMAGENET_MEAN), tuple(IMAGENET_STD)
         self.interpolation = "bilinear"
-        self.crop_pct = img_size / STORE_SIZE
+        self.crop_pct = IMG_SIZE / STORE_SIZE     # the same centre-crop ratio at every size (64 of 72, 96 of 108)
         self.num_classes = int(model.num_classes)
         self.condition = self.info.get("condition")
         self.epoch = self.info.get("epoch")
@@ -488,11 +525,12 @@ class _CentreViewDataset(torch.utils.data.Dataset):
     """Centre out x out crop of stored uint8 [N, S, S, 3] images, then a view: uint8 [3, out, out]."""
 
     def __init__(self, images: np.ndarray, labels: np.ndarray, rows: np.ndarray, view=None,
-                 out_size: int = IMG_SIZE):
+                 out_size: int | None = None):
         self.images, self.labels = images, np.asarray(labels)
         self.rows = np.asarray(rows, dtype=np.int64)
         self.view = canonical_view(view)
-        self.out = int(out_size)
+        # None: the input size that goes with the stored size (64 for 72, 96 for 108)
+        self.out = view_size_for_store(images.shape[1]) if out_size is None else int(out_size)
         self.offset = (int(images.shape[1]) - self.out) // 2
 
     def __len__(self) -> int:
@@ -813,6 +851,9 @@ def train(cfg: TrainConfig) -> dict:
     data_fp = {"n_train": n_train, "n_val": int(len(va_lab_np)),
                "train_labels_sha": labels_fingerprint(tr_lab_np), "val_labels_sha": labels_fingerprint(va_lab_np),
                "size": int(data["train_images"].shape[1])}
+    if int(cfg.img_size) != view_size_for_store(data_fp["size"]):
+        raise ValueError(f"img_size {cfg.img_size} does not go with images stored at {data_fp['size']} "
+                         f"(expected {view_size_for_store(data_fp['size'])}): check the cache folder")
     resume_view = _resume_view(cfg, amp, data_fp)
 
     # ---- model and optimiser ---------------------------------------------------------------
@@ -828,8 +869,8 @@ def train(cfg: TrainConfig) -> dict:
 
     ckpt_common = {"format": CKPT_FORMAT, "exp": cfg.exp, "arch": cfg.arch, "condition": cfg.condition,
                    "condition_spec": CONDITIONS[cfg.condition], "seed": int(cfg.seed), "img_size": int(cfg.img_size),
-                   "patch_size": PATCH_SIZE, "num_classes": num_classes, "drop_path_rate": float(cfg.drop_path),
-                   "store_size": data_fp["size"], "config": resume_view}
+                   "patch_size": arch_patch_size(cfg.arch), "num_classes": num_classes,
+                   "drop_path_rate": float(cfg.drop_path), "store_size": data_fp["size"], "config": resume_view}
 
     # ---- resume or fresh start -------------------------------------------------------------
     last_path = run_dir / "last.pt"
@@ -1052,7 +1093,7 @@ def _seeds(cfg: TrainConfig) -> dict:
 
 def _models(cfg: TrainConfig, model: nn.Module) -> dict:
     return {cfg.arch: {"builder": "mirror.controlled.build_model (timm VisionTransformer)",
-                       **ARCHS[cfg.arch], "patch_size": PATCH_SIZE, "img_size": int(cfg.img_size),
+                       **ARCHS[cfg.arch], "patch_size": arch_patch_size(cfg.arch), "img_size": int(cfg.img_size),
                        "mlp_ratio": 4.0, "qkv_bias": True, "registers": 0, "layerscale": False,
                        "num_classes": int(model.num_classes), "n_params": count_params(model)}}
 

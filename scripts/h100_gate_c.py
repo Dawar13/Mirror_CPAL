@@ -70,7 +70,10 @@ def main(argv=None) -> int:
     out.update({"lr_metrics": str(d / "metrics.json"), "none_meta": str(runs / f"{a.arch}_none_s0" / "meta.json"),
                 "date_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
     res.mkdir(parents=True, exist_ok=True)
-    (res / "gate_c.json").write_text(json.dumps(out, indent=2))
+    # vit_s8 (the 64 x 64 pilot) keeps gate_c.json; the 96 x 96 rerun (vit_s16) writes gate_c_vit_s16.json beside it
+    out["arch"] = a.arch
+    name = "gate_c.json" if a.arch == "vit_s8" else f"gate_c_{a.arch}.json"
+    (res / name).write_text(json.dumps(out, indent=2))
     print(f"gate C {'PASS' if out['pass'] else 'FAIL'}: LR ratio to null (blocks 1-6) {out['lr_ratio_to_null_blocks_1_6']} "
           f"(bar <= {RATIO_MAX}), LR twin fraction {out['lr_twin_fraction_t50_blocks_1_6']} (bar >= {TWIN_MIN})")
     print(f"epoch rule: MUST-12 none run {out['must12_none_wall_minutes']} min (rule: > {MINUTES_MAX} min means 60) "

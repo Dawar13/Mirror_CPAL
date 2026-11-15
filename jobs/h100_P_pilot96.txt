@@ -1,0 +1,12 @@
+# H200 job file P (15 November): the MUST-12 pilot rerun at 96 x 96 with ViT-S/16 after gate C failed at 64 x 64
+# (PREREG_NEXT_PHASE.md MUST-12, proposed fix; Dawar's decision, notes/decisions.md). Same recipe as the 64 x 64
+# pilot (100 epochs, seed 0, none and LR); images stored at 108 x 108 in cache/in100_s108 (centre crop 96, the same
+# ratio as 64 of 72). Gate C is scored by the same script into results/MUST-12/gate_c_vit_s16.json; the marker
+# results/MUST-12/gate_c_vit_s16.pass is written only if it passes (the 96 x 96 grid waits for it).
+#   . ~/.mirror_env.sh; export MW=8
+#   PAR=4 setsid nohup bash scripts/h100_sched.sh jobs/h100_P_pilot96.txt > logs/q_P.log 2>&1 < /dev/null &
+cache/in100_s108/in100_meta.json @12000 | python scripts/train_controlled.py --exp MUST-12 --arch vit_s16 --condition none --seed 0 --epochs 100 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --gpu-frac 0.18
+cache/in100_s108/in100_meta.json @12000 | python scripts/train_controlled.py --exp MUST-12 --arch vit_s16 --condition LR --seed 0 --epochs 100 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --gpu-frac 0.18
+runs/MUST-12/vit_s16_none_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/MUST-12/vit_s16_none_s0 MUST-12
+runs/MUST-12/vit_s16_LR_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/MUST-12/vit_s16_LR_s0 MUST-12
+results/MUST-12/vit_s16_LR_s0/e100/metrics.json runs/MUST-12/vit_s16_none_s0/meta.json @0 %done=results/MUST-12/gate_c_vit_s16.json | python scripts/h100_gate_c.py --arch vit_s16 && touch results/MUST-12/gate_c_vit_s16.pass; test -f results/MUST-12/gate_c_vit_s16.json

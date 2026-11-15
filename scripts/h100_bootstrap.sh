@@ -178,6 +178,10 @@ torch.cuda.set_per_process_memory_fraction = _scaled
 torch.cuda.memory.set_per_process_memory_fraction = _scaled
 PYEOF
 echo 'import os; os.environ.get("MIRROR_MEM_SCALE") and __import__("mirror_memscale")' > "$SITE/mirror_memscale.pth"
+# Thread cap for every venv process (BLAS, OpenMP, numexpr; MIRROR_THREADS, default 4): many CPU-bound jobs share the
+# cores, and 28-thread pools per process made small matrix work hundreds of times slower (15 November). The name
+# starts with 00 so it runs before mirror_memscale.pth, which imports torch and would start its pools uncapped.
+echo 'import os; [os.environ.setdefault(k, os.environ.get("MIRROR_THREADS", "4")) for k in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMEXPR_NUM_THREADS")]' > "$SITE/00_mirror_threads.pth"
 MEMSCALE=""
 if [ "${GPU_MB:-0}" -gt 0 ]; then
   MEMSCALE=$(awk -v g="$GPU_MB" 'BEGIN { s = 81920 / g; if (s < 0.95 || s > 1.05) printf "%.3f", s }')

@@ -370,6 +370,32 @@ def test_train_script_tiny(tmp_path):
     assert meta["git"]["git_hash"]
 
 
+def test_patch16_at_96_from_a_108_cache(tmp_path):
+    """Gate C fix (96 x 96, patch 16): a cache stored at 108 gives 96 x 96 inputs everywhere, the checkpoint
+    records patch 16 and the adapter has a 6 x 6 grid; a 64 x 64 model on that cache is refused."""
+    from mirror.knn import extract_features
+
+    cache = tmp_path / "in100_s108"
+    C.write_synthetic_cache(cache, num_classes=10, train_per_class=8, val_per_class=4, size=108, seed=0)
+    assert C.cache_store_size(cache) == 108 and C.view_size_for_store(108) == 96 and C.view_size_for_store(72) == 64
+    mod = _load_script("train_controlled")
+    out = mod.main(["--tiny", "--arch", "vit_test16", "--condition", "LR", "--out-root", str(tmp_path),
+                    "--cache-dir", str(cache), "--epochs", "1"])
+    assert not out["stopped"]
+    run = tmp_path / "CORE-01" / "vit_test16_LR_s0"
+    ck = C.load_checkpoint(run / "ckpt_e001.pt")
+    assert (ck["img_size"], ck["patch_size"], ck["store_size"]) == (96, 16, 108)
+    adapter = C.load_checkpoint_adapter(run / "ckpt_e001.pt", "cpu")
+    assert tuple(adapter.grid_hw) == (6, 6) and adapter.n_tokens == 37
+    x, _ = next(iter(C.fit_loader(0, n=10, batch_size=4, cache_dir=cache)))
+    assert tuple(x.shape) == (4, 3, 96, 96) and x.dtype == torch.uint8
+    feats, _ = extract_features(adapter, C.val_loader("LR", batch_size=8, cache_dir=cache), "cpu")
+    assert feats.shape[0] == 40
+    with pytest.raises(ValueError, match="does not go with"):
+        mod.main(["--tiny", "--arch", "vit_test8", "--img-size", "64", "--out-root", str(tmp_path / "bad"),
+                  "--cache-dir", str(cache), "--epochs", "1"])
+
+
 # ----------------------------------------------------------------------------------------------
 # ImageNet-100 build
 # ----------------------------------------------------------------------------------------------

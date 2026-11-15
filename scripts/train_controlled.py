@@ -54,9 +54,9 @@ from pathlib import Path  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from mirror.controlled import (ARCHS, CONDITIONS, DEFAULT_CKPT_EPOCHS, TrainConfig, ckpt_epochs_for,  # noqa: E402
-                               load_checkpoint_adapter, run_dir_for, train, val_loader,
-                               write_synthetic_cache)
+from mirror.controlled import (ARCHS, CONDITIONS, DEFAULT_CKPT_EPOCHS, TrainConfig, cache_store_size,  # noqa: E402
+                               ckpt_epochs_for, load_checkpoint_adapter, run_dir_for, train, val_loader,
+                               view_size_for_store, write_synthetic_cache)
 from mirror.utils import log  # noqa: E402
 
 # Real-run defaults (CORE-01 recipe) and the --tiny overrides.
@@ -72,7 +72,10 @@ def parse_args(argv=None):
     p.add_argument("--exp", default="CORE-01", help="experiment ID; also the run folder under --out-root")
     p.add_argument("--condition", default="none", choices=list(CONDITIONS))
     p.add_argument("--seed", type=int, default=0)
-    p.add_argument("--arch", default=None, choices=list(ARCHS), help="vit_s8 (default) or vit_ti8 (UP-03)")
+    p.add_argument("--arch", default=None, choices=list(ARCHS),
+                   help="vit_s8 (default), vit_ti8 (UP-03); vit_s16 / vit_ti16 for the 96 x 96 rerun")
+    p.add_argument("--img-size", type=int, default=None,
+                   help="model input size (default: from the cache's stored size, 72 -> 64, 108 -> 96)")
     p.add_argument("--epochs", type=int, default=None, help="100 (default), or 60 after MUST-12")
     p.add_argument("--ckpt-epochs", default=",".join(str(e) for e in DEFAULT_CKPT_EPOCHS),
                    help="checkpoint epochs; entries beyond --epochs are dropped and the final epoch is added")
@@ -137,6 +140,7 @@ def main(argv=None):
     if a.tiny and not (Path(cfg.cache_dir) / "in100_meta.json").exists():
         write_synthetic_cache(cfg.cache_dir, num_classes=10, train_per_class=8, val_per_class=4, seed=0)
         log(f"synthetic ImageNet-100 stand-in written to {cfg.cache_dir}")
+    cfg.img_size = int(a.img_size) if a.img_size is not None else view_size_for_store(cache_store_size(cfg.cache_dir))
     log(f"run {run_dir_for(cfg)}: arch {cfg.arch}, condition {cfg.condition} {CONDITIONS[cfg.condition]}, "
         f"seed {cfg.seed}, {cfg.epochs} epochs, checkpoints {list(cfg.ckpt_epochs)}")
     t0 = time.time()

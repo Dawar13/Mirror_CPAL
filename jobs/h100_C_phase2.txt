@@ -32,8 +32,8 @@ results/CORE-05/structure/mae_b16_s0.npz results/MUST-07/structure/deit3_b16_s0.
 results/CORE-05/rule_committed.flag @16000 | python scripts/core05_why_cheap.py --stage truth --models dinov2_vitl14_reg,deit3_b16,mae_b16 --gpu-frac 0.2 && python scripts/core05_why_cheap.py --stage score
 
 # ---- UP-02 symmetric start and UP-04 tied training (CORE-01 recipe, 100 epochs); refund-and-heal after the UD runs
-cache/in100_meta.json @12000 | python scripts/train_controlled_sym.py --mode sym_init --condition UD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
-cache/in100_meta.json @12000 | python scripts/train_controlled_sym.py --mode tied --condition UD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+logs/hold/core01_go.flag cache/in100_meta.json @12000 | python scripts/train_controlled_sym.py --mode sym_init --condition UD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+logs/hold/core01_go.flag cache/in100_meta.json @12000 | python scripts/train_controlled_sym.py --mode tied --condition UD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
 runs/CORE-01/vit_s8_UD_s0/last_done.flag @8000 | python scripts/train_controlled_sym.py --mode refund_heal --condition UD --seed 0 --gpu-frac 0.18
 runs/CORE-01/vit_s8_UD_s1/last_done.flag @8000 | python scripts/train_controlled_sym.py --mode refund_heal --condition UD --seed 1 --gpu-frac 0.18
 runs/CORE-01/vit_s8_UD_s2/last_done.flag @8000 | python scripts/train_controlled_sym.py --mode refund_heal --condition UD --seed 2 --gpu-frac 0.18
