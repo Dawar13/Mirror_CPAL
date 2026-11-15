@@ -83,10 +83,11 @@ if [ ${#PKGS[@]} -eq 0 ]; then
   echo "all present"
 elif [ "$SKIP_APT" = 1 ]; then
   warn "missing packages (not installed, --skip-apt): ${PKGS[*]}"
-elif command -v apt-get > /dev/null && [ "$(id -u)" = 0 ]; then
+elif command -v apt-get > /dev/null && { [ "$(id -u)" = 0 ] || sudo -n true 2> /dev/null; }; then
+  SUDO=""; [ "$(id -u)" = 0 ] || SUDO="sudo -n"     # VMs log in as a normal user with passwordless sudo
   echo "installing: ${PKGS[*]}"
-  DEBIAN_FRONTEND=noninteractive apt-get update -q > /dev/null && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends "${PKGS[@]}" > /dev/null \
+  $SUDO env DEBIAN_FRONTEND=noninteractive apt-get update -q > /dev/null && \
+    $SUDO env DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends "${PKGS[@]}" > /dev/null \
     || warn "apt-get install failed for: ${PKGS[*]}"
 else
   warn "cannot install ${PKGS[*]} (no apt-get or not root)"
