@@ -1,0 +1,22 @@
+# H200 job file A3 (15 November): critical-path jobs moved out of job file A, whose PAR=5 slots were held by
+# long CPU-bound measurement jobs. Moved only if never started in A. Heal lanes: heal (Mirror-exact, job file A),
+# heal2 (random structure, plain SVD) and heal3 (gate-B baselines): up to three heals at once, approved by Dawar
+# on 15 November (the GPU is used by this project only).
+#   PAR=6 setsid nohup bash scripts/h100_sched.sh jobs/h100_A3_lanes.txt > logs/q_A3.log 2>&1 < /dev/null &
+runs/MUST-12/vit_s8_none_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/MUST-12/vit_s8_none_s0 MUST-12
+runs/MUST-12/vit_s8_LR_s0/last_done.flag @3000 | bash scripts/h100_measure_run.sh runs/MUST-12/vit_s8_LR_s0 MUST-12
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz cache/msel224_uint8.npy @16000 %lock=must07 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes full --methods mirror_exact
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz cache/msel224_uint8.npy @16000 %lock=must07 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes full --fp32-queries 5000 --fp32-bank-per-class 10
+results/MUST-07/gate_b.json @16000 %lock=must07 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 0 --sizes 6mlp,6both,9both
+cache/train_index.npz cache/val224_uint8.npy @16000 %lock=must07 %done=results/MUST-07/structure/dinov2_vitl14_reg_s0.npz | python scripts/must07_compressors.py --model dinov2_vitl14_reg --fit-seeds 0 --structure-only --workers $MW
+results/MUST-07/gate_b.json results/MUST-07/structure/dinov2_vitb14_reg_s2.npz @16000 %lock=must07 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 1,2 --sizes 6mlp,6both --skip-flip-seeds 1,2 --methods mirror_exact,svd,svdllm,asvd_scale,slicegpt,flap,zipit,pair_actcorr,pair_wcos,pair_random,random_structure
+results/MUST-07/gate_b.json results/MUST-07/structure/dinov2_vitb14_reg_s2.npz @16000 %lock=must07 | python scripts/must07_compressors.py --model dinov2_vitb14_reg --fit-seeds 1,2 --sizes 9both,full --methods mirror_exact --fp32-queries 5000 --fp32-bank-per-class 10
+results/MUST-07/gate_b.json results/MUST-07/structure/deit3_b16_s0.npz @16000 %lock=must07 | bash scripts/h100_must07_other.sh deit3_b16
+results/MUST-07/gate_b.json results/MUST-07/structure/dinov2_vitl14_reg_s0.npz @24000 %lock=must07 | bash scripts/h100_must07_other.sh dinov2_vitl14_reg
+results/MUST-07/gate_b.json results/MUST-07/structure/dinov2_vitb14_reg_s2.npz @16000 %lock=must07 | python scripts/must08_components.py --model dinov2_vitb14_reg --fit-seeds 0,1,2 --reuse-from results/MUST-07 --fp32-queries 5000 --fp32-bank-per-class 10
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz @14000 %lock=heal2 %done=runs/MUST-09/dinov2_vitb14_reg/random_structure/s0/metrics.json | python scripts/must09_heal.py --method random_structure --seed 0 --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz --micro-batch 64 --curve-queries 10000 --gpu-frac 0.2
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz @14000 %lock=heal2 %done=runs/MUST-09/dinov2_vitb14_reg/svd/s0/metrics.json | python scripts/must09_heal.py --method svd --seed 0 --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz --micro-batch 64 --curve-queries 10000 --gpu-frac 0.2
+results/MUST-07/gate_b.json @14000 %lock=heal3 %done=runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done | bash scripts/h100_heal_gate.sh 1 0
+runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @14000 %lock=heal3 %done=runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s1.done | bash scripts/h100_heal_gate.sh 1 1
+runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @14000 %lock=heal3 %done=runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s2.done | bash scripts/h100_heal_gate.sh 1 2
+results/MUST-07/gate_b.json @14000 %lock=heal3 %done=runs/MUST-09/dinov2_vitb14_reg/gate_b_rank2_s0.done | bash scripts/h100_heal_gate.sh 2 0
