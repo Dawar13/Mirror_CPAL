@@ -162,6 +162,7 @@ def build_config(a) -> S.SymTrainConfig:
         label_smoothing=a.label_smoothing, amp=a.amp, compile="off" if a.no_compile else "auto",
         eval_batch=int(base["eval_batch"]), save_every_min=a.save_every_min, save_every_steps=a.save_every_steps,
         log_every=int(base["log_every"]), cache_dir=cache_dir, out_root=out_root,
+        img_size=C.view_size_for_store(C.cache_store_size(cache_dir)),    # 64 for the 72 cache, 96 for 108
         device=pick("device", a.device), stop_after_steps=a.stop_after_steps, force_new=a.force_new,
         mode=a.mode, d_minus=a.d_minus, hidden_pairs=a.hidden_pairs, init_rescale=a.init_rescale,
         project_grads=not a.no_project_grads, source_ckpt=source, fit_seed=a.fit_seed,

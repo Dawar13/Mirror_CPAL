@@ -826,7 +826,8 @@ def train_sym(cfg: SymTrainConfig) -> dict:
     opt = torch.optim.AdamW(C.param_groups(model, cfg.weight_decay), **opt_kw)
     ckpt_common = {"format": C.CKPT_FORMAT, "exp": cfg.exp, "arch": cfg.arch, "condition": cfg.condition,
                    "condition_spec": C.CONDITIONS[cfg.condition], "seed": int(cfg.seed), "img_size": int(cfg.img_size),
-                   "patch_size": C.PATCH_SIZE, "num_classes": num_classes, "drop_path_rate": float(cfg.drop_path),
+                   "patch_size": C.arch_patch_size(cfg.arch), "num_classes": num_classes,
+                   "drop_path_rate": float(cfg.drop_path),
                    "store_size": data_fp["size"], "config": resume_view, "sym_mode": cfg.mode,
                    "sym_structure": st.kind}
 

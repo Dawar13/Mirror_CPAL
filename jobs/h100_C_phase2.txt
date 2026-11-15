@@ -24,7 +24,7 @@ cache/train_index.npz @12000 | python scripts/core04_generality.py --steps struc
 cache/train_index.npz @30000 | python scripts/core04_generality.py --steps structure --models dinov2_vitg14_reg --workers $MW --gpu-frac 0.25
 results/MUST-04/dinov2_vitl14_reg/metrics.json results/MUST-04/dinov2_vitb14/metrics.json @12000 | python scripts/core04_generality.py --steps structure --models dinov2_vits14_reg,dinov2_vitb14_reg,dinov2_vitb14,dinov2_vitl14_reg,deit3_b16 --workers $MW --gpu-frac 0.2
 cache/train_index.npz @30000 | python scripts/core04_generality.py --steps knn --models dinov2_vits14_reg,dinov2_vitb14_reg,dinov2_vitl14_reg,dinov2_vitg14_reg --gpu-frac 0.25
-results/MUST-07/gate_b.json results/MUST-04/dinov2_vitl14_reg/metrics.json @24000 %lock=must07 | python scripts/core04_generality.py --steps surgery --workers $MW --gpu-frac 0.3
+results/MUST-07/gate_b.json results/MUST-04/dinov2_vitl14_reg/metrics.json @24000 %lock=core04s | python scripts/core04_generality.py --steps surgery --workers $MW --gpu-frac 0.3
 
 # ---- CORE-05 why surgery is cheap
 results/MUST-07/structure/dinov2_vitl14_reg_s0.npz @12000 %done=results/CORE-05/structure/mae_b16_s0.npz | python scripts/must07_compressors.py --model mae_b16 --fit-seeds 0 --structure-only --workers $MW --structure-dir results/CORE-05/structure --out results/CORE-05/must07_mae

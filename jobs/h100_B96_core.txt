@@ -1,0 +1,44 @@
+# H200 job file B96 (15 November): the CORE-01 grid, UP-01 and UP-03 at 96 x 96 with patch 16 (vit_s16, vit_ti16),
+# after the MUST-12 rerun at 96 x 96 passes gate C (results/MUST-12/gate_c_vit_s16.json; every training line waits
+# for results/MUST-12/gate_c_vit_s16.pass). Derived line by line from jobs/h100_B_core.txt: same runs, same recipe,
+# images from cache/in100_s108 (stored 108, centre crop 96). Start by hand after the gate, with the epoch rule:
+#   . ~/.mirror_env.sh; export MW=8; export CORE_EPOCHS=<core01_epochs from gate_c_vit_s16.json>
+#   if CORE_EPOCHS=100: mkdir -p runs/CORE-01 && ln -s ../MUST-12/vit_s16_none_s0 runs/CORE-01/vit_s16_none_s0 \
+#     && ln -s ../MUST-12/vit_s16_LR_s0 runs/CORE-01/vit_s16_LR_s0      (the pilot runs are the seed-0 none and LR runs)
+#   PAR=5 setsid nohup bash scripts/h100_sched.sh jobs/h100_B96_core.txt > logs/q_B96.log 2>&1 < /dev/null &
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition UD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition none --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition LR --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition R90 --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition LRUD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition UD --seed 1 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition LR --seed 1 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition none --seed 1 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition UD --seed 2 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition LR --seed 2 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition none --seed 2 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition R90 --seed 1 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition LRUD --seed 1 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+runs/CORE-01/vit_s16_UD_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_UD_s0 CORE-01
+runs/CORE-01/vit_s16_none_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_none_s0 CORE-01
+runs/CORE-01/vit_s16_LR_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_LR_s0 CORE-01
+runs/CORE-01/vit_s16_R90_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_R90_s0 CORE-01
+runs/CORE-01/vit_s16_LRUD_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_LRUD_s0 CORE-01
+runs/CORE-01/vit_s16_UD_s1/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_UD_s1 CORE-01
+runs/CORE-01/vit_s16_LR_s1/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_LR_s1 CORE-01
+runs/CORE-01/vit_s16_none_s1/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_none_s1 CORE-01
+runs/CORE-01/vit_s16_UD_s2/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_UD_s2 CORE-01
+runs/CORE-01/vit_s16_LR_s2/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_LR_s2 CORE-01
+runs/CORE-01/vit_s16_none_s2/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_none_s2 CORE-01
+runs/CORE-01/vit_s16_R90_s1/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_R90_s1 CORE-01
+runs/CORE-01/vit_s16_LRUD_s1/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/CORE-01/vit_s16_LRUD_s1 CORE-01
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --exp UP-01 --condition UD_p0.1 --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @12000 | python scripts/train_controlled.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --exp UP-01 --condition UD_p0.25 --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @8000 | python scripts/train_controlled.py --arch vit_ti16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --exp UP-03 --condition none --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.12
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @8000 | python scripts/train_controlled.py --arch vit_ti16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --exp UP-03 --condition LR --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.12
+results/MUST-12/gate_c_vit_s16.pass cache/in100_meta.json @8000 | python scripts/train_controlled.py --arch vit_ti16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --exp UP-03 --condition UD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.12
+runs/UP-01/vit_s16_UD_p0.1_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/UP-01/vit_s16_UD_p0.1_s0 UP-01
+runs/UP-01/vit_s16_UD_p0.25_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/UP-01/vit_s16_UD_p0.25_s0 UP-01
+runs/UP-03/vit_ti16_none_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/UP-03/vit_ti16_none_s0 UP-03
+runs/UP-03/vit_ti16_LR_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/UP-03/vit_ti16_LR_s0 UP-03
+runs/UP-03/vit_ti16_UD_s0/last_done.flag @3000 | IN100_CACHE_DIR=/home/ubuntu/Mirror_CPAL/cache/in100_s108 bash scripts/h100_measure_run.sh runs/UP-03/vit_ti16_UD_s0 UP-03

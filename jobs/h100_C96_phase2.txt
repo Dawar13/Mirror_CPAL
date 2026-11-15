@@ -1,0 +1,22 @@
+# H200 job file C96 (15 November): the parts of job file C that use the CORE-01 controlled setting, at 96 x 96 with
+# patch 16 (vit_s16, cache/in100_s108), after the MUST-12 rerun passes gate C. Same commands as job file C with
+# --arch vit_s16, the 108 cache and the vit_s16 run names; the 64 x 64 versions in job file C stay pending (their
+# inputs never appear) or held (logs/hold/core01_go.flag). Start together with job file B96:
+#   . ~/.mirror_env.sh; export MW=6; export CORE_EPOCHS=<core01_epochs from gate_c_vit_s16.json>
+#   PAR=3 setsid nohup bash scripts/h100_sched.sh jobs/h100_C96_phase2.txt > logs/q_C96.log 2>&1 < /dev/null &
+# CORE-02 keeps its two steps: predictions first, surgery after their commit (results/CORE-02/predictions_committed.flag).
+
+# ---- UP-02 symmetric start and UP-04 tied training (CORE-01 recipe); refund-and-heal after the UD runs
+results/MUST-12/gate_c_vit_s16.pass @12000 | python scripts/train_controlled_sym.py --mode sym_init --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition UD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+results/MUST-12/gate_c_vit_s16.pass @12000 | python scripts/train_controlled_sym.py --mode tied --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition UD --seed 0 --epochs ${CORE_EPOCHS:-100} --gpu-frac 0.18
+runs/CORE-01/vit_s16_UD_s0/last_done.flag @8000 | python scripts/train_controlled_sym.py --mode refund_heal --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition UD --seed 0 --gpu-frac 0.18
+runs/CORE-01/vit_s16_UD_s1/last_done.flag @8000 | python scripts/train_controlled_sym.py --mode refund_heal --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition UD --seed 1 --gpu-frac 0.18
+runs/CORE-01/vit_s16_UD_s2/last_done.flag @8000 | python scripts/train_controlled_sym.py --mode refund_heal --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --condition UD --seed 2 --gpu-frac 0.18
+
+# ---- CORE-02 (after the LR+UD and R90 final checkpoints are measured): predictions first, surgery after their commit
+results/CORE-01/vit_s16_LRUD_s1/e100/metrics.json results/CORE-01/vit_s16_R90_s1/e100/metrics.json results/CORE-01/vit_s16_UD_s2/e100/metrics.json results/CORE-01/vit_s16_LR_s2/e100/metrics.json @6000 %done=results/CORE-02/predictions.json | python scripts/core02_refund.py --predict-only --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --gpu-frac 0.1 --workers $MW
+results/CORE-02/predictions_committed.flag @6000 | python scripts/core02_refund.py --arch vit_s16 --cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --gpu-frac 0.1 --workers $MW
+
+# ---- After the grid: CORE-05 checkpoint bands (P5.2) and the UP-02/UP-04 summary
+results/CORE-01/vit_s16_LR_s2/e100/metrics.json results/CORE-01/vit_s16_UD_s2/e100/metrics.json @6000 | python scripts/core05_why_cheap.py --stage ckpt --ckpt-runs "runs/CORE-01/vit_s16_LR_s*,runs/CORE-01/vit_s16_UD_s*" --ckpt-cache-dir /home/ubuntu/Mirror_CPAL/cache/in100_s108 --workers $MW --gpu-frac 0.1
+runs/UP-02/vit_s16_UD_sym_init_s0/last_done.flag runs/UP-04/vit_s16_UD_tied_s0/last_done.flag runs/UP-04/vit_s16_UD_refund_heal_s2/last_done.flag @2000 | python scripts/train_controlled_sym.py --summarise --arch vit_s16
