@@ -116,6 +116,18 @@ def test_bases_and_block_structure(ad64, struct64, mirror64):
         assert ST.split_blocks(orig["fc1"], out_b, in_b)[2] > 1e-2
 
 
+def test_merge_and_split_with_an_empty_parity_block():
+    """An even (or odd) part with no rows, as at a low budget on DeiT-III (15 November), merges and splits exactly
+    (reshape with -1 is ambiguous for empty tensors)."""
+    out_b = ST.DenseSignBasis(-np.eye(4))                                   # no +1 eigenvalues: even part empty
+    in_b = ST.DenseSignBasis(np.diag([1.0, 1.0, -1.0, -1.0, 1.0, -1.0]))
+    odd = torch.randn(4, 3, dtype=torch.float64, generator=torch.Generator().manual_seed(0))
+    W = ST.merge_blocks(torch.zeros(0, 3, dtype=torch.float64), odd, out_b, in_b)
+    e, o, res = ST.split_blocks(W, out_b, in_b)
+    assert tuple(W.shape) == (4, 6) and tuple(e.shape) == (0, 3)
+    assert torch.allclose(o, odd) and res < 1e-12
+
+
 def test_truncate_block_full_rank_reproduces_the_block():
     g = torch.Generator().manual_seed(0)
     F = torch.randn(9, 6, dtype=torch.float64, generator=g)

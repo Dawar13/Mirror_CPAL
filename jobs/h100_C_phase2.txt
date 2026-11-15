@@ -51,3 +51,8 @@ runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json @20000 | python scri
 logs/h100_data/extra_sets.done runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2/metrics.json @12000 | python scripts/core06_orientation.py --cub-root $HF_HOME/cub/CUB_200_2011 --healed-run vexact_s0=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0 --healed-run vexact_s1=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1 --healed-run vexact_s2=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2 --gpu-frac 0.15
 logs/h100_data/extra_sets.done results/MUST-11/t2/t2_linear.csv runs/MUST-09/dinov2_vitb14_reg/gate_b_rank1_s0.done @16000 | python scripts/core07_shift.py --must09-dir runs/MUST-09/dinov2_vitb14_reg --mirror-seeds 0,1,2 --gate-b results/MUST-07/gate_b.json --probe-from results/MUST-11/t2 --gpu-frac 0.2
 results/MUST-07/gate_b.json results/CORE-05/rule_committed.flag @4000 | python scripts/core05_why_cheap.py --stage report
+
+# ---- CORE-03 reruns after the empty-block fix in mirror/stacking.py (15 November, 13:45 failure on deit3_b16; the
+#      DINOv2-L line is skipped automatically if its first run finishes, through the same done marker)
+results/MUST-07/structure/deit3_b16_s0.npz results/MUST-07/gate_b.json @16000 %lock=core03 %done=results/CORE-03/done_deit3_b16_s0.flag | CORE03_RERUN=1 python scripts/core03_stacking.py --model deit3_b16 --gpu-frac 0.2
+results/MUST-07/structure/dinov2_vitl14_reg_s0.npz results/MUST-07/gate_b.json @24000 %lock=core03 %done=results/CORE-03/done_dinov2_vitl14_reg_s0.flag | CORE03_RERUN=1 python scripts/core03_stacking.py --model dinov2_vitl14_reg --gpu-frac 0.25

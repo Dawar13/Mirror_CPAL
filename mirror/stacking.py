@@ -194,13 +194,15 @@ class DenseSignBasis:
     def down(self, X: torch.Tensor):
         Qp, Qm = self._t(X.device)
         X = X.to(torch.float64)
-        flat = X.reshape(X.shape[0], -1)
+        flat = X.reshape(X.shape[0], math.prod(X.shape[1:]))    # explicit size: -1 is ambiguous for empty tensors
         return ((Qp.T @ flat).reshape((self.n_plus,) + tuple(X.shape[1:])),
                 (Qm.T @ flat).reshape((self.n_minus,) + tuple(X.shape[1:])))
 
     def up(self, Xp: torch.Tensor, Xm: torch.Tensor) -> torch.Tensor:
         Qp, Qm = self._t(Xp.device)
-        fp, fm = Xp.reshape(Xp.shape[0], -1), Xm.reshape(Xm.shape[0], -1)
+        # explicit sizes: an empty even or odd part ([0, ...], e.g. a zero-rank block at a low budget) breaks -1
+        fp = Xp.reshape(Xp.shape[0], math.prod(Xp.shape[1:]))
+        fm = Xm.reshape(Xm.shape[0], math.prod(Xm.shape[1:]))
         return (Qp @ fp + Qm @ fm).reshape((self.n,) + tuple(Xp.shape[1:]))
 
     def dense(self) -> np.ndarray:

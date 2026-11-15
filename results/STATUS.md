@@ -2,6 +2,40 @@
 
 ## Next phase (PROJECT_NEXT_PHASE.md, adopted 14 November 2026)
 
+### Live run on the Jarvis Labs H200 (instance 574820), updated 2026-11-15 about 12:55 UTC
+
+Started 06:56 UTC. Numbers below are read from the result files on the VM; they are pulled and collected at the end.
+
+**Gates**
+- Gate B (MUST-07, method-selection set, full size): best baseline SVD-LLM (77.36), second SliceGPT (69.53). Both are
+  being healed for MUST-09.
+- Gate C failed at 64 x 64 (10:10 UTC): LR ratio to null 0.484 (passes), LR twin fraction 0.060 (bar 0.2, fails); the
+  no-flip model is close on both (0.547, 0.067). Dawar chose the pre-registered fix: the pilot rerun at 96 x 96 with
+  ViT-S/16 (job file P). It failed too (13:07 UTC): LR ratio 0.475, twin fraction 0.065; no-flip model 0.520 and
+  0.084. As agreed in advance, CORE-01, CORE-02, UP-01 to UP-04 and CORE-05 P5.2 are dropped and reported.
+
+**Results so far (validation k-NN top-1 unless stated; original 78.94)**
+- MUST-09: healed Mirror-exact 78.32, 78.35, 78.35 (seeds 0 to 2); plain SVD 77.02 (seed 0, more than 1 point
+  below, so no extra seeds); random structure 69.93. SVD-LLM and SliceGPT heals running.
+- MUST-07 zero-shot at full size: Mirror-exact 53.88, SVD-LLM 75.80, SliceGPT 68.33, FLAP 65.12, ASVD 57.09.
+- MUST-10 (P10.1 holds): healed Mirror-exact minus flip-averaged original: k-NN -0.68 (CI -0.87 to -0.51), linear
+  probe -1.02, at 0.387 of the FLOPs and 0.765 of the parameters.
+- UP-06 (holds): INT8 drop 0.006 (original 0.004); ToMe drop 0.18 (original 0.34).
+- MUST-04: in DINOv2-B, B-reg, L-reg and DeiT-III, blocks 1 to 6: LR and UD ratios to null 0.45 to 0.51, twin
+  fractions 0.43 to 0.57 (twin-fraction null about 0.00); R90 ratio 0.75 to 0.85. P4.1 (UD and R90 at least 0.9) and
+  P4.2 (UD twin fraction within the null) do not hold: UD structure is as strong as LR in models trained without
+  vertical flips.
+- MUST-02: fp64 error 5.8e-14; fp32 largest component error 2.51e-5 (tolerance 1e-5, does not hold); fp32 flip
+  consistency 100.000% on 50,000 queries.
+- MUST-06: twin visibility checks pass, effective-rank check fails (all three models). UP-07: weights-only pairing
+  fails.
+
+**Operational notes**: thread oversubscription (28-thread BLAS and OpenMP pools in every job) made CPU work 20 to 60
+times slower until 10:12 UTC; fixed (notes/decisions.md). Expected end of GPU work about 17:00 UTC; then results are
+pulled and the instance is switched off (destroyed, at Dawar's request), not paused.
+
+### Before the run
+
 Updated 2026-11-14 about 18:15 UTC. PROJECT_NEXT_PHASE.md now defines the remaining work (MUST, CORE and UP
 experiments) and supersedes PAPER_EXPERIMENTS.md and the old job lists. **PREREG_NEXT_PHASE.md signed off and committed
 (e76fb17); gate A met.** Nothing of the new phase has run on a GPU yet. The GPU run starts on the morning of 15 November on a new Jarvis Labs H200 (instance 574587, set up on 14 November, was deleted by Dawar the same evening, so setup is redone): `jl create --gpu H200 --storage 300`, `ship_h100.sh` (FIRST=1), `upload_structures_h100.sh`, a new Hugging Face token on the machine (the old one was exposed), `h100_bootstrap.sh --hf-home /root/hf`, then `h100_overnight.sh`.
