@@ -1,0 +1,13 @@
+# The law: predicted against achieved parameter saving (MUST-01)
+
+| model | n_blocks | max_abs_diff_pp | structure | verdict |
+|---|---|---|---|---|
+| deit3_b16 | 12 | 0.0 | fitted operators and pairings | PASS |
+| dinov2_vitb14 | 36 | 0.0 | fitted operators and pairings | PASS |
+| dinov2_vitb14_reg | 36 | 0.0 | fitted operators and pairings | PASS |
+| dinov2_vitl14_reg | 24 | 0.0 | synthetic structure with the recorded counts | PASS |
+| dinov2_vits14_reg | 12 | 0.0 | synthetic structure with the recorded counts | PASS |
+| mae_b16 | 12 | 0.0 | fitted operators and pairings | PASS |
+| siglip2_b16 | 12 | 0.0 | fitted operators and pairings | PASS |
+
+Sources: `data/appendix_law.csv`

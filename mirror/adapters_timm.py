@@ -231,6 +231,11 @@ def resolve_name(name: str) -> dict:
     for entry in MODEL_REGISTRY.values():
         if entry.get("timm_name") == name:
             return entry
+    from .adapters_extra import resolve_extra  # CORE-04 models (source "extra"); None when unknown there too
+
+    entry = resolve_extra(name)
+    if entry is not None:
+        return entry
     raise KeyError(f"unknown model {name!r}; known: {sorted(MODEL_REGISTRY)}")
 
 
@@ -254,6 +259,10 @@ def build_model_adapter(name: str, device=None, img_size: int = 224,
         adapter.mean, adapter.std = tuple(pp["mean"]), tuple(pp["std"])
         adapter.interpolation, adapter.crop_pct = pp["interpolation"], float(pp["crop_pct"])
         adapter.feature, adapter.model_name = "cls", entry["hub_name"]
+    elif entry["source"] == "extra":  # CORE-04 ViTs (mirror/adapters_extra.py); CNN entries raise there
+        from .adapters_extra import build_vit_adapter
+
+        adapter = build_vit_adapter(entry, img_size=img_size, pretrained=pretrained)
     else:
         raise ValueError(f"unknown source {entry['source']!r}")
     return adapter.to(device=device) if device is not None else adapter

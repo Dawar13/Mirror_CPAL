@@ -1,0 +1,48 @@
+ID,Prediction,Value,Bar,Verdict
+MUST-01,"Predicted and achieved parameter savings agree to within 1 percentage point per layer, for all 7 measured models",0.0000,"<= 1.0 pp, 7 models",PASS
+MUST-02,"On 1,000 validation images in fp32, every component of Mirror-exact (full model) has maximum relative equivariance error below 1e-5, and flip consistency is 100%",,< 1e-5 and 100%,PENDING
+MUST-03,Acceptance check of the generalised measurement code on dinov2_vitb14_reg with LR: the LR numbers of earlier runs are reproduced (twin pairs and breaking shares of block 1 within rounding of runs/x2/perlayer_reg_s0),,pairs equal; |delta share| < 0.005,PENDING
+MUST-04 P4.1,UD and R90 ratios to null in blocks 1 to 6 are at least 0.9 (LR's ratio is about 0.45),,">= 0.9 (UD and R90, every model)",PENDING
+MUST-04 P4.2,The UD twin fraction in blocks 1 to 6 is within the twin-fraction null's 95% interval,,"inside [null 2.5%, null 97.5%]",PENDING
+MUST-04 P4.3,"Zero-shot UD group-projection surgery on blocks 1 to 6 drops validation k-NN by more than 30 points, against 1.85 for LR",,> 30 points,PENDING
+MUST-05 P5.1,Switch-off median cosine at least 0.7 for twin pairs and at most 0.2 for random pairs,,>= 0.7 twins and <= 0.2 random,PENDING
+MUST-05 P5.2,The norm ratio is between 0.8 and 1.25 for at least 70% of twin pairs,,>= 0.70,PENDING
+MUST-06 P6.1,Median same-token Pearson correlation of twins on the same image at most 0.3,,<= 0.3,PENDING
+MUST-06 P6.2,A twin is in its partner's top 10 same-image correlated neurons for at most 20% of pairs,,<= 0.20,PENDING
+MUST-06 P6.3,Effective rank (entropy-based) of fc1 and fc2 changes by at most 2% under group projection,,<= 0.02 for all 12,PENDING
+MUST-07 P7.1,"On dinov2_vitb14_reg at 6 blocks, Mirror-exact beats every baseline on validation k-NN by at least 2 points, with the paired bootstrap interval excluding 0",,">= 2.0 points and CI low > 0, every method, both sizes",PENDING
+MUST-07 P7.2,ZipIt-style merging and same-image-correlation pairing trail Mirror-exact by at least 10 points at 6 blocks,,>= 10.0 points,PENDING
+MUST-08 P8.1,"MLP-only saving is more than half of the MLP-plus-attention saving, at 6 blocks and at the full model",,> 0.5 at 6 blocks and at the full model,PENDING
+MUST-08 P8.2,k-NN(MLP only) minus k-NN(MLP plus attention) is at most 0.5 at 6 blocks (mean over fit seeds),,<= 0.5 points,PENDING
+MUST-09 P9.1,Mirror-exact is non-inferior to the best baseline: mean over seeds of Mirror-exact minus mean of the best baseline is above -0.5 points (validation k-NN),,> -0.5 points,PENDING
+MUST-09 P9.2,"Only Mirror-exact has 100% flip consistency (scored as: Mirror-exact and the random-structure control reach 100% (fp32, rounding allowance); no compressor (best, second-best, plain SVD) does)",,Mirror-exact and random structure 100%; compressors < 100%,PENDING
+MUST-09 P9.3,Random structure trails Mirror-exact by at least 3 points,,>= 3.0 points,PENDING
+MUST-10 P10.1,"Healed Mirror-exact (mean of 3 seeds) is within 1 point of flip averaging on validation k-NN, at under 45% of its FLOPs (analytic, one pass against two)",,|difference| <= 1.0 and FLOPs ratio < 0.45,PENDING
+MUST-11 P11.1,Healed Mirror-exact is within 1.0 point of the original on the ImageNet linear probe (mean of 3 seeds) and on ADE20K mIoU (seed 0),,both <= 1.0,PENDING
+MUST-11 P11.2,Mirror-exact with the symmetrised head gives 100% mask equivariance; the original model stays below 100%,,Mirror-exact 100%; original < 100%,PENDING
+MUST-12 gate C,"Gate C: in the LR model, the LR ratio to null in blocks 1 to 6 is at most 0.8 and the LR twin fraction in blocks 1 to 6 is at least 0.2",,ratio <= 0.8 and twin >= 0.2,PENDING
+CORE-01 T1,"Dissociation: in every seed pair s = 0, 1, 2, the UD twin fraction (blocks 1 to 6, final) of UD run s minus that of LR run s is at least 0.2 (absolute)",min difference n/a,>= 0.2 in every pair,PENDING
+CORE-01 T2,"Specificity: the UD ratio to null is at most 0.7 in every UD run, and at least 0.9 in every none run and every LR run (blocks 1 to 6, final)",UD s0: n/a; UD s1: n/a; UD s2: n/a; none s0: n/a; none s1: n/a; none s2: n/a; LR s0: n/a; LR s1: n/a; LR s2: n/a,UD runs <= 0.7; none and LR runs >= 0.9,PENDING
+CORE-01 T3,"Rotation: in every R90 run, the share in 4-cycles (blocks 1 to 6, final) is at least 0.3, and at least 3 times the mean share in the none runs",R90 s0: n/a; R90 s1: n/a; none mean n/a,">= 0.3 and >= 3 x none mean, every R90 run",PENDING
+CORE-01 T4,"Emergence: in every LR run (for LR) and every UD run (for UD), the twin fraction of the trained group is higher at the final epoch than at epoch 5",LR s0: n/a -> n/a; LR s1: n/a -> n/a; LR s2: n/a -> n/a; UD s0: n/a -> n/a; UD s1: n/a -> n/a; UD s2: n/a -> n/a,"final > epoch 5, every LR and UD run",PENDING
+CORE-02 P2.1,The achieved saving equals the prediction (identity check),,equal in every block,PENDING
+CORE-02 P2.2,Trained-group surgery on blocks 1 to 6 keeps validation top-1 within 3 points,,<= 3.0 points,PENDING
+CORE-02 P2.3,Every wrong-group surgery loses at least 20 points,,">= 20 points, every row",PENDING
+CORE-03 P3.1,"Mirror plus low rank lies above low rank alone (the better of plain SVD and SVD-LLM) at at least 3 of 4 budget points on at least 2 of 3 models, including DINOv2-L or DeiT-III (zero-shot)",,">= 3 of 4 points on >= 2 of 3 models, one of them DINOv2-L or DeiT-III",PENDING
+CORE-04 P4.1,Scale: the tax in blocks 1 to L/2 increases from DINOv2-S to g (either direction is reported),,S < B < L < g,PENDING
+CORE-04 P4.2,Models whose recipe is verified to have no flips have a lower LR tax than every flip-trained model of the same size,,below every flip-trained model of its size,PENDING
+CORE-04 P4.3,CNNs: twin structure appears in ConvNeXt's pointwise MLPs (LR ratio to null at most 0.8 and twin fraction at least 0.2 in the first half of the stages' pointwise MLPs),,ratio <= 0.8 and twin >= 0.2,PENDING
+CORE-05 P5.1,The activation-weighted breaking share is at most half the weight-energy breaking share in blocks 1 to 6,,<= 0.5,PENDING
+CORE-05 P5.2,"Over training (CORE-01 LR and UD runs), breaking energy in the top-variance band falls faster than in the bottom band",,top fall > bottom fall,PENDING
+CORE-05 P5.3,"The out-of-sample rule is correct on at least 75% of layer-model cases on DINOv2-L-reg, DeiT-III and MAE",,>= 0.75,PENDING
+CORE-06 P6.1,Species from the even part is within 1 point of the full feature,,"<= 1.0 points, every model",PENDING
+CORE-06 P6.2,Facing direction from the odd part is at least 85%,,">= 85%, every model",PENDING
+CORE-06 P6.3,"Facing direction from healed Mirror-exact's even part is at most 60% on natural test images, and exactly 50% on the mirror-augmented test set",,<= 60% and = 50%,PENDING
+CORE-07 P7.1,"Mirror-exact's drop from ImageNet to ImageNet-V2 (matched frequency, linear probe) is within 1 point of the original's drop",,<= 1.0 points,PENDING
+UP-01,"UD tax rises with p (0.1, 0.25, 0.5)",,none (reported),PENDING
+UP-02,"Breaking share stays below 0.05 throughout training from a UD-equivariant start, at accuracy within 1 point of the UD runs",,none (reported),PENDING
+UP-03,The trained-group tax differs between ViT-S and ViT-Ti; either direction is reported,,none (reported),PENDING
+UP-04,Tied-from-scratch reaches about the same accuracy at the reduced parameter count,,none (reported),PENDING
+UP-05,A speed claim needs more than 1.1x the original's speed; otherwise it is a limitation,,none (reported),PENDING
+UP-06,The extra drop from INT8 weight-only quantisation and from ToMe (r = 8) is the same for both models within 0.5 points,,none (reported),PENDING
+UP-07,Pairing from weights alone agrees with the data-driven pairing on at least 70% of pairs,,none (reported),PENDING

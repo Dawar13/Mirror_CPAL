@@ -1,0 +1,58 @@
+{
+ "experiment": "MUST-09",
+ "complete": true,
+ "method": "mirror_exact",
+ "family": "mirror",
+ "model": "dinov2_vitb14_reg",
+ "seed": 1,
+ "targets": "sym",
+ "lr": 0.0001,
+ "total_steps": 780,
+ "curve": [
+  {
+   "step": 0,
+   "knn_top1": 58.349999999999994
+  },
+  {
+   "step": 100,
+   "knn_top1": 76.35
+  },
+  {
+   "step": 300,
+   "knn_top1": 77.85
+  },
+  {
+   "step": 780,
+   "knn_top1": 78.35
+  }
+ ],
+ "knn_bf16": {
+  "step": 780,
+  "knn_top1": 78.35,
+  "flip_consistency": 99.7,
+  "n_query": 50000,
+  "amp": "bf16"
+ },
+ "knn_fp32": {
+  "top1": 78.36,
+  "flip_consistency": 99.998,
+  "n_query": 50000,
+  "n_bank": 100000,
+  "max_margin_rel": 3e-05
+ },
+ "knn_original": {
+  "top1": 79.0
+ },
+ "cls_flip_fp32_probe": {
+  "max_abs_diff": 1e-06
+ },
+ "cost": {
+  "params_frac": 0.765,
+  "params_model": 765000,
+  "gflops": 13.0,
+  "gflops_frac": 0.76
+ },
+ "peak_train_memory_gb": 5.5,
+ "git_hash": "f1x7ure0000000000000000000000000000000001",
+ "git_dirty": false
+}

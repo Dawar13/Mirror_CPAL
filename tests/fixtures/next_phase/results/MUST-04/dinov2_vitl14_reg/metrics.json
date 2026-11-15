@@ -1,0 +1,79 @@
+{
+ "model": "dinov2_vitl14_reg",
+ "fit_seed": 0,
+ "depth": 12,
+ "scores": {
+  "LR": {
+   "ratio_to_null_1-6": 0.47000000000000003,
+   "twin_fraction_t50_1-6": 0.6,
+   "share_4cycles_1-6": 0.0,
+   "tax_mlp_1-6": 0.42,
+   "ratio_to_null_first_half": 0.45,
+   "twin_fraction_t50_first_half": 0.6,
+   "tax_mlp_first_half": 0.42000000000000004
+  },
+  "UD": {
+   "ratio_to_null_1-6": 0.96,
+   "twin_fraction_t50_1-6": 0.012,
+   "share_4cycles_1-6": 0.0,
+   "tax_mlp_1-6": 0.03,
+   "twin_null_twin_fraction_t50_1-6": {
+    "observed": 0.012,
+    "null_mean": 0.012,
+    "null_lo": 0.008,
+    "null_hi": 0.016,
+    "n_draws": 20,
+    "within_null_95": true
+   }
+  },
+  "R90": {
+   "ratio_to_null_1-6": 0.98,
+   "twin_fraction_t50_1-6": 0.0,
+   "share_4cycles_1-6": 0.004,
+   "tax_mlp_1-6": 0.01
+  },
+  "R180": {
+   "ratio_to_null_1-6": 0.93,
+   "twin_fraction_t50_1-6": 0.02,
+   "share_4cycles_1-6": 0.0,
+   "tax_mlp_1-6": 0.04
+  }
+ },
+ "groups": {
+  "LR": {
+   "kind": "c2",
+   "ranges": {
+    "1-6": {
+     "s_fc1_mean": 0.22,
+     "s_fc2_mean": 0.2,
+     "s_fc1_act_mean": 0.08,
+     "s_fc2_act_mean": 0.07
+    }
+   }
+  }
+ },
+ "surgery": {
+  "LR_1-6": {
+   "group": "LR",
+   "blocks": "1-6",
+   "top1": 77.0,
+   "top1_original": 79.0,
+   "drop_points": 2.0,
+   "n_query": 50000
+  },
+  "UD_1-6": {
+   "group": "UD",
+   "blocks": "1-6",
+   "top1": 6.0,
+   "top1_original": 79.0,
+   "drop_points": 73.0,
+   "n_query": 50000,
+   "diff_vs_LR_ci_low": -71.5,
+   "diff_vs_LR_ci_high": -70.5
+  }
+ },
+ "git": {
+  "git_hash": "f1x7ure0000000000000000000000000000000001",
+  "git_dirty": false
+ }
+}

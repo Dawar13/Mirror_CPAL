@@ -1,0 +1,1939 @@
+{
+ "schema": "paper_numbers/next_phase/v1",
+ "written_by": "scripts/collect_next_phase.py",
+ "date_utc": "2026-11-15T07:49:41Z",
+ "collector_git": {
+  "git_hash": "52e29d16766d80933db138b9414e4f69a81e4b7e",
+  "git_dirty": true
+ },
+ "root": ".",
+ "prereg": {
+  "file": "PREREG_NEXT_PHASE.md",
+  "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+  "signoff_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca",
+  "last_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca",
+  "signed_off": true,
+  "read_from": "C:/Users/djtde/Downloads/Mirror_CPAL/PREREG_NEXT_PHASE.md"
+ },
+ "counts": {
+  "scored": 40,
+  "PASS": 1,
+  "FAIL": 0,
+  "PENDING": 39,
+  "REPORTED": 0
+ },
+ "gates": [
+  {
+   "gate": "A",
+   "when": "Before any new GPU job",
+   "condition": "PREREG_NEXT_PHASE.md committed after sign-off; MUST-00 clean",
+   "status": "MET",
+   "value": "sign-off commit e76fb17c3c; MUST-00: MATCH (rounded) 29, MATCH 9, CONTEXT 8, MISMATCH 2",
+   "evidence": "PREREG_NEXT_PHASE.md carries the sign-off line and was committed; MUST-00 audit present (mismatches reported in results/MUST-00/audit.md, accepted per results/STATUS.md)",
+   "sources": [
+    {
+     "file": "PREREG_NEXT_PHASE.md",
+     "git_hash": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+    },
+    {
+     "file": "results/MUST-00/audit.json",
+     "git_hash": null
+    }
+   ]
+  },
+  {
+   "gate": "B",
+   "when": "After MUST-07",
+   "condition": "Best baseline chosen on the method-selection set and recorded (results/MUST-07/gate_b.json) before MUST-09 starts",
+   "status": "PENDING",
+   "value": "",
+   "evidence": "results/MUST-07/gate_b.json missing",
+   "sources": []
+  },
+  {
+   "gate": "C",
+   "when": "After MUST-12",
+   "condition": "LR model: LR ratio to null in blocks 1 to 6 at most 0.8 and LR twin fraction in blocks 1 to 6 at least 0.2",
+   "status": "PENDING",
+   "value": "",
+   "evidence": "results/MUST-12/vit_s8_LR_s0/e<NNN>/metrics.json missing",
+   "sources": []
+  },
+  {
+   "gate": "D",
+   "when": "After MUST-09",
+   "condition": "Mirror-exact mean at least best-baseline mean minus 1.0",
+   "status": "PENDING",
+   "value": "",
+   "evidence": "no finished MUST-09 heal (runs/MUST-09/ or results/MUST-09/summary.csv)",
+   "sources": []
+  },
+  {
+   "gate": "E",
+   "when": "Before abstract registration (23 Nov)",
+   "condition": "MUST-04, MUST-05, MUST-07, MUST-12 done; CORE-01 running",
+   "status": "PENDING",
+   "value": "MUST-04 not done; MUST-05 not done; MUST-07 not done; MUST-12 not done; CORE-01 not started",
+   "evidence": "files present (done = the experiment's scored outputs exist)",
+   "sources": []
+  }
+ ],
+ "predictions": [
+  {
+   "id": "MUST-01",
+   "experiment": "MUST-01",
+   "phase": "Must",
+   "statement": "Predicted and achieved parameter savings agree to within 1 percentage point per layer, for all 7 measured models",
+   "quote": "predicted and achieved parameter savings agree to within 1 percentage point per layer, for all 7 measured models",
+   "quantity": "largest |predicted - achieved| saving over every layer (fc1, fc2) and block (MLP), in percentage points",
+   "bar": "<= 1.0 pp, 7 models",
+   "verdict": "PASS",
+   "value": 0.0,
+   "n": "144 blocks, 7 models",
+   "reason": "structure synthetic with the recorded counts (arithmetic check only) for dinov2_vitl14_reg, dinov2_vits14_reg",
+   "details": [
+    {
+     "model": "deit3_b16",
+     "n_blocks": 12,
+     "fit_seeds": [
+      0
+     ],
+     "max_abs_diff_pp": 0.0,
+     "structure": "fitted operators and pairings",
+     "verdict": "PASS"
+    },
+    {
+     "model": "dinov2_vitb14",
+     "n_blocks": 36,
+     "fit_seeds": [
+      0,
+      1,
+      2
+     ],
+     "max_abs_diff_pp": 0.0,
+     "structure": "fitted operators and pairings",
+     "verdict": "PASS"
+    },
+    {
+     "model": "dinov2_vitb14_reg",
+     "n_blocks": 36,
+     "fit_seeds": [
+      0,
+      1,
+      2
+     ],
+     "max_abs_diff_pp": 0.0,
+     "structure": "fitted operators and pairings",
+     "verdict": "PASS"
+    },
+    {
+     "model": "dinov2_vitl14_reg",
+     "n_blocks": 24,
+     "fit_seeds": [
+      0
+     ],
+     "max_abs_diff_pp": 0.0,
+     "structure": "synthetic structure with the recorded counts",
+     "verdict": "PASS"
+    },
+    {
+     "model": "dinov2_vits14_reg",
+     "n_blocks": 12,
+     "fit_seeds": [
+      0
+     ],
+     "max_abs_diff_pp": 0.0,
+     "structure": "synthetic structure with the recorded counts",
+     "verdict": "PASS"
+    },
+    {
+     "model": "mae_b16",
+     "n_blocks": 12,
+     "fit_seeds": [
+      0
+     ],
+     "max_abs_diff_pp": 0.0,
+     "structure": "fitted operators and pairings",
+     "verdict": "PASS"
+    },
+    {
+     "model": "siglip2_b16",
+     "n_blocks": 12,
+     "fit_seeds": [
+      0
+     ],
+     "max_abs_diff_pp": 0.0,
+     "structure": "fitted operators and pairings",
+     "verdict": "PASS"
+    }
+   ],
+   "sources": [
+    {
+     "file": "results/MUST-01/law_per_layer.csv",
+     "git_hash": "72d5c6ce0cbcbf2344f032695a820991ac1dfe19"
+    },
+    {
+     "file": "results/MUST-01/metrics.json",
+     "git_hash": "72d5c6ce0cbcbf2344f032695a820991ac1dfe19"
+    }
+   ],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-02",
+   "experiment": "MUST-02",
+   "phase": "Must",
+   "statement": "On 1,000 validation images in fp32, every component of Mirror-exact (full model) has maximum relative equivariance error below 1e-5, and flip consistency is 100%",
+   "quote": "every component of Mirror-exact (full model) has maximum relative equivariance error below 1e-5, and flip consistency is 100%",
+   "quantity": "max over images and components of ||T out(x) - out(mirror x)|| / ||out(mirror x)|| (fp32, zero-shot, fit seed 0); k-NN flip consistency with fp32 features on all 50,000 validation images (rounding allowance)",
+   "bar": "< 1e-5 and 100%",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-02/dinov2_vitb14_reg/<variant>/metrics.json missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-03",
+   "experiment": "MUST-03",
+   "phase": "Must",
+   "statement": "Acceptance check of the generalised measurement code on dinov2_vitb14_reg with LR: the LR numbers of earlier runs are reproduced (twin pairs and breaking shares of block 1 within rounding of runs/x2/perlayer_reg_s0)",
+   "quote": "the LR numbers of earlier runs are reproduced (twin pairs and breaking shares of block 1 within rounding of `runs/x2/perlayer_reg_s0`)",
+   "quantity": "block 1: twin pairs equal; |s_fc1 - s1_ref| and |s_fc2 - s2_ref| below 0.005 (half a unit of the 2-decimal values quoted, 0.27 and 0.49); the synthetic-network tests are the unit tests, not scored here",
+   "bar": "pairs equal; |delta share| < 0.005",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "no reference_check.block1 in results/MUST-04/dinov2_vitb14_reg/metrics.json",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-04 P4.1",
+   "experiment": "MUST-04",
+   "phase": "Must",
+   "statement": "UD and R90 ratios to null in blocks 1 to 6 are at least 0.9 (LR's ratio is about 0.45)",
+   "quote": "P4.1: UD and R90 ratios to null in blocks 1 to 6 are at least 0.9 (LR's ratio is about 0.45).",
+   "quantity": "ratio to null, blocks 1 to 6 (mean breaking share of fc1 and fc2 over the blocks / mean of the null means); per model, fit seed 0; claim passes only if it holds on all four models (PREREG Section 9, item 2)",
+   "bar": ">= 0.9 (UD and R90, every model)",
+   "verdict": "PENDING",
+   "value": null,
+   "n": "0 of 4 models",
+   "reason": "missing: dinov2_vitb14_reg, dinov2_vitb14, dinov2_vitl14_reg, deit3_b16",
+   "details": [
+    {
+     "model": "dinov2_vitb14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "dinov2_vitb14",
+     "status": "missing"
+    },
+    {
+     "model": "dinov2_vitl14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "deit3_b16",
+     "status": "missing"
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-04 P4.2",
+   "experiment": "MUST-04",
+   "phase": "Must",
+   "statement": "The UD twin fraction in blocks 1 to 6 is within the twin-fraction null's 95% interval",
+   "quote": "P4.2: the UD twin fraction in blocks 1 to 6 is within the twin-fraction null's 95% interval.",
+   "quantity": "UD twin fraction (threshold 0.5), blocks 1 to 6, against the 2.5th and 97.5th percentiles of the twin-fraction null (random patch permutation with the same cycle type); per model, fit seed 0; claim passes only if it holds on all four models (PREREG Section 9, item 2)",
+   "bar": "inside [null 2.5%, null 97.5%]",
+   "verdict": "PENDING",
+   "value": null,
+   "n": "0 of 4 models",
+   "reason": "missing: dinov2_vitb14_reg, dinov2_vitb14, dinov2_vitl14_reg, deit3_b16",
+   "details": [
+    {
+     "model": "dinov2_vitb14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "dinov2_vitb14",
+     "status": "missing"
+    },
+    {
+     "model": "dinov2_vitl14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "deit3_b16",
+     "status": "missing"
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-04 P4.3",
+   "experiment": "MUST-04",
+   "phase": "Must",
+   "statement": "Zero-shot UD group-projection surgery on blocks 1 to 6 drops validation k-NN by more than 30 points, against 1.85 for LR",
+   "quote": "P4.3: zero-shot UD group-projection surgery on blocks 1 to 6 drops validation k-NN by more than 30 points, against 1.85 for LR (78.94 minus 77.09).",
+   "quantity": "original top-1 minus top-1 after UD surgery (per-layer operators, MLP only, blocks 1 to 6), validation k-NN; per model, fit seed 0; claim passes only if it holds on all four models (PREREG Section 9, item 2)",
+   "bar": "> 30 points",
+   "verdict": "PENDING",
+   "value": null,
+   "n": "0 of 4 models",
+   "reason": "missing: dinov2_vitb14_reg, dinov2_vitb14, dinov2_vitl14_reg, deit3_b16",
+   "details": [
+    {
+     "model": "dinov2_vitb14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "dinov2_vitb14",
+     "status": "missing"
+    },
+    {
+     "model": "dinov2_vitl14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "deit3_b16",
+     "status": "missing"
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-05 P5.1",
+   "experiment": "MUST-05",
+   "phase": "Must",
+   "statement": "Switch-off median cosine at least 0.7 for twin pairs and at most 0.2 for random pairs",
+   "quote": "P5.1: switch-off median cosine (primary measure, output of block l+1, after re-aligning tokens) at least 0.7 for twin pairs and at most 0.2 for random pairs.",
+   "quantity": "median over pairs of the switch-off cosine at the output of block l+1 (per-pair cosine pooled over images and tokens), pooled over the 200 strongest twin pairs (and 200 random pairs) of each of blocks 1 to 6, dinov2_vitb14_reg, 500 validation images",
+   "bar": ">= 0.7 twins and <= 0.2 random",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-05/dinov2_vitb14_reg/ missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-05 P5.2",
+   "experiment": "MUST-05",
+   "phase": "Must",
+   "statement": "The norm ratio is between 0.8 and 1.25 for at least 70% of twin pairs",
+   "quote": "P5.2: the norm ratio is between 0.8 and 1.25 for at least 70% of twin pairs.",
+   "quantity": "share of twin pairs (blocks 1 to 6 pooled) with ||Delta_j|| / ||A Delta_i|| in [0.8, 1.25]",
+   "bar": ">= 0.70",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-05/dinov2_vitb14_reg/ missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-06 P6.1",
+   "experiment": "MUST-06",
+   "phase": "Must",
+   "statement": "Median same-token Pearson correlation of twins on the same image at most 0.3",
+   "quote": "P6.1: median same-token Pearson correlation of twins on the same image at most 0.3.",
+   "quantity": "median over twin pairs of the same-token Pearson correlation (post-GELU); blocks 1 to 6 pooled; scored on dinov2_vitb14_reg (the claim), reported per model for the other two",
+   "bar": "<= 0.3",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-06/dinov2_vitb14_reg/ missing",
+   "details": [
+    {
+     "model": "dinov2_vitb14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "dinov2_vitl14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "deit3_b16",
+     "status": "missing"
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-06 P6.2",
+   "experiment": "MUST-06",
+   "phase": "Must",
+   "statement": "A twin is in its partner's top 10 same-image correlated neurons for at most 20% of pairs",
+   "quote": "P6.2: a twin is in its partner's top 10 same-image correlated neurons for at most 20% of pairs.",
+   "quantity": "share of twin pairs where the twin is in the top 10 |r| partners of either neuron; blocks 1 to 6 pooled; scored on dinov2_vitb14_reg (the claim), reported per model for the other two",
+   "bar": "<= 0.20",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-06/dinov2_vitb14_reg/ missing",
+   "details": [
+    {
+     "model": "dinov2_vitb14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "dinov2_vitl14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "deit3_b16",
+     "status": "missing"
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-06 P6.3",
+   "experiment": "MUST-06",
+   "phase": "Must",
+   "statement": "Effective rank (entropy-based) of fc1 and fc2 changes by at most 2% under group projection",
+   "quote": "P6.3: effective rank (entropy-based) of fc1 and fc2 changes by at most 2% under group projection.",
+   "quantity": "largest |relative change| of exp(entropy of s / sum s) over the 12 matrices (fc1, fc2 of blocks 1 to 6); holds if every matrix satisfies it",
+   "bar": "<= 0.02 for all 12",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-06/dinov2_vitb14_reg/ missing",
+   "details": [
+    {
+     "model": "dinov2_vitb14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "dinov2_vitl14_reg",
+     "status": "missing"
+    },
+    {
+     "model": "deit3_b16",
+     "status": "missing"
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-07 P7.1",
+   "experiment": "MUST-07",
+   "phase": "Must",
+   "statement": "On dinov2_vitb14_reg at 6 blocks, Mirror-exact beats every baseline on validation k-NN by at least 2 points, with the paired bootstrap interval excluding 0",
+   "quote": "P7.1: on `dinov2_vitb14_reg` at 6 blocks, Mirror-exact beats every baseline on validation k-NN by at least 2 points, with the paired bootstrap interval excluding 0.",
+   "quantity": "for each of methods 3 to 12 and each 6-block size (MLP only; MLP plus attention): mean over fit seeds 0, 1, 2 of Mirror-exact minus mean of the method; 95% paired bootstrap interval on the fit-seed-0 per-image predictions (10,000 resamples)",
+   "bar": ">= 2.0 points and CI low > 0, every method, both sizes",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-07/rows_dinov2_vitb14_reg.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-07 P7.2",
+   "experiment": "MUST-07",
+   "phase": "Must",
+   "statement": "ZipIt-style merging and same-image-correlation pairing trail Mirror-exact by at least 10 points at 6 blocks",
+   "quote": "P7.2: ZipIt-style merging and same-image-correlation pairing trail Mirror-exact by at least 10 points at 6 blocks.",
+   "quantity": "mean over fit seeds 0, 1, 2 of Mirror-exact minus mean of zipit and of pair_actcorr, both 6-block sizes",
+   "bar": ">= 10.0 points",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-07/rows_dinov2_vitb14_reg.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-08 P8.1",
+   "experiment": "MUST-08",
+   "phase": "Must",
+   "statement": "MLP-only saving is more than half of the MLP-plus-attention saving, at 6 blocks and at the full model",
+   "quote": "P8.1: the MLP carries most of the saving: MLP-only saving is more than half of the MLP-plus-attention saving, at 6 blocks and at the full model.",
+   "quantity": "saving = original model parameters minus Mirror-exact model parameters (mean over fit seeds); ratio MLP-only saving / MLP-plus-attention saving",
+   "bar": "> 0.5 at 6 blocks and at the full model",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-08/rows_dinov2_vitb14_reg.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-08 P8.2",
+   "experiment": "MUST-08",
+   "phase": "Must",
+   "statement": "k-NN(MLP only) minus k-NN(MLP plus attention) is at most 0.5 at 6 blocks (mean over fit seeds)",
+   "quote": "P8.2: adding attention costs at most 0.5 points at 6 blocks: k-NN(MLP only) minus k-NN(MLP plus attention) is at most 0.5 (mean over fit seeds).",
+   "quantity": "mean over fit seeds 0, 1, 2 of validation k-NN, Mirror-exact 6mlp minus 6both",
+   "bar": "<= 0.5 points",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-08/rows_dinov2_vitb14_reg.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-09 P9.1",
+   "experiment": "MUST-09",
+   "phase": "Must",
+   "statement": "Mirror-exact is non-inferior to the best baseline: mean over seeds of Mirror-exact minus mean of the best baseline is above -0.5 points (validation k-NN)",
+   "quote": "P9.1: Mirror-exact is non-inferior to the best baseline: mean over seeds of Mirror-exact minus mean of the best baseline is above -0.5 points (validation k-NN).",
+   "quantity": "mean over healing seeds 0, 1, 2 of final validation k-NN (bf16, 50,000 queries, step 780), Mirror-exact minus the gate-B best baseline (flip-symmetrised targets)",
+   "bar": "> -0.5 points",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "no finished MUST-09 heal (runs/MUST-09/ or results/MUST-09/summary.csv)",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-09 P9.2",
+   "experiment": "MUST-09",
+   "phase": "Must",
+   "statement": "Only Mirror-exact has 100% flip consistency (scored as: Mirror-exact and the random-structure control reach 100% (fp32, rounding allowance); no compressor (best, second-best, plain SVD) does)",
+   "quote": "P9.2: only Mirror-exact has 100% flip consistency.",
+   "quantity": "fp32 k-NN flip consistency on all 50,000 validation images, every heal; the rounding allowance applies to the exact-invariance side; a compressor fails the prediction if its raw fp32 share is 100%",
+   "bar": "Mirror-exact and random structure 100%; compressors < 100%",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "no finished MUST-09 heal (runs/MUST-09/ or results/MUST-09/summary.csv)",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-09 P9.3",
+   "experiment": "MUST-09",
+   "phase": "Must",
+   "statement": "Random structure trails Mirror-exact by at least 3 points",
+   "quote": "P9.3: random structure trails Mirror-exact by at least 3 points.",
+   "quantity": "mean over seeds 0, 1, 2 of Mirror-exact minus random structure (seed 0), final validation k-NN",
+   "bar": ">= 3.0 points",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "no finished MUST-09 heal (runs/MUST-09/ or results/MUST-09/summary.csv)",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-10 P10.1",
+   "experiment": "MUST-10",
+   "phase": "Must",
+   "statement": "Healed Mirror-exact (mean of 3 seeds) is within 1 point of flip averaging on validation k-NN, at under 45% of its FLOPs (analytic, one pass against two)",
+   "quote": "P10.1: healed Mirror-exact (mean of 3 seeds) is within 1 point of flip averaging on validation k-NN, at under 45% of its FLOPs (analytic, one pass against two).",
+   "quantity": "|mean over seeds 0 to 2 of healed Mirror-exact k-NN (MUST-09) minus flip-averaged original k-NN (MUST-10)|, and healed GFLOPs per image / flip-averaging GFLOPs per image",
+   "bar": "|difference| <= 1.0 and FLOPs ratio < 0.45",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-10/flipavg.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-11 P11.1",
+   "experiment": "MUST-11",
+   "phase": "Must",
+   "statement": "Healed Mirror-exact is within 1.0 point of the original on the ImageNet linear probe (mean of 3 seeds) and on ADE20K mIoU (seed 0)",
+   "quote": "P11.1: healed Mirror-exact is within 1.0 point of the original on the ImageNet linear probe (mean of 3 seeds) and on ADE20K mIoU (seed 0).",
+   "quantity": "|mean of vexact_s0..s2 linear-probe top-1 minus the original's| and |vexact_s0 mIoU minus the original's|",
+   "bar": "both <= 1.0",
+   "verdict": "PENDING",
+   "value": null,
+   "n": "linear probe 3 seeds; ADE20K seed 0",
+   "reason": "results/MUST-11/t2/t2_linear.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-11 P11.2",
+   "experiment": "MUST-11",
+   "phase": "Must",
+   "statement": "Mirror-exact with the symmetrised head gives 100% mask equivariance; the original model stays below 100%",
+   "quote": "P11.2: Mirror-exact with the symmetrised head gives 100% mask equivariance; the original model stays below 100%.",
+   "quantity": "share of pixels with mask(mirror x) = mirror(mask x), fp32, ADE20K validation; Mirror-exact (vexact_s0) symmetrised head with the rounding allowance; the original below 100% with every recorded head",
+   "bar": "Mirror-exact 100%; original < 100%",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-11/t2_seg/t2_ade20k.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "MUST-12 gate C",
+   "experiment": "MUST-12",
+   "phase": "Must",
+   "statement": "Gate C: in the LR model, the LR ratio to null in blocks 1 to 6 is at most 0.8 and the LR twin fraction in blocks 1 to 6 is at least 0.2",
+   "quote": "Gate C: in the LR model, the LR ratio to null in blocks 1 to 6 is at most 0.8 and the LR twin fraction in blocks 1 to 6 is at least 0.2.",
+   "quantity": "MUST-12 ViT-S/8 LR run, seed 0, final checkpoint: LR ratio to null and LR twin fraction (t 0.5), blocks 1 to 6",
+   "bar": "ratio <= 0.8 and twin >= 0.2",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/MUST-12/vit_s8_LR_s0/e<NNN>/metrics.json missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-01 T1",
+   "experiment": "CORE-01",
+   "phase": "Core",
+   "statement": "Dissociation: in every seed pair s = 0, 1, 2, the UD twin fraction (blocks 1 to 6, final) of UD run s minus that of LR run s is at least 0.2 (absolute)",
+   "quote": "T1 Dissociation: in every seed pair s = 0, 1, 2, the UD twin fraction (blocks 1 to 6, final) of UD run s minus that of LR run s is at least 0.2 (absolute).",
+   "quantity": "UD twin fraction (t 0.5), blocks 1 to 6, last checkpoint: UD run s minus LR run s, pairs s = 0, 1, 2",
+   "bar": ">= 0.2 in every pair",
+   "verdict": "PENDING",
+   "value": "min difference n/a",
+   "n": "0 of 3 seed pairs",
+   "reason": "",
+   "details": [
+    {
+     "seed_pair": 0,
+     "UD_run_UD_twin": null,
+     "LR_run_UD_twin": null,
+     "difference": null,
+     "verdict": "PENDING",
+     "UD_run_epoch": null,
+     "LR_run_epoch": null
+    },
+    {
+     "seed_pair": 1,
+     "UD_run_UD_twin": null,
+     "LR_run_UD_twin": null,
+     "difference": null,
+     "verdict": "PENDING",
+     "UD_run_epoch": null,
+     "LR_run_epoch": null
+    },
+    {
+     "seed_pair": 2,
+     "UD_run_UD_twin": null,
+     "LR_run_UD_twin": null,
+     "difference": null,
+     "verdict": "PENDING",
+     "UD_run_epoch": null,
+     "LR_run_epoch": null
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-01 T2",
+   "experiment": "CORE-01",
+   "phase": "Core",
+   "statement": "Specificity: the UD ratio to null is at most 0.7 in every UD run, and at least 0.9 in every none run and every LR run (blocks 1 to 6, final)",
+   "quote": "T2 Specificity: the UD ratio to null is at most 0.7 in every UD run, and at least 0.9 in every none run and every LR run (blocks 1 to 6, final).",
+   "quantity": "UD ratio to null, blocks 1 to 6, last checkpoint",
+   "bar": "UD runs <= 0.7; none and LR runs >= 0.9",
+   "verdict": "PENDING",
+   "value": "UD s0: n/a; UD s1: n/a; UD s2: n/a; none s0: n/a; none s1: n/a; none s2: n/a; LR s0: n/a; LR s1: n/a; LR s2: n/a",
+   "n": "0 of 9 runs",
+   "reason": "",
+   "details": [
+    {
+     "run": "UD s0",
+     "UD_ratio_to_null": null,
+     "bar": "<= 0.7",
+     "verdict": "PENDING",
+     "epoch": null
+    },
+    {
+     "run": "UD s1",
+     "UD_ratio_to_null": null,
+     "bar": "<= 0.7",
+     "verdict": "PENDING",
+     "epoch": null
+    },
+    {
+     "run": "UD s2",
+     "UD_ratio_to_null": null,
+     "bar": "<= 0.7",
+     "verdict": "PENDING",
+     "epoch": null
+    },
+    {
+     "run": "none s0",
+     "UD_ratio_to_null": null,
+     "bar": ">= 0.9",
+     "verdict": "PENDING",
+     "epoch": null
+    },
+    {
+     "run": "none s1",
+     "UD_ratio_to_null": null,
+     "bar": ">= 0.9",
+     "verdict": "PENDING",
+     "epoch": null
+    },
+    {
+     "run": "none s2",
+     "UD_ratio_to_null": null,
+     "bar": ">= 0.9",
+     "verdict": "PENDING",
+     "epoch": null
+    },
+    {
+     "run": "LR s0",
+     "UD_ratio_to_null": null,
+     "bar": ">= 0.9",
+     "verdict": "PENDING",
+     "epoch": null
+    },
+    {
+     "run": "LR s1",
+     "UD_ratio_to_null": null,
+     "bar": ">= 0.9",
+     "verdict": "PENDING",
+     "epoch": null
+    },
+    {
+     "run": "LR s2",
+     "UD_ratio_to_null": null,
+     "bar": ">= 0.9",
+     "verdict": "PENDING",
+     "epoch": null
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-01 T3",
+   "experiment": "CORE-01",
+   "phase": "Core",
+   "statement": "Rotation: in every R90 run, the share in 4-cycles (blocks 1 to 6, final) is at least 0.3, and at least 3 times the mean share in the none runs",
+   "quote": "T3 Rotation: in every R90 run, the share in 4-cycles (blocks 1 to 6, final) is at least 0.3, and at least 3 times the mean share in the none runs.",
+   "quantity": "R90 share of hidden units in 4-cycles, blocks 1 to 6, last checkpoint; against 3 x the mean over the three none runs",
+   "bar": ">= 0.3 and >= 3 x none mean, every R90 run",
+   "verdict": "PENDING",
+   "value": "R90 s0: n/a; R90 s1: n/a; none mean n/a",
+   "n": "2 R90 runs, 3 none runs",
+   "reason": "",
+   "details": [
+    {
+     "run": "R90 s0",
+     "share_4cycles": null,
+     "none_mean": null,
+     "ratio_to_none": null,
+     "verdict": "PENDING"
+    },
+    {
+     "run": "R90 s1",
+     "share_4cycles": null,
+     "none_mean": null,
+     "ratio_to_none": null,
+     "verdict": "PENDING"
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-01 T4",
+   "experiment": "CORE-01",
+   "phase": "Core",
+   "statement": "Emergence: in every LR run (for LR) and every UD run (for UD), the twin fraction of the trained group is higher at the final epoch than at epoch 5",
+   "quote": "T4 Emergence: in every LR run (for LR) and every UD run (for UD), the twin fraction of the trained group is higher at the final epoch than at epoch 5.",
+   "quantity": "twin fraction (t 0.5) of the trained group, blocks 1 to 6 (the range of T1 to T3), last checkpoint against epoch 5",
+   "bar": "final > epoch 5, every LR and UD run",
+   "verdict": "PENDING",
+   "value": "LR s0: n/a -> n/a; LR s1: n/a -> n/a; LR s2: n/a -> n/a; UD s0: n/a -> n/a; UD s1: n/a -> n/a; UD s2: n/a -> n/a",
+   "n": "0 of 6 runs",
+   "reason": "",
+   "details": [
+    {
+     "run": "LR s0",
+     "group": "LR",
+     "epoch5": null,
+     "final": null,
+     "final_epoch": null,
+     "verdict": "PENDING"
+    },
+    {
+     "run": "LR s1",
+     "group": "LR",
+     "epoch5": null,
+     "final": null,
+     "final_epoch": null,
+     "verdict": "PENDING"
+    },
+    {
+     "run": "LR s2",
+     "group": "LR",
+     "epoch5": null,
+     "final": null,
+     "final_epoch": null,
+     "verdict": "PENDING"
+    },
+    {
+     "run": "UD s0",
+     "group": "UD",
+     "epoch5": null,
+     "final": null,
+     "final_epoch": null,
+     "verdict": "PENDING"
+    },
+    {
+     "run": "UD s1",
+     "group": "UD",
+     "epoch5": null,
+     "final": null,
+     "final_epoch": null,
+     "verdict": "PENDING"
+    },
+    {
+     "run": "UD s2",
+     "group": "UD",
+     "epoch5": null,
+     "final": null,
+     "final_epoch": null,
+     "verdict": "PENDING"
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-02 P2.1",
+   "experiment": "CORE-02",
+   "phase": "Core",
+   "statement": "The achieved saving equals the prediction (identity check)",
+   "quote": "P2.1: the achieved saving equals the prediction (identity check).",
+   "quantity": "per block 1 to 6 of every scored model (LR+UD, R90) and group: achieved free-parameter counts of fc1 and fc2 (compressed form) equal to the character-formula counts; reconstruction error below 1e-4; prediction timestamp before the surgery timestamp",
+   "bar": "equal in every block",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-02/surgery.csv missing (predictions.json missing too)",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-02 P2.2",
+   "experiment": "CORE-02",
+   "phase": "Core",
+   "statement": "Trained-group surgery on blocks 1 to 6 keeps validation top-1 within 3 points",
+   "quote": "P2.2: trained-group surgery on blocks 1 to 6 keeps validation top-1 within 3 points.",
+   "quantity": "|top-1 drop| after surgery with the model's training group (Klein for LR+UD, R90), ImageNet-100 validation, every scored model",
+   "bar": "<= 3.0 points",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-02/surgery.csv missing (predictions.json missing too)",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-02 P2.3",
+   "experiment": "CORE-02",
+   "phase": "Core",
+   "statement": "Every wrong-group surgery loses at least 20 points",
+   "quote": "P2.3: every wrong-group surgery loses at least 20 points.",
+   "quantity": "top-1 drop after surgery with a group that is neither the training group nor one of its subgroups, every scored model",
+   "bar": ">= 20 points, every row",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-02/surgery.csv missing (predictions.json missing too)",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-03 P3.1",
+   "experiment": "CORE-03",
+   "phase": "Core",
+   "statement": "Mirror plus low rank lies above low rank alone (the better of plain SVD and SVD-LLM) at at least 3 of 4 budget points on at least 2 of 3 models, including DINOv2-L or DeiT-III (zero-shot)",
+   "quote": "P3.1: Mirror plus low rank lies above low rank alone (the better of plain SVD and SVD-LLM) at at least 3 of 4 budget points (about 85%, 70%, 55% and 40% of the converted span) on at least 2 of 3 models, including DINOv2-L or DeiT-III.",
+   "quantity": "per model and budget point: validation top-1 of the scored Mirror-plus-low-rank point strictly above the scored low-rank-alone point (the better of plain SVD and SVD-LLM by method-selection k-NN, as curves.csv marks it); zero-shot",
+   "bar": ">= 3 of 4 points on >= 2 of 3 models, one of them DINOv2-L or DeiT-III",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-03/curves.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-04 P4.1",
+   "experiment": "CORE-04",
+   "phase": "Core",
+   "statement": "Scale: the tax in blocks 1 to L/2 increases from DINOv2-S to g (either direction is reported)",
+   "quote": "P4.1 (scale): the tax in blocks 1 to L/2 increases from DINOv2-S to g.",
+   "quantity": "LR tax (character formula, MLP), blocks 1 to L/2, DINOv2 S, B, L, g with registers; increases means strictly increasing at every step",
+   "bar": "S < B < L < g",
+   "verdict": "PENDING",
+   "value": null,
+   "n": "0 of 4 sizes",
+   "reason": "missing: dinov2_vits14_reg, dinov2_vitb14_reg, dinov2_vitl14_reg, dinov2_vitg14_reg",
+   "details": [
+    {
+     "model": "dinov2_vits14_reg",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "dinov2_vitb14_reg",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "dinov2_vitl14_reg",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "dinov2_vitg14_reg",
+     "tax_first_half": null,
+     "file": null
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-04 P4.2",
+   "experiment": "CORE-04",
+   "phase": "Core",
+   "statement": "Models whose recipe is verified to have no flips have a lower LR tax than every flip-trained model of the same size",
+   "quote": "P4.2 (recipe): models whose recipe is verified to have no flips have a lower LR tax than every flip-trained model of the same size.",
+   "quantity": "LR tax, blocks 1 to L/2; verified no-flip: recipe_flip 'no' without a 'probable' or '(verify)' confidence in configs/models; same size: same width and depth",
+   "bar": "below every flip-trained model of its size",
+   "verdict": "PENDING",
+   "value": "",
+   "n": "1 verified no-flip model(s): clip_b16",
+   "reason": "flip-trained models of the same size not all measured yet",
+   "details": [
+    {
+     "model": "clip_b16",
+     "recipe_flip": "no",
+     "verified_no_flip": true,
+     "size": "768 x 12",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "convnext_b",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "stage widths 128, 256, 512, 1024 x 36",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "deit3_b16",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "768 x 12",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "dino_b16",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "768 x 12",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "dinov2_vitb14",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "768 x 12",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "dinov2_vitb14_reg",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "768 x 12",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "dinov2_vitg14_reg",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "1536 x 40",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "dinov2_vitl14_reg",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "1024 x 24",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "dinov2_vits14_reg",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "384 x 12",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "dinov3_b16",
+     "recipe_flip": "no",
+     "verified_no_flip": false,
+     "size": "768 x 12",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "eva02_b14",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "768 x 12",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "mae_b16",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "768 x 12",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "resnet50",
+     "recipe_flip": "yes",
+     "verified_no_flip": false,
+     "size": "stage output channels 256, 512, 1024, 2048 (bottleneck widths 64, 128, 256, 512; expansion 4) x 16",
+     "tax_first_half": null,
+     "file": null
+    },
+    {
+     "model": "siglip2_b16",
+     "recipe_flip": "unknown",
+     "verified_no_flip": false,
+     "size": "768 x 12",
+     "tax_first_half": null,
+     "file": null
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-04 P4.3",
+   "experiment": "CORE-04",
+   "phase": "Core",
+   "statement": "CNNs: twin structure appears in ConvNeXt's pointwise MLPs (LR ratio to null at most 0.8 and twin fraction at least 0.2 in the first half of the stages' pointwise MLPs)",
+   "quote": "P4.3 (CNNs): twin structure appears in ConvNeXt's pointwise MLPs.",
+   "quantity": "LR ratio to null and LR twin fraction (t 0.5), first half of ConvNeXt-B's pointwise MLPs",
+   "bar": "ratio <= 0.8 and twin >= 0.2",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-04/structure/convnext_b/metrics.json missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-05 P5.1",
+   "experiment": "CORE-05",
+   "phase": "Core",
+   "statement": "The activation-weighted breaking share is at most half the weight-energy breaking share in blocks 1 to 6",
+   "quote": "P5.1: the activation-weighted breaking share is at most half the weight-energy breaking share in blocks 1 to 6.",
+   "quantity": "dinov2_vitb14_reg, operator A*_L: mean of s_cov over fc1 and fc2 of blocks 1 to 6 over the mean of s_w (other models reported)",
+   "bar": "<= 0.5",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-05/measures_dinov2_vitb14_reg.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-05 P5.2",
+   "experiment": "CORE-05",
+   "phase": "Core",
+   "statement": "Over training (CORE-01 LR and UD runs), breaking energy in the top-variance band falls faster than in the bottom band",
+   "quote": "P5.2: over training (CORE-01 LR and UD runs), breaking energy in the top-variance band falls faster than in the bottom band.",
+   "quantity": "per run, within-band breaking share (mean over fc1 and fc2 of blocks 1 to 6): fall from the first to the last checkpoint, top band against bottom band; every LR and UD run",
+   "bar": "top fall > bottom fall",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-05/ckpt_bands.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-05 P5.3",
+   "experiment": "CORE-05",
+   "phase": "Core",
+   "statement": "The out-of-sample rule is correct on at least 75% of layer-model cases on DINOv2-L-reg, DeiT-III and MAE",
+   "quote": "P5.3: the out-of-sample rule, designed on `dinov2_vitb14_reg` only and frozen before scoring, is correct on at least 75% of layer-model cases on DINOv2-L-reg, DeiT-III and MAE.",
+   "quantity": "share of correct cases (every block of the three models, pooled) of the frozen rule against the validation ground truth",
+   "bar": ">= 0.75",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-05/rule_score.json missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-06 P6.1",
+   "experiment": "CORE-06",
+   "phase": "Core",
+   "statement": "Species from the even part is within 1 point of the full feature",
+   "quote": "P6.1: species from the even part is within 1 point of the full feature.",
+   "quantity": "|species top-1 of the full CLS minus the even CLS|, natural CUB test images, original and every healed Mirror-exact seed",
+   "bar": "<= 1.0 points, every model",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-06/probes.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-06 P6.2",
+   "experiment": "CORE-06",
+   "phase": "Core",
+   "statement": "Facing direction from the odd part is at least 85%",
+   "quote": "P6.2: facing direction from the odd part is at least 85%.",
+   "quantity": "facing accuracy from the odd part (CLS, or mean patch token when the odd CLS's training-split CV accuracy is below 85%), natural test images, every model probed",
+   "bar": ">= 85%, every model",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-06/probes.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-06 P6.3",
+   "experiment": "CORE-06",
+   "phase": "Core",
+   "statement": "Facing direction from healed Mirror-exact's even part is at most 60% on natural test images, and exactly 50% on the mirror-augmented test set",
+   "quote": "P6.3: facing direction from healed Mirror-exact's even part is at most 60% on natural test images, and exactly 50% on the mirror-augmented test set.",
+   "quantity": "facing accuracy from the even CLS of every healed Mirror-exact seed; mirror-augmented: 50% with every differing pair a near-tie (relative logit margin < 1e-4)",
+   "bar": "<= 60% and = 50%",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-06/probes.csv missing",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "CORE-07 P7.1",
+   "experiment": "CORE-07",
+   "phase": "Core",
+   "statement": "Mirror-exact's drop from ImageNet to ImageNet-V2 (matched frequency, linear probe) is within 1 point of the original's drop",
+   "quote": "P7.1: Mirror-exact's drop from ImageNet to ImageNet-V2 (matched frequency, linear probe) is within 1 point of the original's drop.",
+   "quantity": "|mean over healed Mirror-exact seeds of (ImageNet top-1 - ImageNet-V2 top-1) minus the original's|, same linear probe",
+   "bar": "<= 1.0 points",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/CORE-07/shift_rows.csv missing (or no ImageNet-V2 column)",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "UP-01",
+   "experiment": "UP-01",
+   "phase": "Upside",
+   "statement": "UD tax rises with p (0.1, 0.25, 0.5)",
+   "quote": "UP-01: UD tax rises with p (0.1, 0.25, 0.5).",
+   "quantity": "reported as measured, not scored (PREREG Section 4)",
+   "bar": "none (reported)",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/UP-01/ has no finished output",
+   "details": [
+    {
+     "p": 0.1,
+     "run": "vit_s8_UD_p0.1_s0",
+     "UD_tax_1-6": null,
+     "epoch": null
+    },
+    {
+     "p": 0.25,
+     "run": "vit_s8_UD_p0.25_s0",
+     "UD_tax_1-6": null,
+     "epoch": null
+    },
+    {
+     "p": 0.5,
+     "run": "CORE-01 UD runs (mean)",
+     "UD_tax_1-6": null
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "UP-02",
+   "experiment": "UP-02",
+   "phase": "Upside",
+   "statement": "Breaking share stays below 0.05 throughout training from a UD-equivariant start, at accuracy within 1 point of the UD runs",
+   "quote": "UP-02: breaking share stays below 0.05 throughout training from a UD-equivariant start, at accuracy within 1 point of the UD runs.",
+   "quantity": "reported as measured, not scored (PREREG Section 4)",
+   "bar": "none (reported)",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/UP-02/ has no finished output",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "UP-03",
+   "experiment": "UP-03",
+   "phase": "Upside",
+   "statement": "The trained-group tax differs between ViT-S and ViT-Ti; either direction is reported",
+   "quote": "UP-03: the trained-group tax differs between ViT-S and ViT-Ti; either direction is reported.",
+   "quantity": "reported as measured, not scored (PREREG Section 4)",
+   "bar": "none (reported)",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/UP-03/ has no finished output",
+   "details": [
+    {
+     "condition": "none",
+     "group": "LR",
+     "ViT-Ti_tax_1-6": null,
+     "ViT-S_tax_1-6_mean": null
+    },
+    {
+     "condition": "LR",
+     "group": "LR",
+     "ViT-Ti_tax_1-6": null,
+     "ViT-S_tax_1-6_mean": null
+    },
+    {
+     "condition": "UD",
+     "group": "UD",
+     "ViT-Ti_tax_1-6": null,
+     "ViT-S_tax_1-6_mean": null
+    }
+   ],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "UP-04",
+   "experiment": "UP-04",
+   "phase": "Upside",
+   "statement": "Tied-from-scratch reaches about the same accuracy at the reduced parameter count",
+   "quote": "UP-04: tied-from-scratch reaches about the same accuracy at the reduced parameter count.",
+   "quantity": "reported as measured, not scored (PREREG Section 4)",
+   "bar": "none (reported)",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/UP-04/ has no finished output",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "UP-05",
+   "experiment": "UP-05",
+   "phase": "Upside",
+   "statement": "A speed claim needs more than 1.1x the original's speed; otherwise it is a limitation",
+   "quote": "UP-05: a speed claim needs more than 1.1x the original's speed; otherwise it is a limitation.",
+   "quantity": "reported as measured, not scored (PREREG Section 4)",
+   "bar": "none (reported)",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/UP-05/ has no finished output (no script yet)",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "UP-06",
+   "experiment": "UP-06",
+   "phase": "Upside",
+   "statement": "The extra drop from INT8 weight-only quantisation and from ToMe (r = 8) is the same for both models within 0.5 points",
+   "quote": "UP-06: the extra drop from INT8 weight-only quantisation and from ToMe (r = 8) is the same for both models within 0.5 points.",
+   "quantity": "reported as measured, not scored (PREREG Section 4)",
+   "bar": "none (reported)",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/UP-06/ has no finished output",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  {
+   "id": "UP-07",
+   "experiment": "UP-07",
+   "phase": "Upside",
+   "statement": "Pairing from weights alone agrees with the data-driven pairing on at least 70% of pairs",
+   "quote": "UP-07: pairing from weights alone agrees with the data-driven pairing on at least 70% of pairs.",
+   "quantity": "reported as measured, not scored (PREREG Section 4)",
+   "bar": "none (reported)",
+   "verdict": "PENDING",
+   "value": null,
+   "n": null,
+   "reason": "results/UP-07/ has no finished output",
+   "details": [],
+   "sources": [],
+   "quote_found": true,
+   "prereg_commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  }
+ ],
+ "numbers": {
+  "must01.max_abs_diff_pp": {
+   "value": 0.0,
+   "description": "MUST-01: largest |predicted - achieved| saving, any layer, any model",
+   "unit": "percentage points",
+   "n": 144,
+   "seed": null,
+   "sources": [
+    {
+     "file": "results/MUST-01/law_per_layer.csv",
+     "git_hash": "72d5c6ce0cbcbf2344f032695a820991ac1dfe19"
+    }
+   ]
+  },
+  "must01.n_blocks": {
+   "value": 144,
+   "description": "MUST-01: blocks compared (all models and fit seeds)",
+   "unit": "",
+   "n": null,
+   "seed": null,
+   "sources": [
+    {
+     "file": "results/MUST-01/law_per_layer.csv",
+     "git_hash": "72d5c6ce0cbcbf2344f032695a820991ac1dfe19"
+    }
+   ]
+  }
+ },
+ "failed_checks": {
+  "new_phase": [],
+  "earlier_phase": [
+   {
+    "key": "p2",
+    "name": "F4 energy rule (P2): predicts the single-block winner",
+    "value": 0.4444444444444444,
+    "bar": ">= 0.75",
+    "verdict": "FAIL",
+    "source_file": "runs/f4/f4_p2.json",
+    "git_hash": "8a7b6c4e42d1347c9a3fc278e4cef3d596e9627d",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "p5_part2",
+    "name": "Weights-only twin pairing (P5 part 2): agreement with the data-driven pairing",
+    "value": 0.4657534246575342,
+    "bar": ">= 0.7",
+    "verdict": "FAIL",
+    "source_file": "runs/d/d_datafree.json",
+    "git_hash": "6fd06a579e259af724f74a4d85afe2e0067eb3de",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "p5_part2_strict",
+    "name": "Weights-only twin pairing, fully data-free (P5 part 2, strict)",
+    "value": 0.4409246575342466,
+    "bar": ">= 0.7",
+    "verdict": "FAIL",
+    "source_file": "runs/d/d_datafree.json",
+    "git_hash": "6fd06a579e259af724f74a4d85afe2e0067eb3de",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "g4",
+    "name": "gate G4: below the bar, claim C6 is dropped",
+    "value": null,
+    "bar": "P5 passes",
+    "verdict": "FAIL",
+    "source_file": "runs/d/d_datafree.json",
+    "git_hash": "6fd06a579e259af724f74a4d85afe2e0067eb3de",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "m3.g2",
+    "name": "gate G2: P3.a and P3.b (else stop and discuss the framing)",
+    "value": null,
+    "bar": "both pass",
+    "verdict": "FAIL",
+    "source_file": "T_healing_p3",
+    "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "m3.p3",
+    "name": "all three P3 bullets",
+    "value": null,
+    "bar": "all pass",
+    "verdict": "FAIL",
+    "source_file": "T_healing_p3",
+    "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "m3.p3.b",
+    "name": "healed Mirror minus healed SVD",
+    "value": 1.2400031089782715,
+    "bar": ">= 3",
+    "verdict": "FAIL",
+    "source_file": "T_healing",
+    "git_hash": "94b2e19d8b902ca0ed6c65436d4155baa6fee8a3",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "p4.siglip2",
+    "name": "SigLIP2 breaking share minus DINOv2-reg breaking share (row 4 definition, fit seed 0)",
+    "value": -0.08610328129260902,
+    "bar": "> 0",
+    "verdict": "FAIL",
+    "source_file": "runs/g/siglip2_b16_s0;runs/x2/perlayer_reg_s0",
+    "git_hash": "98faa6454f6447b57958487eea0fd57a44676947;e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "p5",
+    "name": "P5 (parts 1 and 2 as D2 defines them)",
+    "value": null,
+    "bar": "both parts pass",
+    "verdict": "FAIL",
+    "source_file": "runs/d/d_datafree.json",
+    "git_hash": "6fd06a579e259af724f74a4d85afe2e0067eb3de",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "x4.plain.float32",
+    "name": "X4 folding check (plain, float32)",
+    "value": null,
+    "bar": "",
+    "verdict": "FAIL",
+    "source_file": "results/x4_fold_dinov2_vitb14.json",
+    "git_hash": "e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "x4.plain.float64",
+    "name": "X4 folding check (plain, float64)",
+    "value": null,
+    "bar": "",
+    "verdict": "FAIL",
+    "source_file": "results/x4_fold_dinov2_vitb14_fp64.json",
+    "git_hash": "aabbbfa3bc3219935467fb269c09c0c9dfe37e5d",
+    "registry": "results/paper/numbers.json"
+   },
+   {
+    "key": "x4.reg.float32",
+    "name": "X4 folding check (reg, float32)",
+    "value": null,
+    "bar": "",
+    "verdict": "FAIL",
+    "source_file": "results/x4_fold_dinov2_vitb14_reg.json",
+    "git_hash": "e8bf18d879ef505c5ba8d5c7fb89c18bf84886fd",
+    "registry": "results/paper/numbers.json"
+   }
+  ]
+ },
+ "earlier_numbers_audit": [
+  {
+   "id": 1,
+   "topic": "Original k-NN top-1",
+   "claim": "78.94",
+   "value_found": "78.9359986782074 in all three fit-seed runs; the RTX 5090 runs measure 78.932",
+   "source": "runs/x2/perlayer_reg_s0/results/e1_surgery.csv:2 (k=0, original); numbers.json main.reg.original.top1; results/paper/tables/T_main_zeroshot.md:14",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 2,
+   "topic": "Twins",
+   "claim": "Block 1: 1,168 twin pairs and 736 self-twins of 3,072 neurons (76% in pairs)",
+   "value_found": "n_pairs 1168, n_self 736, h 3072, twin_frac 0.7604166666666666 (fit seed 0). Fit seed 1: 1171 / 730 (0.762); fit seed 2: 1167 / 738 (0.760)",
+   "source": "runs/x2/perlayer_reg_s0/results/e1_mlp.csv:2 (block 1); results/paper/tables/T_structure_per_layer.md:35 (seed 1: line 53)",
+   "audit_verdict": "MATCH"
+  },
+  {
+   "id": 3,
+   "topic": "Twins",
+   "claim": "Blocks 1 to 6: 63% in pairs",
+   "value_found": "twin_frac_mean 0.630859375 (3 fit seeds, std 0.00066)",
+   "source": "results/paper/tables/T_structure_summary.csv row dinov2_vitb14_reg,1-6; T_f1_ranges.md:11; numbers.json f1.reg.first_half.twin",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 4,
+   "topic": "Twins",
+   "claim": "Blocks 7 to 12: 13%",
+   "value_found": "twin_frac_mean 0.13494646990740738 (3 fit seeds)",
+   "source": "results/paper/tables/T_structure_summary.csv row dinov2_vitb14_reg,7-12; T_f1_ranges.md:12",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 5,
+   "topic": "Twins",
+   "claim": "Mean twin correlation 0.80",
+   "value_found": "Block 1 mean twin correlation 0.8039 (fit seed 0), 0.8021 (seed 1), 0.8023 (seed 2). Mean over blocks 1 to 6: 0.689; blocks 7 to 12: 0.793; all 12 blocks: 0.741 (fit seed 0, computed by this audit from the per-block values)",
+   "source": "runs/x2/perlayer_reg_s0/results/e1_mlp.csv:2 column mean_score_pairs; T_structure_per_layer.md:35 to 46 (twin corr column); T_structure_per_layer.csv",
+   "audit_verdict": "CONTEXT"
+  },
+  {
+   "id": 6,
+   "topic": "Odd directions",
+   "claim": "279 of 768 at layer 1, 128 at layer 6, 8 at layer 12",
+   "value_found": "d_minus 279 (layer 1), 128 (layer 6), 8 (layer 12), d = 768, for fit seeds 0 and 2; fit seed 1: 281, 128, 8",
+   "source": "runs/x2/perlayer_reg_s0/results/e1_layers.csv rows layer=1, 6, 12 (column d_minus); T_structure_per_layer.md:35, 40, 46",
+   "audit_verdict": "MATCH"
+  },
+  {
+   "id": 7,
+   "topic": "Tax",
+   "claim": "0.42 of MLP weights in blocks 1 to 6",
+   "value_found": "tax_formula_mean 0.4186713842698085 (3 fit seeds, std 0.0002); realised saving identical",
+   "source": "results/paper/tables/T_structure_summary.csv row dinov2_vitb14_reg,1-6; T_f1_ranges.md:11; numbers.json f1.reg.first_half.tax",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 8,
+   "topic": "Tax",
+   "claim": "0.11 in blocks 7 to 12",
+   "value_found": "tax_formula_mean 0.10940306863667053 (3 fit seeds)",
+   "source": "results/paper/tables/T_structure_summary.csv row dinov2_vitb14_reg,7-12; T_f1_ranges.md:12",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 9,
+   "topic": "Breaking share",
+   "claim": "About 0.19 to 0.22 in early blocks, against about 0.42 to 0.43 for matched random structure",
+   "value_found": "Registers model, mean fc1 share over blocks 1 to 6: s1 0.2230 (null 0.4271), 3 fit seeds. Plain DINOv2: 0.1938 (null 0.4160). Per block (registers, fit seed 0) s1 runs from 0.155 (block 6) to 0.267 (block 1)",
+   "source": "results/paper/tables/T_structure_summary.csv columns s1_mean, s1_null_mean, rows dinov2_vitb14_reg,1-6 and dinov2_vitb14,1-6; T_f1_ranges.md:9, 11; numbers.json f1.reg.first_half.s1, f1.plain.first_half.s1",
+   "audit_verdict": "CONTEXT"
+  },
+  {
+   "id": 10,
+   "topic": "Breaking share",
+   "claim": "Block 1 fc1: 0.27 against 0.49",
+   "value_found": "s1 0.2670600731187647, s1_null 0.49425580842939026 (fit seed 0); seeds 1 and 2: 0.266 and 0.267, null 0.495 and 0.494",
+   "source": "runs/x2/perlayer_reg_s0/results/e1_mlp.csv:2 columns s1, s1_null; T_structure_per_layer.md:35",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 11,
+   "topic": "Operator fit",
+   "claim": "10.6x better than a random involution at layer 1",
+   "value_found": "10.56639473986125 is the E1b primary arm: plain DINOv2 (dinov2_vitb14), E1b protocol (39,000-image bank, 8,000 queries, original 77.35), mean over layers 1 to 6, not layer 1. Registers model, paper protocol: mean over layers 1 to 6 is 13.06 / 13.07 / 13.07 (fit seeds 0, 1, 2); layer 1 alone 50.73 / 50.88 / 50.74",
+   "source": "runs/e1b_perlayer_b14/results/e1_meta.json decision.rows[0].value; PROJECT_CONTEXT.md:27; registers: runs/x2/perlayer_reg_s0/results/e1_meta.json decision.rows[0].value and decision.per_layer[0].r1; T_structure_per_layer.md:35",
+   "audit_verdict": "CONTEXT"
+  },
+  {
+   "id": 12,
+   "topic": "Operator fit",
+   "claim": "e(A)/e(I) = 0.16",
+   "value_found": "0.16011080803711272 is the E1b primary arm (plain DINOv2, E1b protocol), mean over layers 1 to 6. Registers model, paper protocol: 0.1698 / 0.1698 / 0.1697 (mean over layers 1 to 6, fit seeds 0, 1, 2); layer 1 alone 0.0406 for all three seeds",
+   "source": "runs/e1b_perlayer_b14/results/e1_meta.json decision.rows[1].value; runs/x2/perlayer_reg_s0/results/e1_meta.json decision.rows[1].value and decision.per_layer[0].r2",
+   "audit_verdict": "CONTEXT"
+  },
+  {
+   "id": 13,
+   "topic": "Operator drift",
+   "claim": "Neighbouring layers agree at 0.80 (chance 0.49)",
+   "value_found": "agree_full 0.8023 (null 0.4881) fit seed 0; 0.8022 (0.4873) seed 1; 0.8024 (0.4875) seed 2",
+   "source": "results/paper/tables/T_f2_drift.md:12 to 14; numbers.json f2.perlayer_reg_s0.agree and .agree_null; results/paper/scripts/f2_dinov2/f2_neighbours.csv",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 14,
+   "topic": "Artefact tokens",
+   "claim": "Removing the top 1% by norm cuts late-layer mirror error 2.27x",
+   "value_found": "2.2722933297201893: masking cut over layers 9 to 11 for plain DINOv2 (mean error 1.315 with all tokens, 0.579 without the top 1%)",
+   "source": "runs/f3/f3_dinov2_vitb14.json p1.value (= p1.masking_cut_late); T_prereg.md:35; results/STATUS.md:13",
+   "audit_verdict": "CONTEXT"
+  },
+  {
+   "id": 15,
+   "topic": "Artefact tokens",
+   "claim": "registers model 1.30x",
+   "value_found": "1.2964747230982945: late-layer error (layers 9 to 11) over early-layer error (layers 1 to 6), registers model. The masking cut for the registers model is 0.81 (masking slightly raises its error)",
+   "source": "runs/f3/f3_dinov2_vitb14_reg.json p1.value, p1.late_over_early, p1.masking_cut_late; T_prereg.md:36",
+   "audit_verdict": "CONTEXT"
+  },
+  {
+   "id": 16,
+   "topic": "Artefact tokens",
+   "claim": "Pre-registered pass",
+   "value_found": "P1.plain PASS (bar >= 2), P1.registers PASS (bar <= 2), G3 PASS",
+   "source": "results/paper/tables/T_prereg.md:35 to 37; runs/f3/f3_gate_G3.json",
+   "audit_verdict": "MATCH"
+  },
+  {
+   "id": 17,
+   "topic": "Energy rule (F4)",
+   "claim": "16 of 36 correct, needed 27. Pre-registered fail",
+   "value_found": "n_hits 16, n_cases 36, fraction 0.4444, threshold 0.75 (27 of 36), verdict FAIL",
+   "source": "runs/f4/f4_p2.json primary_prereg_models; T_prereg.md:38; numbers.json p2.value",
+   "audit_verdict": "MATCH"
+  },
+  {
+   "id": 18,
+   "topic": "Zero-shot surgery, 6 blocks",
+   "claim": "Mirror (per-layer, MLP) 77.09 \u00b1 0.003 (3 fit seeds)",
+   "value_found": "mean 77.09133227666219, sample std (n - 1) 0.0030559478279285263, n = 3; per seed 77.094, 77.088, 77.092",
+   "source": "runs/x2/perlayer_reg_s{0,1,2}/results/e1_surgery.csv row k=6, variant=surgery (line 6 in s0); numbers.json main.reg.k6.mirror_mlp.top1 and .top1_std; T_main_zeroshot.md:24",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 19,
+   "topic": "Zero-shot surgery, 6 blocks",
+   "claim": "plain SVD 8.77",
+   "value_found": "8.76933311422666 (mean of 8.768, 8.784, 8.756)",
+   "source": "runs/x2/perlayer_reg_s{0,1,2}/results/e1_surgery.csv row k=6, variant=svd; numbers.json main.reg.k6.svd_mlp.top1; T_main_zeroshot.md:25",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 20,
+   "topic": "Zero-shot surgery, 6 blocks",
+   "claim": "random structure 3.95",
+   "value_found": "3.945999965071678 (3 fit seeds, std 0.11)",
+   "source": "runs/x2/perlayer_reg_s{0,1,2}/results/e1_surgery.csv row k=6, variant=random; numbers.json main.reg.k6.random_mlp.top1; T_main_zeroshot.md:26",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 21,
+   "topic": "Ablations",
+   "claim": "Wrong operator 3.88",
+   "value_found": "A1 random_operator, k = 6: 3.877333303292593 \u00b1 0.441 (s0 3.916, s1 4.298, s2 3.418)",
+   "source": "runs/a/dinov2_vitb14_reg/A1_s{0,1,2}.csv line 6 (variant=random_operator, k=6); T_ablations.md:20; numbers.json a.reg.A1.random_operator.k6.top1",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 22,
+   "topic": "Ablations",
+   "claim": "random pairing 28.96",
+   "value_found": "A2 random_pairing, k = 6: 28.95866632461548 \u00b1 3.498 (s0 29.646, s1 32.062, s2 25.168)",
+   "source": "runs/a/dinov2_vitb14_reg/A2_s{0,1,2}.csv line 3 (variant=random_pairing, k=6); T_ablations.md:31",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 23,
+   "topic": "Ablations",
+   "claim": "pairing by weight cosine 24.69",
+   "value_found": "A2 generic, k = 6: 24.685999751091003 \u00b1 0.047 (s0 24.652, s1 24.740, s2 24.666)",
+   "source": "runs/a/dinov2_vitb14_reg/A2_s{0,1,2}.csv line 5 (variant=generic, k=6); T_ablations.md:33",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 24,
+   "topic": "Ablations",
+   "claim": "100 fit images 77.03",
+   "value_found": "A3 n100, k = 6, fit seed 0: 77.03199982643127",
+   "source": "runs/a/dinov2_vitb14_reg/A3_s0.csv:2; T_ablations.md:42; numbers.json a.reg.A3.n100.k6.top1",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 25,
+   "topic": "Exact version",
+   "claim": "6 blocks, MLP plus attention: 77.37",
+   "value_found": "V-exact, MLP + attention, k = 6: 77.36799716949463 (fit seed 0, n = 1)",
+   "source": "runs/m1/m1_knn.csv:5 (k=6, variant=vexact); numbers.json m1.k6.vexact.top1",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 26,
+   "topic": "Exact version",
+   "claim": "All 12 blocks, before healing: 53.85",
+   "value_found": "53.850001096725464 (k = 12, V-exact, fit seed 0)",
+   "source": "runs/m1/m1_knn.csv:15; runs/m3_vexact/k12/knn.json zero_shot.top1",
+   "audit_verdict": "MATCH"
+  },
+  {
+   "id": 27,
+   "topic": "Attention",
+   "claim": "130 of 144 heads mirror onto themselves; 7 twin-head pairs",
+   "value_found": "n_self_total 130, n_pairs_total 7 (130 + 2 x 7 = 144); per block 12, 10, 10, 12, 10, 10, 10, 10, 12, 10, 12, 12",
+   "source": "runs/m1/m1_heads.csv; T_attention.md:11 to 22; numbers.json m1.heads.n_self_total, m1.heads.n_pairs_total",
+   "audit_verdict": "MATCH"
+  },
+  {
+   "id": 28,
+   "topic": "Attention",
+   "claim": "Block 1 attention breaking share 0.28 against 0.49 random",
+   "value_found": "s_all 0.2831163669660666, s_all_random 0.4939001148308489",
+   "source": "runs/m1/m1_heads.csv:2 (block 1); T_attention.md:11",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 29,
+   "topic": "Healing pilot, 9 blocks",
+   "claim": "Mirror 78.81, SVD 77.57, random 73.28",
+   "value_found": "healed top-1: Mirror 78.81399989128113, SVD 77.57399678230286, random 73.27799797058105",
+   "source": "runs/m3_pilot/{mirror,svd,random}/knn.json healed.top1; T_healing.md:13 to 15",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 30,
+   "topic": "Healing pilot, 9 blocks",
+   "claim": "Pre-registered 3-point bar failed (it needed 80.57, above the original)",
+   "value_found": "P3.b = 1.24 against >= 3: FAIL; 77.574 + 3 = 80.574 (computed), above the original 78.936",
+   "source": "T_healing.md:22; numbers.json m3.p3.b.value, m3.p3.b.verdict",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 31,
+   "topic": "Full conversion, healed",
+   "claim": "78.31",
+   "value_found": "78.31199765205383 (A100, git 5fb53c0744, healing seed 0)",
+   "source": "runs/m3_vexact/k12/knn.json healed.top1; T_healing.md (V-exact table, k = 12 row)",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 32,
+   "topic": "Full conversion, healed",
+   "claim": "rerun of the same seed on another GPU: 78.34",
+   "value_found": "78.33799719810486 (RTX 5090, git 6f35281c33)",
+   "source": "runs/m3_vexact_5090/k12/knn.json healed.top1; numbers.json e3.v0.healed",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 33,
+   "topic": "Full conversion, healed",
+   "claim": "100% flip consistency",
+   "value_found": "flip_consistency 100.0 in the fp32 check (TF32 off, 5,000 validation queries, 10,000-image train bank). Paper-protocol k-NN (bf16, 50,000 queries): 99.76399540901184 (5090 rerun 99.742)",
+   "source": "runs/m3_vexact/k12/flipcheck.json flip_consistency, n_query, n_bank, dtype; runs/m3_vexact/k12/knn.json healed.flip_consistency",
+   "audit_verdict": "CONTEXT"
+  },
+  {
+   "id": 34,
+   "topic": "Full conversion, healed",
+   "claim": "76.5% of parameters kept",
+   "value_found": "model_params_frac 0.7646182036976261 (66,203,360 of 86,583,552); converted matrices 0.760",
+   "source": "runs/m3_vexact/k12/summary.json method_info.model_params_frac; T_healing.md (V-exact table, k = 12 row)",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 35,
+   "topic": "Downstream, 6 blocks healed exact",
+   "claim": "Linear probe 80.86 against 80.99",
+   "value_found": "healed_vexact_k6 80.858; original 80.988",
+   "source": "runs/t2/t2_linear.csv:6 to 7; T_tier2.md:21 to 22",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 36,
+   "topic": "Downstream, 6 blocks healed exact",
+   "claim": "ADE20K 47.51 against 47.59",
+   "value_found": "mIoU healed_vexact_k6 47.50705421032515; original 47.592269358673775 (8,000 iterations, batch 16, crop 448)",
+   "source": "runs/t2_seg/t2_ade20k.csv:2 to 3; T_tier2.md:80",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 37,
+   "topic": "Downstream, 6 blocks healed exact",
+   "claim": "transfer within about 0.5 points",
+   "value_found": "Healed V-exact k = 6 against the original: CIFAR-100 90.54 vs 91.40 (0.86 below), DTD 83.19 vs 83.56 (0.37), Pets 95.67 vs 95.99 (0.33), Flowers-102 99.69 vs 99.69 (0.00, ceiling). The 0.51 figure is the healed V-local k = 9 pilot (CIFAR-100 90.89 vs 91.40)",
+   "source": "runs/t2/t2_transfer.csv:2, 3, 5, 9, 10, 16, 17, 23, 24; T_tier2.md:43, 45, 50, 57, 64; results/STATUS.md:36, 39",
+   "audit_verdict": "MISMATCH"
+  },
+  {
+   "id": 38,
+   "topic": "Generality",
+   "claim": "DeiT-III and MAE pass",
+   "value_found": "P4.deit3.all PASS (share 0.184, ratio 10.66); P4.mae.all PASS (share 0.232, ratio 40.76). Decision-table outcome AMBER for both",
+   "source": "results/paper/tables/T_generality_p4.csv; T_generality.md:17 to 18, 27 to 32",
+   "audit_verdict": "MATCH"
+  },
+  {
+   "id": 39,
+   "topic": "Generality",
+   "claim": "DINOv2-L has the strongest structure",
+   "value_found": "Fit ratio e(null)/e(A) 79.41, the highest of all models (next MAE 40.76). On other measures it is not top: e(A)/e(I) 0.079 (MAE 0.048), tax over the first half 0.414 (MAE 0.448), breaking share 0.252",
+   "source": "runs/g/dinov2_l_reg_s0/results/e1_meta.json decision.rows[0].value; T_generality.md:21; T_f1_ranges.md:15, 21",
+   "audit_verdict": "MATCH"
+  },
+  {
+   "id": 40,
+   "topic": "Generality",
+   "claim": "SigLIP2 weak, as predicted",
+   "value_found": "Outcome KILL; fit ratio 2.38, d-/d 0.138, twin fraction 0.285. Pre-registered P4 sub-check (SigLIP2 breaking share above DINOv2-reg's): 0.137 vs 0.223, FAIL",
+   "source": "results/paper/tables/T_generality_p4.csv row P4.siglip2; T_generality.md:19, 33; results/STATUS.md:23",
+   "audit_verdict": "MISMATCH"
+  },
+  {
+   "id": 41,
+   "topic": "Generality",
+   "claim": "DINOv2-S loses 18 points under surgery",
+   "value_found": "original 74.45600032806396, surgery 56.03399872779846 at k = 6: drop 18.42 (A100 run 56.00)",
+   "source": "runs/g/dinov2_s_reg_s0/results/e1_surgery.csv:2 to 3; T_generality.md:20",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 42,
+   "topic": "Generality",
+   "claim": "On DINOv2-L and DeiT-III, plain SVD stays within 0.7 to 0.9 points of Mirror",
+   "value_found": "DINOv2-L: Mirror 79.256 vs SVD 78.568, margin 0.688 (k = 12 of 24); DeiT-III: 81.548 vs 80.670, margin 0.878 (k = 6)",
+   "source": "runs/g/dinov2_l_reg_s0/results/e1_surgery.csv:3 to 4; runs/g/deit3_b16_s0/results/e1_surgery.csv:3 to 4; T_generality.md:17, 21",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 43,
+   "topic": "Weights only",
+   "claim": "Operator from weights matches the data-driven one at 0.90 (pass)",
+   "value_found": "p5.part1.value 0.8999972812677988, PASS (bar 0.8; chance 0.652); d+ 392 from weights vs 400 from data",
+   "source": "runs/d/d_datafree.json p5.part1; T_prereg.md:56",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 44,
+   "topic": "Weights only",
+   "claim": "pairing from weights 47% (needed 70%, fail)",
+   "value_found": "p5.part2.value 0.4657534246575342 (given the data-driven A_0), FAIL; fully data-free 0.4409, FAIL",
+   "source": "runs/d/d_datafree.json p5.part2, p5.part2_strict; T_prereg.md:57 to 58",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 45,
+   "topic": "Speed",
+   "claim": "0.70 to 0.91x of the original's speed",
+   "value_found": "A100 (runs/m2_clean), bf16, torch.compile, batch 256, Mirror variants against dense in the same implementation: 0.6992 (V-exact k = 12) to 0.9100 (V-local MLP only k = 6). RTX 5090: 0.6346 to 0.8919. A100 batch 1, compiled: 0.495 to 0.843",
+   "source": "results/paper/tables/T_latency.csv (source runs/m2_clean/m2_latency.csv), rows batch=256, mode=compile; T_latency_5090.csv (runs/m2_5090/m2_latency.csv); results/STATUS.md:45, 48",
+   "audit_verdict": "MATCH (rounded)"
+  },
+  {
+   "id": 46,
+   "topic": "Speed",
+   "claim": "88.9 ms against 75.7 ms",
+   "value_found": "RTX 5090 profile, batch 256, compiled: V-exact k = 12 median 88.93957 ms; dense 75.68418 ms (ratio 0.851)",
+   "source": "runs/m2_profile/m2_profile.csv; T_latency_profile.md:12, 24; numbers.json m2p.reg.vexact.k12.b256.compile.latency",
+   "audit_verdict": "CONTEXT"
+  },
+  {
+   "id": 47,
+   "topic": "SVD collapse check (gate G1)",
+   "claim": "Not a bug",
+   "value_found": "G1 PASS (full-rank SVD reproduces the model, max CLS difference 5.12e-05; ranks within 1% of budget)",
+   "source": "results/paper/tables/T_prereg.md:61; runs/x1/x1_svd_check.json; results/STATUS.md:12",
+   "audit_verdict": "MATCH"
+  },
+  {
+   "id": 48,
+   "topic": "Counting error",
+   "claim": "one d x d basis change per block, not counted: about 3.5M extra parameters at 6 blocks",
+   "value_found": "6 x 768 x 768 = 3,538,944 (computed). Recorded as rotation_params 3538944 for Mirror V-local MLP only, k = 6, and excluded from model_params",
+   "source": "results/paper/tables/T_main_zeroshot.csv rows k=6, variant=mirror_mlp, mirror_mlp_m1, vlocal (column rotation_params); results/paper/tables/cost_model.md:13",
+   "audit_verdict": "MATCH (rounded)"
+  }
+ ],
+ "data_files": [
+  "appendix_law.csv",
+  "table3_earlier_ablations.csv",
+  "table4_generality.csv"
+ ],
+ "notes": [
+  "results/MUST-01/meta.json records a PREREG_NEXT_PHASE.md text with sha256 6a531dc27a05, not the current 711b963039af"
+ ],
+ "inputs": {
+  "results/MUST-00/audit.json": "881df60e0bbd2f477cef8c1d2c5816730e915615d8f151c3f3c5e63537cd66be",
+  "results/MUST-01/law_per_layer.csv": "fe55e8b4d6ae0b7afb96b8475ba16b346b20270e766b669cb48c7603400421dc",
+  "results/MUST-01/metrics.json": "050f37b4c47d8ab0e77134ce6703de302eb129c3b9885680b00d755b8ed8ba16",
+  "results/MUST-01/meta.json": "c230aee332f6b9e4a26950652b38537ce314407a5b14862beb0e95d336f7520c",
+  "results/paper/tables/T_ablations.csv": "7befdc9f52e7c55885de4d1dde37058dd50eb69275c3fbfd5885000658634a48",
+  "results/paper/numbers.json": "dee7537af45a08826565b439d9ee5c04d491a1ce7be916fb7eecee0163b5594e",
+  "results/paper/tables/T_prereg.csv": "58e77de1e5c4e5c9e303dbe53ff62b6943adeb5120f64518a1b9e4c3237dab17"
+ }
+}
