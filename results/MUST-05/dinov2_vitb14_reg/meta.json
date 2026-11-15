@@ -1,0 +1,186 @@
+{
+  "experiment": "MUST-05",
+  "date_utc": "2026-11-15T07:54:02Z",
+  "git": {
+    "git_hash": "52e29d16766d80933db138b9414e4f69a81e4b7e",
+    "git_dirty": false
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "model": "dinov2_vitb14_reg",
+    "fit_run": "runs/x2/perlayer_reg_s0",
+    "fit_seed": null,
+    "structure_dir": null,
+    "parts": "track,switch,teaser",
+    "blocks": "1-6",
+    "act": "post",
+    "track_images": 5000,
+    "switch_images": 500,
+    "switch_pairs": 200,
+    "pair_types": "twin,random,random_partner",
+    "no_cls": false,
+    "precision": "tf32",
+    "chunk_images": 4,
+    "abl_batch": 256,
+    "teaser_blocks": "1,3,6",
+    "teaser_pairs": 8,
+    "teaser_patches": 16,
+    "teaser_images": 50000,
+    "teaser_amp": "bf16",
+    "teaser_rank_by": "weight",
+    "crop": 42,
+    "out": "/home/ubuntu/Mirror_CPAL/results/MUST-05",
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache",
+    "top_k": 10,
+    "workers": 6,
+    "reference_run": "runs/x2/perlayer_reg_s0",
+    "batch_size": 32,
+    "stats_batch_size": 16,
+    "num_workers": 4,
+    "seed": 0,
+    "gpu_frac": 0.25,
+    "force": false,
+    "tiny": false
+  },
+  "seeds": {
+    "global": 0,
+    "fit": 0,
+    "random_pairs_tracking": "seed * 1000 + 500 + block0",
+    "random_pairs_switch": "seed * 1000 + 700 + block0",
+    "random_partners_switch": "seed * 1000 + 800 + block0",
+    "switch_images": 0,
+    "teaser_images": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "registry": {
+        "source": "torch_hub",
+        "hub_repo": "facebookresearch/dinov2",
+        "hub_name": "dinov2_vitb14_reg",
+        "feature": "cls",
+        "why": "DINOv2 through the existing Dinov2Adapter (CLS after the final norm).",
+        "preprocess": {
+          "mean": [
+            0.485,
+            0.456,
+            0.406
+          ],
+          "std": [
+            0.229,
+            0.224,
+            0.225
+          ],
+          "interpolation": "bicubic",
+          "crop_pct": 0.875
+        },
+        "note": "(verify on VM)"
+      }
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 2114.82,
+  "extra": {
+    "structure": {
+      "kind": "fit run",
+      "path": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+      "fit_seed": 0,
+      "reused": true,
+      "reference_check": {
+        "reference": "runs/x2/perlayer_reg_s0/results",
+        "n_pairs": {
+          "1": {
+            "fresh": 1168,
+            "reference": 1168
+          },
+          "2": {
+            "fresh": 1116,
+            "reference": 1116
+          },
+          "3": {
+            "fresh": 1013,
+            "reference": 1013
+          },
+          "4": {
+            "fresh": 963,
+            "reference": 963
+          },
+          "5": {
+            "fresh": 878,
+            "reference": 878
+          },
+          "6": {
+            "fresh": 672,
+            "reference": 672
+          }
+        },
+        "n_pairs_equal": true,
+        "d_plus": {
+          "0": {
+            "fresh": 400,
+            "reference": 400
+          },
+          "1": {
+            "fresh": 489,
+            "reference": 489
+          },
+          "2": {
+            "fresh": 502,
+            "reference": 502
+          },
+          "3": {
+            "fresh": 542,
+            "reference": 542
+          },
+          "4": {
+            "fresh": 565,
+            "reference": 565
+          },
+          "5": {
+            "fresh": 605,
+            "reference": 605
+          },
+          "6": {
+            "fresh": 640,
+            "reference": 640
+          }
+        },
+        "d_plus_equal": true,
+        "reference_model": "dinov2_vitb14_reg",
+        "reference_fit_seed": 0
+      }
+    },
+    "peak_memory_gb": 7.072,
+    "timing": {
+      "load": 4.85,
+      "structure": 250.73,
+      "track": 461.9,
+      "switch": 1319.32,
+      "teaser": 78.01
+    },
+    "parts": [
+      "track",
+      "switch",
+      "teaser"
+    ],
+    "block_numbering": "1-based; block 1 = model.blocks[0]",
+    "data_roles": {
+      "structure_and_choices": "train fit0",
+      "tracking": "validation (Protocol.query_loader)",
+      "switch_off": "validation, class-balanced subset (switch_images.csv)",
+      "teaser": "train k-NN bank rows, seeded subset"
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "fields": {
+    "mask_eq_raw": 98.97705388222386,
+    "mask_eq_sym": 99.99991346546048,
+    "mask_eq_raw_n_differ": 4988566,
+    "mask_eq_sym_n_differ": 422,
+    "mask_eq_n_pixels": 487666546,
+    "mask_eq_n_images": 2000,
+    "mask_eq_raw_logit_diff_rel": 0.10074479793467508,
+    "mask_eq_sym_logit_diff_rel": 2.453097094161703e-05,
+    "mask_eq_mIoU_raw": 47.1345984162179,
+    "mask_eq_mIoU_sym": 47.14699409733088,
+    "mask_eq_operator": "A* of the model's even head (full tokens: exactly A*-equivariant before the final affine)",
+    "mask_eq_precision": "fp32 (no autocast, TF32 off)"
+  },
+  "result": {
+    "n_images": 2000,
+    "heads": [
+      "raw",
+      "sym"
+    ],
+    "seconds": 1611.2,
+    "raw": {
+      "share": 98.97705388222386,
+      "n_pixels": 487666546,
+      "n_differ": 4988566,
+      "share_labelled": 99.0812695312795,
+      "n_labelled": 448102043,
+      "max_logit_diff": 2.045366048812866,
+      "max_logit_diff_rel": 0.10074479793467508,
+      "max_margin_of_differing_pixels": 1.2854623794555664,
+      "mIoU": 47.1345984162179,
+      "aAcc": 81.00956794789708,
+      "mAcc": 58.87572131591933
+    },
+    "sym": {
+      "share": 99.99991346546048,
+      "n_pixels": 487666546,
+      "n_differ": 422,
+      "share_labelled": 99.99991876850247,
+      "n_labelled": 448102043,
+      "max_logit_diff": 0.0004989951848983765,
+      "max_logit_diff_rel": 2.453097094161703e-05,
+      "max_margin_of_differing_pixels": 4.482269287109375e-05,
+      "mIoU": 47.14699409733088,
+      "aAcc": 81.02390843149983,
+      "mAcc": 58.884264321923006
+    }
+  },
+  "settings": {
+    "recipe": "t2seg-maskeq-v1",
+    "run": {
+      "recipe": "t2seg-v1",
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_s0",
+      "crop": 448,
+      "iters": 8000,
+      "batch": 16,
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "warmup": 300,
+      "min_lr_ratio": 0.0,
+      "bn": true,
+      "head_init_std": 0.01,
+      "seed": 0,
+      "eval_stride": 298,
+      "max_val_images": null,
+      "amp": "bf16",
+      "ignore_index": 255,
+      "dataset": {
+        "hf_id": "merve/scene_parse_150",
+        "revision": "b83d71b405b381bc5e495f7d497fb844a8de5ffc",
+        "counts": {
+          "train": 20210,
+          "val": 2000
+        },
+        "short_side": 448
+      },
+      "random_seed": null,
+      "sources": {
+        "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+        "weights_sha256": {
+          "healed_state.pt": "0413c2e74fa041b5c2a523675ebd856a20dec5a5417bd3627b20c46b816a6f2a"
+        }
+      },
+      "healed_run_grid": "interpolate-reproject-v1",
+      "final_tokens": "full"
+    },
+    "max_images": null,
+    "operator_file": {
+      "path": "/home/ubuntu/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6"
+    },
+    "precision": "fp32 (no autocast, TF32 off)",
+    "final_tokens": "full"
+  },
+  "operator": "A* of the model's even head (full tokens: exactly A*-equivariant before the final affine)"
+}

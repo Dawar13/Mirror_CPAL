@@ -1,0 +1,5586 @@
+{
+ "method": "mirror_svdllm",
+ "hparams": {
+  "inner": "svdllm",
+  "damp": 1e-06
+ },
+ "components": [
+  "mlp",
+  "attn"
+ ],
+ "blocks": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11
+ ],
+ "k": 12,
+ "full": true,
+ "params_matrices": 59454578,
+ "params_basis_change": 0,
+ "params_total": 59454578,
+ "budget_total": 59454260,
+ "gap": 318,
+ "gap_rel": 5.34864953327146e-06,
+ "gap_step": 3755,
+ "span_dense": 84934656,
+ "mirror_exact_total": 64554464,
+ "mirror_exact_matrices": 64554464,
+ "full_rank": false,
+ "below_budget": false,
+ "max_offdiag_residual": 1.713373083810933e-08,
+ "per_matrix": [
+  {
+   "block": 0,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 1.5250507724026284e-08,
+   "shape_even": [
+    1904,
+    700
+   ],
+   "rank_even": 472,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1229088,
+   "target_even": 1227501,
+   "discarded_energy_even": 3.840528994825121e-08,
+   "shape_odd": [
+    1168,
+    68
+   ],
+   "rank_odd": 59,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 72924,
+   "target_odd": 73150,
+   "discarded_energy_odd": 0.00011831293565345291,
+   "mirror": 1412224,
+   "params": 1302012
+  },
+  {
+   "block": 0,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 1.4463173359757884e-08,
+   "shape_even": [
+    700,
+    1904
+   ],
+   "rank_even": 472,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1229088,
+   "target_even": 1227501,
+   "discarded_energy_even": 0.0003515813524788136,
+   "shape_odd": [
+    68,
+    1168
+   ],
+   "rank_odd": 59,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 72924,
+   "target_odd": 73150,
+   "discarded_energy_odd": 0.0012983569062224865,
+   "mirror": 1412224,
+   "params": 1302012
+  },
+  {
+   "block": 0,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.1734999219210648e-08,
+   "shape_even": [
+    539,
+    700
+   ],
+   "rank_even": 280,
+   "full_even": 539,
+   "dense_storage_even": false,
+   "params_even": 346920,
+   "target_even": 347491,
+   "discarded_energy_even": 8.583304178522155e-09,
+   "shape_odd": [
+    229,
+    68
+   ],
+   "rank_odd": 48,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 14256,
+   "target_odd": 14342,
+   "discarded_energy_odd": 0.0006187881363211023,
+   "mirror": 392872,
+   "params": 361176
+  },
+  {
+   "block": 0,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.26210605550681e-08,
+   "shape_even": [
+    539,
+    700
+   ],
+   "rank_even": 280,
+   "full_even": 539,
+   "dense_storage_even": false,
+   "params_even": 346920,
+   "target_even": 347491,
+   "discarded_energy_even": 1.9327520695000544e-08,
+   "shape_odd": [
+    229,
+    68
+   ],
+   "rank_odd": 48,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 14256,
+   "target_odd": 14342,
+   "discarded_energy_odd": 0.0007187027478855468,
+   "mirror": 392872,
+   "params": 361176
+  },
+  {
+   "block": 0,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.5539810042784754e-08,
+   "shape_even": [
+    491,
+    700
+   ],
+   "rank_even": 266,
+   "full_even": 491,
+   "dense_storage_even": false,
+   "params_even": 316806,
+   "target_even": 316546,
+   "discarded_energy_even": 3.0754199809024385e-07,
+   "shape_odd": [
+    277,
+    68
+   ],
+   "rank_odd": 50,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 17250,
+   "target_odd": 17348,
+   "discarded_energy_odd": 0.0028449670868950783,
+   "mirror": 362536,
+   "params": 334056
+  },
+  {
+   "block": 0,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.2513301113264345e-08,
+   "shape_even": [
+    700,
+    491
+   ],
+   "rank_even": 266,
+   "full_even": 491,
+   "dense_storage_even": false,
+   "params_even": 316806,
+   "target_even": 316546,
+   "discarded_energy_even": 5.085373011581851e-09,
+   "shape_odd": [
+    68,
+    277
+   ],
+   "rank_odd": 50,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 17250,
+   "target_odd": 17348,
+   "discarded_energy_odd": 0.00034580306964437924,
+   "mirror": 362536,
+   "params": 334056
+  },
+  {
+   "block": 1,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 1.4836990307726437e-08,
+   "shape_even": [
+    1956,
+    700
+   ],
+   "rank_even": 475,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1261600,
+   "target_even": 1261025,
+   "discarded_energy_even": 0.0007624599941824517,
+   "shape_odd": [
+    1116,
+    68
+   ],
+   "rank_odd": 59,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 69856,
+   "target_odd": 69893,
+   "discarded_energy_odd": 0.0034443576306154577,
+   "mirror": 1445088,
+   "params": 1331456
+  },
+  {
+   "block": 1,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 1.4278871396897363e-08,
+   "shape_even": [
+    700,
+    1956
+   ],
+   "rank_even": 475,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1261600,
+   "target_even": 1261025,
+   "discarded_energy_even": 0.000818609997108477,
+   "shape_odd": [
+    68,
+    1116
+   ],
+   "rank_odd": 59,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 69856,
+   "target_odd": 69893,
+   "discarded_energy_odd": 0.006077795281123732,
+   "mirror": 1445088,
+   "params": 1331456
+  },
+  {
+   "block": 1,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.713373083810933e-08,
+   "shape_even": [
+    543,
+    700
+   ],
+   "rank_even": 281,
+   "full_even": 543,
+   "dense_storage_even": false,
+   "params_even": 349283,
+   "target_even": 350070,
+   "discarded_energy_even": 0.0005237558165690492,
+   "shape_odd": [
+    225,
+    68
+   ],
+   "rank_odd": 48,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 14064,
+   "target_odd": 14092,
+   "discarded_energy_odd": 0.0028667472815903094,
+   "mirror": 395400,
+   "params": 363347
+  },
+  {
+   "block": 1,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.6744685298056323e-08,
+   "shape_even": [
+    543,
+    700
+   ],
+   "rank_even": 281,
+   "full_even": 543,
+   "dense_storage_even": false,
+   "params_even": 349283,
+   "target_even": 350070,
+   "discarded_energy_even": 0.00041522692191642285,
+   "shape_odd": [
+    225,
+    68
+   ],
+   "rank_odd": 48,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 14064,
+   "target_odd": 14092,
+   "discarded_energy_odd": 0.0022653340618231654,
+   "mirror": 395400,
+   "params": 363347
+  },
+  {
+   "block": 1,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.5441272898904394e-08,
+   "shape_even": [
+    490,
+    700
+   ],
+   "rank_even": 265,
+   "full_even": 490,
+   "dense_storage_even": false,
+   "params_even": 315350,
+   "target_even": 315901,
+   "discarded_energy_even": 0.0055323356481180586,
+   "shape_odd": [
+    278,
+    68
+   ],
+   "rank_odd": 50,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 17300,
+   "target_odd": 17411,
+   "discarded_energy_odd": 0.011429292887815468,
+   "mirror": 361904,
+   "params": 332650
+  },
+  {
+   "block": 1,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.4313952543792324e-08,
+   "shape_even": [
+    700,
+    490
+   ],
+   "rank_even": 265,
+   "full_even": 490,
+   "dense_storage_even": false,
+   "params_even": 315350,
+   "target_even": 315901,
+   "discarded_energy_even": 0.0001983303829252714,
+   "shape_odd": [
+    68,
+    278
+   ],
+   "rank_odd": 50,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 17300,
+   "target_odd": 17411,
+   "discarded_energy_odd": 0.00929975195523891,
+   "mirror": 361904,
+   "params": 332650
+  },
+  {
+   "block": 2,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 1.4665115013392408e-08,
+   "shape_even": [
+    2059,
+    700
+   ],
+   "rank_even": 481,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1327079,
+   "target_even": 1327429,
+   "discarded_energy_even": 0.005200795112475842,
+   "shape_odd": [
+    1013,
+    68
+   ],
+   "rank_odd": 58,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 62698,
+   "target_odd": 63442,
+   "discarded_energy_odd": 0.011783448221893478,
+   "mirror": 1510184,
+   "params": 1389777
+  },
+  {
+   "block": 2,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 1.3558488549029055e-08,
+   "shape_even": [
+    700,
+    2059
+   ],
+   "rank_even": 481,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1327079,
+   "target_even": 1327429,
+   "discarded_energy_even": 0.0016207957600379297,
+   "shape_odd": [
+    68,
+    1013
+   ],
+   "rank_odd": 58,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 62698,
+   "target_odd": 63442,
+   "discarded_energy_odd": 0.02416251034371364,
+   "mirror": 1510184,
+   "params": 1389777
+  },
+  {
+   "block": 2,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.3973998638325349e-08,
+   "shape_even": [
+    583,
+    700
+   ],
+   "rank_even": 293,
+   "full_even": 583,
+   "dense_storage_even": false,
+   "params_even": 375919,
+   "target_even": 375858,
+   "discarded_energy_even": 0.0027851887239950246,
+   "shape_odd": [
+    185,
+    68
+   ],
+   "rank_odd": 45,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 11385,
+   "target_odd": 11587,
+   "discarded_energy_odd": 0.008781524964923015,
+   "mirror": 420680,
+   "params": 387304
+  },
+  {
+   "block": 2,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.4867403860321158e-08,
+   "shape_even": [
+    583,
+    700
+   ],
+   "rank_even": 293,
+   "full_even": 583,
+   "dense_storage_even": false,
+   "params_even": 375919,
+   "target_even": 375858,
+   "discarded_energy_even": 0.0026775138408778876,
+   "shape_odd": [
+    185,
+    68
+   ],
+   "rank_odd": 45,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 11385,
+   "target_odd": 11587,
+   "discarded_energy_odd": 0.006500148970240316,
+   "mirror": 420680,
+   "params": 387304
+  },
+  {
+   "block": 2,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.4427885538009234e-08,
+   "shape_even": [
+    539,
+    700
+   ],
+   "rank_even": 280,
+   "full_even": 539,
+   "dense_storage_even": false,
+   "params_even": 346920,
+   "target_even": 347491,
+   "discarded_energy_even": 0.018034749199457467,
+   "shape_odd": [
+    229,
+    68
+   ],
+   "rank_odd": 48,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 14256,
+   "target_odd": 14342,
+   "discarded_energy_odd": 0.04000301348175361,
+   "mirror": 392872,
+   "params": 361176
+  },
+  {
+   "block": 2,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.1603932849678538e-08,
+   "shape_even": [
+    700,
+    539
+   ],
+   "rank_even": 280,
+   "full_even": 539,
+   "dense_storage_even": false,
+   "params_even": 346920,
+   "target_even": 347491,
+   "discarded_energy_even": 0.0002805922332259625,
+   "shape_odd": [
+    68,
+    229
+   ],
+   "rank_odd": 48,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 14256,
+   "target_odd": 14342,
+   "discarded_energy_odd": 0.029290905747893947,
+   "mirror": 392872,
+   "params": 361176
+  },
+  {
+   "block": 3,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 1.3608863770609379e-08,
+   "shape_even": [
+    2109,
+    700
+   ],
+   "rank_even": 484,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1359556,
+   "target_even": 1359664,
+   "discarded_energy_even": 0.007595269766337065,
+   "shape_odd": [
+    963,
+    68
+   ],
+   "rank_odd": 58,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 59798,
+   "target_odd": 60311,
+   "discarded_energy_odd": 0.005984402288296331,
+   "mirror": 1541784,
+   "params": 1419354
+  },
+  {
+   "block": 3,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 1.3191081383487331e-08,
+   "shape_even": [
+    700,
+    2109
+   ],
+   "rank_even": 484,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1359556,
+   "target_even": 1359664,
+   "discarded_energy_even": 0.0013167500087190032,
+   "shape_odd": [
+    68,
+    963
+   ],
+   "rank_odd": 58,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 59798,
+   "target_odd": 60311,
+   "discarded_energy_odd": 0.018124908987222965,
+   "mirror": 1541784,
+   "params": 1419354
+  },
+  {
+   "block": 3,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.2656136194964357e-08,
+   "shape_even": [
+    650,
+    700
+   ],
+   "rank_even": 310,
+   "full_even": 650,
+   "dense_storage_even": false,
+   "params_even": 418500,
+   "target_even": 419053,
+   "discarded_energy_even": 0.0033448503579028843,
+   "shape_odd": [
+    118,
+    68
+   ],
+   "rank_odd": 39,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 7254,
+   "target_odd": 7391,
+   "discarded_energy_odd": 0.002230337448241637,
+   "mirror": 463024,
+   "params": 425754
+  },
+  {
+   "block": 3,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.366787115839402e-08,
+   "shape_even": [
+    650,
+    700
+   ],
+   "rank_even": 310,
+   "full_even": 650,
+   "dense_storage_even": false,
+   "params_even": 418500,
+   "target_even": 419053,
+   "discarded_energy_even": 0.0027136385018907694,
+   "shape_odd": [
+    118,
+    68
+   ],
+   "rank_odd": 39,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 7254,
+   "target_odd": 7391,
+   "discarded_energy_odd": 0.0015269581579523406,
+   "mirror": 463024,
+   "params": 425754
+  },
+  {
+   "block": 3,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.1353054946544608e-08,
+   "shape_even": [
+    631,
+    700
+   ],
+   "rank_even": 306,
+   "full_even": 631,
+   "dense_storage_even": false,
+   "params_even": 407286,
+   "target_even": 406803,
+   "discarded_energy_even": 0.011074163413946514,
+   "shape_odd": [
+    137,
+    68
+   ],
+   "rank_odd": 41,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 8405,
+   "target_odd": 8580,
+   "discarded_energy_odd": 0.010064443998247685,
+   "mirror": 451016,
+   "params": 415691
+  },
+  {
+   "block": 3,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.0262388754780962e-08,
+   "shape_even": [
+    700,
+    631
+   ],
+   "rank_even": 306,
+   "full_even": 631,
+   "dense_storage_even": false,
+   "params_even": 407286,
+   "target_even": 406803,
+   "discarded_energy_even": 0.00033603790707403824,
+   "shape_odd": [
+    68,
+    137
+   ],
+   "rank_odd": 41,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 8405,
+   "target_odd": 8580,
+   "discarded_energy_odd": 0.023726345507579905,
+   "mirror": 451016,
+   "params": 415691
+  },
+  {
+   "block": 4,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 1.3045098970871156e-08,
+   "shape_even": [
+    2194,
+    700
+   ],
+   "rank_even": 489,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1415166,
+   "target_even": 1414463,
+   "discarded_energy_even": 0.008412290923692334,
+   "shape_odd": [
+    878,
+    68
+   ],
+   "rank_odd": 58,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 54868,
+   "target_odd": 54988,
+   "discarded_energy_odd": 0.005173416603191705,
+   "mirror": 1595504,
+   "params": 1470034
+  },
+  {
+   "block": 4,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 1.2691306521368444e-08,
+   "shape_even": [
+    700,
+    2194
+   ],
+   "rank_even": 489,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1415166,
+   "target_even": 1414463,
+   "discarded_energy_even": 0.004487682134795223,
+   "shape_odd": [
+    68,
+    878
+   ],
+   "rank_odd": 58,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 54868,
+   "target_odd": 54988,
+   "discarded_energy_odd": 0.01845173327068128,
+   "mirror": 1595504,
+   "params": 1470034
+  },
+  {
+   "block": 4,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.4929049305651465e-08,
+   "shape_even": [
+    622,
+    700
+   ],
+   "rank_even": 303,
+   "full_even": 622,
+   "dense_storage_even": false,
+   "params_even": 400566,
+   "target_even": 401001,
+   "discarded_energy_even": 0.004751496524849186,
+   "shape_odd": [
+    146,
+    68
+   ],
+   "rank_odd": 42,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 8988,
+   "target_odd": 9144,
+   "discarded_energy_odd": 0.0018555803016141459,
+   "mirror": 445328,
+   "params": 409554
+  },
+  {
+   "block": 4,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.4571596339544986e-08,
+   "shape_even": [
+    622,
+    700
+   ],
+   "rank_even": 303,
+   "full_even": 622,
+   "dense_storage_even": false,
+   "params_even": 400566,
+   "target_even": 401001,
+   "discarded_energy_even": 0.0035658124361773735,
+   "shape_odd": [
+    146,
+    68
+   ],
+   "rank_odd": 42,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 8988,
+   "target_odd": 9144,
+   "discarded_energy_odd": 0.0013123033426065689,
+   "mirror": 445328,
+   "params": 409554
+  },
+  {
+   "block": 4,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.1691027595064348e-08,
+   "shape_even": [
+    601,
+    700
+   ],
+   "rank_even": 298,
+   "full_even": 601,
+   "dense_storage_even": false,
+   "params_even": 387698,
+   "target_even": 387463,
+   "discarded_energy_even": 0.013524948534316295,
+   "shape_odd": [
+    167,
+    68
+   ],
+   "rank_odd": 44,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 10340,
+   "target_odd": 10459,
+   "discarded_energy_odd": 0.008970798843837224,
+   "mirror": 432056,
+   "params": 398038
+  },
+  {
+   "block": 4,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.1675223675842513e-08,
+   "shape_even": [
+    700,
+    601
+   ],
+   "rank_even": 298,
+   "full_even": 601,
+   "dense_storage_even": false,
+   "params_even": 387698,
+   "target_even": 387463,
+   "discarded_energy_even": 0.0052482265809583595,
+   "shape_odd": [
+    68,
+    167
+   ],
+   "rank_odd": 44,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 10340,
+   "target_odd": 10459,
+   "discarded_energy_odd": 0.03317012956395271,
+   "mirror": 432056,
+   "params": 398038
+  },
+  {
+   "block": 5,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 1.1870876557560926e-08,
+   "shape_even": [
+    2400,
+    700
+   ],
+   "rank_even": 499,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1546900,
+   "target_even": 1547270,
+   "discarded_energy_even": 0.006695400215890435,
+   "shape_odd": [
+    672,
+    68
+   ],
+   "rank_odd": 56,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 41440,
+   "target_odd": 42086,
+   "discarded_energy_odd": 0.008054626636160966,
+   "mirror": 1725696,
+   "params": 1588340
+  },
+  {
+   "block": 5,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 1.1363616776095182e-08,
+   "shape_even": [
+    700,
+    2400
+   ],
+   "rank_even": 499,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1546900,
+   "target_even": 1547270,
+   "discarded_energy_even": 0.0030629952360285984,
+   "shape_odd": [
+    68,
+    672
+   ],
+   "rank_odd": 56,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 41440,
+   "target_odd": 42086,
+   "discarded_energy_odd": 0.019981693745311002,
+   "mirror": 1725696,
+   "params": 1588340
+  },
+  {
+   "block": 5,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.403861167952412e-08,
+   "shape_even": [
+    633,
+    700
+   ],
+   "rank_even": 306,
+   "full_even": 633,
+   "dense_storage_even": false,
+   "params_even": 407898,
+   "target_even": 408093,
+   "discarded_energy_even": 0.006888437133320324,
+   "shape_odd": [
+    135,
+    68
+   ],
+   "rank_odd": 41,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 8323,
+   "target_odd": 8455,
+   "discarded_energy_odd": 0.0023926235019299247,
+   "mirror": 452280,
+   "params": 416221
+  },
+  {
+   "block": 5,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.534266740594431e-08,
+   "shape_even": [
+    633,
+    700
+   ],
+   "rank_even": 306,
+   "full_even": 633,
+   "dense_storage_even": false,
+   "params_even": 407898,
+   "target_even": 408093,
+   "discarded_energy_even": 0.004936111760988626,
+   "shape_odd": [
+    135,
+    68
+   ],
+   "rank_odd": 41,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 8323,
+   "target_odd": 8455,
+   "discarded_energy_odd": 0.00139331916937524,
+   "mirror": 452280,
+   "params": 416221
+  },
+  {
+   "block": 5,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.2131375156879113e-08,
+   "shape_even": [
+    601,
+    700
+   ],
+   "rank_even": 298,
+   "full_even": 601,
+   "dense_storage_even": false,
+   "params_even": 387698,
+   "target_even": 387463,
+   "discarded_energy_even": 0.011893930879804393,
+   "shape_odd": [
+    167,
+    68
+   ],
+   "rank_odd": 44,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 10340,
+   "target_odd": 10459,
+   "discarded_energy_odd": 0.007625535486279533,
+   "mirror": 432056,
+   "params": 398038
+  },
+  {
+   "block": 5,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.1356343166628528e-08,
+   "shape_even": [
+    700,
+    601
+   ],
+   "rank_even": 298,
+   "full_even": 601,
+   "dense_storage_even": false,
+   "params_even": 387698,
+   "target_even": 387463,
+   "discarded_energy_even": 0.003962147375147551,
+   "shape_odd": [
+    68,
+    167
+   ],
+   "rank_odd": 44,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 10340,
+   "target_odd": 10459,
+   "discarded_energy_odd": 0.01434600272777009,
+   "mirror": 432056,
+   "params": 398038
+  },
+  {
+   "block": 6,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 1.1354745817261876e-08,
+   "shape_even": [
+    2518,
+    700
+   ],
+   "rank_even": 505,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1625090,
+   "target_even": 1623344,
+   "discarded_energy_even": 0.008477429621571941,
+   "shape_odd": [
+    554,
+    68
+   ],
+   "rank_odd": 55,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 34210,
+   "target_odd": 34696,
+   "discarded_energy_odd": 0.00789789793525908,
+   "mirror": 1800272,
+   "params": 1659300
+  },
+  {
+   "block": 6,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 1.0687094087423988e-08,
+   "shape_even": [
+    700,
+    2518
+   ],
+   "rank_even": 505,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1625090,
+   "target_even": 1623344,
+   "discarded_energy_even": 0.003537084472712837,
+   "shape_odd": [
+    68,
+    554
+   ],
+   "rank_odd": 55,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 34210,
+   "target_odd": 34696,
+   "discarded_energy_odd": 0.017681585238157216,
+   "mirror": 1800272,
+   "params": 1659300
+  },
+  {
+   "block": 6,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.3662381685489988e-08,
+   "shape_even": [
+    637,
+    700
+   ],
+   "rank_even": 307,
+   "full_even": 637,
+   "dense_storage_even": false,
+   "params_even": 410459,
+   "target_even": 410672,
+   "discarded_energy_even": 0.009387288158432927,
+   "shape_odd": [
+    131,
+    68
+   ],
+   "rank_odd": 41,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 8159,
+   "target_odd": 8205,
+   "discarded_energy_odd": 0.003404666342639806,
+   "mirror": 454808,
+   "params": 418618
+  },
+  {
+   "block": 6,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.4233589819586812e-08,
+   "shape_even": [
+    637,
+    700
+   ],
+   "rank_even": 307,
+   "full_even": 637,
+   "dense_storage_even": false,
+   "params_even": 410459,
+   "target_even": 410672,
+   "discarded_energy_even": 0.006986187263225974,
+   "shape_odd": [
+    131,
+    68
+   ],
+   "rank_odd": 41,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 8159,
+   "target_odd": 8205,
+   "discarded_energy_odd": 0.0024358810147843135,
+   "mirror": 454808,
+   "params": 418618
+  },
+  {
+   "block": 6,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.1767145273737833e-08,
+   "shape_even": [
+    621,
+    700
+   ],
+   "rank_even": 303,
+   "full_even": 621,
+   "dense_storage_even": false,
+   "params_even": 400263,
+   "target_even": 400356,
+   "discarded_energy_even": 0.018808150962433157,
+   "shape_odd": [
+    147,
+    68
+   ],
+   "rank_odd": 42,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 9030,
+   "target_odd": 9207,
+   "discarded_energy_odd": 0.013162959354130921,
+   "mirror": 444696,
+   "params": 409293
+  },
+  {
+   "block": 6,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.1054741906818702e-08,
+   "shape_even": [
+    700,
+    621
+   ],
+   "rank_even": 303,
+   "full_even": 621,
+   "dense_storage_even": false,
+   "params_even": 400263,
+   "target_even": 400356,
+   "discarded_energy_even": 0.003761783130662444,
+   "shape_odd": [
+    68,
+    147
+   ],
+   "rank_odd": 42,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 9030,
+   "target_odd": 9207,
+   "discarded_energy_odd": 0.020059314098860415,
+   "mirror": 444696,
+   "params": 409293
+  },
+  {
+   "block": 7,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 1.0475317327765114e-08,
+   "shape_even": [
+    2666,
+    700
+   ],
+   "rank_even": 511,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1720026,
+   "target_even": 1718759,
+   "discarded_energy_even": 0.007172886705101189,
+   "shape_odd": [
+    406,
+    68
+   ],
+   "rank_odd": 53,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 25122,
+   "target_odd": 25427,
+   "discarded_energy_odd": 0.00430972131110241,
+   "mirror": 1893808,
+   "params": 1745148
+  },
+  {
+   "block": 7,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 9.993353528882547e-09,
+   "shape_even": [
+    700,
+    2666
+   ],
+   "rank_even": 511,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1720026,
+   "target_even": 1718759,
+   "discarded_energy_even": 0.003362812239967372,
+   "shape_odd": [
+    68,
+    406
+   ],
+   "rank_odd": 53,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 25122,
+   "target_odd": 25427,
+   "discarded_energy_odd": 0.01401062328640823,
+   "mirror": 1893808,
+   "params": 1745148
+  },
+  {
+   "block": 7,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.3927126421583627e-08,
+   "shape_even": [
+    646,
+    700
+   ],
+   "rank_even": 309,
+   "full_even": 646,
+   "dense_storage_even": false,
+   "params_even": 415914,
+   "target_even": 416474,
+   "discarded_energy_even": 0.009548981456871997,
+   "shape_odd": [
+    122,
+    68
+   ],
+   "rank_odd": 40,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 7600,
+   "target_odd": 7641,
+   "discarded_energy_odd": 0.002410371503031583,
+   "mirror": 460496,
+   "params": 423514
+  },
+  {
+   "block": 7,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.4679760970132342e-08,
+   "shape_even": [
+    646,
+    700
+   ],
+   "rank_even": 309,
+   "full_even": 646,
+   "dense_storage_even": false,
+   "params_even": 415914,
+   "target_even": 416474,
+   "discarded_energy_even": 0.008537139341258104,
+   "shape_odd": [
+    122,
+    68
+   ],
+   "rank_odd": 40,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 7600,
+   "target_odd": 7641,
+   "discarded_energy_odd": 0.002432791360875375,
+   "mirror": 460496,
+   "params": 423514
+  },
+  {
+   "block": 7,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.0917564073817147e-08,
+   "shape_even": [
+    654,
+    700
+   ],
+   "rank_even": 311,
+   "full_even": 654,
+   "dense_storage_even": false,
+   "params_even": 421094,
+   "target_even": 421631,
+   "discarded_energy_even": 0.01921395776406465,
+   "shape_odd": [
+    114,
+    68
+   ],
+   "rank_odd": 39,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 7098,
+   "target_odd": 7140,
+   "discarded_energy_odd": 0.010768656426401124,
+   "mirror": 465552,
+   "params": 428192
+  },
+  {
+   "block": 7,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.053021715760983e-08,
+   "shape_even": [
+    700,
+    654
+   ],
+   "rank_even": 311,
+   "full_even": 654,
+   "dense_storage_even": false,
+   "params_even": 421094,
+   "target_even": 421631,
+   "discarded_energy_even": 0.00566238756932802,
+   "shape_odd": [
+    68,
+    114
+   ],
+   "rank_odd": 39,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 7098,
+   "target_odd": 7140,
+   "discarded_energy_odd": 0.013333896395582245,
+   "mirror": 465552,
+   "params": 428192
+  },
+  {
+   "block": 8,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 9.51474421712385e-09,
+   "shape_even": [
+    2917,
+    700
+   ],
+   "rank_even": 520,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1880840,
+   "target_even": 1880578,
+   "discarded_energy_even": 0.010899157401111803,
+   "shape_odd": [
+    155,
+    68
+   ],
+   "rank_odd": 43,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 9589,
+   "target_odd": 9708,
+   "discarded_energy_odd": 0.0021014954677627262,
+   "mirror": 2052440,
+   "params": 1890429
+  },
+  {
+   "block": 8,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 8.145216807456194e-09,
+   "shape_even": [
+    700,
+    2917
+   ],
+   "rank_even": 520,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1880840,
+   "target_even": 1880578,
+   "discarded_energy_even": 0.0064657025514280875,
+   "shape_odd": [
+    68,
+    155
+   ],
+   "rank_odd": 43,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 9589,
+   "target_odd": 9708,
+   "discarded_energy_odd": 0.00649351165382861,
+   "mirror": 2052440,
+   "params": 1890429
+  },
+  {
+   "block": 8,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.1929718129075618e-08,
+   "shape_even": [
+    723,
+    700
+   ],
+   "rank_even": 328,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 466744,
+   "target_even": 466115,
+   "discarded_energy_even": 0.014304058028590028,
+   "shape_odd": [
+    45,
+    68
+   ],
+   "rank_odd": 24,
+   "full_odd": 45,
+   "dense_storage_odd": false,
+   "params_odd": 2712,
+   "target_odd": 2819,
+   "discarded_energy_odd": 0.0015096099870258728,
+   "mirror": 509160,
+   "params": 469456
+  },
+  {
+   "block": 8,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.1431843322683578e-08,
+   "shape_even": [
+    723,
+    700
+   ],
+   "rank_even": 328,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 466744,
+   "target_even": 466115,
+   "discarded_energy_even": 0.01232629025069254,
+   "shape_odd": [
+    45,
+    68
+   ],
+   "rank_odd": 24,
+   "full_odd": 45,
+   "dense_storage_odd": false,
+   "params_odd": 2712,
+   "target_odd": 2819,
+   "discarded_energy_odd": 0.0014422647508862685,
+   "mirror": 509160,
+   "params": 469456
+  },
+  {
+   "block": 8,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 9.470143526495906e-09,
+   "shape_even": [
+    724,
+    700
+   ],
+   "rank_even": 328,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 467072,
+   "target_even": 466760,
+   "discarded_energy_even": 0.018704269147410635,
+   "shape_odd": [
+    44,
+    68
+   ],
+   "rank_odd": 24,
+   "full_odd": 44,
+   "dense_storage_odd": false,
+   "params_odd": 2688,
+   "target_odd": 2756,
+   "discarded_energy_odd": 0.008075552427314836,
+   "mirror": 509792,
+   "params": 469760
+  },
+  {
+   "block": 8,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 8.159695512935426e-09,
+   "shape_even": [
+    700,
+    724
+   ],
+   "rank_even": 328,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 467072,
+   "target_even": 466760,
+   "discarded_energy_even": 0.006476043051068081,
+   "shape_odd": [
+    68,
+    44
+   ],
+   "rank_odd": 24,
+   "full_odd": 44,
+   "dense_storage_odd": false,
+   "params_odd": 2688,
+   "target_odd": 2756,
+   "discarded_energy_odd": 0.014549915565042149,
+   "mirror": 509792,
+   "params": 469760
+  },
+  {
+   "block": 9,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 8.331593144081835e-09,
+   "shape_even": [
+    2979,
+    700
+   ],
+   "rank_even": 522,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1920438,
+   "target_even": 1920549,
+   "discarded_energy_even": 0.012315724988401722,
+   "shape_odd": [
+    93,
+    68
+   ],
+   "rank_odd": 36,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 5796,
+   "target_odd": 5825,
+   "discarded_energy_odd": 0.0008652948774006131,
+   "mirror": 2091624,
+   "params": 1926234
+  },
+  {
+   "block": 9,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 7.626313427682219e-09,
+   "shape_even": [
+    700,
+    2979
+   ],
+   "rank_even": 522,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1920438,
+   "target_even": 1920549,
+   "discarded_energy_even": 0.007747066718568396,
+   "shape_odd": [
+    68,
+    93
+   ],
+   "rank_odd": 36,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 5796,
+   "target_odd": 5825,
+   "discarded_energy_odd": 0.0022759669013491246,
+   "mirror": 2091624,
+   "params": 1926234
+  },
+  {
+   "block": 9,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.3484122842433273e-08,
+   "shape_even": [
+    671,
+    700
+   ],
+   "rank_even": 315,
+   "full_even": 671,
+   "dense_storage_even": false,
+   "params_even": 431865,
+   "target_even": 432591,
+   "discarded_energy_even": 0.01195122247598912,
+   "shape_odd": [
+    97,
+    68
+   ],
+   "rank_odd": 36,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 5940,
+   "target_odd": 6075,
+   "discarded_energy_odd": 0.0007891962747422765,
+   "mirror": 476296,
+   "params": 437805
+  },
+  {
+   "block": 9,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.3070934330377335e-08,
+   "shape_even": [
+    671,
+    700
+   ],
+   "rank_even": 315,
+   "full_even": 671,
+   "dense_storage_even": false,
+   "params_even": 431865,
+   "target_even": 432591,
+   "discarded_energy_even": 0.010460421201471393,
+   "shape_odd": [
+    97,
+    68
+   ],
+   "rank_odd": 36,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 5940,
+   "target_odd": 6075,
+   "discarded_energy_odd": 0.0007941066063861246,
+   "mirror": 476296,
+   "params": 437805
+  },
+  {
+   "block": 9,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 1.0343623202583883e-08,
+   "shape_even": [
+    689,
+    700
+   ],
+   "rank_even": 320,
+   "full_even": 689,
+   "dense_storage_even": false,
+   "params_even": 444480,
+   "target_even": 444196,
+   "discarded_energy_even": 0.024629985429301726,
+   "shape_odd": [
+    79,
+    68
+   ],
+   "rank_odd": 33,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 4851,
+   "target_odd": 4948,
+   "discarded_energy_odd": 0.0019583053039398113,
+   "mirror": 487672,
+   "params": 449331
+  },
+  {
+   "block": 9,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 9.748975361569752e-09,
+   "shape_even": [
+    700,
+    689
+   ],
+   "rank_even": 320,
+   "full_even": 689,
+   "dense_storage_even": false,
+   "params_even": 444480,
+   "target_even": 444196,
+   "discarded_energy_even": 0.007731375312341138,
+   "shape_odd": [
+    68,
+    79
+   ],
+   "rank_odd": 33,
+   "full_odd": 68,
+   "dense_storage_odd": false,
+   "params_odd": 4851,
+   "target_odd": 4948,
+   "discarded_energy_odd": 0.0012493001496763911,
+   "mirror": 487672,
+   "params": 449331
+  },
+  {
+   "block": 10,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 7.682763704552262e-09,
+   "shape_even": [
+    3053,
+    700
+   ],
+   "rank_even": 525,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1970325,
+   "target_even": 1968256,
+   "discarded_energy_even": 0.02243708631627328,
+   "shape_odd": [
+    19,
+    68
+   ],
+   "rank_odd": 13,
+   "full_odd": 19,
+   "dense_storage_odd": false,
+   "params_odd": 1131,
+   "target_odd": 1190,
+   "discarded_energy_odd": 0.0011886502724927084,
+   "mirror": 2138392,
+   "params": 1971456
+  },
+  {
+   "block": 10,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 7.278113350334844e-09,
+   "shape_even": [
+    700,
+    3053
+   ],
+   "rank_even": 525,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1970325,
+   "target_even": 1968256,
+   "discarded_energy_even": 0.005628157673364997,
+   "shape_odd": [
+    68,
+    19
+   ],
+   "rank_odd": 13,
+   "full_odd": 19,
+   "dense_storage_odd": false,
+   "params_odd": 1131,
+   "target_odd": 1190,
+   "discarded_energy_odd": 0.0010759538692830528,
+   "mirror": 2138392,
+   "params": 1971456
+  },
+  {
+   "block": 10,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 9.029869530250056e-09,
+   "shape_even": [
+    747,
+    700
+   ],
+   "rank_even": 333,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 481851,
+   "target_even": 481588,
+   "discarded_energy_even": 0.021100281048060165,
+   "shape_odd": [
+    21,
+    68
+   ],
+   "rank_odd": 14,
+   "full_odd": 21,
+   "dense_storage_odd": false,
+   "params_odd": 1246,
+   "target_odd": 1316,
+   "discarded_energy_odd": 0.00021777481645601782,
+   "mirror": 524328,
+   "params": 483097
+  },
+  {
+   "block": 10,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 8.751649910833233e-09,
+   "shape_even": [
+    747,
+    700
+   ],
+   "rank_even": 333,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 481851,
+   "target_even": 481588,
+   "discarded_energy_even": 0.020386441733621363,
+   "shape_odd": [
+    21,
+    68
+   ],
+   "rank_odd": 14,
+   "full_odd": 21,
+   "dense_storage_odd": false,
+   "params_odd": 1246,
+   "target_odd": 1316,
+   "discarded_energy_odd": 0.0002682904609019321,
+   "mirror": 524328,
+   "params": 483097
+  },
+  {
+   "block": 10,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 7.609085651099238e-09,
+   "shape_even": [
+    764,
+    700
+   ],
+   "rank_even": 336,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 491904,
+   "target_even": 492548,
+   "discarded_energy_even": 0.031180432129936597,
+   "shape_odd": [
+    4,
+    68
+   ],
+   "rank_odd": 3,
+   "full_odd": 4,
+   "dense_storage_odd": false,
+   "params_odd": 216,
+   "target_odd": 251,
+   "discarded_energy_odd": 0.005150944387955492,
+   "mirror": 535072,
+   "params": 492120
+  },
+  {
+   "block": 10,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 6.901573067579787e-09,
+   "shape_even": [
+    700,
+    764
+   ],
+   "rank_even": 336,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 491904,
+   "target_even": 492548,
+   "discarded_energy_even": 0.013658249305519843,
+   "shape_odd": [
+    68,
+    4
+   ],
+   "rank_odd": 3,
+   "full_odd": 4,
+   "dense_storage_odd": false,
+   "params_odd": 216,
+   "target_odd": 251,
+   "discarded_energy_odd": 0.010037242624431508,
+   "mirror": 535072,
+   "params": 492120
+  },
+  {
+   "block": 11,
+   "name": "fc1",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "residual": 8.024619119947447e-09,
+   "shape_even": [
+    3055,
+    700
+   ],
+   "rank_even": 525,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1971375,
+   "target_even": 1969546,
+   "discarded_energy_even": 0.013044981248196641,
+   "shape_odd": [
+    17,
+    68
+   ],
+   "rank_odd": 12,
+   "full_odd": 17,
+   "dense_storage_odd": false,
+   "params_odd": 1020,
+   "target_odd": 1065,
+   "discarded_energy_odd": 0.0005901836643901204,
+   "mirror": 2139656,
+   "params": 1972395
+  },
+  {
+   "block": 11,
+   "name": "fc2",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "residual": 7.487428960998784e-09,
+   "shape_even": [
+    700,
+    3055
+   ],
+   "rank_even": 525,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 1971375,
+   "target_even": 1969546,
+   "discarded_energy_even": 0.0025428964463430903,
+   "shape_odd": [
+    68,
+    17
+   ],
+   "rank_odd": 12,
+   "full_odd": 17,
+   "dense_storage_odd": false,
+   "params_odd": 1020,
+   "target_odd": 1065,
+   "discarded_energy_odd": 0.0021322463415173187,
+   "mirror": 2139656,
+   "params": 1972395
+  },
+  {
+   "block": 11,
+   "name": "wq",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 8.837448715611217e-09,
+   "shape_even": [
+    752,
+    700
+   ],
+   "rank_even": 334,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 484968,
+   "target_even": 484812,
+   "discarded_energy_even": 0.016768479534574388,
+   "shape_odd": [
+    16,
+    68
+   ],
+   "rank_odd": 11,
+   "full_odd": 16,
+   "dense_storage_odd": false,
+   "params_odd": 924,
+   "target_odd": 1003,
+   "discarded_energy_odd": 0.0002641810501283759,
+   "mirror": 527488,
+   "params": 485892
+  },
+  {
+   "block": 11,
+   "name": "wk",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 8.586109784108243e-09,
+   "shape_even": [
+    752,
+    700
+   ],
+   "rank_even": 334,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 484968,
+   "target_even": 484812,
+   "discarded_energy_even": 0.014061361997557031,
+   "shape_odd": [
+    16,
+    68
+   ],
+   "rank_odd": 11,
+   "full_odd": 16,
+   "dense_storage_odd": false,
+   "params_odd": 924,
+   "target_odd": 1003,
+   "discarded_energy_odd": 0.00027873414905532634,
+   "mirror": 527488,
+   "params": 485892
+  },
+  {
+   "block": 11,
+   "name": "wv",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 7.739636622969831e-09,
+   "shape_even": [
+    761,
+    700
+   ],
+   "rank_even": 336,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 490896,
+   "target_even": 490614,
+   "discarded_energy_even": 0.042928473990018645,
+   "shape_odd": [
+    7,
+    68
+   ],
+   "rank_odd": 5,
+   "full_odd": 7,
+   "dense_storage_odd": false,
+   "params_odd": 375,
+   "target_odd": 439,
+   "discarded_energy_odd": 0.0099060453263351,
+   "mirror": 533176,
+   "params": 491271
+  },
+  {
+   "block": 11,
+   "name": "wo",
+   "kind": "stacked",
+   "inner": "svdllm",
+   "shape": [
+    768,
+    768
+   ],
+   "dense": 589824,
+   "residual": 7.61370557940581e-09,
+   "shape_even": [
+    700,
+    761
+   ],
+   "rank_even": 336,
+   "full_even": 700,
+   "dense_storage_even": false,
+   "params_even": 490896,
+   "target_even": 490614,
+   "discarded_energy_even": 0.03083064560490434,
+   "shape_odd": [
+    68,
+    7
+   ],
+   "rank_odd": 5,
+   "full_odd": 7,
+   "dense_storage_odd": false,
+   "params_odd": 375,
+   "target_odd": 439,
+   "discarded_energy_odd": 0.0013373318557985403,
+   "mirror": 533176,
+   "params": 491271
+  }
+ ],
+ "blocks_alloc": [
+  {
+   "block": 0,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    1904,
+    700
+   ],
+   "dense": 1332800,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1412224,
+   "target": 1227501,
+   "rank": 472,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1229088
+  },
+  {
+   "block": 0,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    1168,
+    68
+   ],
+   "dense": 79424,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1412224,
+   "target": 73150,
+   "rank": 59,
+   "full": 68,
+   "dense_storage": false,
+   "params": 72924
+  },
+  {
+   "block": 0,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    1904
+   ],
+   "dense": 1332800,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1412224,
+   "target": 1227501,
+   "rank": 472,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1229088
+  },
+  {
+   "block": 0,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    1168
+   ],
+   "dense": 79424,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1412224,
+   "target": 73150,
+   "rank": 59,
+   "full": 68,
+   "dense_storage": false,
+   "params": 72924
+  },
+  {
+   "block": 0,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    539,
+    700
+   ],
+   "dense": 377300,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 392872,
+   "target": 347491,
+   "rank": 280,
+   "full": 539,
+   "dense_storage": false,
+   "params": 346920
+  },
+  {
+   "block": 0,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    229,
+    68
+   ],
+   "dense": 15572,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 392872,
+   "target": 14342,
+   "rank": 48,
+   "full": 68,
+   "dense_storage": false,
+   "params": 14256
+  },
+  {
+   "block": 0,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    539,
+    700
+   ],
+   "dense": 377300,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 392872,
+   "target": 347491,
+   "rank": 280,
+   "full": 539,
+   "dense_storage": false,
+   "params": 346920
+  },
+  {
+   "block": 0,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    229,
+    68
+   ],
+   "dense": 15572,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 392872,
+   "target": 14342,
+   "rank": 48,
+   "full": 68,
+   "dense_storage": false,
+   "params": 14256
+  },
+  {
+   "block": 0,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    491,
+    700
+   ],
+   "dense": 343700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 362536,
+   "target": 316546,
+   "rank": 266,
+   "full": 491,
+   "dense_storage": false,
+   "params": 316806
+  },
+  {
+   "block": 0,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    277,
+    68
+   ],
+   "dense": 18836,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 362536,
+   "target": 17348,
+   "rank": 50,
+   "full": 68,
+   "dense_storage": false,
+   "params": 17250
+  },
+  {
+   "block": 0,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    491
+   ],
+   "dense": 343700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 362536,
+   "target": 316546,
+   "rank": 266,
+   "full": 491,
+   "dense_storage": false,
+   "params": 316806
+  },
+  {
+   "block": 0,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    277
+   ],
+   "dense": 18836,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 362536,
+   "target": 17348,
+   "rank": 50,
+   "full": 68,
+   "dense_storage": false,
+   "params": 17250
+  },
+  {
+   "block": 1,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    1956,
+    700
+   ],
+   "dense": 1369200,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1445088,
+   "target": 1261025,
+   "rank": 475,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1261600
+  },
+  {
+   "block": 1,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    1116,
+    68
+   ],
+   "dense": 75888,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1445088,
+   "target": 69893,
+   "rank": 59,
+   "full": 68,
+   "dense_storage": false,
+   "params": 69856
+  },
+  {
+   "block": 1,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    1956
+   ],
+   "dense": 1369200,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1445088,
+   "target": 1261025,
+   "rank": 475,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1261600
+  },
+  {
+   "block": 1,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    1116
+   ],
+   "dense": 75888,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1445088,
+   "target": 69893,
+   "rank": 59,
+   "full": 68,
+   "dense_storage": false,
+   "params": 69856
+  },
+  {
+   "block": 1,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    543,
+    700
+   ],
+   "dense": 380100,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 395400,
+   "target": 350070,
+   "rank": 281,
+   "full": 543,
+   "dense_storage": false,
+   "params": 349283
+  },
+  {
+   "block": 1,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    225,
+    68
+   ],
+   "dense": 15300,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 395400,
+   "target": 14092,
+   "rank": 48,
+   "full": 68,
+   "dense_storage": false,
+   "params": 14064
+  },
+  {
+   "block": 1,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    543,
+    700
+   ],
+   "dense": 380100,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 395400,
+   "target": 350070,
+   "rank": 281,
+   "full": 543,
+   "dense_storage": false,
+   "params": 349283
+  },
+  {
+   "block": 1,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    225,
+    68
+   ],
+   "dense": 15300,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 395400,
+   "target": 14092,
+   "rank": 48,
+   "full": 68,
+   "dense_storage": false,
+   "params": 14064
+  },
+  {
+   "block": 1,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    490,
+    700
+   ],
+   "dense": 343000,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 361904,
+   "target": 315901,
+   "rank": 265,
+   "full": 490,
+   "dense_storage": false,
+   "params": 315350
+  },
+  {
+   "block": 1,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    278,
+    68
+   ],
+   "dense": 18904,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 361904,
+   "target": 17411,
+   "rank": 50,
+   "full": 68,
+   "dense_storage": false,
+   "params": 17300
+  },
+  {
+   "block": 1,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    490
+   ],
+   "dense": 343000,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 361904,
+   "target": 315901,
+   "rank": 265,
+   "full": 490,
+   "dense_storage": false,
+   "params": 315350
+  },
+  {
+   "block": 1,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    278
+   ],
+   "dense": 18904,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 361904,
+   "target": 17411,
+   "rank": 50,
+   "full": 68,
+   "dense_storage": false,
+   "params": 17300
+  },
+  {
+   "block": 2,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    2059,
+    700
+   ],
+   "dense": 1441300,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1510184,
+   "target": 1327429,
+   "rank": 481,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1327079
+  },
+  {
+   "block": 2,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    1013,
+    68
+   ],
+   "dense": 68884,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1510184,
+   "target": 63442,
+   "rank": 58,
+   "full": 68,
+   "dense_storage": false,
+   "params": 62698
+  },
+  {
+   "block": 2,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    2059
+   ],
+   "dense": 1441300,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1510184,
+   "target": 1327429,
+   "rank": 481,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1327079
+  },
+  {
+   "block": 2,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    1013
+   ],
+   "dense": 68884,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1510184,
+   "target": 63442,
+   "rank": 58,
+   "full": 68,
+   "dense_storage": false,
+   "params": 62698
+  },
+  {
+   "block": 2,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    583,
+    700
+   ],
+   "dense": 408100,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 420680,
+   "target": 375858,
+   "rank": 293,
+   "full": 583,
+   "dense_storage": false,
+   "params": 375919
+  },
+  {
+   "block": 2,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    185,
+    68
+   ],
+   "dense": 12580,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 420680,
+   "target": 11587,
+   "rank": 45,
+   "full": 68,
+   "dense_storage": false,
+   "params": 11385
+  },
+  {
+   "block": 2,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    583,
+    700
+   ],
+   "dense": 408100,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 420680,
+   "target": 375858,
+   "rank": 293,
+   "full": 583,
+   "dense_storage": false,
+   "params": 375919
+  },
+  {
+   "block": 2,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    185,
+    68
+   ],
+   "dense": 12580,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 420680,
+   "target": 11587,
+   "rank": 45,
+   "full": 68,
+   "dense_storage": false,
+   "params": 11385
+  },
+  {
+   "block": 2,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    539,
+    700
+   ],
+   "dense": 377300,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 392872,
+   "target": 347491,
+   "rank": 280,
+   "full": 539,
+   "dense_storage": false,
+   "params": 346920
+  },
+  {
+   "block": 2,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    229,
+    68
+   ],
+   "dense": 15572,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 392872,
+   "target": 14342,
+   "rank": 48,
+   "full": 68,
+   "dense_storage": false,
+   "params": 14256
+  },
+  {
+   "block": 2,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    539
+   ],
+   "dense": 377300,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 392872,
+   "target": 347491,
+   "rank": 280,
+   "full": 539,
+   "dense_storage": false,
+   "params": 346920
+  },
+  {
+   "block": 2,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    229
+   ],
+   "dense": 15572,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 392872,
+   "target": 14342,
+   "rank": 48,
+   "full": 68,
+   "dense_storage": false,
+   "params": 14256
+  },
+  {
+   "block": 3,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    2109,
+    700
+   ],
+   "dense": 1476300,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1541784,
+   "target": 1359664,
+   "rank": 484,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1359556
+  },
+  {
+   "block": 3,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    963,
+    68
+   ],
+   "dense": 65484,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1541784,
+   "target": 60311,
+   "rank": 58,
+   "full": 68,
+   "dense_storage": false,
+   "params": 59798
+  },
+  {
+   "block": 3,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    2109
+   ],
+   "dense": 1476300,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1541784,
+   "target": 1359664,
+   "rank": 484,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1359556
+  },
+  {
+   "block": 3,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    963
+   ],
+   "dense": 65484,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1541784,
+   "target": 60311,
+   "rank": 58,
+   "full": 68,
+   "dense_storage": false,
+   "params": 59798
+  },
+  {
+   "block": 3,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    650,
+    700
+   ],
+   "dense": 455000,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 463024,
+   "target": 419053,
+   "rank": 310,
+   "full": 650,
+   "dense_storage": false,
+   "params": 418500
+  },
+  {
+   "block": 3,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    118,
+    68
+   ],
+   "dense": 8024,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 463024,
+   "target": 7391,
+   "rank": 39,
+   "full": 68,
+   "dense_storage": false,
+   "params": 7254
+  },
+  {
+   "block": 3,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    650,
+    700
+   ],
+   "dense": 455000,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 463024,
+   "target": 419053,
+   "rank": 310,
+   "full": 650,
+   "dense_storage": false,
+   "params": 418500
+  },
+  {
+   "block": 3,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    118,
+    68
+   ],
+   "dense": 8024,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 463024,
+   "target": 7391,
+   "rank": 39,
+   "full": 68,
+   "dense_storage": false,
+   "params": 7254
+  },
+  {
+   "block": 3,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    631,
+    700
+   ],
+   "dense": 441700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 451016,
+   "target": 406803,
+   "rank": 306,
+   "full": 631,
+   "dense_storage": false,
+   "params": 407286
+  },
+  {
+   "block": 3,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    137,
+    68
+   ],
+   "dense": 9316,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 451016,
+   "target": 8580,
+   "rank": 41,
+   "full": 68,
+   "dense_storage": false,
+   "params": 8405
+  },
+  {
+   "block": 3,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    631
+   ],
+   "dense": 441700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 451016,
+   "target": 406803,
+   "rank": 306,
+   "full": 631,
+   "dense_storage": false,
+   "params": 407286
+  },
+  {
+   "block": 3,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    137
+   ],
+   "dense": 9316,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 451016,
+   "target": 8580,
+   "rank": 41,
+   "full": 68,
+   "dense_storage": false,
+   "params": 8405
+  },
+  {
+   "block": 4,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    2194,
+    700
+   ],
+   "dense": 1535800,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1595504,
+   "target": 1414463,
+   "rank": 489,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1415166
+  },
+  {
+   "block": 4,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    878,
+    68
+   ],
+   "dense": 59704,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1595504,
+   "target": 54988,
+   "rank": 58,
+   "full": 68,
+   "dense_storage": false,
+   "params": 54868
+  },
+  {
+   "block": 4,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    2194
+   ],
+   "dense": 1535800,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1595504,
+   "target": 1414463,
+   "rank": 489,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1415166
+  },
+  {
+   "block": 4,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    878
+   ],
+   "dense": 59704,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1595504,
+   "target": 54988,
+   "rank": 58,
+   "full": 68,
+   "dense_storage": false,
+   "params": 54868
+  },
+  {
+   "block": 4,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    622,
+    700
+   ],
+   "dense": 435400,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 445328,
+   "target": 401001,
+   "rank": 303,
+   "full": 622,
+   "dense_storage": false,
+   "params": 400566
+  },
+  {
+   "block": 4,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    146,
+    68
+   ],
+   "dense": 9928,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 445328,
+   "target": 9144,
+   "rank": 42,
+   "full": 68,
+   "dense_storage": false,
+   "params": 8988
+  },
+  {
+   "block": 4,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    622,
+    700
+   ],
+   "dense": 435400,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 445328,
+   "target": 401001,
+   "rank": 303,
+   "full": 622,
+   "dense_storage": false,
+   "params": 400566
+  },
+  {
+   "block": 4,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    146,
+    68
+   ],
+   "dense": 9928,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 445328,
+   "target": 9144,
+   "rank": 42,
+   "full": 68,
+   "dense_storage": false,
+   "params": 8988
+  },
+  {
+   "block": 4,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    601,
+    700
+   ],
+   "dense": 420700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 432056,
+   "target": 387463,
+   "rank": 298,
+   "full": 601,
+   "dense_storage": false,
+   "params": 387698
+  },
+  {
+   "block": 4,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    167,
+    68
+   ],
+   "dense": 11356,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 432056,
+   "target": 10459,
+   "rank": 44,
+   "full": 68,
+   "dense_storage": false,
+   "params": 10340
+  },
+  {
+   "block": 4,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    601
+   ],
+   "dense": 420700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 432056,
+   "target": 387463,
+   "rank": 298,
+   "full": 601,
+   "dense_storage": false,
+   "params": 387698
+  },
+  {
+   "block": 4,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    167
+   ],
+   "dense": 11356,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 432056,
+   "target": 10459,
+   "rank": 44,
+   "full": 68,
+   "dense_storage": false,
+   "params": 10340
+  },
+  {
+   "block": 5,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    2400,
+    700
+   ],
+   "dense": 1680000,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1725696,
+   "target": 1547270,
+   "rank": 499,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1546900
+  },
+  {
+   "block": 5,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    672,
+    68
+   ],
+   "dense": 45696,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1725696,
+   "target": 42086,
+   "rank": 56,
+   "full": 68,
+   "dense_storage": false,
+   "params": 41440
+  },
+  {
+   "block": 5,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    2400
+   ],
+   "dense": 1680000,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1725696,
+   "target": 1547270,
+   "rank": 499,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1546900
+  },
+  {
+   "block": 5,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    672
+   ],
+   "dense": 45696,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1725696,
+   "target": 42086,
+   "rank": 56,
+   "full": 68,
+   "dense_storage": false,
+   "params": 41440
+  },
+  {
+   "block": 5,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    633,
+    700
+   ],
+   "dense": 443100,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 452280,
+   "target": 408093,
+   "rank": 306,
+   "full": 633,
+   "dense_storage": false,
+   "params": 407898
+  },
+  {
+   "block": 5,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    135,
+    68
+   ],
+   "dense": 9180,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 452280,
+   "target": 8455,
+   "rank": 41,
+   "full": 68,
+   "dense_storage": false,
+   "params": 8323
+  },
+  {
+   "block": 5,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    633,
+    700
+   ],
+   "dense": 443100,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 452280,
+   "target": 408093,
+   "rank": 306,
+   "full": 633,
+   "dense_storage": false,
+   "params": 407898
+  },
+  {
+   "block": 5,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    135,
+    68
+   ],
+   "dense": 9180,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 452280,
+   "target": 8455,
+   "rank": 41,
+   "full": 68,
+   "dense_storage": false,
+   "params": 8323
+  },
+  {
+   "block": 5,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    601,
+    700
+   ],
+   "dense": 420700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 432056,
+   "target": 387463,
+   "rank": 298,
+   "full": 601,
+   "dense_storage": false,
+   "params": 387698
+  },
+  {
+   "block": 5,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    167,
+    68
+   ],
+   "dense": 11356,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 432056,
+   "target": 10459,
+   "rank": 44,
+   "full": 68,
+   "dense_storage": false,
+   "params": 10340
+  },
+  {
+   "block": 5,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    601
+   ],
+   "dense": 420700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 432056,
+   "target": 387463,
+   "rank": 298,
+   "full": 601,
+   "dense_storage": false,
+   "params": 387698
+  },
+  {
+   "block": 5,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    167
+   ],
+   "dense": 11356,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 432056,
+   "target": 10459,
+   "rank": 44,
+   "full": 68,
+   "dense_storage": false,
+   "params": 10340
+  },
+  {
+   "block": 6,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    2518,
+    700
+   ],
+   "dense": 1762600,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1800272,
+   "target": 1623344,
+   "rank": 505,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1625090
+  },
+  {
+   "block": 6,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    554,
+    68
+   ],
+   "dense": 37672,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1800272,
+   "target": 34696,
+   "rank": 55,
+   "full": 68,
+   "dense_storage": false,
+   "params": 34210
+  },
+  {
+   "block": 6,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    2518
+   ],
+   "dense": 1762600,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1800272,
+   "target": 1623344,
+   "rank": 505,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1625090
+  },
+  {
+   "block": 6,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    554
+   ],
+   "dense": 37672,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1800272,
+   "target": 34696,
+   "rank": 55,
+   "full": 68,
+   "dense_storage": false,
+   "params": 34210
+  },
+  {
+   "block": 6,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    637,
+    700
+   ],
+   "dense": 445900,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 454808,
+   "target": 410672,
+   "rank": 307,
+   "full": 637,
+   "dense_storage": false,
+   "params": 410459
+  },
+  {
+   "block": 6,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    131,
+    68
+   ],
+   "dense": 8908,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 454808,
+   "target": 8205,
+   "rank": 41,
+   "full": 68,
+   "dense_storage": false,
+   "params": 8159
+  },
+  {
+   "block": 6,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    637,
+    700
+   ],
+   "dense": 445900,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 454808,
+   "target": 410672,
+   "rank": 307,
+   "full": 637,
+   "dense_storage": false,
+   "params": 410459
+  },
+  {
+   "block": 6,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    131,
+    68
+   ],
+   "dense": 8908,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 454808,
+   "target": 8205,
+   "rank": 41,
+   "full": 68,
+   "dense_storage": false,
+   "params": 8159
+  },
+  {
+   "block": 6,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    621,
+    700
+   ],
+   "dense": 434700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 444696,
+   "target": 400356,
+   "rank": 303,
+   "full": 621,
+   "dense_storage": false,
+   "params": 400263
+  },
+  {
+   "block": 6,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    147,
+    68
+   ],
+   "dense": 9996,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 444696,
+   "target": 9207,
+   "rank": 42,
+   "full": 68,
+   "dense_storage": false,
+   "params": 9030
+  },
+  {
+   "block": 6,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    621
+   ],
+   "dense": 434700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 444696,
+   "target": 400356,
+   "rank": 303,
+   "full": 621,
+   "dense_storage": false,
+   "params": 400263
+  },
+  {
+   "block": 6,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    147
+   ],
+   "dense": 9996,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 444696,
+   "target": 9207,
+   "rank": 42,
+   "full": 68,
+   "dense_storage": false,
+   "params": 9030
+  },
+  {
+   "block": 7,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    2666,
+    700
+   ],
+   "dense": 1866200,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1893808,
+   "target": 1718759,
+   "rank": 511,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1720026
+  },
+  {
+   "block": 7,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    406,
+    68
+   ],
+   "dense": 27608,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1893808,
+   "target": 25427,
+   "rank": 53,
+   "full": 68,
+   "dense_storage": false,
+   "params": 25122
+  },
+  {
+   "block": 7,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    2666
+   ],
+   "dense": 1866200,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1893808,
+   "target": 1718759,
+   "rank": 511,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1720026
+  },
+  {
+   "block": 7,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    406
+   ],
+   "dense": 27608,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 1893808,
+   "target": 25427,
+   "rank": 53,
+   "full": 68,
+   "dense_storage": false,
+   "params": 25122
+  },
+  {
+   "block": 7,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    646,
+    700
+   ],
+   "dense": 452200,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 460496,
+   "target": 416474,
+   "rank": 309,
+   "full": 646,
+   "dense_storage": false,
+   "params": 415914
+  },
+  {
+   "block": 7,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    122,
+    68
+   ],
+   "dense": 8296,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 460496,
+   "target": 7641,
+   "rank": 40,
+   "full": 68,
+   "dense_storage": false,
+   "params": 7600
+  },
+  {
+   "block": 7,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    646,
+    700
+   ],
+   "dense": 452200,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 460496,
+   "target": 416474,
+   "rank": 309,
+   "full": 646,
+   "dense_storage": false,
+   "params": 415914
+  },
+  {
+   "block": 7,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    122,
+    68
+   ],
+   "dense": 8296,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 460496,
+   "target": 7641,
+   "rank": 40,
+   "full": 68,
+   "dense_storage": false,
+   "params": 7600
+  },
+  {
+   "block": 7,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    654,
+    700
+   ],
+   "dense": 457800,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 465552,
+   "target": 421631,
+   "rank": 311,
+   "full": 654,
+   "dense_storage": false,
+   "params": 421094
+  },
+  {
+   "block": 7,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    114,
+    68
+   ],
+   "dense": 7752,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 465552,
+   "target": 7140,
+   "rank": 39,
+   "full": 68,
+   "dense_storage": false,
+   "params": 7098
+  },
+  {
+   "block": 7,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    654
+   ],
+   "dense": 457800,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 465552,
+   "target": 421631,
+   "rank": 311,
+   "full": 654,
+   "dense_storage": false,
+   "params": 421094
+  },
+  {
+   "block": 7,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    114
+   ],
+   "dense": 7752,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 465552,
+   "target": 7140,
+   "rank": 39,
+   "full": 68,
+   "dense_storage": false,
+   "params": 7098
+  },
+  {
+   "block": 8,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    2917,
+    700
+   ],
+   "dense": 2041900,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2052440,
+   "target": 1880578,
+   "rank": 520,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1880840
+  },
+  {
+   "block": 8,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    155,
+    68
+   ],
+   "dense": 10540,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2052440,
+   "target": 9708,
+   "rank": 43,
+   "full": 68,
+   "dense_storage": false,
+   "params": 9589
+  },
+  {
+   "block": 8,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    2917
+   ],
+   "dense": 2041900,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2052440,
+   "target": 1880578,
+   "rank": 520,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1880840
+  },
+  {
+   "block": 8,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    155
+   ],
+   "dense": 10540,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2052440,
+   "target": 9708,
+   "rank": 43,
+   "full": 68,
+   "dense_storage": false,
+   "params": 9589
+  },
+  {
+   "block": 8,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    723,
+    700
+   ],
+   "dense": 506100,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 509160,
+   "target": 466115,
+   "rank": 328,
+   "full": 700,
+   "dense_storage": false,
+   "params": 466744
+  },
+  {
+   "block": 8,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    45,
+    68
+   ],
+   "dense": 3060,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 509160,
+   "target": 2819,
+   "rank": 24,
+   "full": 45,
+   "dense_storage": false,
+   "params": 2712
+  },
+  {
+   "block": 8,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    723,
+    700
+   ],
+   "dense": 506100,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 509160,
+   "target": 466115,
+   "rank": 328,
+   "full": 700,
+   "dense_storage": false,
+   "params": 466744
+  },
+  {
+   "block": 8,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    45,
+    68
+   ],
+   "dense": 3060,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 509160,
+   "target": 2819,
+   "rank": 24,
+   "full": 45,
+   "dense_storage": false,
+   "params": 2712
+  },
+  {
+   "block": 8,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    724,
+    700
+   ],
+   "dense": 506800,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 509792,
+   "target": 466760,
+   "rank": 328,
+   "full": 700,
+   "dense_storage": false,
+   "params": 467072
+  },
+  {
+   "block": 8,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    44,
+    68
+   ],
+   "dense": 2992,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 509792,
+   "target": 2756,
+   "rank": 24,
+   "full": 44,
+   "dense_storage": false,
+   "params": 2688
+  },
+  {
+   "block": 8,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    724
+   ],
+   "dense": 506800,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 509792,
+   "target": 466760,
+   "rank": 328,
+   "full": 700,
+   "dense_storage": false,
+   "params": 467072
+  },
+  {
+   "block": 8,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    44
+   ],
+   "dense": 2992,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 509792,
+   "target": 2756,
+   "rank": 24,
+   "full": 44,
+   "dense_storage": false,
+   "params": 2688
+  },
+  {
+   "block": 9,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    2979,
+    700
+   ],
+   "dense": 2085300,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2091624,
+   "target": 1920549,
+   "rank": 522,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1920438
+  },
+  {
+   "block": 9,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    93,
+    68
+   ],
+   "dense": 6324,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2091624,
+   "target": 5825,
+   "rank": 36,
+   "full": 68,
+   "dense_storage": false,
+   "params": 5796
+  },
+  {
+   "block": 9,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    2979
+   ],
+   "dense": 2085300,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2091624,
+   "target": 1920549,
+   "rank": 522,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1920438
+  },
+  {
+   "block": 9,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    93
+   ],
+   "dense": 6324,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2091624,
+   "target": 5825,
+   "rank": 36,
+   "full": 68,
+   "dense_storage": false,
+   "params": 5796
+  },
+  {
+   "block": 9,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    671,
+    700
+   ],
+   "dense": 469700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 476296,
+   "target": 432591,
+   "rank": 315,
+   "full": 671,
+   "dense_storage": false,
+   "params": 431865
+  },
+  {
+   "block": 9,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    97,
+    68
+   ],
+   "dense": 6596,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 476296,
+   "target": 6075,
+   "rank": 36,
+   "full": 68,
+   "dense_storage": false,
+   "params": 5940
+  },
+  {
+   "block": 9,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    671,
+    700
+   ],
+   "dense": 469700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 476296,
+   "target": 432591,
+   "rank": 315,
+   "full": 671,
+   "dense_storage": false,
+   "params": 431865
+  },
+  {
+   "block": 9,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    97,
+    68
+   ],
+   "dense": 6596,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 476296,
+   "target": 6075,
+   "rank": 36,
+   "full": 68,
+   "dense_storage": false,
+   "params": 5940
+  },
+  {
+   "block": 9,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    689,
+    700
+   ],
+   "dense": 482300,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 487672,
+   "target": 444196,
+   "rank": 320,
+   "full": 689,
+   "dense_storage": false,
+   "params": 444480
+  },
+  {
+   "block": 9,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    79,
+    68
+   ],
+   "dense": 5372,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 487672,
+   "target": 4948,
+   "rank": 33,
+   "full": 68,
+   "dense_storage": false,
+   "params": 4851
+  },
+  {
+   "block": 9,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    689
+   ],
+   "dense": 482300,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 487672,
+   "target": 444196,
+   "rank": 320,
+   "full": 689,
+   "dense_storage": false,
+   "params": 444480
+  },
+  {
+   "block": 9,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    79
+   ],
+   "dense": 5372,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 487672,
+   "target": 4948,
+   "rank": 33,
+   "full": 68,
+   "dense_storage": false,
+   "params": 4851
+  },
+  {
+   "block": 10,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    3053,
+    700
+   ],
+   "dense": 2137100,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2138392,
+   "target": 1968256,
+   "rank": 525,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1970325
+  },
+  {
+   "block": 10,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    19,
+    68
+   ],
+   "dense": 1292,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2138392,
+   "target": 1190,
+   "rank": 13,
+   "full": 19,
+   "dense_storage": false,
+   "params": 1131
+  },
+  {
+   "block": 10,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    3053
+   ],
+   "dense": 2137100,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2138392,
+   "target": 1968256,
+   "rank": 525,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1970325
+  },
+  {
+   "block": 10,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    19
+   ],
+   "dense": 1292,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2138392,
+   "target": 1190,
+   "rank": 13,
+   "full": 19,
+   "dense_storage": false,
+   "params": 1131
+  },
+  {
+   "block": 10,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    747,
+    700
+   ],
+   "dense": 522900,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 524328,
+   "target": 481588,
+   "rank": 333,
+   "full": 700,
+   "dense_storage": false,
+   "params": 481851
+  },
+  {
+   "block": 10,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    21,
+    68
+   ],
+   "dense": 1428,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 524328,
+   "target": 1316,
+   "rank": 14,
+   "full": 21,
+   "dense_storage": false,
+   "params": 1246
+  },
+  {
+   "block": 10,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    747,
+    700
+   ],
+   "dense": 522900,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 524328,
+   "target": 481588,
+   "rank": 333,
+   "full": 700,
+   "dense_storage": false,
+   "params": 481851
+  },
+  {
+   "block": 10,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    21,
+    68
+   ],
+   "dense": 1428,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 524328,
+   "target": 1316,
+   "rank": 14,
+   "full": 21,
+   "dense_storage": false,
+   "params": 1246
+  },
+  {
+   "block": 10,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    764,
+    700
+   ],
+   "dense": 534800,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 535072,
+   "target": 492548,
+   "rank": 336,
+   "full": 700,
+   "dense_storage": false,
+   "params": 491904
+  },
+  {
+   "block": 10,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    4,
+    68
+   ],
+   "dense": 272,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 535072,
+   "target": 251,
+   "rank": 3,
+   "full": 4,
+   "dense_storage": false,
+   "params": 216
+  },
+  {
+   "block": 10,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    764
+   ],
+   "dense": 534800,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 535072,
+   "target": 492548,
+   "rank": 336,
+   "full": 700,
+   "dense_storage": false,
+   "params": 491904
+  },
+  {
+   "block": 10,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    4
+   ],
+   "dense": 272,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 535072,
+   "target": 251,
+   "rank": 3,
+   "full": 4,
+   "dense_storage": false,
+   "params": 216
+  },
+  {
+   "block": 11,
+   "name": "fc1",
+   "sign": "even",
+   "shape": [
+    3055,
+    700
+   ],
+   "dense": 2138500,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2139656,
+   "target": 1969546,
+   "rank": 525,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1971375
+  },
+  {
+   "block": 11,
+   "name": "fc1",
+   "sign": "odd",
+   "shape": [
+    17,
+    68
+   ],
+   "dense": 1156,
+   "matrix_shape": [
+    3072,
+    768
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2139656,
+   "target": 1065,
+   "rank": 12,
+   "full": 17,
+   "dense_storage": false,
+   "params": 1020
+  },
+  {
+   "block": 11,
+   "name": "fc2",
+   "sign": "even",
+   "shape": [
+    700,
+    3055
+   ],
+   "dense": 2138500,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2139656,
+   "target": 1969546,
+   "rank": 525,
+   "full": 700,
+   "dense_storage": false,
+   "params": 1971375
+  },
+  {
+   "block": 11,
+   "name": "fc2",
+   "sign": "odd",
+   "shape": [
+    68,
+    17
+   ],
+   "dense": 1156,
+   "matrix_shape": [
+    768,
+    3072
+   ],
+   "matrix_dense": 2359296,
+   "mirror": 2139656,
+   "target": 1065,
+   "rank": 12,
+   "full": 17,
+   "dense_storage": false,
+   "params": 1020
+  },
+  {
+   "block": 11,
+   "name": "wq",
+   "sign": "even",
+   "shape": [
+    752,
+    700
+   ],
+   "dense": 526400,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 527488,
+   "target": 484812,
+   "rank": 334,
+   "full": 700,
+   "dense_storage": false,
+   "params": 484968
+  },
+  {
+   "block": 11,
+   "name": "wq",
+   "sign": "odd",
+   "shape": [
+    16,
+    68
+   ],
+   "dense": 1088,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 527488,
+   "target": 1003,
+   "rank": 11,
+   "full": 16,
+   "dense_storage": false,
+   "params": 924
+  },
+  {
+   "block": 11,
+   "name": "wk",
+   "sign": "even",
+   "shape": [
+    752,
+    700
+   ],
+   "dense": 526400,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 527488,
+   "target": 484812,
+   "rank": 334,
+   "full": 700,
+   "dense_storage": false,
+   "params": 484968
+  },
+  {
+   "block": 11,
+   "name": "wk",
+   "sign": "odd",
+   "shape": [
+    16,
+    68
+   ],
+   "dense": 1088,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 527488,
+   "target": 1003,
+   "rank": 11,
+   "full": 16,
+   "dense_storage": false,
+   "params": 924
+  },
+  {
+   "block": 11,
+   "name": "wv",
+   "sign": "even",
+   "shape": [
+    761,
+    700
+   ],
+   "dense": 532700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 533176,
+   "target": 490614,
+   "rank": 336,
+   "full": 700,
+   "dense_storage": false,
+   "params": 490896
+  },
+  {
+   "block": 11,
+   "name": "wv",
+   "sign": "odd",
+   "shape": [
+    7,
+    68
+   ],
+   "dense": 476,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 533176,
+   "target": 439,
+   "rank": 5,
+   "full": 7,
+   "dense_storage": false,
+   "params": 375
+  },
+  {
+   "block": 11,
+   "name": "wo",
+   "sign": "even",
+   "shape": [
+    700,
+    761
+   ],
+   "dense": 532700,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 533176,
+   "target": 490614,
+   "rank": 336,
+   "full": 700,
+   "dense_storage": false,
+   "params": 490896
+  },
+  {
+   "block": 11,
+   "name": "wo",
+   "sign": "odd",
+   "shape": [
+    68,
+    7
+   ],
+   "dense": 476,
+   "matrix_shape": [
+    768,
+    768
+   ],
+   "matrix_dense": 589824,
+   "mirror": 533176,
+   "target": 439,
+   "rank": 5,
+   "full": 7,
+   "dense_storage": false,
+   "params": 375
+  }
+ ],
+ "build": {
+  "embedding_shares": {
+   "patch_embed.weight": 0.29047765988126373,
+   "patch_embed.bias": 0.00023761394375632706,
+   "pos_embed.patches": 0.06229202825041877,
+   "pos_embed.cls": 0.03693953270098778,
+   "cls_token": 0.03693953270098778,
+   "registers": 0.034666539402704734
+  },
+  "pos_materialised": true,
+  "even_head": true,
+  "d_plus": 700,
+  "basis_change_local_rule": 0,
+  "basis_change_from_budget": 0
+ },
+ "allocation": "budget._fill over the even and odd blocks, targets proportional to Mirror-exact block counts",
+ "row": {
+  "model": "dinov2_vitb14_reg",
+  "fit_seed": 0,
+  "point": "f0.70",
+  "fraction": 0.7,
+  "curve": "mirror_lowrank",
+  "method": "mirror_svdllm",
+  "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+  "git_dirty": true,
+  "structure_sha": "2b2192863f519231",
+  "budget_total": 59454260,
+  "hparams": "{\"damp\": 1e-06, \"inner\": \"svdllm\"}",
+  "alloc_weights": "mirror (blocks)",
+  "claims_exact_invariance": true,
+  "mirror_exact_total": 64554464,
+  "same_as": "",
+  "full_rank": false,
+  "gap_step": 3755,
+  "gap_note": "within one block step above the budget (budget._fill)",
+  "structure_check_ok": true,
+  "max_offdiag_residual": 1.6878764234276686e-08,
+  "build_s": 133.36,
+  "val_top1": 46.76999747753143,
+  "flip_consistency": 97.59599566459656,
+  "max_abs_unit_feature_diff": 0.011989906430244446,
+  "msel_top1": 47.81000018119812,
+  "n_bank": 100000,
+  "n_msel": 10000,
+  "n_val": 50000,
+  "flip_consistency_fp32": 99.97999668121338,
+  "top1_fp32": 34.52000021934509,
+  "max_abs_unit_feature_diff_fp32": 3.4403055906295776e-06,
+  "n_bank_fp32": 10000,
+  "n_val_fp32": 5000,
+  "params_matrices": 59454578,
+  "params_basis_change": 0,
+  "params_total": 59454578,
+  "span_dense": 84934656,
+  "span_kept_frac": 0.7000037534737292,
+  "gap": 318,
+  "gap_rel": 5.34864953327146e-06,
+  "below_budget": false,
+  "model_params": 61103474,
+  "model_params_frac": 0.7057168779585296,
+  "macs": 16888856634,
+  "gflops": 33.777713268,
+  "gflops_frac": 0.7174792470155084,
+  "status": "ok",
+  "preds_sha": "d8fb291287e84681",
+  "time_s": 582.98,
+  "eval_s": 449.6,
+  "img_per_s": 511.6,
+  "peak_mem_gb": 6.201
+ }
+}

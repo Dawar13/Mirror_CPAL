@@ -1,0 +1,116 @@
+{
+  "experiment": "MUST-12",
+  "date_utc": "2026-11-15T13:31:37Z",
+  "git": {
+    "git_hash": "d572a53fe9508488161b60ce80427fa40b44f7af",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "model": "dinov2_vitb14_reg",
+    "checkpoint": "runs/MUST-12/vit_s16_none_s0/ckpt_e050.pt",
+    "arch": "controlled",
+    "groups": "LR,UD,R90,Klein",
+    "fit_seed": 0,
+    "fit_images": 2000,
+    "blocks": "all",
+    "null_draws": 20,
+    "twin_null_draws": 0,
+    "twin_null_groups": "UD",
+    "twin_null_blocks": "1-6",
+    "twin_null_mem_gb": 4.0,
+    "surgery": "",
+    "surgery_blocks": "1-6",
+    "queries": null,
+    "summary_ranges": "1-6,7-12",
+    "top_k": 10,
+    "workers": "8",
+    "no_heldout": false,
+    "no_attn": false,
+    "reference_run": null,
+    "seed": 0,
+    "experiment": "MUST-12",
+    "out": "results/MUST-12/vit_s16_none_s0/e050",
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache",
+    "batch_size": 128,
+    "stats_batch_size": 16,
+    "num_workers": 4,
+    "gpu_frac": 0.2,
+    "device": "auto",
+    "tiny": false
+  },
+  "seeds": {
+    "fit_seed": 0,
+    "null_seed_base": 0,
+    "null_draws": 20,
+    "twin_null_draws": 0
+  },
+  "models": {
+    "controlled_vit_s16_none_s0_e50": {
+      "checkpoint": "runs/MUST-12/vit_s16_none_s0/ckpt_e050.pt",
+      "arch": "controlled",
+      "checkpoint_info": {
+        "format": "mirror-controlled-v1",
+        "exp": "MUST-12",
+        "arch": "vit_s16",
+        "condition": "none",
+        "seed": 0,
+        "img_size": 96,
+        "patch_size": 16,
+        "num_classes": 100,
+        "drop_path_rate": 0.0,
+        "store_size": 108,
+        "kind": "checkpoint",
+        "epoch": 50,
+        "step": 12350,
+        "path": "runs/MUST-12/vit_s16_none_s0/ckpt_e050.pt"
+      }
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 1125.92,
+  "extra": {
+    "peak_gpu_memory_bytes": 897250816,
+    "timings_s": {
+      "pass_LR": 31.8,
+      "pass_UD": 38.4,
+      "pass_R90": 11.0,
+      "analyse_LR": 90.4,
+      "analyse_UD": 98.5,
+      "analyse_R90": 125.3,
+      "analyse_Klein": 724.6
+    },
+    "groups": [
+      "LR",
+      "UD",
+      "R90",
+      "Klein"
+    ],
+    "blocks": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ]
+  }
+}

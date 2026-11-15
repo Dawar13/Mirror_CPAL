@@ -1,0 +1,109 @@
+{
+  "result": {
+    "cv": {
+      "chosen_wd": 0.01,
+      "cv_top1": 89.28928928928929,
+      "trials": [
+        {
+          "wd": 1.0,
+          "cv_top1": 81.84851518184851,
+          "n": 5994
+        },
+        {
+          "wd": 0.1,
+          "cv_top1": 88.15482148815482,
+          "n": 5994
+        },
+        {
+          "wd": 0.01,
+          "cv_top1": 89.28928928928929,
+          "n": 5994
+        },
+        {
+          "wd": 0.001,
+          "cv_top1": 89.25592258925592,
+          "n": 5994
+        },
+        {
+          "wd": 0.0001,
+          "cv_top1": 89.1891891891892,
+          "n": 5994
+        },
+        {
+          "wd": 1e-05,
+          "cv_top1": 89.07240573907241,
+          "n": 5994
+        }
+      ],
+      "folds": 5,
+      "seed": 0,
+      "wd_at_grid_edge": false
+    },
+    "natural": {
+      "acc": 89.95512599240594,
+      "n": 5794
+    },
+    "mirror_augmented": {
+      "acc": 90.05868139454608,
+      "n": 11588,
+      "n_pairs": 5794,
+      "pairs_same_prediction": 97.9979288919572,
+      "n_pairs_differ": 116,
+      "n_pairs_differ_not_near_tie": 115,
+      "max_margin_of_differing_pairs": 0.09426738436019917
+    },
+    "train": {
+      "n": 5994,
+      "hit_iter_limit": false,
+      "share_class1": null
+    },
+    "test_share_class1": null
+  },
+  "rows": [
+    {
+      "variant": "original",
+      "task": "species",
+      "features": "even_cls",
+      "test_set": "natural",
+      "acc": 89.95512599240594,
+      "n": 5794,
+      "chosen_wd": 0.01,
+      "cv_top1_train": 89.28928928928929,
+      "wd_at_grid_edge": false,
+      "n_train": 5994,
+      "pairs_same_prediction": null,
+      "n_pairs_differ_not_near_tie": null
+    },
+    {
+      "variant": "original",
+      "task": "species",
+      "features": "even_cls",
+      "test_set": "mirror_augmented",
+      "acc": 90.05868139454608,
+      "n": 11588,
+      "chosen_wd": 0.01,
+      "cv_top1_train": 89.28928928928929,
+      "wd_at_grid_edge": false,
+      "n_train": 5994,
+      "pairs_same_prediction": 97.9979288919572,
+      "n_pairs_differ_not_near_tie": 115
+    }
+  ],
+  "settings": {
+    "grid": [
+      1e-05,
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "folds": 5,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000
+    },
+    "num_classes": 200
+  },
+  "features_sha": "508aa9507cf090252376686b641bde89"
+}

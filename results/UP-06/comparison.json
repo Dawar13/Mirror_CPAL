@@ -1,0 +1,63 @@
+{
+  "bar_points": 0.5,
+  "reading": "point estimate |drop(mirror_exact) - drop(original)| <= bar",
+  "forms": {
+    "int8": {
+      "drop_original": 0.003999471664428711,
+      "drop_mirror_exact": 0.005996227264404297,
+      "difference": 0.001996755599975586,
+      "pass": true,
+      "bootstrap_difference": {
+        "n": 50000,
+        "n_resamples": 10000,
+        "seed": 0,
+        "diff": 0.002,
+        "ci_low": -0.10200000000000001,
+        "ci_high": 0.10200000000000001,
+        "excludes_zero": false
+      },
+      "ci_inside_bar": true,
+      "bootstrap_drop": {
+        "original": {
+          "diff": 0.004,
+          "ci_low": -0.054,
+          "ci_high": 0.062
+        },
+        "mirror_exact": {
+          "diff": 0.006,
+          "ci_low": -0.08,
+          "ci_high": 0.09
+        }
+      }
+    },
+    "tome": {
+      "drop_original": 0.33600330352783203,
+      "drop_mirror_exact": 0.17799735069274902,
+      "difference": -0.158005952835083,
+      "pass": true,
+      "bootstrap_difference": {
+        "n": 50000,
+        "n_resamples": 10000,
+        "seed": 0,
+        "diff": -0.158,
+        "ci_low": -0.338,
+        "ci_high": 0.024,
+        "excludes_zero": false
+      },
+      "ci_inside_bar": true,
+      "bootstrap_drop": {
+        "original": {
+          "diff": 0.336,
+          "ci_low": 0.202,
+          "ci_high": 0.47000000000000003
+        },
+        "mirror_exact": {
+          "diff": 0.178,
+          "ci_low": 0.046,
+          "ci_high": 0.314
+        }
+      }
+    }
+  },
+  "prediction_holds": true
+}

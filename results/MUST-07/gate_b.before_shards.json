@@ -1,0 +1,140 @@
+{
+  "gate": "B",
+  "experiment": "MUST-07",
+  "model": "dinov2_vitb14_reg",
+  "size": "full",
+  "fit_seed": 0,
+  "selection_data": "method-selection queries (10k ImageNet-train images, role msel) against the k-NN bank; validation is not read",
+  "rule": "rank methods 3 to 12 (every non-Mirror method; Mirror-local is an ablation) by method-selection k-NN top-1 at the full-model size, each at its own method-selection-chosen hyperparameters; ties go to the lower MUST-07 method number",
+  "ranking": [
+    {
+      "method": "svdllm",
+      "number": 4,
+      "msel_top1": 77.35999822616577,
+      "hparams": {
+        "damp": 1e-06
+      },
+      "params_total": 64555008,
+      "budget_total": 64554464,
+      "gap_rel": 8.426992748324887e-06,
+      "n_msel": 10000,
+      "rank": 1
+    },
+    {
+      "method": "slicegpt",
+      "number": 6,
+      "msel_top1": 69.52999830245972,
+      "hparams": {
+        "basis": "per_block",
+        "pca": "stream"
+      },
+      "params_total": 64675800,
+      "budget_total": 64554464,
+      "gap_rel": 0.0018795911619682,
+      "n_msel": 10000,
+      "rank": 2
+    },
+    {
+      "method": "flap",
+      "number": 7,
+      "msel_top1": 66.99999570846558,
+      "hparams": {
+        "allocation": "uniform"
+      },
+      "params_total": 64555008,
+      "budget_total": 64554464,
+      "gap_rel": 8.426992748324887e-06,
+      "n_msel": 10000,
+      "rank": 3
+    },
+    {
+      "method": "asvd_scale",
+      "number": 5,
+      "msel_top1": 59.700000286102295,
+      "hparams": {
+        "alpha": 1.0
+      },
+      "params_total": 64555008,
+      "budget_total": 64554464,
+      "gap_rel": 8.426992748324887e-06,
+      "n_msel": 10000,
+      "rank": 4
+    },
+    {
+      "method": "pair_wcos",
+      "number": 10,
+      "msel_top1": 16.48000031709671,
+      "hparams": {},
+      "params_total": 64554464,
+      "budget_total": 64554464,
+      "gap_rel": 0.0,
+      "n_msel": 10000,
+      "rank": 5
+    },
+    {
+      "method": "zipit",
+      "number": 8,
+      "msel_top1": 15.16999900341034,
+      "hparams": {
+        "alpha": 0.5
+      },
+      "params_total": 64555008,
+      "budget_total": 64554464,
+      "gap_rel": 8.426992748324887e-06,
+      "n_msel": 10000,
+      "rank": 6
+    },
+    {
+      "method": "pair_actcorr",
+      "number": 9,
+      "msel_top1": 13.87999951839447,
+      "hparams": {},
+      "params_total": 64554464,
+      "budget_total": 64554464,
+      "gap_rel": 0.0,
+      "n_msel": 10000,
+      "rank": 7
+    },
+    {
+      "method": "pair_random",
+      "number": 11,
+      "msel_top1": 11.309999972581863,
+      "hparams": {},
+      "params_total": 64554464,
+      "budget_total": 64554464,
+      "gap_rel": 0.0,
+      "n_msel": 10000,
+      "rank": 8
+    },
+    {
+      "method": "svd",
+      "number": 3,
+      "msel_top1": 5.669999867677689,
+      "hparams": {},
+      "params_total": 64555008,
+      "budget_total": 64554464,
+      "gap_rel": 8.426992748324887e-06,
+      "n_msel": 10000,
+      "rank": 9
+    },
+    {
+      "method": "random_structure",
+      "number": 12,
+      "msel_top1": 5.079999938607216,
+      "hparams": {},
+      "params_total": 64554464,
+      "budget_total": 64554464,
+      "gap_rel": 0.0,
+      "n_msel": 10000,
+      "rank": 10
+    }
+  ],
+  "ties": [],
+  "best": "svdllm",
+  "second_best": "slicegpt",
+  "missing_methods": [],
+  "complete": true,
+  "git_hash": "5edf2980f01f64daa5fbcb084bf1665b1ba3c992",
+  "git_dirty": true,
+  "written": "2026-11-15 13:09:06"
+}

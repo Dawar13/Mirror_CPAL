@@ -1,0 +1,130 @@
+{
+  "experiment": "CORE-03",
+  "date_utc": "2026-11-15T19:43:17Z",
+  "git": {
+    "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "model": "dinov2_vitl14_reg",
+    "fit_seed": 0,
+    "fractions": "0.85,0.70,0.55,0.40",
+    "lowrank_methods": "svd,svdllm",
+    "lowrank_weights": "mirror",
+    "inner": "svd,svdllm",
+    "score_inner": "svd",
+    "damp": 1e-06,
+    "flip_rows": "mirror",
+    "fp32_flip": "exact",
+    "fp32_queries": null,
+    "fp32_bank_per_class": null,
+    "out": null,
+    "structure_dir": null,
+    "structure": null,
+    "bootstrap_resamples": 10000,
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache",
+    "eval_batch": null,
+    "stats_batch_size": 16,
+    "num_workers": 4,
+    "preload": "loader",
+    "queries": null,
+    "knn_k": 20,
+    "knn_temperature": 0.07,
+    "gpu_frac": 0.25,
+    "device": null,
+    "tiny": false,
+    "summary_only": false
+  },
+  "seeds": {
+    "fit_seed": 0,
+    "bootstrap_seed": 0,
+    "global": 0
+  },
+  "models": {
+    "dinov2_vitl14_reg": {
+      "source": "torch_hub",
+      "hub_repo": "facebookresearch/dinov2",
+      "hub_name": "dinov2_vitl14_reg",
+      "feature": "cls",
+      "why": "DINOv2 through the existing Dinov2Adapter (CLS after the final norm).",
+      "preprocess": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ],
+        "interpolation": "bicubic",
+        "crop_pct": 0.875
+      },
+      "note": "(verify on VM)"
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 13112.97,
+  "extra": {
+    "fractions": [
+      0.85,
+      0.7,
+      0.55,
+      0.4
+    ],
+    "budgets": {
+      "f0.85": 256691405,
+      "f0.70": 211392922,
+      "f0.55": 166094439,
+      "f0.40": 120795956
+    },
+    "span_dense": 301989888,
+    "mirror_exact_total": 246026620,
+    "mirror_fraction": 0.8146849605772231,
+    "lowrank_methods": [
+      "svd",
+      "svdllm"
+    ],
+    "inner_methods": [
+      "svd",
+      "svdllm"
+    ],
+    "score_inner": "svd",
+    "structure": {
+      "path": "/home/ubuntu/Mirror_CPAL/results/MUST-07/structure/dinov2_vitl14_reg_s0.npz",
+      "sha": "edf00dab7205d984"
+    },
+    "rows_added": 10,
+    "rows_total": 18,
+    "images_featurised": 2020000,
+    "peak_mem_gb_process": 10.141,
+    "data_sizes": {
+      "bank": 100000,
+      "msel": 10000,
+      "val": 50000,
+      "bank_fp32": 10000,
+      "val_fp32": 5000
+    },
+    "amp": "bf16",
+    "fp32_flip": {
+      "mode": "exact",
+      "queries": 5000,
+      "bank_per_class": 10
+    },
+    "p31_verdict": "FAIL"
+  }
+}

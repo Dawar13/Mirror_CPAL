@@ -1,0 +1,16 @@
+# Healed full-model comparison (identical recipe) and test-time flip averaging
+
+k-NN: 100k-image train bank, 50k validation queries; mean ± std over healing seeds. Flip consistency with fp32 features on all validation images.
+
+| Method | Seeds | k-NN top-1 | step 0 | step 100 | step 300 | step 780 | Flip consistency fp32 (min) | Parameters (share) | GFLOPs (share) |
+|---|---|---|---|---|---|---|---|---|---|
+| Mirror-exact | 3 | 78.34 ± 0.02 | 53.84 | 78.02 | 78.38 | 78.34 | 100.000 | 0.765 | 0.774 |
+| Plain SVD | 1 | 77.02 | 5.20 | 74.18 | 76.78 | 77.02 | 94.296 | 0.765 | 0.774 |
+| SVD-LLM-style whitening (best baseline) | 3 | 78.06 ± 0.01 | 75.80 | 77.50 | 78.10 | 78.06 | 95.706 | 0.765 | 0.774 |
+| SliceGPT-style slicing (second-best baseline) | 1 | 77.89 | 68.29 | 77.39 | 77.91 | 77.89 | 95.432 | 0.766 | 0.775 |
+| Random structure | 1 | 69.93 | 4.78 | 18.63 | 52.27 | 69.93 | 100.000 | 0.765 | 0.774 |
+| original model, plain | 1 | 78.95 |  |  |  |  |  | 1.000 |  |
+| original model, flipavg (two passes) | 1 | 79.00 |  |  |  |  | 100.000 | 1.000 |  |
+| healed model, plain | 1 | 78.32 |  |  |  |  | 100.000 | 0.765 |  |
+
+Sources: `data/table1_healed.csv`, `data/table1_flipavg.csv`

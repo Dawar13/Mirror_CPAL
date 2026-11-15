@@ -1,0 +1,163 @@
+{
+  "experiment": "MUST-06",
+  "date_utc": "2026-11-15T10:09:48Z",
+  "git": {
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "model": "deit3_b16",
+    "fit_run": "runs/g/deit3_b16_s0",
+    "fit_seed": null,
+    "structure_dir": null,
+    "blocks": "1-6",
+    "images": 5000,
+    "act": "post",
+    "top_partners": 10,
+    "partner_score": "abs",
+    "null_seeds": 1,
+    "out": "/home/ubuntu/Mirror_CPAL/results/MUST-06",
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache",
+    "top_k": 10,
+    "workers": 6,
+    "reference_run": "runs/g/deit3_b16_s0",
+    "batch_size": 32,
+    "stats_batch_size": 16,
+    "num_workers": 4,
+    "seed": 0,
+    "gpu_frac": 0.15,
+    "force": false,
+    "tiny": false
+  },
+  "seeds": {
+    "global": 0,
+    "fit": 0,
+    "random_pairs": "seed * 1000 + 500 + block0",
+    "random_structures": "(seed + 1) * 100000 + 1000 * null_seed + block0 (+500 A_out, +700 pairing)"
+  },
+  "models": {
+    "deit3_b16": {
+      "registry": {
+        "source": "timm",
+        "timm_name": "deit3_base_patch16_224.fb_in1k",
+        "feature": "cls",
+        "why": "DeiT-III ViT-B/16, supervised on ImageNet-1k only, 224 px. Chosen over fb_in22k_ft_in1k so that the training data match the other ImageNet-1k models and no 22k pre-training is mixed in. Has LayerScale; CLS has no position embedding (no_embed_class=True).",
+        "listing": "timm.list_models('*deit3*base*', pretrained=True) -> deit3_base_patch16_224.fb_in1k, deit3_base_patch16_224.fb_in22k_ft_in1k, deit3_base_patch16_384.fb_in1k, deit3_base_patch16_384.fb_in22k_ft_in1k",
+        "preprocess": {
+          "mean": [
+            0.485,
+            0.456,
+            0.406
+          ],
+          "std": [
+            0.229,
+            0.224,
+            0.225
+          ],
+          "interpolation": "bicubic",
+          "crop_pct": 0.9
+        },
+        "note": "(verify on VM)"
+      }
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 21.14,
+  "extra": {
+    "structure": {
+      "kind": "fit run",
+      "path": "runs/g/deit3_b16_s0/results/e1_operators.npz",
+      "sha256": "cc65a9ba9425c9ba6bb707cfac15696f0a8a9068c7c3ba9257385d33b9a5f92d",
+      "fit_seed": 0,
+      "reused": true,
+      "reference_check": {
+        "reference": "runs/g/deit3_b16_s0/results",
+        "n_pairs": {
+          "1": {
+            "fresh": 1128,
+            "reference": 1128
+          },
+          "2": {
+            "fresh": 1041,
+            "reference": 1041
+          },
+          "3": {
+            "fresh": 934,
+            "reference": 934
+          },
+          "4": {
+            "fresh": 699,
+            "reference": 699
+          },
+          "5": {
+            "fresh": 410,
+            "reference": 410
+          },
+          "6": {
+            "fresh": 173,
+            "reference": 173
+          }
+        },
+        "n_pairs_equal": true,
+        "d_plus": {
+          "0": {
+            "fresh": 404,
+            "reference": 404
+          },
+          "1": {
+            "fresh": 506,
+            "reference": 506
+          },
+          "2": {
+            "fresh": 547,
+            "reference": 547
+          },
+          "3": {
+            "fresh": 570,
+            "reference": 570
+          },
+          "4": {
+            "fresh": 615,
+            "reference": 615
+          },
+          "5": {
+            "fresh": 659,
+            "reference": 659
+          },
+          "6": {
+            "fresh": 706,
+            "reference": 706
+          }
+        },
+        "d_plus_equal": true,
+        "reference_model": "deit3_b16",
+        "reference_fit_seed": 0
+      }
+    },
+    "peak_memory_gb": 0.513,
+    "timing": {
+      "load": 5.21,
+      "structure": 3.38,
+      "correlations": 1.31,
+      "spectra": 11.22
+    },
+    "block_numbering": "1-based; block 1 = model.blocks[0]",
+    "data_roles": {
+      "structure": "train fit0",
+      "measurement": "validation (query role)"
+    }
+  }
+}

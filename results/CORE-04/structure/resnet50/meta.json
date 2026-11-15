@@ -1,0 +1,94 @@
+{
+  "experiment": "CORE-04",
+  "date_utc": "2026-11-15T10:31:56Z",
+  "git": {
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "steps": "structure",
+    "models": "dinov3_b16,eva02_b14,convnext_b,resnet50",
+    "groups": "LR,UD",
+    "fit_seed": 0,
+    "null_draws": 20,
+    "twin_null_draws": 0,
+    "seed": 0,
+    "top_k": 10,
+    "workers": "6",
+    "reuse_must04": "/home/ubuntu/Mirror_CPAL/results/MUST-04",
+    "surgery_threshold": 0.8,
+    "surgery_models": "auto",
+    "surgery_components": "mlp,both",
+    "gate_b": "/home/ubuntu/Mirror_CPAL/results/MUST-07/gate_b.json",
+    "allow_no_gate_b": false,
+    "structure_dir": "/home/ubuntu/Mirror_CPAL/results/MUST-07/structure",
+    "must07_reuse": "/home/ubuntu/Mirror_CPAL/results/MUST-07",
+    "fp32_flip": "none",
+    "queries": null,
+    "out": null,
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache",
+    "batch_size": 128,
+    "stats_batch_size": 16,
+    "num_workers": 4,
+    "gpu_frac": 0.15,
+    "device": "auto",
+    "tiny": false,
+    "tiny_force_surgery": false,
+    "groups_list": [
+      "LR",
+      "UD"
+    ]
+  },
+  "seeds": {
+    "fit_seed": 0,
+    "null_seed_base": 0,
+    "null_draws": 20
+  },
+  "models": {
+    "resnet50": {
+      "name": "resnet50",
+      "role": "CNN",
+      "recipe_flip": "yes",
+      "recipe_verified": true,
+      "recipe_flip_confidence": null,
+      "width": "stage output channels 256, 512, 1024, 2048 (bottleneck widths 64, 128, 256, 512; expansion 4)",
+      "blocks": 16,
+      "size_class": "CNN",
+      "mlp_type": "bottleneck: 1 x 1 conv (reduce), 3 x 3 conv, 1 x 1 conv (expand); CORE-04 uses the 1 x 1 convolutions",
+      "yaml": "configs/models/resnet50.yaml",
+      "id": "resnet50.tv_in1k",
+      "revision": "78f3ecfdb38e06d9b8397f662e7ab8fee96026fa"
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 370.12,
+  "extra": {
+    "step": "structure",
+    "engine": "mirror/cnn_groups.py",
+    "checks": {},
+    "versions": {
+      "timm": "1.0.31",
+      "torch": "2.11.0+cu128",
+      "numpy": "2.2.6"
+    },
+    "peak_gpu_memory_bytes": 4888683520,
+    "spec": {
+      "input_size": 225,
+      "n_units": 16,
+      "n_stages": 4
+    }
+  }
+}

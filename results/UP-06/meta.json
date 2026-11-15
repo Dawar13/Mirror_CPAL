@@ -1,0 +1,102 @@
+{
+  "experiment": "UP-06",
+  "date_utc": "2026-11-15T11:46:31Z",
+  "git": {
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "healed_run": "runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+    "variants": "original,original+int8,original+tome,mirror_exact,mirror_exact+int8,mirror_exact+tome",
+    "tome_r": 8,
+    "fp32": "mirror",
+    "out": null,
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache",
+    "eval_batch": null,
+    "knn_batch_size": 128,
+    "num_workers": 4,
+    "preload": "cpu",
+    "knn_k": 20,
+    "knn_temperature": 0.07,
+    "n_boot": 10000,
+    "seed": 0,
+    "gpu_frac": 0.2,
+    "device": null,
+    "force": false,
+    "tiny": false
+  },
+  "seeds": {
+    "seed": 0,
+    "bootstrap": 0,
+    "healed": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "kind": "dinov2",
+      "hub_repo": "facebookresearch/dinov2",
+      "name": "dinov2_vitb14_reg",
+      "img_size": 224
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 3871.85,
+  "extra": {
+    "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+    "healed_method": "mirror_exact",
+    "timing": {
+      "load": 7.29,
+      "original": 269.02,
+      "original+int8": 252.78,
+      "original+tome": 374.98,
+      "mirror_exact": 1109.51,
+      "mirror_exact+int8": 859.85,
+      "mirror_exact+tome": 982.57
+    },
+    "bar_points": 0.5,
+    "int8": {
+      "n_matrices": 48,
+      "n_weights": 84934656,
+      "n_scales": 82944,
+      "bytes_fp32": 339738624,
+      "bytes_int8": 85266432,
+      "max_abs_err_over_scale": 0.5000035693708613,
+      "scheme": "symmetric, per output channel, [-127, 127], fp32 scale max|W_row|/127, round half to even; weights dequantised in place (simulated weight-only INT8)"
+    },
+    "tome": {
+      "r": 8,
+      "n_protected": 5,
+      "n_tokens": 261,
+      "expected_tokens": [
+        253,
+        245,
+        237,
+        229,
+        221,
+        213,
+        205,
+        197,
+        189,
+        181,
+        173,
+        165
+      ]
+    },
+    "int8_mirror_checks": {
+      "0:MirrorMLPConstraint": 0.020264449029956357,
+      "1:MirrorAttnConstraint": 0.015295469896423596
+    }
+  }
+}

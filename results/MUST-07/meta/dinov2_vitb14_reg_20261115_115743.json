@@ -1,0 +1,149 @@
+{
+  "experiment": "MUST-07",
+  "date_utc": "2026-11-15T11:57:43Z",
+  "git": {
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "experiment": "MUST-07",
+    "model": "dinov2_vitb14_reg",
+    "sizes": "full",
+    "methods": null,
+    "fit_seeds": "0",
+    "grid_seeds": "0",
+    "random_seed": 1,
+    "skip_flip_seeds": "",
+    "fp32_flip": "full",
+    "fp32_queries": 5000,
+    "fp32_bank_per_class": 10,
+    "out": null,
+    "structure_dir": null,
+    "operators_template": null,
+    "reuse_from": null,
+    "main_model": null,
+    "bootstrap_fit_seed": 0,
+    "bootstrap_resamples": 10000,
+    "budget_tol": 0.01,
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache",
+    "eval_batch": null,
+    "stats_batch_size": 16,
+    "num_workers": 4,
+    "preload": "cpu",
+    "queries": null,
+    "top_k": 10,
+    "workers": 8,
+    "register_margin": 0.0,
+    "knn_k": 20,
+    "knn_temperature": 0.07,
+    "gpu_frac": 0.3,
+    "device": null,
+    "tiny": false,
+    "shim": false,
+    "force_structure": false,
+    "structure_only": false,
+    "postprocess_only": false
+  },
+  "seeds": {
+    "fit_seeds": [
+      0
+    ],
+    "random_seed_base": 1,
+    "bootstrap_seed": 0,
+    "global": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "source": "torch_hub",
+      "hub_repo": "facebookresearch/dinov2",
+      "hub_name": "dinov2_vitb14_reg",
+      "feature": "cls",
+      "why": "DINOv2 through the existing Dinov2Adapter (CLS after the final norm).",
+      "preprocess": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ],
+        "interpolation": "bicubic",
+        "crop_pct": 0.875
+      },
+      "note": "(verify on VM)"
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 3183.34,
+  "extra": {
+    "sizes": [
+      {
+        "name": "full",
+        "k": 12,
+        "components": [
+          "mlp",
+          "attn"
+        ]
+      }
+    ],
+    "methods": [
+      "mirror_exact",
+      "mirror_local",
+      "svd",
+      "svdllm",
+      "asvd_scale",
+      "slicegpt",
+      "flap",
+      "zipit",
+      "pair_actcorr",
+      "pair_wcos",
+      "pair_random",
+      "random_structure"
+    ],
+    "compressor_api": "real",
+    "compressor_methods": [
+      "svd",
+      "svdllm",
+      "asvd_scale",
+      "slicegpt",
+      "flap",
+      "zipit"
+    ],
+    "budget_source": "real",
+    "structures": {
+      "0": {
+        "path": "/home/ubuntu/Mirror_CPAL/results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+        "sha": "2b2192863f519231"
+      }
+    },
+    "rows_added": 11,
+    "rows_total": 13,
+    "images_featurised": 3300000,
+    "peak_mem_gb_process": 5.879,
+    "data_sizes": {
+      "bank": 100000,
+      "msel": 10000,
+      "val": 50000,
+      "bank_fp32": 10000,
+      "val_fp32": 5000
+    },
+    "amp": "bf16",
+    "fp32_flip": "full"
+  }
+}

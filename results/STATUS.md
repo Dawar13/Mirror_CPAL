@@ -2,45 +2,48 @@
 
 ## Next phase (PROJECT_NEXT_PHASE.md, adopted 14 November 2026)
 
-### Live run on the Jarvis Labs H200 (instance 574820), updated 2026-11-15 about 15:30 UTC
+### H200 run (Jarvis Labs instance 574820), finished 2026-11-15; instance deleted 20:30 UTC
 
-Started 06:56 UTC. Numbers below are read from the result files on the VM; they are pulled and collected at the end.
+The VM booted at about 06:10 UTC, jobs ran 06:56 to 20:18 UTC, and the instance was deleted (not paused) at about
+20:30 UTC on Dawar's order, about 14.4 hours after boot (check against the bill). All result tables, summaries,
+figures and logs were pulled and checksum-checked (1,544 tables identical; MUST-01's laptop copy is the newer committed
+rerun). Kept on the laptop but not in git: the 9 healed MUST-09 checkpoints (runs/MUST-09, checksums matched) and the
+fitted structures (results/MUST-07/structure and others). Not kept, by Dawar's choice (laptop storage; regenerable on
+a GPU from the checkpoints): feature files, caches, MUST-12 pilot checkpoints and k-NN prediction arrays.
 
-**Gates**
-- Gate B (MUST-07, method-selection set, full size): best baseline SVD-LLM (77.36), second SliceGPT (69.53). Both are
-  being healed for MUST-09.
-- Gate C failed at 64 x 64 (10:10 UTC): LR ratio to null 0.484 (passes), LR twin fraction 0.060 (bar 0.2, fails); the
-  no-flip model is close on both (0.547, 0.067). Dawar chose the pre-registered fix: the pilot rerun at 96 x 96 with
-  ViT-S/16 (job file P). It failed too (13:07 UTC): LR ratio 0.475, twin fraction 0.065; no-flip model 0.520 and
-  0.084. As agreed in advance, CORE-01, CORE-02, UP-01 to UP-04 and CORE-05 P5.2 are dropped and reported.
+**Scoring** (scripts/collect_next_phase.py, FINAL_RESULTS.md, PAPER_NUMBERS.json): 40 pre-registered predictions,
+17 PASS, 16 FAIL, 7 PENDING. Figures and tables: scripts/make_figures_next.py, results/paper_next/FIGURES.md (15 made;
+the refund table skipped because CORE-02 was dropped).
 
-**Results so far (validation k-NN top-1 unless stated; original 78.94)**
-- MUST-09 (results/MUST-09/summary.csv, 17:01 UTC): healed Mirror-exact 78.32, 78.35, 78.35 (seeds 0 to 2, mean
-  78.34; fp32 flip consistency 100.000% on every seed); healed SVD-LLM, the gate-B best, 78.05, 78.07, 78.06 (mean
-  78.06; fp32 flip consistency 95.80, 95.71, 95.73%); healed SliceGPT 77.89 (seed 0; 95.43%); plain SVD 77.02 (seed 0,
-  more than 1 point below, so no extra seeds); random structure 69.93 (100.000%). Read off the summary: P9.1 holds
-  (Mirror-exact minus SVD-LLM, 3-seed means, +0.28 against the bar of -0.5); gate D holds (bar -1.0); P9.2 holds (only
-  Mirror-exact and random structure reach 100% in fp32); P9.3 holds (random structure trails by 8.41, bar 3). Final
-  verdicts and bootstrap intervals come from scripts/collect_next_phase.py after the pull.
-- MUST-07 zero-shot at full size: Mirror-exact 53.88, SVD-LLM 75.80, SliceGPT 68.33, FLAP 65.12, ASVD 57.09.
-- MUST-10 (P10.1 holds): healed Mirror-exact minus flip-averaged original: k-NN -0.68 (CI -0.87 to -0.51), linear
-  probe -1.02, at 0.387 of the FLOPs and 0.765 of the parameters.
-- UP-06 (holds): INT8 drop 0.006 (original 0.004); ToMe drop 0.18 (original 0.34).
-- MUST-04: in DINOv2-B, B-reg, L-reg and DeiT-III, blocks 1 to 6: LR and UD ratios to null 0.45 to 0.51, twin
-  fractions 0.43 to 0.57 (twin-fraction null about 0.00); R90 ratio 0.75 to 0.85. P4.1 (UD and R90 at least 0.9) and
-  P4.2 (UD twin fraction within the null) do not hold: UD structure is as strong as LR in models trained without
-  vertical flips.
-- MUST-02: fp64 error 5.8e-14; fp32 largest component error 2.51e-5 (tolerance 1e-5, does not hold); fp32 flip
-  consistency 100.000% on 50,000 queries.
-- MUST-06: twin visibility checks pass, effective-rank check fails (all three models). UP-07: weights-only pairing
-  fails.
+**Main result (MUST-09, PASS on P9.1, P9.2, P9.3; gate D met)**, validation k-NN top-1, original 78.94: healed
+Mirror-exact 78.32, 78.35, 78.35 (mean 78.34; fp32 flip consistency 100.000% on every seed); healed SVD-LLM (gate-B
+best) 78.05, 78.07, 78.06 (mean 78.06; 95.7 to 95.8%); healed SliceGPT 77.89 (seed 0); plain SVD 77.02; random
+structure 69.93. MUST-10 PASS (-0.68 against flip averaging at 0.387 of the FLOPs).
 
-**Operational notes**: thread oversubscription (28-thread BLAS and OpenMP pools in every job) made CPU work 20 to 60
-times slower until 10:12 UTC; fixed (notes/decisions.md). At 15:16 to 15:22 UTC the three serial tails (MUST-07 on
-DINOv2-B-reg with seeds 1 and 2 and the 9-block size, MUST-11 ADE20K, CORE-04 surgery) were split into parallel
-processes (job files R and R2; shards merged afterwards with scripts/must07_shards.py). Expected end of GPU work
-about 18:00 to 19:00 UTC; then results are pulled and the instance is switched off (destroyed, at Dawar's request),
-not paused.
+**Downstream (MUST-11 P11.1 PASS)**: ImageNet linear probe original 81.00, Mirror-exact 80.04 to 80.19 (3 seeds),
+SVD-LLM 79.72; transfer, Mirror-exact against SVD-LLM: CIFAR-100 90.18 / 89.40, DTD 83.35 / 82.07, Pets 95.69 / 95.53,
+Flowers 99.69 / 99.64 (original 91.42, 83.51, 95.94, 99.69); ADE20K mIoU original 47.59, Mirror-exact 47.16, SVD-LLM
+46.79. P11.2 PENDING: Mirror-exact's symmetrised head agrees on 99.99991% of 487.7 million pixels (422 differ, logits
+equal to 2.5e-5 relative), but the top-two margins needed for the pre-registered near-tie rule were not recorded.
+
+**Other passes**: CORE-07 P7.1 (ImageNet-V2 drop 9.17 against the original's 8.62, bound 1.0); CORE-06 P6.1 to P6.3
+(even features: species 89.4 to 89.5%, facing exactly 50.0% under mirror augmentation; odd features: facing 99.2%);
+CORE-04 P4.3; MUST-03; MUST-05 P5.2; MUST-06 P6.1 and P6.2; MUST-08 P8.1 and P8.2; MUST-01.
+
+**Fails**: MUST-02 (fp32 component error 2.51e-5, bar 1e-5; flip consistency 100%); MUST-04 P4.1 to P4.3 (UD
+structure as strong as LR); MUST-05 P5.1 (twin switch-off cosine 0.49, bar 0.7); MUST-06 P6.3 (effective rank);
+MUST-07 P7.1 and P7.2 (zero-shot at 6 blocks Mirror-exact does not beat every baseline by 2 points; smallest margin
+-1.75); gate C (MUST-12, at 64 and 96 px); CORE-01 T2 and T4 (pilot runs only); CORE-03 P3.1 (Mirror plus low rank
+above low rank alone at 0 of 4 points on all 3 models); CORE-04 P4.1 and P4.2; CORE-05 P5.1 (0.58, bar 0.5) and
+P5.3 (32 of 48 cases, 0.667, bar 0.75; rule frozen and committed in 70a47df before scoring).
+
+**Pending because dropped or not run**: CORE-01 T1 and T3, CORE-02 P2.1 to P2.3, CORE-05 P5.2 (all depend on the
+CORE-01 grid, dropped after gate C); UP-01 to UP-05 (UP-05 has no script). UP-06 and UP-07 are reported.
+
+**Operational notes** (notes/decisions.md): thread oversubscription until 10:12 UTC; serial tails split into parallel
+processes from 15:16 (job files R, R2, R3, R4; MUST-07 shards merged with scripts/must07_shards.py, CORE-05 truth
+merged by hand, both logged); a host-memory overload at 15:49 (one OOM kill, one cuSOLVER failure) fixed by loading
+images from the memory-mapped caches (--preload loader, identical rows); CORE-03's empty-part bug fixed in 805c231.
 
 ### Before the run
 

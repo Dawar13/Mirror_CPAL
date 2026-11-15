@@ -1,66 +1,166 @@
 {
  "written_by": "scripts/make_figures_next.py",
- "date_utc": "2026-11-15T07:49:43Z",
- "git_hash": "52e29d16766d80933db138b9414e4f69a81e4b7e",
+ "date_utc": "2026-11-15T20:30:27Z",
+ "git_hash": "6b4c66ab7850d7c5d98d61e11bac05130033e399",
  "inputs_sha256": {
-  "table4_generality.csv": "798e9287f5895937fb1d55901d5e311057b5e2de6393aafc95995e8430259496",
+  "fig1_teaser.npz": "b2164df84365d7e8604f4acb44f9bde9d8c209f8222c33c2a39c75436770001b",
+  "fig2_blocks.csv": "79e2566fcdf8d61c2a8e0d6b4e912e7a867830440fad343d6bc16014a746243b",
+  "table4_generality.csv": "4de3dfd9959b99bfb1b1d92a5c535e576990160fbd7d7e16585a73ebfc63c39a",
+  "fig3_matrix.csv": "f139627d87346af601ed0debdc88e592c5d0420d1f94f86bd8fa88487e6c238a",
+  "fig3_emergence.csv": "286925e9999d2161268aa319312eb484870a9687433a1313379427bc2e964383",
+  "fig4a_pairs.csv": "65a773cab671c7e1ad5d6e08452089ceaf6dbf87f028faa16d67f24fb4d3a49b",
+  "fig4b_stacking.csv": "2cf49cf33d386ca848f269d66b9c5d5f8b42c308a99ef2c59e6e710fbc1eff36",
+  "fig5_points.csv": "c1c3636cf6ff187001a0994dacfd71f27edafd384fa0cec59291a8e0fae2f67f",
+  "table1_healed.csv": "9eb393aca774979b3d3d8d70ccfdecc0ca28256d2c4b6c85e612671a4b8937ac",
+  "table1_flipavg.csv": "d4e3209d9065589d7e48792117225efb999c17665485c617f68c1e053efa167c",
+  "table2_downstream.csv": "53404a16de7147ca78148c542ce40c29a970a320ffa1c6cce619f6f592871386",
+  "table2_shift.csv": "d8e7ed3b09b3b572b7295b6687f75b8e6a46cdd6981db42aefa8468a98882634",
+  "must07_rows.csv": "7e003318f837a3051c5357a21863bbe79545152d5af9a5028794e489fed36686",
+  "table3_must07_p7.csv": "839f7199c84f8141f635799e4be232c1b0b73c3de9e60cbf1977c76a758309b0",
+  "table3_must08.csv": "06bbbf1e6ca812665aceb19378f599f7ebccd6d339a96a449459a1dacf8990c2",
   "table3_earlier_ablations.csv": "f5cbf3faaa21d3d0f91469178deaba5a513e61c673dc865c786f79221e562d15",
-  "appendix_law.csv": "4cf408c7db50fd01e3377e4aa92d777a9c5fa20e255ce6fe4358464f04496eec"
+  "appendix_law.csv": "8722e7f98931253aef26aa8af17e0c0b0ab8f75655357c97a002b014b0967daf",
+  "appendix_exactness.csv": "72b10ea45733d93f2fbcd2c80b9fa010a4aaa369d1a7fadf562f919958385bc0"
  },
  "entries": [
   {
    "kind": "figure",
    "name": "fig1_twins",
-   "status": "skipped",
-   "reason": "no MUST-05 teaser (data/fig1_teaser.npz)"
+   "status": "made",
+   "files": [
+    "fig1_twins.png",
+    "fig1_twins.pdf"
+   ],
+   "sources": [
+    "data/fig1_teaser.npz",
+    "PAPER_NUMBERS.json must04.dinov2_vitb14_reg.LR.tax_1-6"
+   ],
+   "caption": "Top activating patches (50k ImageNet-train images) of the strongest twin pairs in blocks 1, 3, 6.",
+   "skipped_panels": []
   },
   {
    "kind": "figure",
    "name": "fig2_tax_depth",
-   "status": "skipped",
-   "reason": "no MUST-04 or CORE-04 measurement (data/fig2_blocks.csv)"
+   "status": "made",
+   "files": [
+    "fig2_tax_depth.png",
+    "fig2_tax_depth.pdf"
+   ],
+   "sources": [
+    "data/fig2_blocks.csv",
+    "data/table4_generality.csv"
+   ],
+   "caption": "Tax by depth across models (a); breaking share relative to the matched null for the trained (LR) and wrong groups (b, c).",
+   "skipped_panels": [
+    "artefact-token inset (earlier-phase result, results/paper)"
+   ]
   },
   {
    "kind": "figure",
    "name": "fig3_controlled",
-   "status": "skipped",
-   "reason": "no CORE-01 measurement (data/fig3_matrix.csv)"
+   "status": "made",
+   "files": [
+    "fig3_controlled.png",
+    "fig3_controlled.pdf"
+   ],
+   "sources": [
+    "data/fig3_matrix.csv",
+    "data/fig3_emergence.csv"
+   ],
+   "caption": "Controlled training (ViT-S/8, ImageNet-100): structure by training symmetry (a) and its emergence (b); thin lines are single seeds.",
+   "skipped_panels": []
   },
   {
    "kind": "figure",
    "name": "fig4_visibility_stacking",
-   "status": "skipped",
-   "reason": "no MUST-06, CORE-03 or CORE-05 data"
+   "status": "made",
+   "files": [
+    "fig4_visibility_stacking.png",
+    "fig4_visibility_stacking.pdf"
+   ],
+   "sources": [
+    "data/fig4a_pairs.csv",
+    "data/fig4b_stacking.csv",
+    "data/fig4c_bands.csv"
+   ],
+   "caption": "(a) Twins correlate on the mirrored image but not on the same image; (b) Mirror stacks with low rank; (c) breaking energy by input-variance band over training.",
+   "skipped_panels": [
+    "panel c (inputs missing)"
+   ]
   },
   {
    "kind": "figure",
    "name": "fig5_accuracy_params",
-   "status": "skipped",
-   "reason": "no MUST-07, MUST-09 or CORE-04 data (data/fig5_points.csv)"
+   "status": "made",
+   "files": [
+    "fig5_accuracy_params.png",
+    "fig5_accuracy_params.pdf"
+   ],
+   "sources": [
+    "data/fig5_points.csv",
+    "PAPER_NUMBERS.json gate_b.best"
+   ],
+   "caption": "Accuracy against parameters: every method at matched parameters, zero-shot (hollow) and healed (filled, mean and standard deviation over seeds), with the released DINOv2 family.",
+   "skipped_panels": []
   },
   {
    "kind": "table",
    "name": "table1_healed",
-   "status": "skipped",
-   "reason": "no MUST-09 or MUST-10 data"
+   "status": "made",
+   "files": [
+    "table1_healed.md",
+    "table1_healed.csv",
+    "table1_healed.tex"
+   ],
+   "sources": [
+    "data/table1_healed.csv",
+    "data/table1_flipavg.csv"
+   ],
+   "caption": "Healed full-model comparison (identical recipe) and test-time flip averaging"
   },
   {
    "kind": "table",
    "name": "table2_downstream",
-   "status": "skipped",
-   "reason": "no MUST-11 or CORE-07 data"
+   "status": "made",
+   "files": [
+    "table2_downstream.md",
+    "table2_downstream.csv",
+    "table2_downstream.tex"
+   ],
+   "sources": [
+    "data/table2_downstream.csv",
+    "data/table2_shift.csv"
+   ],
+   "caption": "Downstream tasks, robustness and mask equivariance of the healed full models"
   },
   {
    "kind": "table",
    "name": "table3a_compressors",
-   "status": "skipped",
-   "reason": "no MUST-07 rows"
+   "status": "made",
+   "files": [
+    "table3a_compressors.md",
+    "table3a_compressors.csv",
+    "table3a_compressors.tex"
+   ],
+   "sources": [
+    "data/must07_rows.csv",
+    "data/table3_must07_p7.csv"
+   ],
+   "caption": "Zero-shot comparison at matched parameters (MUST-07), DINOv2-B reg"
   },
   {
    "kind": "table",
    "name": "table3b_components",
-   "status": "skipped",
-   "reason": "no MUST-08 rows"
+   "status": "made",
+   "files": [
+    "table3b_components.md",
+    "table3b_components.csv",
+    "table3b_components.tex"
+   ],
+   "sources": [
+    "data/table3_must08.csv"
+   ],
+   "caption": "Matched component ablation of Mirror-exact (MUST-08)"
   },
   {
    "kind": "table",
@@ -79,14 +179,37 @@
   {
    "kind": "table",
    "name": "table4_generality",
+   "status": "made",
+   "files": [
+    "table4_generality.md",
+    "table4_generality.csv",
+    "table4_generality.tex"
+   ],
+   "sources": [
+    "data/table4_generality.csv",
+    "data/appendix_law.csv"
+   ],
+   "caption": "Generality and the law across models and groups"
+  },
+  {
+   "kind": "table",
+   "name": "table4b_refund_new_groups",
    "status": "skipped",
-   "reason": "no MUST-04 or CORE-04 measurement"
+   "reason": "no CORE-02 surgery rows"
   },
   {
    "kind": "table",
    "name": "appendix_a1_exactness",
-   "status": "skipped",
-   "reason": "no MUST-02 per-component audit"
+   "status": "made",
+   "files": [
+    "appendix_a1_exactness.md",
+    "appendix_a1_exactness.csv",
+    "appendix_a1_exactness.tex"
+   ],
+   "sources": [
+    "data/appendix_exactness.csv"
+   ],
+   "caption": "Exactness audit of Mirror-exact, per component (largest over blocks)"
   },
   {
    "kind": "table",

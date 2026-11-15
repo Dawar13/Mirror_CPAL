@@ -1,0 +1,349 @@
+{
+  "experiment": "Tier 2 transfer linear probes",
+  "model": "dinov2_vitb14_reg",
+  "variants": [
+    "original",
+    "vexact_s0",
+    "best_svdllm_s0"
+  ],
+  "datasets": {
+    "cifar100": {
+      "hf_id": "uoft-cs/cifar100",
+      "train": [
+        "train"
+      ],
+      "test": "test",
+      "image": "img",
+      "label": "fine_label",
+      "num_classes": 100,
+      "name": "CIFAR-100",
+      "note": "(verify on VM)",
+      "cache": {
+        "format": 1,
+        "hf_id": "uoft-cs/cifar100",
+        "train_splits": [
+          "train"
+        ],
+        "test_split": "test",
+        "image": "img",
+        "label": "fine_label",
+        "resize": 256,
+        "crop": 224,
+        "complete": true,
+        "counts": {
+          "train": 50000,
+          "test": 10000
+        },
+        "loader": "parquet",
+        "sources": {
+          "train": [
+            "train-00000-of-00001.parquet"
+          ],
+          "test": [
+            "test-00000-of-00001.parquet"
+          ]
+        },
+        "decode": {
+          "train": {
+            "n": 50000,
+            "seconds": 26.8
+          },
+          "test": {
+            "n": 10000,
+            "seconds": 6.3
+          }
+        },
+        "seconds": 37.5,
+        "interpolation": "bicubic",
+        "note": "(verify on VM)"
+      }
+    },
+    "flowers102": {
+      "hf_id": "dpdl-benchmark/oxford_flowers102",
+      "train": [
+        "train",
+        "validation"
+      ],
+      "test": "test",
+      "image": "image",
+      "label": "label",
+      "num_classes": 102,
+      "name": "Oxford Flowers-102",
+      "note": "official 1,020 / 1,020 / 6,149 split sizes (verify on VM)",
+      "cache": {
+        "format": 1,
+        "hf_id": "dpdl-benchmark/oxford_flowers102",
+        "train_splits": [
+          "train",
+          "validation"
+        ],
+        "test_split": "test",
+        "image": "image",
+        "label": "label",
+        "resize": 256,
+        "crop": 224,
+        "complete": true,
+        "counts": {
+          "train": 2040,
+          "test": 6149
+        },
+        "loader": "parquet",
+        "sources": {
+          "train": [
+            "train-00000-of-00001.parquet",
+            "validation-00000-of-00001.parquet"
+          ],
+          "test": [
+            "test-00000-of-00006.parquet",
+            "test-00001-of-00006.parquet",
+            "test-00002-of-00006.parquet",
+            "test-00003-of-00006.parquet",
+            "test-00004-of-00006.parquet",
+            "test-00005-of-00006.parquet"
+          ]
+        },
+        "decode": {
+          "train": {
+            "n": 2040,
+            "seconds": 9.3
+          },
+          "test": {
+            "n": 6149,
+            "seconds": 24.3
+          }
+        },
+        "seconds": 66.6,
+        "interpolation": "bicubic",
+        "note": "official 1,020 / 1,020 / 6,149 split sizes (verify on VM)"
+      }
+    },
+    "pets": {
+      "hf_id": "timm/oxford-iiit-pet",
+      "train": [
+        "train"
+      ],
+      "test": "test",
+      "image": "image",
+      "label": "label",
+      "num_classes": 37,
+      "name": "Oxford-IIIT Pets",
+      "note": "train = official trainval (verify on VM)",
+      "cache": {
+        "format": 1,
+        "hf_id": "timm/oxford-iiit-pet",
+        "train_splits": [
+          "train"
+        ],
+        "test_split": "test",
+        "image": "image",
+        "label": "label",
+        "resize": 256,
+        "crop": 224,
+        "complete": true,
+        "counts": {
+          "train": 3680,
+          "test": 3669
+        },
+        "loader": "parquet",
+        "sources": {
+          "train": [
+            "train-00000-of-00001.parquet"
+          ],
+          "test": [
+            "test-00000-of-00001.parquet"
+          ]
+        },
+        "decode": {
+          "train": {
+            "n": 3680,
+            "seconds": 6.7
+          },
+          "test": {
+            "n": 3669,
+            "seconds": 6.5
+          }
+        },
+        "seconds": 22.8,
+        "interpolation": "bicubic",
+        "note": "train = official trainval (verify on VM)"
+      }
+    },
+    "dtd": {
+      "hf_id": "tanganke/dtd",
+      "train": [
+        "train"
+      ],
+      "test": "test",
+      "image": "image",
+      "label": "label",
+      "num_classes": 47,
+      "name": "DTD",
+      "note": "3,760 / 1,880: one official split, train + val (verify on VM)",
+      "cache": {
+        "format": 1,
+        "hf_id": "tanganke/dtd",
+        "train_splits": [
+          "train"
+        ],
+        "test_split": "test",
+        "image": "image",
+        "label": "label",
+        "resize": 256,
+        "crop": 224,
+        "complete": true,
+        "counts": {
+          "train": 3760,
+          "test": 1880
+        },
+        "loader": "parquet",
+        "sources": {
+          "train": [
+            "train-00000-of-00001.parquet"
+          ],
+          "test": [
+            "test-00000-of-00001.parquet"
+          ]
+        },
+        "decode": {
+          "train": {
+            "n": 3760,
+            "seconds": 5.9
+          },
+          "test": {
+            "n": 1880,
+            "seconds": 3.5
+          }
+        },
+        "seconds": 18.2,
+        "interpolation": "bicubic",
+        "note": "3,760 / 1,880: one official split, train + val (verify on VM)"
+      }
+    }
+  },
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "variants": "original",
+    "datasets": "cifar100,flowers102,pets,dtd",
+    "out": "results/MUST-11/t2",
+    "cache_dir": "cache",
+    "loader": "parquet",
+    "decode_workers": 8,
+    "operators": null,
+    "m1_structure": null,
+    "heal_dir": null,
+    "heal_config": null,
+    "vexact_dir": null,
+    "vexact_checkpoint": null,
+    "vexact_config": null,
+    "healed_run": [
+      "vexact_s0=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+      "best_svdllm_s0=runs/MUST-09/dinov2_vitb14_reg/svdllm/s0"
+    ],
+    "full_patch_view": true,
+    "random_seed": 1,
+    "seed": 0,
+    "img_size": 224,
+    "batch_size": 256,
+    "num_workers": 6,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "no_wd_refine": false,
+    "holdout_frac": 0.1,
+    "max_iter": 1000,
+    "history_size": 20,
+    "tol_grad": 1e-06,
+    "probe_tf32": false,
+    "skip_probe": false,
+    "force_features": false,
+    "force_probe": false,
+    "memory_fraction": null,
+    "device": null,
+    "tiny": false
+  },
+  "paths": {
+    "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "m1_structure": "runs/m1/m1_structure.npz",
+    "heal_dir": "runs/m3_pilot",
+    "vexact_dir": "runs/m3_vexact",
+    "vexact_checkpoint": null,
+    "vexact_config": null,
+    "healed_runs": {
+      "vexact_s0": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+      "best_svdllm_s0": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/svdllm/s0"
+    }
+  },
+  "git": {
+    "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "seed": 0,
+  "feature_recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+  "timing": {
+    "stages": {
+      "datasets": 0.01,
+      "load": 4.5
+    },
+    "variants": {
+      "original": {
+        "build original": 0.0,
+        "extract original cifar100 train": 94.96,
+        "extract original cifar100 test": 21.46,
+        "extract original flowers102 train": 4.89,
+        "extract original flowers102 test": 13.62,
+        "extract original pets train": 8.57,
+        "extract original pets test": 8.14,
+        "extract original dtd train": 7.46,
+        "extract original dtd test": 5.08,
+        "probe original cifar100": 1094.93,
+        "probe original flowers102": 142.67,
+        "probe original pets": 505.25,
+        "probe original dtd": 701.49
+      },
+      "vexact_s0": {
+        "build vexact_s0": 12.53,
+        "extract vexact_s0 cifar100 train": 123.28,
+        "extract vexact_s0 cifar100 test": 23.9,
+        "extract vexact_s0 flowers102 train": 5.38,
+        "extract vexact_s0 flowers102 test": 14.78,
+        "extract vexact_s0 pets train": 8.89,
+        "extract vexact_s0 pets test": 8.48,
+        "extract vexact_s0 dtd train": 8.59,
+        "extract vexact_s0 dtd test": 4.59,
+        "probe vexact_s0 cifar100": 1288.72,
+        "probe vexact_s0_fullpatch cifar100": 1530.9,
+        "probe vexact_s0 flowers102": 180.62,
+        "probe vexact_s0_fullpatch flowers102": 186.83,
+        "probe vexact_s0 pets": 513.1,
+        "probe vexact_s0_fullpatch pets": 698.93,
+        "probe vexact_s0 dtd": 930.43,
+        "probe vexact_s0_fullpatch dtd": 909.34
+      },
+      "best_svdllm_s0": {
+        "build best_svdllm_s0": 334.05,
+        "extract best_svdllm_s0 cifar100 train": 263.08,
+        "extract best_svdllm_s0 cifar100 test": 53.5,
+        "extract best_svdllm_s0 flowers102 train": 11.23,
+        "extract best_svdllm_s0 flowers102 test": 32.53,
+        "extract best_svdllm_s0 pets train": 19.53,
+        "extract best_svdllm_s0 pets test": 20.28,
+        "extract best_svdllm_s0 dtd train": 20.57,
+        "extract best_svdllm_s0 dtd test": 10.49,
+        "probe best_svdllm_s0 cifar100": 1503.48,
+        "probe best_svdllm_s0 flowers102": 175.32,
+        "probe best_svdllm_s0 pets": 656.05,
+        "probe best_svdllm_s0 dtd": 594.5
+      }
+    },
+    "total_s": 12762.62
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "experiment": "MUST-06",
+  "date_utc": "2026-11-15T10:38:07Z",
+  "git": {
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "model": "dinov2_vitl14_reg",
+    "fit_run": null,
+    "fit_seed": null,
+    "structure_dir": null,
+    "blocks": "1-6",
+    "images": 5000,
+    "act": "post",
+    "top_partners": 10,
+    "partner_score": "abs",
+    "null_seeds": 1,
+    "out": "/home/ubuntu/Mirror_CPAL/results/MUST-06",
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache",
+    "top_k": 10,
+    "workers": 6,
+    "reference_run": "runs/g/dinov2_l_reg_s0",
+    "batch_size": 32,
+    "stats_batch_size": 16,
+    "num_workers": 4,
+    "seed": 0,
+    "gpu_frac": 0.2,
+    "force": false,
+    "tiny": false
+  },
+  "seeds": {
+    "global": 0,
+    "fit": 0,
+    "random_pairs": "seed * 1000 + 500 + block0",
+    "random_structures": "(seed + 1) * 100000 + 1000 * null_seed + block0 (+500 A_out, +700 pairing)"
+  },
+  "models": {
+    "dinov2_vitl14_reg": {
+      "registry": {
+        "source": "torch_hub",
+        "hub_repo": "facebookresearch/dinov2",
+        "hub_name": "dinov2_vitl14_reg",
+        "feature": "cls",
+        "why": "DINOv2 through the existing Dinov2Adapter (CLS after the final norm).",
+        "preprocess": {
+          "mean": [
+            0.485,
+            0.456,
+            0.406
+          ],
+          "std": [
+            0.229,
+            0.224,
+            0.225
+          ],
+          "interpolation": "bicubic",
+          "crop_pct": 0.875
+        },
+        "note": "(verify on VM)"
+      }
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 761.03,
+  "extra": {
+    "structure": {
+      "kind": "fresh fit",
+      "path": "/home/ubuntu/Mirror_CPAL/cache/structures/dinov2_vitl14_reg_fit0/results/e1_operators.npz",
+      "sha256": "54952bb9595d273b193ad5e1aaffec0a2381d457b54caf34fce1a94fa8855bbd",
+      "fit_seed": 0,
+      "reused": false,
+      "matched_blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "reference_check": {
+        "reference": "runs/g/dinov2_l_reg_s0/results",
+        "n_pairs": {
+          "1": {
+            "fresh": 630,
+            "reference": 630
+          },
+          "2": {
+            "fresh": 1691,
+            "reference": 1691
+          },
+          "3": {
+            "fresh": 1062,
+            "reference": 1062
+          },
+          "4": {
+            "fresh": 873,
+            "reference": 873
+          },
+          "5": {
+            "fresh": 1480,
+            "reference": 1480
+          },
+          "6": {
+            "fresh": 1519,
+            "reference": 1519
+          }
+        },
+        "n_pairs_equal": true,
+        "d_plus": {
+          "0": {
+            "fresh": 603,
+            "reference": 603
+          },
+          "1": {
+            "fresh": 616,
+            "reference": 616
+          },
+          "2": {
+            "fresh": 646,
+            "reference": 646
+          },
+          "3": {
+            "fresh": 661,
+            "reference": 661
+          },
+          "4": {
+            "fresh": 681,
+            "reference": 681
+          },
+          "5": {
+            "fresh": 677,
+            "reference": 677
+          },
+          "6": {
+            "fresh": 678,
+            "reference": 678
+          }
+        },
+        "d_plus_equal": true,
+        "reference_model": "dinov2_vitl14_reg",
+        "reference_fit_seed": 0
+      }
+    },
+    "peak_memory_gb": 6.058,
+    "timing": {
+      "load": 6.68,
+      "structure": 391.74,
+      "correlations": 339.08,
+      "spectra": 23.51
+    },
+    "block_numbering": "1-based; block 1 = model.blocks[0]",
+    "data_roles": {
+      "structure": "train fit0",
+      "measurement": "validation (query role)"
+    }
+  }
+}

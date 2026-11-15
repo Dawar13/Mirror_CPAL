@@ -1,0 +1,109 @@
+{
+  "result": {
+    "cv": {
+      "chosen_wd": 0.01,
+      "cv_top1": 80.91126217159655,
+      "trials": [
+        {
+          "wd": 1.0,
+          "cv_top1": 69.07955171780269,
+          "n": 5443
+        },
+        {
+          "wd": 0.1,
+          "cv_top1": 78.3391512033805,
+          "n": 5443
+        },
+        {
+          "wd": 0.01,
+          "cv_top1": 80.91126217159655,
+          "n": 5443
+        },
+        {
+          "wd": 0.001,
+          "cv_top1": 80.91126217159655,
+          "n": 5443
+        },
+        {
+          "wd": 0.0001,
+          "cv_top1": 80.5989344111703,
+          "n": 5443
+        },
+        {
+          "wd": 1e-05,
+          "cv_top1": 80.36009553555024,
+          "n": 5443
+        }
+      ],
+      "folds": 5,
+      "seed": 0,
+      "wd_at_grid_edge": false
+    },
+    "natural": {
+      "acc": 83.38044092707744,
+      "n": 5307
+    },
+    "mirror_augmented": {
+      "acc": 82.90936498963633,
+      "n": 10614,
+      "n_pairs": 5307,
+      "pairs_same_prediction": 32.221594120972306,
+      "n_pairs_differ": 3597,
+      "n_pairs_differ_not_near_tie": 3597,
+      "max_margin_of_differing_pairs": 1.9999999179133305
+    },
+    "train": {
+      "n": 5443,
+      "hit_iter_limit": false,
+      "share_class1": 0.5070733051625942
+    },
+    "test_share_class1": 0.497456189937818
+  },
+  "rows": [
+    {
+      "variant": "original",
+      "task": "facing",
+      "features": "even_patch",
+      "test_set": "natural",
+      "acc": 83.38044092707744,
+      "n": 5307,
+      "chosen_wd": 0.01,
+      "cv_top1_train": 80.91126217159655,
+      "wd_at_grid_edge": false,
+      "n_train": 5443,
+      "pairs_same_prediction": null,
+      "n_pairs_differ_not_near_tie": null
+    },
+    {
+      "variant": "original",
+      "task": "facing",
+      "features": "even_patch",
+      "test_set": "mirror_augmented",
+      "acc": 82.90936498963633,
+      "n": 10614,
+      "chosen_wd": 0.01,
+      "cv_top1_train": 80.91126217159655,
+      "wd_at_grid_edge": false,
+      "n_train": 5443,
+      "pairs_same_prediction": 32.221594120972306,
+      "n_pairs_differ_not_near_tie": 3597
+    }
+  ],
+  "settings": {
+    "grid": [
+      1e-05,
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "folds": 5,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000
+    },
+    "num_classes": 200
+  },
+  "features_sha": "508aa9507cf090252376686b641bde89"
+}

@@ -1,0 +1,80 @@
+{
+  "experiment": "MUST-02",
+  "date_utc": "2026-11-15T07:55:10Z",
+  "git": {
+    "git_hash": "52e29d16766d80933db138b9414e4f69a81e4b7e",
+    "git_dirty": false
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "model": "dinov2_vitb14_reg",
+    "hub_repo": "facebookresearch/dinov2",
+    "img_size": 224,
+    "operators": null,
+    "m1_structure": null,
+    "span_structure": "results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+    "fit_seed": 0,
+    "vexact_run": null,
+    "vexact_config": "configs/m3_vexact.yaml",
+    "healed_run": null,
+    "name": null,
+    "dtype": "float64",
+    "n_images": 1000,
+    "batch_size": 16,
+    "tol": 1e-05,
+    "flip_queries": 0,
+    "flip_bank_per_class": 0,
+    "no_flip_check": true,
+    "no_bf16_flip": false,
+    "knn_batch_size": 256,
+    "knn_k": 20,
+    "knn_temperature": 0.07,
+    "cache_dir": "cache",
+    "num_workers": 4,
+    "seed": 0,
+    "out": null,
+    "gpu_frac": 0.15,
+    "device": null,
+    "tiny": false
+  },
+  "seeds": {
+    "seed": 0,
+    "fit_seed": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "hub_repo": "facebookresearch/dinov2",
+      "img_size": 224,
+      "variant": "zeroshot_fp64",
+      "structure": {
+        "kind": "zero-shot mirror.m1.build_vexact (full conversion, even head)",
+        "span_structure": "/home/ubuntu/Mirror_CPAL/results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+        "span_structure_sha256": "13f19ba0f75bf04790adda69c036c8f404d8598cac04c1d0ba6570e9b9ae124f",
+        "fit_seed": 0,
+        "fitted_here": false,
+        "structure_model": "dinov2_vitb14_reg",
+        "parts": "A* (k = depth), neuron pairings, head maps (gauged by build_vexact) and register pairing"
+      }
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 117.23,
+  "extra": {
+    "n_images": 1000,
+    "dtype": "float64",
+    "csv": "must02_components.csv",
+    "prediction_holds": null
+  }
+}

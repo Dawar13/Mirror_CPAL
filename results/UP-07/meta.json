@@ -1,0 +1,125 @@
+{
+  "experiment": "UP-07",
+  "date_utc": "2026-11-15T10:26:57Z",
+  "git": {
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "model": "dinov2_vitb14_reg",
+    "hub_repo": "facebookresearch/dinov2",
+    "img_size": 224,
+    "fit_run": "runs/x2/perlayer_reg_s0",
+    "blocks": "1-12",
+    "alpha": 0.5,
+    "chain_pairing": "fc1",
+    "top_k": 10,
+    "workers": "4",
+    "n_nodes": 64,
+    "out": null,
+    "seed": 0,
+    "gpu_frac": 0.05,
+    "allow_model_mismatch": false,
+    "tiny": false
+  },
+  "seeds": {
+    "seed": 0,
+    "fit_seed": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "hub_repo": "facebookresearch/dinov2",
+      "img_size": 224
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cpu"
+  },
+  "wall_seconds": 7345.11,
+  "extra": {
+    "fit_run": "/home/ubuntu/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "npz_sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6",
+    "bar": 0.7,
+    "first_attempt": {
+      "data_fc1": {
+        "n_common": 544,
+        "n_pairs_ref": 1168,
+        "recovery": 0.4657534246575342,
+        "label": "fc1 rows only, given the data-driven A_0 (P5 part 2)"
+      },
+      "weights_fc1": {
+        "n_common": 515,
+        "n_pairs_ref": 1168,
+        "recovery": 0.4409246575342466,
+        "label": "fc1 rows only, operator from the weights A_0^w (strict reading)"
+      }
+    },
+    "first_attempt_file": {
+      "path": "runs/d/d_datafree.json",
+      "sha256": "e80597c5a036362e392c6aabd4bf516caf3825e874152acc40af396bb96fa0e5",
+      "recovery": {
+        "data_fc1": {
+          "1": 0.4657534246575342,
+          "2": 0.5922939068100358,
+          "3": 0.650542941757157,
+          "4": 0.6220145379023884,
+          "5": 0.6275626423690205,
+          "6": 0.6696428571428571,
+          "7": 0.7635379061371841,
+          "8": 0.8152709359605911,
+          "9": 0.8516129032258064,
+          "10": 0.8924731182795699,
+          "11": 0.8947368421052632,
+          "12": 0.8235294117647058
+        },
+        "weights_fc1": {
+          "1": 0.4409246575342466,
+          "2": 0.48118279569892475,
+          "3": 0.5518262586377097
+        }
+      },
+      "operators_file": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6"
+    },
+    "timing": {
+      "load": 192.07,
+      "d1": 15.99,
+      "matchings": 7123.75
+    },
+    "workers": 4,
+    "verdict": {
+      "bar": 0.7,
+      "scored_block": 1,
+      "primary": {
+        "variant": "weights_joint",
+        "recovery": 0.601027397260274,
+        "n_common": 702,
+        "n_pairs_ref": 1168,
+        "pass": false
+      },
+      "given_data": {
+        "variant": "data_joint",
+        "recovery": 0.6361301369863014,
+        "n_common": 743,
+        "n_pairs_ref": 1168,
+        "pass": false
+      },
+      "pooled_primary": {
+        "variant": "weights_joint",
+        "n_blocks": 12,
+        "n_common": 2694,
+        "n_pairs_ref": 7054,
+        "recovery_pooled": 0.38191097249787354,
+        "recovery_mean_over_blocks": 0.21617046545285348
+      }
+    }
+  }
+}

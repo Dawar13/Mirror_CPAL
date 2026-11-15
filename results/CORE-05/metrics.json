@@ -1,0 +1,564 @@
+{
+  "experiment": "CORE-05",
+  "P5.1": {
+    "prediction": "the activation-weighted breaking share is at most half the weight-energy breaking share in blocks 1 to 6",
+    "operational": "dinov2_vitb14_reg, operator A*_L, mean s_cov over fc1 and fc2 of blocks 1 to 6 divided by the mean s_w, at most 0.5; other models and operators reported",
+    "per_model": {
+      "dinov2_vitb14_reg": {
+        "perlayer": {
+          "s_w": 0.20008557026882687,
+          "s_cov": 0.11483535275050107,
+          "s_mom": 0.0769016467605053,
+          "ratio_cov": 0.5739312065143575,
+          "ratio_mom": 0.3843437917945975,
+          "n_matrices": 12,
+          "pass": false
+        },
+        "star": {
+          "s_w": 0.2536072979781207,
+          "s_cov": 0.14717399488353636,
+          "s_mom": 0.0864294487855964,
+          "ratio_cov": 0.5803223963067238,
+          "ratio_mom": 0.340800321893942,
+          "n_matrices": 12,
+          "pass": false,
+          "attention_reported": {
+            "s_w": 0.1650547952966519,
+            "s_cov": 0.08563009778936853
+          }
+        },
+        "star6": {
+          "s_w": 0.24461005681831283,
+          "s_cov": 0.13703835964217406,
+          "s_mom": 0.08012035406757152,
+          "ratio_cov": 0.5602319112495077,
+          "ratio_mom": 0.3275431726303956,
+          "n_matrices": 12,
+          "pass": false
+        }
+      },
+      "dinov2_vitl14_reg": {
+        "perlayer": {
+          "s_w": 0.22249288897584554,
+          "s_cov": 0.09882892013327527,
+          "s_mom": 0.0693885858555261,
+          "ratio_cov": 0.44418911808010375,
+          "ratio_mom": 0.3118687800537262,
+          "n_matrices": 12,
+          "pass": true
+        },
+        "star": {
+          "s_w": 0.2302106097315898,
+          "s_cov": 0.12360257288206683,
+          "s_mom": 0.07763385098026751,
+          "ratio_cov": 0.5369108444922638,
+          "ratio_mom": 0.3372296831617943,
+          "n_matrices": 12,
+          "pass": false,
+          "attention_reported": {
+            "s_w": 0.20498570287558596,
+            "s_cov": 0.10489043609794334
+          }
+        },
+        "star6": {
+          "s_w": 0.20991876704903553,
+          "s_cov": 0.09594387148673095,
+          "s_mom": 0.06489702851016034,
+          "ratio_cov": 0.4570523771431982,
+          "ratio_mom": 0.30915305678696586,
+          "n_matrices": 12,
+          "pass": true
+        }
+      },
+      "deit3_b16": {
+        "perlayer": {
+          "s_w": 0.15686141766333186,
+          "s_cov": 0.11164255741051793,
+          "s_mom": 0.08434634090332505,
+          "ratio_cov": 0.7117273264107165,
+          "ratio_mom": 0.5377124735947223,
+          "n_matrices": 12,
+          "pass": false
+        },
+        "star": {
+          "s_w": 0.2067454487838789,
+          "s_cov": 0.14129101806299732,
+          "s_mom": 0.09712681481085451,
+          "ratio_cov": 0.6834056995890425,
+          "ratio_mom": 0.46978937327121484,
+          "n_matrices": 12,
+          "pass": false,
+          "attention_reported": {
+            "s_w": 0.20674836815938794,
+            "s_cov": 0.07255880392161991
+          }
+        },
+        "star6": {
+          "s_w": 0.19192845572083614,
+          "s_cov": 0.12783629316519327,
+          "s_mom": 0.09391158559296363,
+          "ratio_cov": 0.6660622193049569,
+          "ratio_mom": 0.4893051696803102,
+          "n_matrices": 12,
+          "pass": false
+        }
+      },
+      "mae_b16": {
+        "perlayer": {
+          "s_w": 0.2260834811009741,
+          "s_cov": 0.13319235156331863,
+          "s_mom": 0.09732886691383585,
+          "ratio_cov": 0.5891290726536179,
+          "ratio_mom": 0.4304996828599191,
+          "n_matrices": 12,
+          "pass": false
+        },
+        "star": {
+          "s_w": 0.2671811929375038,
+          "s_cov": 0.1475014117632163,
+          "s_mom": 0.09790008126220114,
+          "ratio_cov": 0.5520650991243918,
+          "ratio_mom": 0.3664183103078699,
+          "n_matrices": 12,
+          "pass": false,
+          "attention_reported": {
+            "s_w": 0.2282389820957833,
+            "s_cov": 0.09199035743409802
+          }
+        },
+        "star6": {
+          "s_w": 0.26464407572007287,
+          "s_cov": 0.1483616524526367,
+          "s_mom": 0.10276035247921743,
+          "ratio_cov": 0.5606082510970929,
+          "ratio_mom": 0.3882964400378724,
+          "n_matrices": 12,
+          "pass": false
+        }
+      }
+    },
+    "verdict": "FAIL",
+    "all_models_star": false
+  },
+  "P5.2": {
+    "prediction": "over training (CORE-01 LR and UD runs), breaking energy in the top-variance band falls faster than in the bottom band",
+    "operational": "per run, within-band breaking share (mean over fc1 and fc2 of blocks 1 to 6) of the top band falls by more than that of the bottom band from the first to the last checkpoint; every LR and UD run",
+    "verdict": "n/a",
+    "runs": {}
+  },
+  "P5.3": {
+    "prediction": "the out-of-sample rule, designed on dinov2_vitb14_reg only and frozen before scoring, is correct on at least 75% of layer-model cases on DINOv2-L-reg, DeiT-III and MAE",
+    "frozen": {
+      "frozen_utc": "2026-11-15T16:36:17Z",
+      "rule": {
+        "operator": "star",
+        "operator_text": "A*_L (full-model Mirror-exact span operator), input and output",
+        "matrices": [
+          "fc1",
+          "fc2"
+        ],
+        "block_value": "mean of the fc1 and fc2 fractions",
+        "prediction": "Mirror has the smaller single-block drop iff x = E - s > 0",
+        "tie": "a case with x == 0 or y == 0 counts as a miss (as F4)",
+        "truth_design": "msel",
+        "truth_score": "val",
+        "id": "mom_plain",
+        "weighting": "second moment M",
+        "svd_energy": "plain truncation applied",
+        "s_col": "s_mom",
+        "E_col": "E_mom_plain"
+      },
+      "rule_sha256": "68ab3dff181156086c28708abe4841ddc83f573ba3abe110cf0c5058226b99db",
+      "design_model": "dinov2_vitb14_reg",
+      "design_complete": true
+    },
+    "design_candidates": [
+      {
+        "id": "cov_plain",
+        "n_cases": 12,
+        "n_hits": 6,
+        "fraction": 0.5
+      },
+      {
+        "id": "cov_white",
+        "n_cases": 12,
+        "n_hits": 4,
+        "fraction": 0.3333333333333333
+      },
+      {
+        "id": "mom_plain",
+        "n_cases": 12,
+        "n_hits": 7,
+        "fraction": 0.5833333333333334
+      },
+      {
+        "id": "mom_white",
+        "n_cases": 12,
+        "n_hits": 4,
+        "fraction": 0.3333333333333333
+      }
+    ],
+    "score": {
+      "verdict": "FAIL",
+      "primary": {
+        "n_cases": 48,
+        "n_hits": 32,
+        "fraction": 0.6666666666666666
+      },
+      "per_model": {
+        "dinov2_vitl14_reg": {
+          "n_cases": 24,
+          "n_hits": 13,
+          "fraction": 0.5416666666666666
+        },
+        "deit3_b16": {
+          "n_cases": 12,
+          "n_hits": 11,
+          "fraction": 0.9166666666666666
+        },
+        "mae_b16": {
+          "n_cases": 12,
+          "n_hits": 8,
+          "fraction": 0.6666666666666666
+        }
+      },
+      "secondary": {
+        "msel_truth": {
+          "n_cases": 48,
+          "n_hits": 33,
+          "fraction": 0.6875
+        },
+        "feature_distortion_truth": {
+          "n_cases": 48,
+          "n_hits": 42,
+          "fraction": 0.875
+        },
+        "other_candidates_val": {
+          "cov_plain": {
+            "n_cases": 48,
+            "n_hits": 29,
+            "fraction": 0.6041666666666666
+          },
+          "cov_white": {
+            "n_cases": 48,
+            "n_hits": 21,
+            "fraction": 0.4375
+          },
+          "mom_white": {
+            "n_cases": 48,
+            "n_hits": 21,
+            "fraction": 0.4375
+          }
+        },
+        "f4_style_rule_val": {
+          "n_cases": 48,
+          "n_hits": 26,
+          "fraction": 0.5416666666666666,
+          "note": "the F4 rule's quantities (per-layer operators, second moments, whitened SVD energy), here with fit-set moments, ceil ranks and the new single-block ground truth"
+        }
+      },
+      "f4_original": {
+        "file": "/home/ubuntu/Mirror_CPAL/runs/f4/f4_p2.json",
+        "verdict": "FAIL",
+        "primary_prereg_models": {
+          "n_cases": 36,
+          "n_hits": 16,
+          "fraction": 0.4444444444444444
+        },
+        "threshold": 0.75,
+        "hypothesis": "P2: sign(activation-weighted E_svd - s) predicts the smaller single-block k-NN drop in at least 75% of block and model cases"
+      },
+      "complete": true
+    },
+    "verdict": "FAIL"
+  },
+  "bands_released": {
+    "dinov2_vitb14_reg": {
+      "blocks_1_6": {
+        "top_share_of_breaking": 0.0803171721547615,
+        "top_breaking_share": 0.15083183425990704,
+        "top_variance_share": 0.6870209454185982,
+        "mid_share_of_breaking": 0.8354343442607717,
+        "mid_breaking_share": 0.27709466762568713,
+        "mid_variance_share": 0.30741083768125826,
+        "bottom_share_of_breaking": 0.08424848358446684,
+        "bottom_breaking_share": 0.24808201010207556,
+        "bottom_variance_share": 0.005568216900143599
+      },
+      "all_blocks": {
+        "top_share_of_breaking": 0.0732865524640528,
+        "top_breaking_share": 0.1100431967646584,
+        "top_variance_share": 0.6061606689137116,
+        "mid_share_of_breaking": 0.7895818979015363,
+        "mid_breaking_share": 0.1925549864945916,
+        "mid_variance_share": 0.3850286343259093,
+        "bottom_share_of_breaking": 0.13713154963441065,
+        "bottom_breaking_share": 0.1744468768039162,
+        "bottom_variance_share": 0.008810696760378987
+      }
+    },
+    "dinov2_vitl14_reg": {
+      "blocks_1_6": {
+        "top_share_of_breaking": 0.1457682934084693,
+        "top_breaking_share": 0.17250227092367343,
+        "top_variance_share": 0.8211467810167387,
+        "mid_share_of_breaking": 0.7829324893372952,
+        "mid_breaking_share": 0.2468294715977152,
+        "mid_variance_share": 0.17852807137067228,
+        "bottom_share_of_breaking": 0.07129921725423544,
+        "bottom_breaking_share": 0.2263363427232388,
+        "bottom_variance_share": 0.0003251476125888888
+      },
+      "all_blocks": {
+        "top_share_of_breaking": 0.09290976660007494,
+        "top_breaking_share": 0.10751601220515399,
+        "top_variance_share": 0.6026508441567685,
+        "mid_share_of_breaking": 0.7912727486790136,
+        "mid_breaking_share": 0.16035854781487957,
+        "mid_variance_share": 0.38812915257340924,
+        "bottom_share_of_breaking": 0.11581748472091123,
+        "bottom_breaking_share": 0.1447589355373843,
+        "bottom_variance_share": 0.009220003269822164
+      }
+    },
+    "deit3_b16": {
+      "blocks_1_6": {
+        "top_share_of_breaking": 0.05483028974404888,
+        "top_breaking_share": 0.12420568639217087,
+        "top_variance_share": 0.6635411572673153,
+        "mid_share_of_breaking": 0.8396734498434645,
+        "mid_breaking_share": 0.2178267273542053,
+        "mid_variance_share": 0.33261361120180366,
+        "bottom_share_of_breaking": 0.10549626041248657,
+        "bottom_breaking_share": 0.17703680034622862,
+        "bottom_variance_share": 0.0038452315308809457
+      },
+      "all_blocks": {
+        "top_share_of_breaking": 0.0580859399860885,
+        "top_breaking_share": 0.07783116454677834,
+        "top_variance_share": 0.6225180140774019,
+        "mid_share_of_breaking": 0.8414200184854895,
+        "mid_breaking_share": 0.13266894973105256,
+        "mid_variance_share": 0.3709414831660385,
+        "bottom_share_of_breaking": 0.10049404152842184,
+        "bottom_breaking_share": 0.10147954380982203,
+        "bottom_variance_share": 0.006540502756559486
+      }
+    },
+    "mae_b16": {
+      "blocks_1_6": {
+        "top_share_of_breaking": 0.0577987074481556,
+        "top_breaking_share": 0.1539047044809585,
+        "top_variance_share": 0.718836904916729,
+        "mid_share_of_breaking": 0.8156474264438885,
+        "mid_breaking_share": 0.27084801684244625,
+        "mid_variance_share": 0.2776731981145765,
+        "bottom_share_of_breaking": 0.1265538661079555,
+        "bottom_breaking_share": 0.41200021074458526,
+        "bottom_variance_share": 0.003489896968694499
+      },
+      "all_blocks": {
+        "top_share_of_breaking": 0.0536445585263211,
+        "top_breaking_share": 0.1353452434617775,
+        "top_variance_share": 0.6627172605593183,
+        "mid_share_of_breaking": 0.7980169837208656,
+        "mid_breaking_share": 0.22906434104053353,
+        "mid_variance_share": 0.3307500557492217,
+        "bottom_share_of_breaking": 0.1483384577528131,
+        "bottom_breaking_share": 0.315877935826618,
+        "bottom_variance_share": 0.006532683691459917
+      }
+    }
+  },
+  "flatness": {
+    "table": {
+      "dinov2_vitb14_reg": {
+        "blocks_1_6": {
+          "erank_w": 0.8145445453877923,
+          "erank_w_energy": 0.5300953822809652,
+          "erank_act": 0.629233129587078,
+          "erank_input": 0.6977853534734851,
+          "E_w": 0.1012629106428723,
+          "E_cov_plain": 0.09815021878979753,
+          "s_w": 0.2536072979781207,
+          "s_cov": 0.14717399488353636
+        },
+        "all_blocks": {
+          "erank_w": 0.8528667500035837,
+          "erank_w_energy": 0.5779389632748692,
+          "erank_act": 0.7089648099969054,
+          "erank_input": 0.7709995861410458,
+          "E_w": 0.08859831900372256,
+          "E_cov_plain": 0.0891587665631585,
+          "s_w": 0.17805870312216998,
+          "s_cov": 0.10890102169002992
+        }
+      },
+      "dinov2_vitl14_reg": {
+        "blocks_1_6": {
+          "erank_w": 0.5664320213888764,
+          "erank_w_energy": 0.2261456132580589,
+          "erank_act": 0.3509386320785632,
+          "erank_input": 0.49899502978067845,
+          "E_w": 0.021326037754597255,
+          "E_cov_plain": 0.0231861632077511,
+          "s_w": 0.2302106097315898,
+          "s_cov": 0.12360257288206683
+        },
+        "all_blocks": {
+          "erank_w": 0.790980486203126,
+          "erank_w_energy": 0.5056945633147335,
+          "erank_act": 0.6584199429354285,
+          "erank_input": 0.7463254709139809,
+          "E_w": 0.05218445420814491,
+          "E_cov_plain": 0.057983475439160624,
+          "s_w": 0.15108402984384595,
+          "s_cov": 0.09903466056492945
+        }
+      },
+      "deit3_b16": {
+        "blocks_1_6": {
+          "erank_w": 0.6690859276913462,
+          "erank_w_energy": 0.37294560213633904,
+          "erank_act": 0.593783033795008,
+          "erank_input": 0.6961764636294799,
+          "E_w": 0.03158919801972076,
+          "E_cov_plain": 0.03742977930469534,
+          "s_w": 0.2067454487838789,
+          "s_cov": 0.14129101806299732
+        },
+        "all_blocks": {
+          "erank_w": 0.7611222579570444,
+          "erank_w_energy": 0.4283347538619032,
+          "erank_act": 0.6655457089812206,
+          "erank_input": 0.7377501437154305,
+          "E_w": 0.037551630416288125,
+          "E_cov_plain": 0.04147051857915462,
+          "s_w": 0.12422848973613453,
+          "s_cov": 0.08477322852926743
+        }
+      },
+      "mae_b16": {
+        "blocks_1_6": {
+          "erank_w": 0.8404217276400131,
+          "erank_w_energy": 0.6280090171345224,
+          "erank_act": 0.6624393547190502,
+          "erank_input": 0.6637274455022836,
+          "E_w": 0.16916713629120947,
+          "E_cov_plain": 0.18977760388216344,
+          "s_w": 0.2671811929375038,
+          "s_cov": 0.1475014117632163
+        },
+        "all_blocks": {
+          "erank_w": 0.8350936094410852,
+          "erank_w_energy": 0.6120961155130563,
+          "erank_act": 0.7015607610162364,
+          "erank_input": 0.7317994872360606,
+          "E_w": 0.1430395392103052,
+          "E_cov_plain": 0.16570037170131413,
+          "s_w": 0.22708358889016658,
+          "s_cov": 0.13875812074633928
+        }
+      }
+    },
+    "svd_zero_shot_loss": {
+      "dinov2_vitb14_reg": {
+        "original_val_top1": 78.93799543380737,
+        "source": "/home/ubuntu/Mirror_CPAL/results/MUST-07/rows_dinov2_vitb14_reg.csv",
+        "svd_loss_6mlp": 69.57399547100067,
+        "svd_loss_6both": 73.09399545192719,
+        "svd_loss_full": 73.76799546182156
+      },
+      "dinov2_vitl14_reg": {
+        "original_val_top1": 80.58799505233765,
+        "source": "/home/ubuntu/Mirror_CPAL/results/MUST-07/rows_dinov2_vitl14_reg.csv",
+        "svd_loss_6mlp": 0.019997358322143555,
+        "svd_loss_full": 19.969993829727166
+      },
+      "deit3_b16": {
+        "original_val_top1": 82.97399878501892,
+        "source": "/home/ubuntu/Mirror_CPAL/results/MUST-07/rows_deit3_b16.csv",
+        "svd_loss_6mlp": 1.6799986362457275,
+        "svd_loss_full": 8.248001337051392
+      }
+    },
+    "across_models": {
+      "erank_w_vs_svd_loss_6mlp": {
+        "models": [
+          "dinov2_vitb14_reg",
+          "dinov2_vitl14_reg",
+          "deit3_b16"
+        ],
+        "spearman": 1.0
+      },
+      "erank_w_vs_svd_loss_full": {
+        "models": [
+          "dinov2_vitb14_reg",
+          "dinov2_vitl14_reg",
+          "deit3_b16"
+        ],
+        "spearman": 1.0
+      },
+      "erank_act_vs_svd_loss_6mlp": {
+        "models": [
+          "dinov2_vitb14_reg",
+          "dinov2_vitl14_reg",
+          "deit3_b16"
+        ],
+        "spearman": 1.0
+      },
+      "erank_act_vs_svd_loss_full": {
+        "models": [
+          "dinov2_vitb14_reg",
+          "dinov2_vitl14_reg",
+          "deit3_b16"
+        ],
+        "spearman": 0.5
+      },
+      "erank_input_vs_svd_loss_6mlp": {
+        "models": [
+          "dinov2_vitb14_reg",
+          "dinov2_vitl14_reg",
+          "deit3_b16"
+        ],
+        "spearman": 1.0
+      },
+      "erank_input_vs_svd_loss_full": {
+        "models": [
+          "dinov2_vitb14_reg",
+          "dinov2_vitl14_reg",
+          "deit3_b16"
+        ],
+        "spearman": 1.0
+      }
+    },
+    "across_blocks": {
+      "erank_w_vs_single_block_svd_drop": {
+        "n": 60,
+        "spearman": 0.04240361246772207
+      },
+      "erank_act_vs_single_block_svd_drop": {
+        "n": 60,
+        "spearman": -0.12554359182776428
+      },
+      "E_w_vs_single_block_svd_drop": {
+        "n": 60,
+        "spearman": 0.5585550551858987
+      },
+      "E_cov_plain_vs_single_block_svd_drop": {
+        "n": 60,
+        "spearman": 0.5192914218851835
+      }
+    },
+    "note": "reported, not tested; effective ranks divided by the largest possible value"
+  },
+  "git": {
+    "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  }
+}

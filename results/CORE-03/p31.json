@@ -1,0 +1,124 @@
+{
+  "verdict": "FAIL",
+  "models": {
+    "dinov2_vitb14_reg": {
+      "n_points": 4,
+      "n_above": 0,
+      "points_above": [],
+      "status": "fail"
+    },
+    "dinov2_vitl14_reg": {
+      "n_points": 4,
+      "n_above": 0,
+      "points_above": [],
+      "status": "fail"
+    },
+    "deit3_b16": {
+      "n_points": 4,
+      "n_above": 0,
+      "points_above": [],
+      "status": "fail"
+    }
+  },
+  "passed": [],
+  "open": [],
+  "rule": "Mirror plus low rank strictly above low rank alone (validation top-1) at >= 3 of 4 budget points, on >= 2 of ['dinov2_vitb14_reg', 'dinov2_vitl14_reg', 'deit3_b16'], including one of ['dinov2_vitl14_reg', 'deit3_b16']",
+  "score_inner": "svd",
+  "fit_seed": 0,
+  "per_model_points": {
+    "deit3_b16": [
+      {
+        "point": "f0.40",
+        "mirror_lowrank": 20.576000213623047,
+        "lowrank": 46.67799770832062,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      },
+      {
+        "point": "f0.55",
+        "mirror_lowrank": 40.80199897289276,
+        "lowrank": 68.6959981918335,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      },
+      {
+        "point": "f0.70",
+        "mirror_lowrank": 56.85999989509583,
+        "lowrank": 77.42599844932556,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      },
+      {
+        "point": "f0.85",
+        "mirror_lowrank": 72.84799814224243,
+        "lowrank": 80.83399534225464,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      }
+    ],
+    "dinov2_vitb14_reg": [
+      {
+        "point": "f0.40",
+        "mirror_lowrank": 5.38799986243248,
+        "lowrank": 15.546000003814695,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      },
+      {
+        "point": "f0.55",
+        "mirror_lowrank": 2.685999870300293,
+        "lowrank": 60.975998640060425,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      },
+      {
+        "point": "f0.70",
+        "mirror_lowrank": 6.189999729394913,
+        "lowrank": 74.01599884033203,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      },
+      {
+        "point": "f0.85",
+        "mirror_lowrank": 53.87799739837647,
+        "lowrank": 77.91199684143066,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      }
+    ],
+    "dinov2_vitl14_reg": [
+      {
+        "point": "f0.40",
+        "mirror_lowrank": 9.68799963593483,
+        "lowrank": 53.77199649810791,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      },
+      {
+        "point": "f0.55",
+        "mirror_lowrank": 9.79200005531311,
+        "lowrank": 74.81600046157837,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      },
+      {
+        "point": "f0.70",
+        "mirror_lowrank": 12.027999758720398,
+        "lowrank": 79.67599630355835,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      },
+      {
+        "point": "f0.85",
+        "mirror_lowrank": 30.167999863624573,
+        "lowrank": 80.60599565505981,
+        "mirror_lowrank_method": "mirror_svd",
+        "lowrank_method": "svdllm"
+      }
+    ]
+  },
+  "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+  "git_dirty": true,
+  "written": "2026-11-15 19:43:17",
+  "selection": "low rank alone: higher method-selection top-1 of its methods at each point; Mirror plus low rank: inner method svd (fixed); validation is read only for the comparison itself"
+}

@@ -1,0 +1,230 @@
+{
+ "method": "pair_wcos",
+ "hparams": {},
+ "components": [
+  "mlp"
+ ],
+ "blocks": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "k": 6,
+ "full": false,
+ "params_matrices": 16443936,
+ "params_basis_change": 589824,
+ "params_total": 17033760,
+ "params_total_absorbed": 16443936,
+ "budget_total": 17033760,
+ "gap": 0,
+ "gap_rel": 0.0,
+ "span_dense": 28311552,
+ "per_matrix": [
+  {
+   "block": 0,
+   "name": "fc1",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "kept": 1303632
+  },
+  {
+   "block": 0,
+   "name": "fc2",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "kept": 1303632
+  },
+  {
+   "block": 1,
+   "name": "fc1",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "kept": 1319088
+  },
+  {
+   "block": 1,
+   "name": "fc2",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "kept": 1319088
+  },
+  {
+   "block": 2,
+   "name": "fc1",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "kept": 1355712
+  },
+  {
+   "block": 2,
+   "name": "fc2",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "kept": 1355712
+  },
+  {
+   "block": 3,
+   "name": "fc1",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "kept": 1372512
+  },
+  {
+   "block": 3,
+   "name": "fc2",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "kept": 1372512
+  },
+  {
+   "block": 4,
+   "name": "fc1",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "kept": 1401072
+  },
+  {
+   "block": 4,
+   "name": "fc2",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "kept": 1401072
+  },
+  {
+   "block": 5,
+   "name": "fc1",
+   "shape": [
+    3072,
+    768
+   ],
+   "dense": 2359296,
+   "kept": 1469952
+  },
+  {
+   "block": 5,
+   "name": "fc2",
+   "shape": [
+    768,
+    3072
+   ],
+   "dense": 2359296,
+   "kept": 1469952
+  }
+ ],
+ "structure_info": {
+  "operator": "fitted span operator A* over stream layers 0..6",
+  "pairing": "weight cosine of folded fc1 rows, matched pair count",
+  "head_maps": "fitted",
+  "register_pairing": "fitted under A*"
+ },
+ "build": {
+  "embedding_shares": {
+   "patch_embed.weight": 0.07514434653564184,
+   "patch_embed.bias": 0.00020686222341510587,
+   "pos_embed.patches": 0.03495214221474971,
+   "pos_embed.cls": 0.10605189544311604,
+   "cls_token": 0.10605189544311604,
+   "registers": 0.09111939456824139
+  },
+  "pos_materialised": true,
+  "even_head": false,
+  "d_plus": 552,
+  "basis_change_local_rule": 589824,
+  "basis_change_from_budget": 589824
+ },
+ "seed": 3,
+ "budget_source": "real",
+ "row": {
+  "model": "dinov2_vitb14_reg",
+  "size": "6mlp",
+  "k": 6,
+  "components": "mlp",
+  "method": "pair_wcos",
+  "number": 10,
+  "fit_seed": 2,
+  "random_seed": "",
+  "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+  "git_dirty": true,
+  "val_top1": 34.66799855232239,
+  "flip_consistency": NaN,
+  "max_abs_unit_feature_diff": NaN,
+  "msel_top1": 35.60999929904938,
+  "n_bank": 100000,
+  "n_msel": 10000,
+  "n_val": 50000,
+  "flip_consistency_fp32": NaN,
+  "top1_fp32": NaN,
+  "max_abs_unit_feature_diff_fp32": NaN,
+  "n_bank_fp32": 0,
+  "n_val_fp32": 0,
+  "params_matrices": 16443936,
+  "params_basis_change": 589824,
+  "params_total": 17033760,
+  "params_total_absorbed": 16443936,
+  "budget_total": 17033760,
+  "budget_total_reported": 17033760,
+  "gap": 0,
+  "gap_rel": 0.0,
+  "span_dense": 28311552,
+  "span_kept_frac": 0.601654052734375,
+  "within_budget": true,
+  "model_params": 75305760,
+  "model_params_frac": 0.8697467158658494,
+  "macs": 20595653280,
+  "gflops": 41.19130656,
+  "gflops_frac": 0.874952883274436,
+  "hparams": "{}",
+  "selected_by": "none (no hyperparameters)",
+  "n_grid": 0,
+  "claims_exact_invariance": false,
+  "status": "ok",
+  "preds_sha": "cc8162f120b189ca",
+  "structure_sha": "3456793e12faf1ba",
+  "reused_from": "",
+  "build_s": 0.91,
+  "eval_s": 345.1,
+  "time_s": 346.02,
+  "img_per_s": 463.6,
+  "peak_mem_gb": 4.159
+ },
+ "budget": {
+  "budget_total": 17033760,
+  "budget_basis_change": 589824,
+  "budget_matrices": 16443936,
+  "span_dense": 28311552,
+  "n_matrices": 12
+ }
+}

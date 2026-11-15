@@ -1,0 +1,98 @@
+{
+  "fields": {
+    "mask_eq_raw": 94.7590349984762,
+    "mask_eq_sym": 94.62486852645414,
+    "mask_eq_raw_n_differ": 25558433,
+    "mask_eq_sym_n_differ": 26212718,
+    "mask_eq_n_pixels": 487666546,
+    "mask_eq_n_images": 2000,
+    "mask_eq_raw_logit_diff_rel": 0.6121189839232942,
+    "mask_eq_sym_logit_diff_rel": 0.6147696744412094,
+    "mask_eq_mIoU_raw": 46.73693674741554,
+    "mask_eq_mIoU_sym": 46.74128733840957,
+    "mask_eq_operator": "A_L: last-layer per-layer operator (layer 12) from /home/ubuntu/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "mask_eq_precision": "fp32 (no autocast, TF32 off)"
+  },
+  "result": {
+    "n_images": 2000,
+    "heads": [
+      "raw",
+      "sym"
+    ],
+    "seconds": 1889.7,
+    "raw": {
+      "share": 94.7590349984762,
+      "n_pixels": 487666546,
+      "n_differ": 25558433,
+      "share_labelled": 95.17768032135484,
+      "n_labelled": 448102043,
+      "max_logit_diff": 11.732319831848145,
+      "max_logit_diff_rel": 0.6121189839232942,
+      "max_margin_of_differing_pixels": 8.833260536193848,
+      "mIoU": 46.73693674741554,
+      "aAcc": 80.86007342751616,
+      "mAcc": 58.40107944749143
+    },
+    "sym": {
+      "share": 94.62486852645414,
+      "n_pixels": 487666546,
+      "n_differ": 26212718,
+      "share_labelled": 95.04634505761447,
+      "n_labelled": 448102043,
+      "max_logit_diff": 11.745041847229004,
+      "max_logit_diff_rel": 0.6147696744412094,
+      "max_margin_of_differing_pixels": 8.877876281738281,
+      "mIoU": 46.74128733840957,
+      "aAcc": 80.84091038165609,
+      "mAcc": 58.38372125585505
+    }
+  },
+  "settings": {
+    "recipe": "t2seg-maskeq-v1",
+    "run": {
+      "recipe": "t2seg-v1",
+      "model": "dinov2_vitb14_reg",
+      "variant": "best_svdllm_s0",
+      "crop": 448,
+      "iters": 8000,
+      "batch": 16,
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "warmup": 300,
+      "min_lr_ratio": 0.0,
+      "bn": true,
+      "head_init_std": 0.01,
+      "seed": 0,
+      "eval_stride": 298,
+      "max_val_images": null,
+      "amp": "bf16",
+      "ignore_index": 255,
+      "dataset": {
+        "hf_id": "merve/scene_parse_150",
+        "revision": "b83d71b405b381bc5e495f7d497fb844a8de5ffc",
+        "counts": {
+          "train": 20210,
+          "val": 2000
+        },
+        "short_side": 448
+      },
+      "random_seed": null,
+      "sources": {
+        "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/svdllm/s0",
+        "weights_sha256": {
+          "healed_state.pt": "4dd580535b7ab3d5196e56637ae8267a1ff11d32bcd149c3385733688065d971"
+        }
+      },
+      "healed_run_grid": "interpolate-reproject-v1",
+      "final_tokens": "full"
+    },
+    "max_images": null,
+    "operator_file": {
+      "path": "/home/ubuntu/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6"
+    },
+    "precision": "fp32 (no autocast, TF32 off)",
+    "final_tokens": "full"
+  },
+  "operator": "A_L: last-layer per-layer operator (layer 12) from /home/ubuntu/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz"
+}

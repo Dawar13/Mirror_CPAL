@@ -1,0 +1,244 @@
+{
+  "info": {
+    "variant": "vexact_s0",
+    "label": "healed model from a run directory (mirror.heal_structured.load_healed_model)",
+    "family": "healed_run",
+    "method": "run",
+    "k": 0,
+    "blocks": [],
+    "model_params_original": 86583552,
+    "builder": "mirror.heal_structured.load_healed_model",
+    "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+    "healed_info": {
+      "run_dir": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+      "spec": {
+        "format": "must09-healed-v1",
+        "family": "mirror",
+        "method": "mirror_exact",
+        "blocks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "components": [
+          "mlp",
+          "attn"
+        ],
+        "base": {
+          "materialise_pos_embed": true,
+          "fold": true,
+          "even_head": true
+        },
+        "modules": [],
+        "matrices": [],
+        "mirror": {
+          "d_plus": 700,
+          "structure_file": "structure.npz",
+          "n_pairs": [
+            1168,
+            1116,
+            1013,
+            963,
+            878,
+            672,
+            554,
+            406,
+            155,
+            93,
+            19,
+            17
+          ],
+          "n_head_pairs": [
+            0,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          "builder": "mirror.mirror_family.build_mirror_variant"
+        },
+        "trainable": "converted blocks (re-projected with A* after every step) and the embeddings (re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+        "experiment": "MUST-09",
+        "adapter": {
+          "kind": "dinov2",
+          "hub_repo": "facebookresearch/dinov2",
+          "name": "dinov2_vitb14_reg",
+          "img_size": 224
+        },
+        "state_file": "healed_state.pt",
+        "targets": "sym",
+        "seed": 0,
+        "model": "dinov2_vitb14_reg",
+        "hparams": null
+      },
+      "method": "mirror_exact",
+      "family": "mirror",
+      "seed": 0,
+      "targets": "sym",
+      "meta": {
+        "seed": 0,
+        "lr": 0.0001,
+        "steps": 780,
+        "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+        "git_dirty": true
+      },
+      "structure": {
+        "A_star": "array of shape [768, 768]",
+        "perms": [
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]"
+        ],
+        "maps_after": [
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps"
+        ],
+        "reg_perm": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "blocks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "A": "array of shape [768, 768]"
+      },
+      "constraints": [
+        "MirrorMLPConstraint",
+        "MirrorAttnConstraint",
+        "VExactEmbeddings"
+      ],
+      "model_params": 85691904,
+      "model_params_stored": 86281728,
+      "converted_params_kept": 64554464,
+      "converted_params_dense": 84934656,
+      "model_params_structured": 66203360,
+      "model_params_original": 86583552,
+      "model_params_frac": 0.7646182036976261,
+      "params_source": "free parameters",
+      "checks": {
+        "0:MirrorMLPConstraint": {
+          "max_rel_violation": 2.587954062073317e-08,
+          "per_block": [
+            2.587954062073317e-08,
+            2.3750964250960282e-08,
+            2.306978836216599e-08,
+            2.2161534627012904e-08,
+            2.133616677710985e-08,
+            1.907711719999855e-08,
+            1.7833515959890208e-08,
+            1.696834243746869e-08,
+            1.4596868294317714e-08,
+            1.3245066107473023e-08,
+            1.1799997950843325e-08,
+            1.2302292705036104e-08
+          ]
+        },
+        "1:MirrorAttnConstraint": {
+          "max_rel_violation": 9.809593784711402e-09,
+          "per_block": [
+            6.045670720413012e-09,
+            9.809593784711402e-09,
+            8.382741398091711e-09,
+            7.312359163635932e-09,
+            9.506864585807028e-09,
+            8.9647452676118e-09,
+            7.801486143234884e-09,
+            8.298337828803174e-09,
+            5.751113747430952e-09,
+            7.053483576648171e-09,
+            4.4143129348082874e-09,
+            4.037347250720054e-09
+          ]
+        },
+        "2:VExactEmbeddings": {
+          "max_share": 2.6765621757193774e-16,
+          "shares": {
+            "patch_embed.weight": 1.6480707533185208e-16,
+            "patch_embed.bias": 2.2901039473010014e-18,
+            "pos_embed.patches": 2.6765621757193774e-16,
+            "pos_embed.cls": 1.9727565268532942e-17,
+            "cls_token": 1.9727565268532942e-17,
+            "registers": 1.4373129657940874e-17
+          },
+          "embeddings_train": false,
+          "even_head_max_abs_err": 2.9776049292884466e-08
+        }
+      }
+    },
+    "healed_k": 12,
+    "exact_operator": "loader info['A_star']",
+    "even_head": true,
+    "reg_perm": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "position_grid": null,
+    "healed_run_checks": null,
+    "converted_params_dense": 84934656,
+    "converted_params_kept": 64554464,
+    "model_params": 85691904,
+    "mlp_params_kept": null,
+    "attn_params_kept": null,
+    "position_grid_note": "position embedding as loaded (257 rows; the original model has 1370), used as the model uses it at 224 px"
+  },
+  "sources": {
+    "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+    "weights_sha256": {
+      "healed_state.pt": "0413c2e74fa041b5c2a523675ebd856a20dec5a5417bd3627b20c46b816a6f2a"
+    }
+  },
+  "git": {
+    "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+    "git_dirty": true
+  }
+}

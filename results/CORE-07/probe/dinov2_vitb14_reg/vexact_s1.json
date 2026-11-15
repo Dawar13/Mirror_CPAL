@@ -1,0 +1,181 @@
+{
+  "row": {
+    "top1": 80.044,
+    "chosen_wd": 0.00316
+  },
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 82.04,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 81.68,
+        "holdout_top5": 95.77,
+        "holdout_loss": 0.9605494140625,
+        "train_objective": 1.4204163551330566,
+        "grad_max": 3.9524209569208324e-05,
+        "n_iter": 105,
+        "n_eval": 113,
+        "hit_limit": false,
+        "seconds": 82.76
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 81.61,
+        "holdout_top5": 95.77,
+        "holdout_loss": 0.72966708984375,
+        "train_objective": 0.43116486072540283,
+        "grad_max": 7.325633760046912e-06,
+        "n_iter": 180,
+        "n_eval": 187,
+        "hit_limit": false,
+        "seconds": 149.01
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 81.01,
+        "holdout_top5": 95.42,
+        "holdout_loss": 0.78963271484375,
+        "train_objective": 0.09861684590578079,
+        "grad_max": 1.4812685549259186e-06,
+        "n_iter": 328,
+        "n_eval": 343,
+        "hit_limit": false,
+        "seconds": 324.54
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 80.69,
+        "holdout_top5": 94.92,
+        "holdout_loss": 0.94707509765625,
+        "train_objective": 0.019246332347393036,
+        "grad_max": 7.43500834232691e-07,
+        "n_iter": 130,
+        "n_eval": 139,
+        "hit_limit": false,
+        "seconds": 165.58
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 80.47,
+        "holdout_top5": 94.65,
+        "holdout_loss": 1.166773828125,
+        "train_objective": 0.003760979976505041,
+        "grad_max": 9.498775170868612e-07,
+        "n_iter": 86,
+        "n_eval": 95,
+        "hit_limit": false,
+        "seconds": 101.53
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 80.47,
+        "holdout_top5": 94.65,
+        "holdout_loss": 1.166773828125,
+        "train_objective": 0.0015158988535404205,
+        "grad_max": 9.94129777609487e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.38
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 80.64,
+        "holdout_top5": 95.33,
+        "holdout_loss": 1.4100873046875,
+        "train_objective": 2.4684743881225586,
+        "grad_max": 3.964696225011721e-05,
+        "n_iter": 36,
+        "n_eval": 42,
+        "hit_limit": false,
+        "seconds": 37.73
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 82.04,
+        "holdout_top5": 95.88,
+        "holdout_loss": 0.7805462890625,
+        "train_objective": 0.808121919631958,
+        "grad_max": 1.5896264812909067e-05,
+        "n_iter": 112,
+        "n_eval": 119,
+        "hit_limit": false,
+        "seconds": 137.36
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.00316,
+    "train_objective": 0.8249391317367554,
+    "grad_max": 1.1597168850130402e-05,
+    "n_iter": 99,
+    "n_eval": 104,
+    "hit_limit": false,
+    "seconds": 112.63,
+    "train_top1": 92.552
+  },
+  "test": {
+    "top1": 80.044,
+    "top5": 95.578,
+    "mean_per_class_top1": 80.04400000000001,
+    "loss": 0.84469119140625,
+    "n": 50000
+  },
+  "sources": {
+    "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1",
+    "weights_sha256": {
+      "healed_state.pt": "df395939ef9bd85b2e66fa103f6ff26595c3b606b1d61401a532cc81a912a2b0"
+    }
+  },
+  "feature_meta": {
+    "bank": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_s1",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1",
+        "weights_sha256": {
+          "healed_state.pt": "df395939ef9bd85b2e66fa103f6ff26595c3b606b1d61401a532cc81a912a2b0"
+        }
+      },
+      "img_size": 224,
+      "split": "bank"
+    },
+    "val": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_s1",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1",
+        "weights_sha256": {
+          "healed_state.pt": "df395939ef9bd85b2e66fa103f6ff26595c3b606b1d61401a532cc81a912a2b0"
+        }
+      },
+      "img_size": 224,
+      "split": "val"
+    }
+  },
+  "git": {
+    "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+    "git_dirty": true
+  },
+  "trained_by": "scripts/core07_shift.py (tier2_linear.run_probe)"
+}

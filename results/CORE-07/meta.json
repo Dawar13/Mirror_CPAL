@@ -1,0 +1,79 @@
+{
+  "experiment": "CORE-07",
+  "date_utc": "2026-11-15T17:09:27Z",
+  "git": {
+    "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "model": "dinov2_vitb14_reg",
+    "variants": "original",
+    "healed_run": null,
+    "must09_dir": "runs/MUST-09/dinov2_vitb14_reg",
+    "mirror_seeds": "0,1,2",
+    "gate_b": "results/MUST-07/gate_b.json",
+    "best_seeds": "0",
+    "probe_from": "results/MUST-11/t2",
+    "no_probe_reuse": false,
+    "v2_root": "/home/ubuntu/hf/extracted/imagenetv2-matched-frequency-format-val",
+    "sketch_zip": "/home/ubuntu/hf/extracted/ImageNet-Sketch.zip",
+    "no_sketch": false,
+    "shift_cache_dir": "/home/ubuntu/Mirror_CPAL/cache/shift",
+    "cache_dir": "cache",
+    "out": null,
+    "img_size": 224,
+    "resize": 256,
+    "batch_size": 256,
+    "num_workers": 6,
+    "decode_workers": 16,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": null,
+    "max_iter": 1000,
+    "dup_thr": 0.02,
+    "bootstrap_resamples": 10000,
+    "seed": 0,
+    "gpu_frac": 0.2,
+    "device": null,
+    "tiny": false
+  },
+  "seeds": {
+    "global": 0,
+    "bootstrap": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "variants": [
+        "original",
+        "vexact_s0",
+        "vexact_s1",
+        "vexact_s2",
+        "best_svdllm_s0"
+      ],
+      "healed_runs": {
+        "vexact_s0": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+        "vexact_s1": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1",
+        "vexact_s2": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2",
+        "best_svdllm_s0": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/svdllm/s0"
+      }
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 9628.89,
+  "extra": {
+    "verdict": "PASS"
+  }
+}

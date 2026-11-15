@@ -1,0 +1,181 @@
+{
+  "row": {
+    "top1": 79.726,
+    "chosen_wd": 0.001
+  },
+  "selection": {
+    "chosen_wd": 0.001,
+    "holdout_top1_at_chosen": 81.64,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 81.04,
+        "holdout_top5": 95.7,
+        "holdout_loss": 0.96615224609375,
+        "train_objective": 1.413864254951477,
+        "grad_max": 4.96776046929881e-05,
+        "n_iter": 101,
+        "n_eval": 107,
+        "hit_limit": false,
+        "seconds": 116.51
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 81.64,
+        "holdout_top5": 95.43,
+        "holdout_loss": 0.74113779296875,
+        "train_objective": 0.4421214461326599,
+        "grad_max": 1.406537921866402e-05,
+        "n_iter": 184,
+        "n_eval": 193,
+        "hit_limit": false,
+        "seconds": 231.12
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 81.05,
+        "holdout_top5": 95.04,
+        "holdout_loss": 0.80639501953125,
+        "train_objective": 0.10373932123184204,
+        "grad_max": 1.3534954632632434e-06,
+        "n_iter": 349,
+        "n_eval": 364,
+        "hit_limit": false,
+        "seconds": 409.69
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 80.73,
+        "holdout_top5": 94.52,
+        "holdout_loss": 0.9736333984375,
+        "train_objective": 0.020526254549622536,
+        "grad_max": 9.89013983598852e-07,
+        "n_iter": 124,
+        "n_eval": 136,
+        "hit_limit": false,
+        "seconds": 127.99
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 80.36,
+        "holdout_top5": 94.37,
+        "holdout_loss": 1.20950546875,
+        "train_objective": 0.004015653859823942,
+        "grad_max": 6.883810783619992e-07,
+        "n_iter": 77,
+        "n_eval": 85,
+        "hit_limit": false,
+        "seconds": 78.03
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 80.36,
+        "holdout_top5": 94.37,
+        "holdout_loss": 1.20950546875,
+        "train_objective": 0.0015963346231728792,
+        "grad_max": 8.394346764362126e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.31
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 81.6,
+        "holdout_top5": 95.73,
+        "holdout_loss": 0.790379296875,
+        "train_objective": 0.8150427341461182,
+        "grad_max": 2.723509714996908e-05,
+        "n_iter": 105,
+        "n_eval": 113,
+        "hit_limit": false,
+        "seconds": 109.19
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 81.44,
+        "holdout_top5": 95.29,
+        "holdout_loss": 0.755975732421875,
+        "train_objective": 0.22061100602149963,
+        "grad_max": 4.85703185404418e-06,
+        "n_iter": 247,
+        "n_eval": 261,
+        "hit_limit": false,
+        "seconds": 257.41
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.001,
+    "train_objective": 0.46057701110839844,
+    "grad_max": 9.252516974811442e-06,
+    "n_iter": 168,
+    "n_eval": 179,
+    "hit_limit": false,
+    "seconds": 174.47,
+    "train_top1": 97.438
+  },
+  "test": {
+    "top1": 79.726,
+    "top5": 95.286,
+    "mean_per_class_top1": 79.72600000000001,
+    "loss": 0.8021539855957032,
+    "n": 50000
+  },
+  "sources": {
+    "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/svdllm/s0",
+    "weights_sha256": {
+      "healed_state.pt": "4dd580535b7ab3d5196e56637ae8267a1ff11d32bcd149c3385733688065d971"
+    }
+  },
+  "feature_meta": {
+    "bank": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "best_svdllm_s0",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/svdllm/s0",
+        "weights_sha256": {
+          "healed_state.pt": "4dd580535b7ab3d5196e56637ae8267a1ff11d32bcd149c3385733688065d971"
+        }
+      },
+      "img_size": 224,
+      "split": "bank"
+    },
+    "val": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "best_svdllm_s0",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/svdllm/s0",
+        "weights_sha256": {
+          "healed_state.pt": "4dd580535b7ab3d5196e56637ae8267a1ff11d32bcd149c3385733688065d971"
+        }
+      },
+      "img_size": 224,
+      "split": "val"
+    }
+  },
+  "git": {
+    "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+    "git_dirty": true
+  },
+  "trained_by": "scripts/core07_shift.py (tier2_linear.run_probe)"
+}

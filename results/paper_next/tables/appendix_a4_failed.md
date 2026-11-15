@@ -2,6 +2,22 @@
 
 | Phase | Check | Value | Bar |
 |---|---|---|---|
+| new | MUST-02: On 1,000 validation images in fp32, every component of Mirror-exact (full model) has maximum relative equivariance error below 1e-5, and flip consistency is 100% | max rel. error 2.51e-05 (block 11 act); flip 100.0000% | < 1e-5 and 100% |
+| new | MUST-04 P4.1: UD and R90 ratios to null in blocks 1 to 6 are at least 0.9 (LR's ratio is about 0.45) | min UD 0.4807 / min R90 0.7536 | >= 0.9 (UD and R90, every model) |
+| new | MUST-04 P4.2: The UD twin fraction in blocks 1 to 6 is within the twin-fraction null's 95% interval | dinov2_vitb14_reg: 0.5600 in [0, 6.00e-04]; dinov2_vitb14: 0.5298 in [0.0016, 0.0035]; dinov2_vitl14_reg: 0.5458 in [0, 3.68e-04]; deit3_b16: 0.4630 in [0, 0] | inside [null 2.5%, null 97.5%] |
+| new | MUST-04 P4.3: Zero-shot UD group-projection surgery on blocks 1 to 6 drops validation k-NN by more than 30 points, against 1.85 for LR | min UD drop 0.2320 | > 30 points |
+| new | MUST-05 P5.1: Switch-off median cosine at least 0.7 for twin pairs and at most 0.2 for random pairs | twins 0.4875, random -9.22e-07 | >= 0.7 twins and <= 0.2 random |
+| new | MUST-06 P6.3: Effective rank (entropy-based) of fc1 and fc2 changes by at most 2% under group projection | 0.0864 | <= 0.02 for all 12 |
+| new | MUST-07 P7.1: On dinov2_vitb14_reg at 6 blocks, Mirror-exact beats every baseline on validation k-NN by at least 2 points, with the paired bootstrap interval excluding 0 | smallest margin -1.75 | >= 2.0 points and CI low > 0, every method, both sizes |
+| new | MUST-07 P7.2: ZipIt-style merging and same-image-correlation pairing trail Mirror-exact by at least 10 points at 6 blocks | smallest margin 0.9340 | >= 10.0 points |
+| new | MUST-12 gate C: Gate C: in the LR model, the LR ratio to null in blocks 1 to 6 is at most 0.8 and the LR twin fraction in blocks 1 to 6 is at least 0.2 | ratio 0.4844, twin 0.0601 | ratio <= 0.8 and twin >= 0.2 |
+| new | CORE-01 T2: Specificity: the UD ratio to null is at most 0.7 in every UD run, and at least 0.9 in every none run and every LR run (blocks 1 to 6, final) | UD s0: n/a; UD s1: n/a; UD s2: n/a; none s0: 0.7026; none s1: n/a; none s2: n/a; LR s0: 0.6856; LR s1: n/a; LR s2: n/a | UD runs <= 0.7; none and LR runs >= 0.9 |
+| new | CORE-01 T4: Emergence: in every LR run (for LR) and every UD run (for UD), the twin fraction of the trained group is higher at the final epoch than at epoch 5 | LR s0: 0.0846 -> 0.0601; LR s1: n/a -> n/a; LR s2: n/a -> n/a; UD s0: n/a -> n/a; UD s1: n/a -> n/a; UD s2: n/a -> n/a | final > epoch 5, every LR and UD run |
+| new | CORE-03 P3.1: Mirror plus low rank lies above low rank alone (the better of plain SVD and SVD-LLM) at at least 3 of 4 budget points on at least 2 of 3 models, including DINOv2-L or DeiT-III (zero-shot) | dinov2_vitb14_reg: 0 of 4 points above; dinov2_vitl14_reg: 0 of 4 points above; deit3_b16: 0 of 4 points above | >= 3 of 4 points on >= 2 of 3 models, one of them DINOv2-L or DeiT-III |
+| new | CORE-04 P4.1: Scale: the tax in blocks 1 to L/2 increases from DINOv2-S to g (either direction is reported) | s14 0.4002, b14 0.4185, l14 0.4140, g14 0.3440 | S < B < L < g |
+| new | CORE-04 P4.2: Models whose recipe is verified to have no flips have a lower LR tax than every flip-trained model of the same size | clip_b16: 0.3125; convnext_b: 0.2168; deit3_b16: 0.3487; dino_b16: 0.2495; dinov2_vitb14: 0.4048; dinov2_vitb14_reg: 0.4185; dinov2_vitg14_reg: 0.3440; dinov2_vitl14_reg: 0.4140; dinov2_vits14_reg: 0.4002; dinov3_b16: 0.4002; eva02_b14: 0.1647; mae_b16: 0.4482; resnet50: 0.2794; siglip2_b16: 0.2309 | below every flip-trained model of its size |
+| new | CORE-05 P5.1: The activation-weighted breaking share is at most half the weight-energy breaking share in blocks 1 to 6 | 0.5803 | <= 0.5 |
+| new | CORE-05 P5.3: The out-of-sample rule is correct on at least 75% of layer-model cases on DINOv2-L-reg, DeiT-III and MAE | 0.6667 | >= 0.75 |
 | earlier | F4 energy rule (P2): predicts the single-block winner | 0.4444 | >= 0.75 |
 | earlier | Weights-only twin pairing (P5 part 2): agreement with the data-driven pairing | 0.4658 | >= 0.7 |
 | earlier | Weights-only twin pairing, fully data-free (P5 part 2, strict) | 0.4409 | >= 0.7 |

@@ -1,0 +1,12 @@
+# Matched component ablation of Mirror-exact (MUST-08)
+
+| Size | k-NN top-1 | Parameters (share) | GFLOPs (share) | Flip bf16 | Flip fp32 |
+|---|---|---|---|---|---|
+| 6mlp | 76.60 ± 0.02 (n = 3) | 0.870 | 0.875 | 91.69 |  |
+| 6attn | 77.42 ± 0.02 (n = 3) | 0.943 | 0.945 | 92.56 |  |
+| 6both | 77.34 ± 0.08 (n = 3) | 0.806 | 0.814 | 95.01 |  |
+| fullmlp | 52.55 ± 0.02 (n = 3) | 0.839 | 0.845 | 64.80 | 60.747 |
+| fullattn | 62.40 ± 0.26 (n = 3) | 0.925 | 0.928 | 77.15 | 73.927 |
+| full | 53.81 ± 0.36 (n = 3) | 0.764 | 0.774 | 97.93 | 100.000 |
+
+Sources: `data/table3_must08.csv`

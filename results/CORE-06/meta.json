@@ -1,0 +1,115 @@
+{
+  "experiment": "CORE-06",
+  "date_utc": "2026-11-15T20:09:34Z",
+  "git": {
+    "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "model": "dinov2_vitb14_reg",
+    "structure": null,
+    "healed_run": [
+      "vexact_s0=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+      "vexact_s1=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1",
+      "vexact_s2=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2"
+    ],
+    "zeroshot_exact": false,
+    "no_original": false,
+    "cub_root": "/home/ubuntu/hf/cub/CUB_200_2011",
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache/cub",
+    "out": null,
+    "resize": 256,
+    "crop": 224,
+    "decode_workers": 8,
+    "batch_size": 128,
+    "num_workers": 4,
+    "amp": "none",
+    "wd_grid": "1e-5,1e-4,1e-3,1e-2,1e-1,1",
+    "folds": 5,
+    "max_iter": 1000,
+    "seed": 0,
+    "force_features": false,
+    "force_probe": false,
+    "gpu_frac": 0.15,
+    "device": null,
+    "tiny": false
+  },
+  "seeds": {
+    "folds": 0,
+    "global": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "structure": "/home/ubuntu/Mirror_CPAL/results/MUST-07/structure/dinov2_vitb14_reg_s0.npz"
+    },
+    "original": null,
+    "vexact_s0": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+    "vexact_s1": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1",
+    "vexact_s2": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2"
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 32534.47,
+  "extra": {
+    "verdicts": {
+      "P6.1": "PASS",
+      "P6.2": "PASS",
+      "P6.3": "PASS"
+    },
+    "data": {
+      "n_images": 11788,
+      "n_train": 5994,
+      "n_test": 5794,
+      "n_classes": 200,
+      "n_facing_train": 5443,
+      "n_facing_test": 5307,
+      "facing_right_share_train": 0.5070733051625942,
+      "facing_right_share_test": 0.497456189937818,
+      "annotation_sha256": {
+        "images.txt": "e1cfc5ed1f4bd1b838040784b6f75c44f7a25d9b31707a3adab49ec694618c1f",
+        "train_test_split.txt": "8bbbfcc09b4d3c9c6e3e40c9874bd863eb6658f4f456e472df1b33d3403d2600",
+        "image_class_labels.txt": "e9df8c96d897994a245746fe2c98914b9b31f5342bddc6e8b06bdfbf45e49b02",
+        "bounding_boxes.txt": "c19d9f096c15564793408e5ba054b8d715a6805819d98f037c977f369ef4abd3",
+        "parts/part_locs.txt": "5be41e1e1e9165ff19632da203e30384fe8a359347c545ffc12ab99155b0415f",
+        "parts/parts.txt": "411a4ab5c7622c1b93bf84dd1e9f69a8a2feaecd79753ed13cfc27ec0c2aeef0"
+      },
+      "part_names_check": {
+        "ok": true,
+        "beak": "beak",
+        "tail": "tail",
+        "n_parts": 15
+      },
+      "cache": {
+        "root": "/home/ubuntu/hf/cub/CUB_200_2011",
+        "resize": 256,
+        "crop": 224,
+        "n_images": 11788,
+        "annotation_sha256": {
+          "images.txt": "e1cfc5ed1f4bd1b838040784b6f75c44f7a25d9b31707a3adab49ec694618c1f",
+          "train_test_split.txt": "8bbbfcc09b4d3c9c6e3e40c9874bd863eb6658f4f456e472df1b33d3403d2600",
+          "image_class_labels.txt": "e9df8c96d897994a245746fe2c98914b9b31f5342bddc6e8b06bdfbf45e49b02",
+          "bounding_boxes.txt": "c19d9f096c15564793408e5ba054b8d715a6805819d98f037c977f369ef4abd3",
+          "parts/part_locs.txt": "5be41e1e1e9165ff19632da203e30384fe8a359347c545ffc12ab99155b0415f",
+          "parts/parts.txt": "411a4ab5c7622c1b93bf84dd1e9f69a8a2feaecd79753ed13cfc27ec0c2aeef0"
+        },
+        "complete": true,
+        "order": "images.txt",
+        "interpolation": "bicubic",
+        "transform": "resize 256 (shorter side, bicubic), centre crop 224 (mirror.data.preprocess_pil)"
+      },
+      "facing_convention": "sign = sign(x_beak - x_tail); +1 = beak right of tail (bird faces right); probe class 1 = faces right, 0 = faces left; images without a label (a part not visible, or parts closer than 10% of the box width) are left out of every facing probe"
+    }
+  }
+}

@@ -1,0 +1,455 @@
+{
+  "experiment": "CORE-06",
+  "scoring": {
+    "P6.1": {
+      "prediction": "species from the even part is within 1 point of the full feature",
+      "operational": "|full CLS - even CLS| species top-1 on natural test images <= 1.0, on every model probed (original with A_L, each healed Mirror-exact seed)",
+      "per_model": {
+        "original": {
+          "even_cls": 89.95512599240594,
+          "full_cls": 90.00690369347602,
+          "full_minus_even": 0.05177770107007973,
+          "pass": true
+        },
+        "vexact_s0": {
+          "even_cls": 89.45460821539524,
+          "full_cls": 89.42008974801519,
+          "full_minus_even": -0.03451846738005315,
+          "pass": true
+        },
+        "vexact_s1": {
+          "even_cls": 89.52364515015533,
+          "full_cls": 89.47186744908527,
+          "full_minus_even": -0.05177770107006552,
+          "pass": true
+        },
+        "vexact_s2": {
+          "even_cls": 89.43734898170521,
+          "full_cls": 89.36831204694512,
+          "full_minus_even": -0.0690369347600921,
+          "pass": true
+        }
+      },
+      "verdict": "PASS",
+      "complete": true
+    },
+    "P6.2": {
+      "prediction": "facing direction from the odd part is at least 85%",
+      "operational": "facing accuracy on natural test images >= 85.0% from the odd CLS, or from the odd mean patch token when the odd CLS's training-split CV accuracy is below 85.0% (decided before scoring); on every model probed",
+      "per_model": {
+        "original": {
+          "feature": "odd_cls",
+          "fallback_to_mean_patch": false,
+          "odd_cls_cv_top1_train": 95.68252801763734,
+          "rule": "odd CLS unless its training-split cross-validated facing accuracy is below 85.0%",
+          "facing_acc_natural": 94.98775202562652,
+          "facing_acc_mirror_augmented": 95.30808366308648,
+          "odd_cls_natural": 94.98775202562652,
+          "odd_patch_natural": 96.6270962879216,
+          "pass": true
+        },
+        "vexact_s0": {
+          "feature": "odd_cls",
+          "fallback_to_mean_patch": false,
+          "odd_cls_cv_top1_train": 99.13650560352747,
+          "rule": "odd CLS unless its training-split cross-validated facing accuracy is below 85.0%",
+          "facing_acc_natural": 99.18974938760128,
+          "facing_acc_mirror_augmented": 99.18032786885246,
+          "odd_cls_natural": 99.18974938760128,
+          "odd_patch_natural": 99.32165065008479,
+          "pass": true
+        },
+        "vexact_s1": {
+          "feature": "odd_cls",
+          "fallback_to_mean_patch": false,
+          "odd_cls_cv_top1_train": 99.11813338232592,
+          "rule": "odd CLS unless its training-split cross-validated facing accuracy is below 85.0%",
+          "facing_acc_natural": 99.20859242509893,
+          "facing_acc_mirror_augmented": 99.18974938760128,
+          "odd_cls_natural": 99.20859242509893,
+          "odd_patch_natural": 99.26512153759187,
+          "pass": true
+        },
+        "vexact_s2": {
+          "feature": "odd_cls",
+          "fallback_to_mean_patch": false,
+          "odd_cls_cv_top1_train": 99.08138893992283,
+          "rule": "odd CLS unless its training-split cross-validated facing accuracy is below 85.0%",
+          "facing_acc_natural": 99.24627850009422,
+          "facing_acc_mirror_augmented": 99.24627850009422,
+          "odd_cls_natural": 99.24627850009422,
+          "odd_patch_natural": 99.30280761258715,
+          "pass": true
+        }
+      },
+      "verdict": "PASS",
+      "complete": true
+    },
+    "P6.3": {
+      "prediction": "facing from healed Mirror-exact's even part is at most 60% on natural test images and exactly 50% on the mirror-augmented test set",
+      "operational": "even CLS, natural <= 60.0%; mirror-augmented 50% with every differing pair a near-tie (relative logit margin < 0.0001); every healed seed",
+      "per_model": {
+        "vexact_s0": {
+          "natural": 50.83851516864518,
+          "mirror_augmented": 50.0,
+          "mirror_augmented_raw_exactly_50": true,
+          "n_pairs_differ": 0,
+          "n_pairs_differ_not_near_tie": 0,
+          "pass_natural": true,
+          "pass_exact50": true,
+          "pass": true
+        },
+        "vexact_s1": {
+          "natural": 50.29206708121349,
+          "mirror_augmented": 50.0,
+          "mirror_augmented_raw_exactly_50": true,
+          "n_pairs_differ": 0,
+          "n_pairs_differ_not_near_tie": 0,
+          "pass_natural": true,
+          "pass_exact50": true,
+          "pass": true
+        },
+        "vexact_s2": {
+          "natural": 50.57471264367817,
+          "mirror_augmented": 50.0,
+          "mirror_augmented_raw_exactly_50": true,
+          "n_pairs_differ": 0,
+          "n_pairs_differ_not_near_tie": 0,
+          "pass_natural": true,
+          "pass_exact50": true,
+          "pass": true
+        }
+      },
+      "verdict": "PASS",
+      "complete": true
+    }
+  },
+  "data": {
+    "n_images": 11788,
+    "n_train": 5994,
+    "n_test": 5794,
+    "n_classes": 200,
+    "n_facing_train": 5443,
+    "n_facing_test": 5307,
+    "facing_right_share_train": 0.5070733051625942,
+    "facing_right_share_test": 0.497456189937818,
+    "annotation_sha256": {
+      "images.txt": "e1cfc5ed1f4bd1b838040784b6f75c44f7a25d9b31707a3adab49ec694618c1f",
+      "train_test_split.txt": "8bbbfcc09b4d3c9c6e3e40c9874bd863eb6658f4f456e472df1b33d3403d2600",
+      "image_class_labels.txt": "e9df8c96d897994a245746fe2c98914b9b31f5342bddc6e8b06bdfbf45e49b02",
+      "bounding_boxes.txt": "c19d9f096c15564793408e5ba054b8d715a6805819d98f037c977f369ef4abd3",
+      "parts/part_locs.txt": "5be41e1e1e9165ff19632da203e30384fe8a359347c545ffc12ab99155b0415f",
+      "parts/parts.txt": "411a4ab5c7622c1b93bf84dd1e9f69a8a2feaecd79753ed13cfc27ec0c2aeef0"
+    },
+    "part_names_check": {
+      "ok": true,
+      "beak": "beak",
+      "tail": "tail",
+      "n_parts": 15
+    },
+    "cache": {
+      "root": "/home/ubuntu/hf/cub/CUB_200_2011",
+      "resize": 256,
+      "crop": 224,
+      "n_images": 11788,
+      "annotation_sha256": {
+        "images.txt": "e1cfc5ed1f4bd1b838040784b6f75c44f7a25d9b31707a3adab49ec694618c1f",
+        "train_test_split.txt": "8bbbfcc09b4d3c9c6e3e40c9874bd863eb6658f4f456e472df1b33d3403d2600",
+        "image_class_labels.txt": "e9df8c96d897994a245746fe2c98914b9b31f5342bddc6e8b06bdfbf45e49b02",
+        "bounding_boxes.txt": "c19d9f096c15564793408e5ba054b8d715a6805819d98f037c977f369ef4abd3",
+        "parts/part_locs.txt": "5be41e1e1e9165ff19632da203e30384fe8a359347c545ffc12ab99155b0415f",
+        "parts/parts.txt": "411a4ab5c7622c1b93bf84dd1e9f69a8a2feaecd79753ed13cfc27ec0c2aeef0"
+      },
+      "complete": true,
+      "order": "images.txt",
+      "interpolation": "bicubic",
+      "transform": "resize 256 (shorter side, bicubic), centre crop 224 (mirror.data.preprocess_pil)"
+    },
+    "facing_convention": "sign = sign(x_beak - x_tail); +1 = beak right of tail (bird faces right); probe class 1 = faces right, 0 = faces left; images without a label (a part not visible, or parts closer than 10% of the box width) are left out of every facing probe"
+  },
+  "invariance": {
+    "original": {
+      "cls_even_rel_max": 0.4139023721218109,
+      "cls_odd_rel_max": 3.254340410232544,
+      "cls_odd_rel_median": 1.809081792831421,
+      "cls_odd_norm_share_median": 0.011438088491559029,
+      "patch_even_rel_max": 0.4586751163005829,
+      "patch_odd_rel_max": 3.6680827140808105,
+      "patch_odd_rel_median": 1.2600346803665161,
+      "patch_odd_norm_share_median": 0.00843233335763216
+    },
+    "vexact_s0": {
+      "cls_even_rel_max": 6.361079158523353e-06,
+      "cls_odd_rel_max": 0.00019605392299126834,
+      "cls_odd_rel_median": 2.4158263840945438e-05,
+      "cls_odd_norm_share_median": 0.0032155318185687065,
+      "patch_even_rel_max": 1.1452158105385024e-05,
+      "patch_odd_rel_max": 4.559554872685112e-05,
+      "patch_odd_rel_median": 7.4518607107165735e-06,
+      "patch_odd_norm_share_median": 0.003566165454685688
+    },
+    "vexact_s1": {
+      "cls_even_rel_max": 6.384497282851953e-06,
+      "cls_odd_rel_max": 0.00019846463692374527,
+      "cls_odd_rel_median": 2.4275743271573447e-05,
+      "cls_odd_norm_share_median": 0.0032045217230916023,
+      "patch_even_rel_max": 8.278104360215366e-06,
+      "patch_odd_rel_max": 4.574939885060303e-05,
+      "patch_odd_rel_median": 6.880655746499542e-06,
+      "patch_odd_norm_share_median": 0.003606016281992197
+    },
+    "vexact_s2": {
+      "cls_even_rel_max": 6.350923740683356e-06,
+      "cls_odd_rel_max": 0.00021242005459498614,
+      "cls_odd_rel_median": 2.400293669779785e-05,
+      "cls_odd_norm_share_median": 0.0032423597294837236,
+      "patch_even_rel_max": 1.8393064237898216e-05,
+      "patch_odd_rel_max": 3.854498208966106e-05,
+      "patch_odd_rel_median": 6.540091362694511e-06,
+      "patch_odd_norm_share_median": 0.0035962897818535566
+    }
+  },
+  "variants": {
+    "original": {
+      "role": "original",
+      "operator": "A_layers[12] (final-layer operator) of /home/ubuntu/Mirror_CPAL/results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+      "d_minus": 8,
+      "first_batch_checks": {
+        "natural": 6.143781661194225e-08,
+        "mirror": 1.0948767936724835e-07
+      }
+    },
+    "vexact_s0": {
+      "role": "healed_exact",
+      "operator": "info['structure']['A_star'] of /home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+      "d_minus": 68,
+      "even_head_check": 2.9776049292884466e-08,
+      "run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+      "method": "mirror_exact",
+      "seed": 0,
+      "constraint_checks": {
+        "0:MirrorMLPConstraint": {
+          "max_rel_violation": 2.587954062073317e-08,
+          "per_block": [
+            2.587954062073317e-08,
+            2.3750964250960282e-08,
+            2.306978836216599e-08,
+            2.2161534627012904e-08,
+            2.133616677710985e-08,
+            1.907711719999855e-08,
+            1.7833515959890208e-08,
+            1.696834243746869e-08,
+            1.4596868294317714e-08,
+            1.3245066107473023e-08,
+            1.1799997950843325e-08,
+            1.2302292705036104e-08
+          ]
+        },
+        "1:MirrorAttnConstraint": {
+          "max_rel_violation": 9.809593784711402e-09,
+          "per_block": [
+            6.045670720413012e-09,
+            9.809593784711402e-09,
+            8.382741398091711e-09,
+            7.312359163635932e-09,
+            9.506864585807028e-09,
+            8.9647452676118e-09,
+            7.801486143234884e-09,
+            8.298337828803174e-09,
+            5.751113747430952e-09,
+            7.053483576648171e-09,
+            4.4143129348082874e-09,
+            4.037347250720054e-09
+          ]
+        },
+        "2:VExactEmbeddings": {
+          "max_share": 2.6765621757193774e-16,
+          "shares": {
+            "patch_embed.weight": 1.6480707533185208e-16,
+            "patch_embed.bias": 2.2901039473010014e-18,
+            "pos_embed.patches": 2.6765621757193774e-16,
+            "pos_embed.cls": 1.9727565268532942e-17,
+            "cls_token": 1.9727565268532942e-17,
+            "registers": 1.4373129657940874e-17
+          },
+          "embeddings_train": false,
+          "even_head_max_abs_err": 2.9776049292884466e-08
+        }
+      },
+      "sources": {
+        "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0",
+        "weights_sha256": {
+          "healed_state.pt": "0413c2e74fa041b5c2a523675ebd856a20dec5a5417bd3627b20c46b816a6f2a"
+        }
+      },
+      "first_batch_checks": {
+        "natural": 1.3731953458773205e-06,
+        "mirror": 1.3432227206067182e-06
+      }
+    },
+    "vexact_s1": {
+      "role": "healed_exact",
+      "operator": "info['structure']['A_star'] of /home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1",
+      "d_minus": 68,
+      "even_head_check": 2.9776049292884466e-08,
+      "run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1",
+      "method": "mirror_exact",
+      "seed": 1,
+      "constraint_checks": {
+        "0:MirrorMLPConstraint": {
+          "max_rel_violation": 2.5854110130308948e-08,
+          "per_block": [
+            2.5854110130308948e-08,
+            2.373166641987649e-08,
+            2.3034485804508272e-08,
+            2.2358239643662223e-08,
+            2.1670947245233838e-08,
+            1.946925449216207e-08,
+            1.808686635741284e-08,
+            1.6954661268927763e-08,
+            1.4971808128776446e-08,
+            1.3258054218559816e-08,
+            1.176059705157541e-08,
+            1.2112222127179096e-08
+          ]
+        },
+        "1:MirrorAttnConstraint": {
+          "max_rel_violation": 1.0066110401437265e-08,
+          "per_block": [
+            5.517449205898916e-09,
+            1.0066110401437265e-08,
+            8.280046362861722e-09,
+            7.346213531548166e-09,
+            9.255403229330569e-09,
+            9.049355871867452e-09,
+            8.04456070350267e-09,
+            8.371229651624333e-09,
+            5.8826109403718465e-09,
+            7.162320651280103e-09,
+            4.375940103108366e-09,
+            4.121449512628876e-09
+          ]
+        },
+        "2:VExactEmbeddings": {
+          "max_share": 2.724961487894986e-16,
+          "shares": {
+            "patch_embed.weight": 1.601818684194708e-16,
+            "patch_embed.bias": 2.412270965161811e-18,
+            "pos_embed.patches": 2.724961487894986e-16,
+            "pos_embed.cls": 2.0435093394312107e-17,
+            "cls_token": 2.0435093394312107e-17,
+            "registers": 1.3008153397403068e-17
+          },
+          "embeddings_train": false,
+          "even_head_max_abs_err": 2.9776049292884466e-08
+        }
+      },
+      "sources": {
+        "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s1",
+        "weights_sha256": {
+          "healed_state.pt": "df395939ef9bd85b2e66fa103f6ff26595c3b606b1d61401a532cc81a912a2b0"
+        }
+      },
+      "first_batch_checks": {
+        "natural": 1.2867920986536774e-06,
+        "mirror": 1.5947360907375696e-06
+      }
+    },
+    "vexact_s2": {
+      "role": "healed_exact",
+      "operator": "info['structure']['A_star'] of /home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2",
+      "d_minus": 68,
+      "even_head_check": 2.9776049292884466e-08,
+      "run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2",
+      "method": "mirror_exact",
+      "seed": 2,
+      "constraint_checks": {
+        "0:MirrorMLPConstraint": {
+          "max_rel_violation": 2.5902252023004015e-08,
+          "per_block": [
+            2.5902252023004015e-08,
+            2.378739122208092e-08,
+            2.304483847718427e-08,
+            2.2303382323072234e-08,
+            2.1567325342109426e-08,
+            1.9306893624730478e-08,
+            1.7945728638053385e-08,
+            1.680459300588025e-08,
+            1.446226226404892e-08,
+            1.323627585369519e-08,
+            1.1826050337399218e-08,
+            1.2365725355334712e-08
+          ]
+        },
+        "1:MirrorAttnConstraint": {
+          "max_rel_violation": 9.976182793853436e-09,
+          "per_block": [
+            5.518148234360685e-09,
+            9.976182793853436e-09,
+            8.038941251030623e-09,
+            7.293948222757652e-09,
+            9.203303409671532e-09,
+            8.641412020961885e-09,
+            7.938916583717167e-09,
+            8.140772883134276e-09,
+            5.8461758518036554e-09,
+            7.1752621057121385e-09,
+            4.403274570882266e-09,
+            4.103655083502408e-09
+          ]
+        },
+        "2:VExactEmbeddings": {
+          "max_share": 2.4967254391230163e-16,
+          "shares": {
+            "patch_embed.weight": 1.625486314069103e-16,
+            "patch_embed.bias": 1.5265574395564418e-18,
+            "pos_embed.patches": 2.4967254391230163e-16,
+            "pos_embed.cls": 2.0967886629657365e-17,
+            "cls_token": 2.0967886629657365e-17,
+            "registers": 1.2229577170972157e-17
+          },
+          "embeddings_train": false,
+          "even_head_max_abs_err": 2.9776049292884466e-08
+        }
+      },
+      "sources": {
+        "healed_run": "/home/ubuntu/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s2",
+        "weights_sha256": {
+          "healed_state.pt": "91d40fe8f0f449ceacf42bc53989e5bf7811e3ffa7c905d12b2f503440b148ac"
+        }
+      },
+      "first_batch_checks": {
+        "natural": 1.3752417089563096e-06,
+        "mirror": 1.571064899508201e-06
+      }
+    }
+  },
+  "git": {
+    "git_hash": "e84e20ff35bb1ac4c3e7e3406fba5d633fb3c9f9",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "seed": 0,
+  "probe": {
+    "wd_grid": [
+      1e-05,
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "folds": 5,
+    "solver": {
+      "max_iter": 1000
+    },
+    "selection": "stratified k-fold CV on the CUB training split only"
+  },
+  "amp": "none",
+  "structure": "/home/ubuntu/Mirror_CPAL/results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+  "structure_sha256": "13f19ba0f75bf04790adda69c036c8f404d8598cac04c1d0ba6570e9b9ae124f"
+}

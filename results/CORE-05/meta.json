@@ -1,0 +1,82 @@
+{
+  "experiment": "CORE-05",
+  "date_utc": "2026-11-15T20:21:40Z",
+  "git": {
+    "git_hash": "805c231c9c525c197689b4bca447e207068ef63b",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "stage": "report",
+    "models": null,
+    "design_model": null,
+    "score_models": null,
+    "structure_dirs": "results/MUST-07/structure,results/CORE-05/structure",
+    "fit_seed": 0,
+    "blocks": "all",
+    "no_attn": false,
+    "out": null,
+    "cache_dir": "/home/ubuntu/Mirror_CPAL/cache",
+    "eval_batch": 128,
+    "stats_batch": 16,
+    "num_workers": 4,
+    "group_size": 8,
+    "bank_per_class": null,
+    "queries": null,
+    "knn_k": 20,
+    "knn_temperature": 0.07,
+    "amp": "bf16",
+    "refreeze": false,
+    "ckpt_runs": "runs/CORE-01/vit_s8_LR_s*,runs/CORE-01/vit_s8_UD_s*",
+    "ckpt_measure_dir": "results/CORE-01",
+    "ckpt_fit_images": 2000,
+    "ckpt_cache_dir": null,
+    "top_k": 10,
+    "workers": 8,
+    "must07_dir": "results/MUST-07",
+    "f4_json": "runs/f4/f4_p2.json",
+    "seed": 0,
+    "gpu_frac": 0.2,
+    "device": null,
+    "tiny": false
+  },
+  "seeds": {
+    "fit": 0,
+    "global": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "structure_dirs": "results/MUST-07/structure,results/CORE-05/structure"
+    },
+    "dinov2_vitl14_reg": {
+      "structure_dirs": "results/MUST-07/structure,results/CORE-05/structure"
+    },
+    "deit3_b16": {
+      "structure_dirs": "results/MUST-07/structure,results/CORE-05/structure"
+    },
+    "mae_b16": {
+      "structure_dirs": "results/MUST-07/structure,results/CORE-05/structure"
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 0.32,
+  "extra": {
+    "verdicts": {
+      "P5.1": "FAIL",
+      "P5.2": "n/a",
+      "P5.3": "FAIL"
+    }
+  }
+}
