@@ -1,6 +1,6 @@
 # MUST-01: the law against the achieved saving
 
-Commit 72d5c6ce0c. Written by scripts/must01_law.py; every number below is read from law_per_layer.csv and law_surgery_k.csv in this folder.
+Commit 52e29d1676 (uncommitted changes present). Written by scripts/must01_law.py; every number below is read from law_per_layer.csv and law_surgery_k.csv in this folder.
 
 Predicted: free parameters of fc1 and fc2 from the character formula (mirror/groups.py) with the block's operators and twin matching. Achieved: entries of the weight tensors of the even/odd MLP (mirror/efficient.py) built from random weights projected onto the same structure. The difference is in percentage points of the dense MLP weights. Pre-registered bar: 1 point per block.
 

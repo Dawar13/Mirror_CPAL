@@ -1,0 +1,8 @@
+# H200 job file A2 (15 November): extra slots beside job file A, whose PAR=5 slots were all held by CPU-bound
+# measurement jobs while the GPU sat at about 33%. Locks are shared across job files, and the heal line is identical
+# to job file A's, so the "heal" lock and its %done marker stop it from running twice.
+#   PAR=3 setsid nohup bash scripts/h100_sched.sh jobs/h100_A2_gpu.txt > logs/q_A2.log 2>&1 < /dev/null &
+# MUST-02 fp32 rerun: the first attempt hit its own per-process cap (--gpu-frac 0.15, 21 GB of the H200) in the fp32
+# flip check; caps never change results.
+results/MUST-07/structure/dinov2_vitb14_reg_s0.npz @30000 | python scripts/must02_exactness.py --model dinov2_vitb14_reg --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz --gpu-frac 0.4
+cache/heal256_uint8.npy cache/msel224_uint8.npy results/MUST-07/structure/dinov2_vitb14_reg_s0.npz @14000 %lock=heal %done=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0/metrics.json | python scripts/must09_heal.py --method mirror_exact --seed 0 --span-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz --micro-batch 64 --curve-queries 10000 --gpu-frac 0.2

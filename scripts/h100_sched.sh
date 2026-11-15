@@ -26,6 +26,9 @@
 # To stop one job for good: kill -TERM -<pid> (pid in logs/<jobs>/state/<key>.pid; the minus sign
 # signals its whole process group), then touch logs/<jobs>/state/<key>.skip.
 # To run a finished job again: delete its files in logs/<jobs>/state/ (or the whole folder).
+# WARNING: a job's key is its whole line, so editing the line of a job that has started makes a NEW job that the
+# scheduler starts again (a duplicate writing to the same folder). Never edit a started job's line; to change it,
+# stop it, touch its .skip file and add a new line.
 set -u
 
 SELF="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
