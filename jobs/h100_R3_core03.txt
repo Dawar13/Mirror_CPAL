@@ -1,0 +1,8 @@
+# H200 job file R3 (2026-11-15, 15:45 UTC): CORE-03 on DINOv2-L-reg. The first run (C job 5, started 13:45, before the
+# empty-part fix of 805c231) stopped at 15:38 on that bug at the 70% point. C line 29 (the same rerun, behind lock
+# core03 after the DeiT-III rerun) is marked .skip; this rerun runs beside the DeiT-III rerun instead. Each model has
+# its own rows file; curves.csv, bootstrap.csv, p31.json and SUMMARY.md are rebuilt from all rows at the end of every
+# run. Finished rows are reused.
+#   . ~/.mirror_env.sh; export MW=6
+#   PAR=1 setsid nohup bash scripts/h100_sched.sh jobs/h100_R3_core03.txt > logs/q_R3.log 2>&1 < /dev/null &
+results/MUST-07/gate_b.json @12000 %done=results/CORE-03/done_dinov2_vitl14_reg_s0.flag | CORE03_RERUN=2 python scripts/core03_stacking.py --model dinov2_vitl14_reg --gpu-frac 0.25
