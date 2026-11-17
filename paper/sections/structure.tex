@@ -12,6 +12,12 @@ $\tfrac12(C_l + C_l^\top) = V \Lambda V^\top$,
   A_l = V \,\mathrm{sign}(\Lambda)\, V^\top .
   \label{eq:operator}
 \end{equation}
+
+\begin{lemma}\label{lem:fit}
+Among all symmetric orthogonal matrices $A$, the matrix of Equation~\eqref{eq:operator} minimises
+$\lVert \tilde{x}_l - x_l A \rVert_F$ summed over tokens and images.
+\end{lemma}
+
 The $+1$ eigenvectors of $A_l$ span the \emph{even} directions of the stream, which a mirror leaves unchanged, and the
 $-1$ eigenvectors span the \emph{odd} directions, which change sign; we write $d_+$ and $d_-$ for their numbers.
 
@@ -25,17 +31,14 @@ constraint makes redundant, $1 - (\text{free parameters})/(\text{dense parameter
 Section~\ref{sec:method}.
 
 \paragraph{How close the weights are.}
-To measure how close a trained MLP is to this form, we project each weight matrix onto it and record the share of its
-energy that the projection removes, $s = \lVert W - W_{\mathrm{eq}} \rVert_F^2 / \lVert W \rVert_F^2$. A random
-structure of the same size (a random mirror operator with the same $d_+$ and a random pairing with the same number of
-twins) also removes energy, about 48\% in the first block of DINOv2-B/14 with registers, so we report the \emph{ratio
-to null}: $s$ divided by its mean over 20 random structures. A ratio of 1 means the weights are no closer to the
-fitted structure than to a random one, and lower means closer. For example, the first block of DINOv2-B/14 with
-registers loses 27\% (first MLP layer) and 20\% (second) of its weight energy to the projection, so it is far from
-random but not exactly symmetric. The same procedure, with the matching token map, measures up-down mirroring (UD),
-180-degree rotation (R180) and 90-degree rotation (R90, with four-cycles of neurons).
-
-\paragraph{Models.} We measure 14 released models: five DINOv2 models (four sizes with registers and the base size
+We project each MLP weight onto this form (Proposition~\ref{prop:projection}) and record the share of its energy that
+the projection removes, $s = \lVert W - W_{\mathrm{eq}} \rVert_F^2 / \lVert W \rVert_F^2$. Because a random structure of
+the same size also removes energy, we report the \emph{ratio to null}: $s$ divided by its mean over 20 random structures
+(random mirror operators with the same $d_+$, random pairings with the same number of twins). A ratio of 1 means no
+closer than chance. In the first block of DINOv2-B/14 with registers the projection removes 27\% and 20\% of the energy
+of the two MLP layers, against about 48\% for random structures: far from random, but not exactly symmetric. The same
+procedure with the matching token map measures up-down mirroring (UD), 180-degree rotation (R180) and 90-degree
+rotation (R90, with four-cycles of neurons). We measure 14 released models: five DINOv2 models (four sizes with registers and the base size
 without)~\citep{oquab2024dinov2,darcet2024registers}, DeiT~III~\citep{touvron2022deit}, DINO~\citep{caron2021emerging},
 DINOv3~\citep{simeoni2025dinov3}, EVA-02~\citep{fang2024eva}, MAE~\citep{he2022masked},
 CLIP~\citep{radford2021learning}, SigLIP~2~\citep{tschannen2025siglip}, and two CNNs, ConvNeXt~\citep{liu2022convnet}
@@ -77,9 +80,16 @@ flip-trained models, and DINOv3, whose released teacher configurations switch fl
 ViT-B student is not public), has 0.45. Both differ from the other models in more than augmentation, so this is
 evidence, not proof.
 
-One explanation, which we formed after these predictions failed, fits the observations. The power spectrum of any
-real image is unchanged by a 180-degree rotation, so a left-right flip and an up-down flip change it in exactly the
-same way: the power spectrum cannot tell the two mirrors apart. A 90-degree rotation maps one orientation onto
+One explanation, which we formed after these predictions failed, fits the observations. It rests on a simple fact.
+
+\begin{lemma}\label{lem:spectrum}
+Let $\hat f$ be the Fourier transform of a real image $f$, and $f_{\mathrm{LR}}$, $f_{\mathrm{UD}}$ its left-right and
+up-down mirror images. Then $|\hat f_{\mathrm{LR}}(k_x, k_y)| = |\hat f_{\mathrm{UD}}(k_x, k_y)|$ for every frequency.
+\end{lemma}
+
+\noindent The proof is one line: $\hat f_{\mathrm{LR}}(k_x,k_y) = \hat f(-k_x, k_y)$, $\hat f_{\mathrm{UD}}(k_x,k_y) =
+\hat f(k_x,-k_y)$, and $|\hat f(-k)| = |\hat f(k)|$ for a real image. So the power spectrum, the second-order statistics
+of an image pooled over positions, cannot tell the two mirrors apart. A 90-degree rotation maps one orientation onto
 another, and the power of natural images varies with orientation~\citep{vanderschaaf1996modelling,%
 torralba2003statistics}; we would expect horizontal and vertical structure to differ in particular, since gravity gives
 real scenes horizons and upright objects. Early features are local, and a patch filter shared across positions sees
@@ -88,7 +98,3 @@ has no preferred handedness, they should carry left-right and up-down pairing to
 pairing much less, whatever the augmentation. Deeper features encode layout, for which up and down are not
 interchangeable: up-down structure fades with depth in all 14 models and 180-degree structure in all four where we
 measured it (Appendix~\ref{app:structure}). We have not tested this explanation causally.
-
-Late blocks hold little mirror structure to collect, but in a residual network they must share the stream's mirror
-operator with the early blocks if the whole model is to be exactly equivariant. The next section builds the conversion
-on this constraint.

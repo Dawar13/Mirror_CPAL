@@ -26,12 +26,15 @@ Writes paper/figures/fig_symmetry_depth.pdf (vector) and fig_symmetry_depth.png 
 plotted value with its source, fit seed and git hash. No randomness: the small horizontal offsets in panel (a) are
 fixed by model order.
 
-Style: the validated categorical palette of the dataviz reference. Panel (a) keeps the group colours and markers of
-scripts/make_figures_next.py (LR blue circle, UD orange square, R90 aqua triangle, R180 yellow diamond) in palette
-order, whose adjacent pairs pass the colour-vision checks on white; each group is named on the axis. Panel (b)
-colours model type with three slots not used in panel (a) (violet, magenta, green), which pass the all-pairs
-colour-vision checks on white; magenta sits below 3:1 contrast, so the types have a legend and the named lines a
-direct label. Serif text (Palatino, as the paper's TeX Gyre Pagella) at 8 to 9 pt; 6 in wide for a 6 in text block.
+Style: the shared paper style (scripts/paper_style.py: apply() for fonts, spines, grid and line widths; the muted
+colours C and ROLE). Panel (a): ROLE["LR"], ROLE["UD"], ROLE["R90"], ROLE["R180"] (slate blue, terracotta, sage,
+sand) with the marker shapes of scripts/make_figures_next.py (circle, square, triangle, diamond); each model is a
+light-tint marker ringed in the group colour, the mean bar is the full colour, and each group is named on the axis.
+Panel (b): ROLE["vision"], ROLE["imagetext"], ROLE["cnn"]; the eleven unnamed lines at reduced opacity, the three
+named lines in full colour. The dataviz colour checker flags the muted colours (chroma below its floor; sage and
+terracotta close under deuteranopia and for normal vision), so identity never rests on colour alone: shapes and
+axis names in (a), and in (b) a legend, direct labels and a dashed line style for the CNNs. Fixed size 6 x 2.3 in
+(savefig.bbox kept at "standard" so the page size does not shrink).
 """
 from __future__ import annotations
 
@@ -49,6 +52,9 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from paper_style import C, ROLE, apply  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 MUST04 = ROOT / "results" / "MUST-04"
 CORE04 = ROOT / "results" / "CORE-04" / "structure"
@@ -56,21 +62,29 @@ OUT_DIR = ROOT / "paper" / "figures"
 OUT_STEM = "fig_symmetry_depth"
 
 # ---------------------------------------------------------------------------------------------- style
-C_INK, C_INK2, C_MUTED, C_GRID, C_AXIS, SURFACE = "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7", "#ffffff"
-GROUPS = {  # key: (label, colour, marker); dict order = palette order = slot order in panel (a)
-    "LR": ("LR", "#2a78d6", "o"),
-    "UD": ("UD", "#eb6834", "s"),
-    "R90": ("R90", "#1baf7a", "^"),
-    "R180": ("R180", "#eda100", "D"),
+C_INK, C_INK2, SURFACE = C["ink"], C["ink2"], C["paper"]
+_HUE = {v: k for k, v in C.items() if f"{k}_lt" in C}   # full colour -> hue name, for its light tint
+
+
+def tint(colour: str) -> str:
+    return C[_HUE[colour] + "_lt"]
+
+
+GROUPS = {  # key: (label, colour, marker); dict order = slot order in panel (a)
+    "LR": ("LR", ROLE["LR"], "o"),
+    "UD": ("UD", ROLE["UD"], "s"),
+    "R90": ("R90", ROLE["R90"], "^"),
+    "R180": ("R180", ROLE["R180"], "D"),
 }
 HALF = "first_half"
 MODEL_TYPES = {  # key: (legend label, colour, members); dict order = legend order
-    "vision": ("vision-only ViTs", "#6250d6",
+    "vision": ("vision-only ViTs", ROLE["vision"],
                ("dinov2_vits14_reg", "dinov2_vitb14", "dinov2_vitb14_reg", "dinov2_vitl14_reg", "dinov2_vitg14_reg",
                 "deit3_b16", "dino_b16", "dinov3_b16", "eva02_b14", "mae_b16")),
-    "image_text": ("image-text ViTs", "#e87ba4", ("clip_b16", "siglip2_b16")),
-    "cnn": ("CNNs", "#008300", ("convnext_b", "resnet50")),
+    "image_text": ("image-text ViTs", ROLE["imagetext"], ("clip_b16", "siglip2_b16")),
+    "cnn": ("CNNs", ROLE["cnn"], ("convnext_b", "resnet50")),
 }
+LINESTYLE = {"vision": "-", "image_text": "-", "cnn": (0, (3.5, 1.5))}  # dashes: second channel for CNN vs image-text
 LABELLED = ("dinov2_vitb14_reg", "clip_b16", "mae_b16")  # lines named directly at their end in panel (b)
 # Layout only (no data): lines that end in the bunch near zero get their name in the free space above the bunch,
 # with a vertical leader down to the line at x (just before the end); value = (x of the leader, y of the label).
@@ -81,20 +95,6 @@ SHORT_NAMES = {
     "eva02_b14": "EVA-02-B/14", "convnext_b": "ConvNeXt-B", "resnet50": "ResNet-50",
     "dinov2_vits14_reg": "DINOv2-S/14 reg", "dinov2_vitl14_reg": "DINOv2-L/14 reg",
     "dinov2_vitg14_reg": "DINOv2-g/14 reg", "dinov2_vitb14": "DINOv2-B/14",
-}
-STYLE = {
-    "font.family": "serif",
-    "font.serif": ["TeX Gyre Pagella", "Palatino Linotype", "Palatino", "Book Antiqua", "DejaVu Serif"],
-    "mathtext.fontset": "custom", "mathtext.rm": "Palatino Linotype", "mathtext.it": "Palatino Linotype:italic",
-    "mathtext.bf": "Palatino Linotype:bold",
-    "font.size": 8, "axes.titlesize": 9, "axes.labelsize": 8, "xtick.labelsize": 8, "ytick.labelsize": 8,
-    "legend.fontsize": 8, "axes.edgecolor": C_AXIS, "axes.labelcolor": C_INK, "axes.titlecolor": C_INK,
-    "axes.linewidth": 0.6, "axes.spines.top": False, "axes.spines.right": False, "axes.grid": False,
-    "axes.axisbelow": True, "grid.color": C_GRID, "grid.linewidth": 0.5, "grid.linestyle": "-",
-    "xtick.color": C_INK2, "ytick.color": C_INK2, "xtick.labelcolor": C_INK, "ytick.labelcolor": C_INK,
-    "xtick.major.width": 0.6, "ytick.major.width": 0.6, "xtick.major.size": 2.5, "ytick.major.size": 2.5,
-    "legend.frameon": False, "figure.facecolor": SURFACE, "axes.facecolor": SURFACE, "savefig.facecolor": SURFACE,
-    "savefig.dpi": 300, "pdf.fonttype": 42, "ps.fonttype": 42, "text.color": C_INK,
 }
 FIG_W, FIG_H = 6.0, 2.3
 
@@ -215,15 +215,15 @@ def panel_a(ax, d) -> list[dict]:
     rows = []
     for gi, (g, (label, colour, marker)) in enumerate(GROUPS.items()):
         vals = [ratio(metrics[m], g, HALF) for m in models]
-        ax.scatter(gi + m_off, vals, s=16, marker=marker, color=colour, edgecolors=SURFACE, linewidths=0.6,
-                   zorder=3)
+        ax.scatter(gi + m_off, vals, s=17, marker=marker, facecolors=tint(colour), edgecolors=colour,
+                   linewidths=0.7, zorder=3)
         mean = float(np.mean(vals))
         ax.plot([gi - half_w, gi + half_w], [mean, mean], color=colour, lw=2.0, solid_capstyle="butt", zorder=4)
         for m, v in zip(models, vals):
             rows.append(dict(model=m, group=g, value=v, blocks=blocks_of(metrics[m], g, HALF)))
         rows.append(dict(model=f"mean of {n_m}", group=g, value=mean, blocks=[]))
 
-    ax.axhline(1.0, color=C_MUTED, lw=0.7, ls=(0, (3, 2)), zorder=1)
+    ax.axhline(1.0, color=C_INK2, lw=0.7, ls=(0, (3, 2)), zorder=2)  # above the grid line at 1.0
     ax.text(len(GROUPS) - 1 + 0.5, 1.0 + 0.012, "no structure", ha="right", va="bottom", fontsize=8, color=C_INK2)
     ax.set_xticks(range(len(GROUPS)), [v[0] for v in GROUPS.values()])
     ax.tick_params(axis="x", length=0, pad=4)
@@ -231,10 +231,11 @@ def panel_a(ax, d) -> list[dict]:
     ax.set_ylim(0.3, 1.07)
     ax.set_yticks([0.4, 0.6, 0.8, 1.0])
     ax.yaxis.grid(True)
+    ax.xaxis.grid(False)
     ax.set_ylabel("ratio to null (lower = stronger pairing)")
     ax.set_title("(a)  pairing by symmetry, early blocks", loc="left", fontsize=9, pad=6)
 
-    key = [Line2D([], [], ls="none", marker="o", ms=3.8, mfc=C_INK2, mec=SURFACE, mew=0.6,
+    key = [Line2D([], [], ls="none", marker="o", ms=3.9, mfc=tint(C["grey"]), mec=C_INK2, mew=0.7,
                   label=f"one model (n = {n_m})"),
            Line2D([], [], color=C_INK2, lw=2.0, solid_capstyle="butt", label="mean")]
     ax.legend(handles=key, loc="upper left", bbox_to_anchor=(-0.55, 0.965), bbox_transform=ax.transData,
@@ -252,7 +253,7 @@ def panel_b(ax, d) -> None:
         named = r["model"] in LABELLED
         s = r["stream"]
         ax.plot(s["x"], s["odd"], color=colour, lw=1.3 if named else 0.8, alpha=1.0 if named else 0.6,
-                solid_joinstyle="round", solid_capstyle="round", zorder=4 if named else 3)
+                ls=LINESTYLE[r["type"]], solid_joinstyle="round", solid_capstyle="round", zorder=4 if named else 3)
 
     # direct labels: at the line end, or (for ends in the bunch near zero) above it with a leader
     for r in rows:
@@ -274,11 +275,13 @@ def panel_b(ax, d) -> None:
     top = max(float(r["stream"]["odd"].max()) for r in rows)
     ax.set_ylim(0, math.ceil(top * 10) / 10)
     ax.yaxis.grid(True)
+    ax.xaxis.grid(False)
     ax.set_xlabel("relative depth")
     ax.set_ylabel(r"odd share of the stream, $d_-/d$")
     ax.set_title("(b)  how much mirror structure is left with depth", loc="left", fontsize=9, pad=6)
     n_type = {t: sum(r["type"] == t for r in rows) for t in order}
-    handles = [Line2D([], [], color=MODEL_TYPES[t][1], lw=1.3, label=f"{MODEL_TYPES[t][0]} ({n_type[t]})")
+    handles = [Line2D([], [], color=MODEL_TYPES[t][1], lw=1.3, ls=LINESTYLE[t],
+                      label=f"{MODEL_TYPES[t][0]} ({n_type[t]})")
                for t in order if n_type[t]]
     ax.legend(handles=handles, loc="upper right", handlelength=1.4, handletextpad=0.5, borderaxespad=0.2,
               labelspacing=0.3)
@@ -290,7 +293,8 @@ def main() -> int:
     if not d["a_models"] or not d["b_rows"]:
         print("nothing to plot: panel (a) models", d["a_models"], "panel (b) rows", len(d["b_rows"]))
         return 1
-    plt.rcParams.update(STYLE)
+    apply()                                    # shared paper style: fonts, spines, grid, line widths
+    plt.rcParams["savefig.bbox"] = "standard"  # keep the page exactly FIG_W x FIG_H (the style default trims it)
     fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(FIG_W, FIG_H), layout="constrained",
                                      gridspec_kw={"width_ratios": [1.0, 1.75]})
     fig.get_layout_engine().set(w_pad=0.04, h_pad=0.02, wspace=0.08)

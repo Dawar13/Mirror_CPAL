@@ -10,7 +10,7 @@ with $k=20$ and temperature $0.07$ as in DINO~\citep{caron2021emerging}, a bank 
 so accuracies are below published full-bank numbers) and all 50{,}000 validation images as queries. Accuracies use
 bfloat16 features; \emph{flip consistency}, the share of validation images whose prediction does not change when the
 image is mirrored, uses float32. The original model scores 78.95 in the healing pipeline and 78.94 in the compression
-pipeline of Table~\ref{tab:zeroshot}.
+pipeline used before healing.
 
 \paragraph{Baselines.}
 We compare with plain SVD, SVD-LLM~\citep{wang2025svdllm} (its whitening step, without the sequential update),
@@ -55,8 +55,18 @@ Surgery and SVD-LLM were healed with three seeds each, which share one fitted st
   \end{tabular}
 \end{table}
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_results.pdf}
+  \caption{\textbf{Healing and size.} (a) $k$-NN top-1 of the healed full models during healing (steps 100 and 300 on a
+  10{,}000-image validation subset, steps 0 and 780 on all 50{,}000 images; means over seeds). Mirror Surgery starts far
+  lower than SVD-LLM and overtakes it early. (b) $k$-NN top-1 against parameter count: the released DINOv2 models with
+  registers (grey line) and the healed compressed versions of DINOv2-B; filled markers are exactly flip-invariant.}
+  \label{fig:results}
+\end{figure}
+
 \paragraph{Main result.}
-Table~\ref{tab:healed} compares the healed full models. Mirror Surgery reaches 78.34 $k$-NN top-1 (three seeds,
+Table~\ref{tab:healed} and Figure~\ref{fig:results} compare the healed full models. Mirror Surgery reaches 78.34 $k$-NN top-1 (three seeds,
 standard deviation 0.02) and SVD-LLM, the baseline ranked first on the held-out images, 78.06; the pre-registered
 test was non-inferiority, and it passes. A paired bootstrap over the validation images, which we added afterwards,
 gives a difference of $+0.28$ points (95\% interval $+0.09$ to $+0.47$; the interval excludes zero for each seed
@@ -66,7 +76,9 @@ exactly flip-invariant: the other compressors change their prediction for 4 to 6
 is mirrored, and the original model does so for 3.7\%. The random-structure control, which has exactly the same shapes
 and is also exactly invariant, ends 8.4 points lower, so the gain comes from the fitted structure and not from the
 equivariant form or from healing alone. Healing is essential: the converted model starts at 53.84, far below
-SVD-LLM's 75.80, and is ahead of it from the first check after step 0 (Appendix~\ref{app:extra}).
+SVD-LLM's 75.80, and is ahead of it from the first check after step 0 (Figure~\ref{fig:results}a). At 66M parameters
+the healed model lies on the size-accuracy line of the released DINOv2 models, slightly above the straight line between
+the small and base models (78.34 against 78.07, interpolated on a log scale; Figure~\ref{fig:results}b).
 
 \paragraph{Invariance and cost.}
 The usual way to make a model flip-invariant is to average its features over the image and its mirror image. On the
@@ -109,48 +121,17 @@ segmentation~\citep{zhou2017scene} (47.16 against 46.79 mIoU, 0.43 below the ori
 where noted, and the Pets and Flowers gaps are within noise. Under distribution shift, its accuracy drop from ImageNet to
 ImageNet-V2~\citep{recht2019imagenet} is 9.17 points against 8.62 for the original: within the one-point margin we
 pre-registered, though the paired interval of the difference ($+0.08$ to $+1.02$) shows the drop is larger. On
-ImageNet-Sketch~\citep{wang2019learning} Mirror Surgery leads SVD-LLM by 4.2 points. The dataset fills some classes
-with flipped and rotated copies of other images, which an invariant model treats alike, but the lead remains after
-removing detected near-duplicates (55.03 against 50.43). For segmentation the converted backbone is exactly
+ImageNet-Sketch~\citep{wang2019learning} Mirror Surgery leads SVD-LLM by 4.2 points, also after removing the
+flipped and rotated near-duplicates the dataset contains (55.03 against 50.43). For segmentation the converted backbone is exactly
 equivariant, and a head averaged over the image and its mirror image gives the mirrored mask for all but 422 of the
 487.7 million pixels of the 2{,}000 validation images (raw head: 98.98\% of pixels; original model: 95.03\%).
 
-\begin{table}[t]
-  \centering
-  \small
-  \caption{\textbf{Before healing}: $k$-NN top-1 after converting part or all of DINOv2-B/14 with registers, at
-  matched parameter counts (mean over three structure-fit seeds where shown with $\pm$). 6 MLP: MLPs of blocks 1--6;
-  6 blocks: MLP and attention of blocks 1--6; full: all 12 blocks. Original: 78.94.}
-  \label{tab:zeroshot}
-  \setlength{\tabcolsep}{5pt}
-  \begin{tabular}{lcccc}
-    \toprule
-    Method & 6 MLP & 6 blocks & 9 blocks & full \\
-    \midrule
-    \textbf{Mirror Surgery}            & 76.60 $\pm$ 0.02 & 77.34 $\pm$ 0.08 & 73.37 $\pm$ 0.11 & 53.81 $\pm$ 0.36 \\
-    SVD-LLM                            & \textbf{78.35} $\pm$ 0.03 & \textbf{78.02} $\pm$ 0.01 & \textbf{77.35} & \textbf{75.80} \\
-    ASVD-style scaling                 & 76.81 $\pm$ 0.04 & 74.41 $\pm$ 0.02 & 65.24 & 57.09 \\
-    SliceGPT-style                     & 31.41 $\pm$ 1.23 & 75.60 $\pm$ 0.11 & 72.48 & 68.33 \\
-    FLAP-style                         & 75.20 $\pm$ 0.07 & 70.29 $\pm$ 0.18 & 63.47 & 65.12 \\
-    ZipIt-style                        & 75.67 $\pm$ 0.15 & 18.51 $\pm$ 1.20 & 13.38 & 13.58 \\
-    Plain SVD                          & 9.37 $\pm$ 0.00  & 5.87 $\pm$ 0.03  & 5.67  & 5.17 \\
-    \midrule
-    Pairing by same-image correlation  & 27.42 $\pm$ 0.81 & 31.31 $\pm$ 1.53 & 13.36 & 12.17 \\
-    Pairing by weight similarity       & 34.42 $\pm$ 0.36 & 39.85 $\pm$ 0.32 & 16.94 & 14.98 \\
-    Random structure                   & 2.31 $\pm$ 0.50  & 2.29 $\pm$ 0.42  & 4.31  & 4.78 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
 \paragraph{Before healing.}
-Table~\ref{tab:zeroshot} shows the conversion without training. Converting the first six blocks costs Mirror Surgery
-1.6 points, and the structure is what matters: pairing the same neurons by same-image correlation or by weight
-similarity, with everything else unchanged, falls 37 to 49 points below Mirror Surgery at six blocks, and a random
-structure destroys the model. This matches the twin statistics: twins respond to mirrored inputs, so on any single
-image they are almost uncorrelated (median same-token correlation 0.05), and correlation-based pairing cannot find
-them. SVD-LLM, however, is better than Mirror Surgery at every size, by 1.8 points on six MLPs and by 22 points on the
-full model. The late blocks, which hold little mirror structure but must use the shared operator, lose most. Mirror
-Surgery is therefore a conversion followed by a short distillation, and its value lies in the healed model.
+Without training (Table~\ref{tab:zeroshot} in Appendix~\ref{app:extra}), converting the first six blocks costs Mirror
+Surgery 1.6 points, and the structure is what matters: pairing the same neurons by same-image correlation or by weight
+similarity falls 37 to 49 points lower, because twins respond to mirrored inputs and are almost uncorrelated on any
+single image (median same-token correlation 0.05). SVD-LLM, however, is better at every size, by 1.8 points on six MLPs
+and 22 points on the full model, where late blocks lose most. Mirror Surgery's value lies in the healed model.
 
 \begin{table}[t]
   \centering

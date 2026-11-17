@@ -57,6 +57,33 @@ symmetry.
   \end{tabular}
 \end{table}
 
+\begin{table}[h]
+  \centering
+  \small
+  \caption{\textbf{Before healing}: $k$-NN top-1 after converting part or all of DINOv2-B/14 with registers, at
+  matched parameter counts (mean over three structure-fit seeds where shown with $\pm$). 6 MLP: MLPs of blocks 1--6;
+  6 blocks: MLP and attention of blocks 1--6; full: all 12 blocks. Original: 78.94.}
+  \label{tab:zeroshot}
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{lcccc}
+    \toprule
+    Method & 6 MLP & 6 blocks & 9 blocks & full \\
+    \midrule
+    \textbf{Mirror Surgery}            & 76.60 $\pm$ 0.02 & 77.34 $\pm$ 0.08 & 73.37 $\pm$ 0.11 & 53.81 $\pm$ 0.36 \\
+    SVD-LLM                            & \textbf{78.35} $\pm$ 0.03 & \textbf{78.02} $\pm$ 0.01 & \textbf{77.35} & \textbf{75.80} \\
+    ASVD-style scaling                 & 76.81 $\pm$ 0.04 & 74.41 $\pm$ 0.02 & 65.24 & 57.09 \\
+    SliceGPT-style                     & 31.41 $\pm$ 1.23 & 75.60 $\pm$ 0.11 & 72.48 & 68.33 \\
+    FLAP-style                         & 75.20 $\pm$ 0.07 & 70.29 $\pm$ 0.18 & 63.47 & 65.12 \\
+    ZipIt-style                        & 75.67 $\pm$ 0.15 & 18.51 $\pm$ 1.20 & 13.38 & 13.58 \\
+    Plain SVD                          & 9.37 $\pm$ 0.00  & 5.87 $\pm$ 0.03  & 5.67  & 5.17 \\
+    \midrule
+    Pairing by same-image correlation  & 27.42 $\pm$ 0.81 & 31.31 $\pm$ 1.53 & 13.36 & 12.17 \\
+    Pairing by weight similarity       & 34.42 $\pm$ 0.36 & 39.85 $\pm$ 0.32 & 16.94 & 14.98 \\
+    Random structure                   & 2.31 $\pm$ 0.50  & 2.29 $\pm$ 0.42  & 4.31  & 4.78 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \paragraph{Other models before healing.} Table~\ref{tab:core04} repeats the comparison before healing on the first
 half of eight models (fit seed 0). SVD-LLM is never worse than Mirror Surgery. Mirror Surgery is far better than plain
 SVD on most DINOv2 models, but collapses on SigLIP~2.
@@ -101,3 +128,49 @@ on a held-out tenth of the training split. ADE20K uses a frozen backbone at 448 
 trained for 8{,}000 iterations, and sliding-window evaluation on 2{,}000 validation images. CUB probes use 5-fold
 cross-validation on the training split; facing labels come from the horizontal order of the beak and tail part
 annotations. Some CUB images also occur in the ImageNet training set; this affects all models alike.
+
+\section{Proofs}
+\label{app:proofs}
+
+\paragraph{Lemma~\ref{lem:fit}.} For orthogonal $A$, $\lVert \tilde{x} - xA\rVert_F^2 = \lVert\tilde{x}\rVert_F^2 +
+\lVert x\rVert_F^2 - 2\operatorname{tr}(A^\top x^\top \tilde{x})$, so minimising the error means maximising
+$\operatorname{tr}(A^\top C)$ with $C = x^\top\tilde{x}$ (summed over tokens and images). For symmetric $A$ this equals
+$\operatorname{tr}(A S)$ with $S = \tfrac12(C + C^\top) = V\Lambda V^\top$. The eigenvalues of a symmetric orthogonal
+matrix are $\pm1$, so by von Neumann's trace inequality $\operatorname{tr}(AS) \le \sum_i |\lambda_i|$, with equality
+for $A = V\,\mathrm{sign}(\Lambda)V^\top$. In practice we fit on the mean-centred subspace and set the sign of zero
+eigenvalues to $+1$, so that $A\mathbf{1} = \mathbf{1}$. \qed
+
+\paragraph{Proposition~\ref{prop:projection}.} $P$ and $A^\star$ are orthogonal involutions. Hence
+$T^2(W) = P^2 W (A^\star)^2 = W$, and $\langle T(W), T(V)\rangle_F = \operatorname{tr}(A^{\star\top} W^\top P^\top P V
+A^\star) = \operatorname{tr}(W^\top V)$, so $T$ is an orthogonal involution and therefore self-adjoint. Its fixed space
+$\{W : PWA^\star = W\}$ is the set of equivariant matrices (since $(A^\star)^2 = I$, $PW = WA^\star$ is the same as
+$PWA^\star = W$), and $\tfrac12(I + T)$ is the orthogonal projection onto it. The nearest-point property and the
+reading of $s$ follow. \qed
+
+\paragraph{Proposition~\ref{prop:count}.} Replace each twin pair $(i,j)$ of hidden units by $(e_i + e_j)/\sqrt2$ and
+$(e_i - e_j)/\sqrt2$, and keep self-twins; in this orthonormal basis $P = \operatorname{diag}(I_{h_+}, -I_{h_-})$ with
+$h_+$ the number of pairs plus self-twins and $h_-$ the number of pairs. In the eigenbasis of $A^\star$,
+$A^\star = \operatorname{diag}(I_{d_+}, -I_{d_-})$. An entry $W_{ab}$ of a matrix with $PWA^\star = W$ is multiplied
+by the product of the two signs, so it must vanish unless the signs agree: only the even-even and odd-odd blocks
+survive, which gives $h_+d_+ + h_-d_-$ free parameters. With $h_+ + h_- = h$, $h_+ - h_- = \operatorname{tr}(P)$,
+$d_+ + d_- = d$ and $d_+ - d_- = \operatorname{tr}(A^\star)$, expanding $\tfrac12\left(hd +
+\operatorname{tr}(P)\operatorname{tr}(A^\star)\right)$ gives the same number, and the tax follows by dividing by $hd$.
+This is the dimension of the space of equivariant linear maps between the two representations of the group of order
+two, $\tfrac1{|G|}\sum_g \chi_{\mathrm{out}}(g)\chi_{\mathrm{in}}(g)$. \qed
+
+\paragraph{Proposition~\ref{prop:exact}.} By induction over the layers. \emph{Input:} after projection the patch
+embedding satisfies $W_E\,\mathrm{flip}(p) = W_E\,p\,A^\star$ for every patch $p$ (written for row vectors), the position
+embedding satisfies $\mathrm{pos}(r, G-1-c) = \mathrm{pos}(r,c)\,A^\star$ on the $G\times G$ grid, and the class and
+register tokens are even ($t A^\star = t$); so the aligned tokens of the mirrored image are $x_0 A^\star$.
+\emph{Normalisation:} the folded stream is mean-centred and $A^\star$ is orthogonal with $A^\star\mathbf{1} =
+\mathbf{1}$, so centring and the RMS norm commute with right-multiplication by $A^\star$. \emph{Attention:} for paired
+heads $(h,g)$ the projected weights give $\tilde q^{g} = q^{h} B_h^\top$ and $\tilde k^{g} = k^{h} B_h^\top$ at aligned
+positions, so the logits of head $g$ on the mirrored image equal those of head $h$ on the original at the aligned token
+pairs ($B_h$ orthogonal); softmax and the value average commute with the token alignment, and the value and output
+constraints with $C_h$ return the head outputs to the stream as $(\cdot)A^\star$. Self-heads are the case $g = h$.
+\emph{MLP:} $x A^\star W_1^\top = x W_1^\top P$ by the projected constraint, GELU acts entry by entry and so commutes
+with the permutation $P$, and the second layer maps $P$-permuted hidden units to $(\cdot)A^\star$. \emph{Residual
+additions} preserve the relation. Hence $\tilde x_l = x_l A^\star$ at every layer. Finally, for the class token
+$t$, $t A^\star\,\tfrac12(I + A^\star) = t\,\tfrac12(A^\star + I)$ because $(A^\star)^2 = I$, so the even projection
+gives the same feature for the image and its mirror image, and so does the per-channel affine map applied after it.
+\qed

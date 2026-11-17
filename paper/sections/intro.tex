@@ -44,11 +44,6 @@ Our contributions are:
   full features do but carry essentially no information about which way the bird faces, while the odd features
   predict the facing direction at 99\%.
   \item \textbf{Pre-registration.} We specified the experiments, with pass and fail thresholds, before running them,
-  and report all 40 scored predictions, including the 16 that failed (Appendix~\ref{app:prereg}).
+  and report all 40 scored predictions, including the 16 that failed (Appendix~\ref{app:prereg}); before healing, for
+  example, Mirror Surgery is a weaker compressor than SVD-LLM.
 \end{itemize}
-
-Some of those failures shape the paper. Before healing, Mirror Surgery is a weaker compressor than SVD-LLM, so the
-method is a conversion followed by a short distillation, not a free lunch. Our even/odd implementation is slower than
-the dense original, so we make no speed claim for the smaller form. And we originally expected flip augmentation to
-create the pairing; the measurements in Section~\ref{sec:structure} suggest that, in early blocks, it does not need
-to.

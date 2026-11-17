@@ -1,67 +1,97 @@
 \section{Mirror Surgery}
 \label{sec:method}
 
-Mirror Surgery converts a pretrained ViT with GELU MLPs and learned position embeddings into a network that is
-exactly equivariant to left-right mirroring. The conversion needs no training: an eigendecomposition and a matching
-per layer, fitted on the activations of 2{,}000 images. A short distillation then recovers accuracy.
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_method.pdf}
+  \caption{\textbf{Mirror Surgery.} (a) Twin neurons respond to mirror images of each other, and their input weights are
+  related by the stream's mirror operator, $w_j = A^\star w_i$. (b) In the eigenbasis of $A^\star$ an equivariant
+  weight matrix is block-diagonal, with an even block and a smaller odd block, so it has
+  $h_+ d_+ + h_- d_-$ instead of $hd$ free parameters. (c) The conversion fits the structure from 2{,}000 images, projects
+  the weights, rewrites them in even and odd coordinates and heals the model; it is exactly equivariant from the
+  projection onwards.}
+  \label{fig:method}
+\end{figure}
+
+Mirror Surgery converts a pretrained ViT with GELU MLPs and learned position embeddings into a network that is exactly
+equivariant to left-right mirroring (Figure~\ref{fig:method}). The conversion needs no training, only an
+eigendecomposition and a matching per layer fitted on the activations of 2{,}000 images; a short distillation then
+recovers accuracy. Proofs of the statements below are in Appendix~\ref{app:proofs}.
 
 \paragraph{One operator for the stream.}
-The per-layer operators of Equation~\eqref{eq:operator} differ from layer to layer, but in a residual network an exact
-end-to-end symmetry needs a single operator $A^\star$ for the stream, since every block writes into the same space.
-We fit $A^\star$ with Equation~\eqref{eq:operator} applied to $\sum_l C_l / \operatorname{tr}(G_l)$, where
-$G_l = \sum x_l^\top x_l$, so that every layer contributes with equal energy. For DINOv2-B/14 with registers, $A^\star$
-has $d_+ = 700$ even and $d_- = 68$ odd directions, far fewer odd directions than the early layers have on their own.
-Before projecting, we fold every LayerNorm into an RMS normalisation of a mean-centred stream and absorb the affine
-parameters and LayerScale into the adjacent linear maps, as in SliceGPT~\citep{ashkboos2024slicegpt}. This changes no
-output, and afterwards exactness only requires $A^\star$ to be orthogonal.
+In a residual network every block writes into the same space, so an exact end-to-end symmetry needs a single operator
+$A^\star$ for the whole stream, shared by the structured early blocks and the nearly invariant late ones. We fit it with Equation~\eqref{eq:operator} applied to $\sum_l C_l / \operatorname{tr}(G_l)$,
+where $G_l = \sum x_l^\top x_l$, so that every layer contributes with equal energy; by Lemma~\ref{lem:fit} this is the
+best symmetric orthogonal operator for the pooled statistics. For DINOv2-B/14 with registers, $A^\star$ has $d_+ = 700$
+even and $d_- = 68$ odd directions. Before projecting, we fold every LayerNorm into an RMS normalisation of a
+mean-centred stream and absorb the affine parameters and LayerScale into the adjacent linear maps, as in
+SliceGPT~\citep{ashkboos2024slicegpt}. This changes no output, and $A^\star$ fixes the all-ones vector, so the
+centring commutes with it.
 
 \paragraph{Projection.}
-Each weight is replaced by its average over the mirror, which is the closest exactly equivariant weight in Frobenius
-norm. For an MLP with twin permutation $P$,
-\begin{equation}
-  \begin{aligned}
-  W_1 &\leftarrow \tfrac12\left(W_1 + P W_1 A^\star\right), &\qquad b_1 &\leftarrow \tfrac12\left(b_1 + P b_1\right),\\
-  W_2 &\leftarrow \tfrac12\left(W_2 + A^\star W_2 P\right), & b_2 &\leftarrow \tfrac12\left(b_2 + A^\star b_2\right).
-  \end{aligned}
-  \label{eq:projection}
-\end{equation}
-Twin rows become tied ($w_j = A^\star w_i$), and a neuron that is its own twin keeps only its even part, since GELU is
-not an odd function. In attention, heads either map to themselves or swap in pairs. For a head $h$ with partner $g$ we
-require $W_Q^{g} A^\star = B_h W_Q^{h}$ and $W_K^{g} A^\star = B_h W_K^{h}$, where $B_h$ is an orthogonal map within
-the head's query and key space; using the same $B_h$ for queries and keys leaves the attention logits unchanged. A
-second map $C_h$ plays the same role for the values and the output projection. The head pairing and the maps $B_h$
-and $C_h$ are fitted from the same mirrored activations. The patch embedding, the position embeddings of the
-$16\times16$ grid, the class token and the register tokens are projected in the same way. Finally, an \emph{even
-projection} $y \mapsto y\,\tfrac12(I + A^\star)$ after the last normalisation keeps only the even part of each output
-token, which makes the class-token feature exactly invariant to mirroring.
+For an MLP with twin permutation $P$, the map $T(W) = P W A^\star$ is an involution on weight matrices, and a weight is
+equivariant exactly when $T(W) = W$. We replace each weight by its mirror average.
+
+\begin{proposition}[Nearest equivariant weights]\label{prop:projection}
+$T$ is orthogonal for the Frobenius inner product, so $W_{\mathrm{eq}} = \tfrac12\,(W + P W A^\star)$ is the orthogonal
+projection of $W$ onto the equivariant matrices: it is the closest equivariant matrix to $W$, and the breaking share
+$s = \lVert W - W_{\mathrm{eq}}\rVert_F^2 / \lVert W\rVert_F^2$ of Section~\ref{sec:structure} is the squared relative
+distance to that set.
+\end{proposition}
+
+We apply it to the first MLP layer with $T(W_1) = P W_1 A^\star$, to the second with $T(W_2) = A^\star W_2 P$, and to
+the biases in the same way. Twin rows become tied ($w_j = A^\star w_i$), and a neuron that is its own twin keeps only
+its even part, since GELU is not an odd function. In
+attention, heads either map to themselves or swap in pairs. For a head $h$ with partner $g$ we require
+$W_Q^{g} A^\star = B_h W_Q^{h}$ and $W_K^{g} A^\star = B_h W_K^{h}$, where $B_h$ is an orthogonal map within the head's
+query and key space; using the same $B_h$ for queries and keys leaves every attention logit unchanged. A second map
+$C_h$ plays the same role for the values and the output projection, and the head pairing and both maps are fitted from
+the same mirrored activations. The patch embedding, the position embeddings of the $16\times16$ grid, the class token
+and the register tokens are projected in the same way. Finally, an \emph{even projection}
+$y \mapsto y\,\tfrac12(I + A^\star)$ after the last normalisation keeps only the even part of each output token.
 
 \paragraph{Even and odd coordinates.}
 In the eigenbasis of $A^\star$ a stream vector splits into $x = (x_+, x_-)$, as in the mirror-equivariant ViTs that
 \citet{bokman2025flopping} train from scratch. A twin pair has weights $(a_+, a_-)$ and $(a_+, -a_-)$, so it can be
-computed as $u = a_+ \cdot x_+$ and $v = a_- \cdot x_-$, with pre-activations $u+v$ and $u-v$: one even and one odd
-dot product instead of two full ones. A self-twin needs only $c_+ \cdot x_+$. Counting the remaining entries gives the
-number of free parameters of an equivariant $h \times d$ map,
+computed as $u = a_+ \cdot x_+$ and $v = a_- \cdot x_-$, with pre-activations $u+v$ and $u-v$: one even and one odd dot
+product instead of two full ones. A self-twin needs only $c_+ \cdot x_+$.
+
+\begin{proposition}[Parameter count and tax]\label{prop:count}
+An $h\times d$ matrix is equivariant if and only if, in the eigenbases of $P$ and $A^\star$, it is block-diagonal with an
+even block of size $h_+ \times d_+$ and an odd block of size $h_- \times d_-$. Its number of free parameters is
 \begin{equation}
-  \tfrac12 \left( h d + \operatorname{tr}(P)\operatorname{tr}(A^\star) \right) = h_+ d_+ + h_- d_- ,
+  h_+ d_+ + h_- d_- \;=\; \tfrac12 \left( h d + \operatorname{tr}(P)\operatorname{tr}(A^\star) \right),
+  \qquad\text{so the tax is}\qquad
+  1 - \frac{h_+ d_+ + h_- d_-}{hd} \;=\; \frac12 - \frac{\operatorname{tr}(P)\operatorname{tr}(A^\star)}{2hd}.
   \label{eq:count}
 \end{equation}
-where $h_+$ and $h_-$ are the numbers of even and odd hidden units. A twin head pair likewise costs one head. Applied
-to every MLP and attention matrix of DINOv2-B/14 with registers, Equation~\eqref{eq:count} leaves 66.2M of the
-model's 86.6M parameters (76.5\%), and our even/odd implementation has exactly this many entries.
+\end{proposition}
+
+Here $\operatorname{tr}(P)$ is the number of self-twins and $\operatorname{tr}(A^\star) = d_+ - d_-$. The tax is exactly one
+half when every neuron has a twin or when the stream has as many odd as even directions, and it vanishes only when every
+neuron is its own twin and the stream is entirely even. A twin head pair likewise costs one head. Applied to every MLP and
+attention matrix of DINOv2-B/14 with registers, Equation~\eqref{eq:count} leaves 66.2M of the model's 86.6M parameters
+(76.5\%), and our even/odd implementation has exactly this many entries.
 
 \paragraph{Exactness.}
-For a mirrored input, the converted network's tokens equal the original tokens multiplied by $A^\star$ at every layer,
-and its class-token feature is unchanged. In float64 the largest relative deviation over all 198 internal tensors on
-1{,}000 validation images is $5.8\times10^{-14}$. In float32 it is $2.5\times10^{-5}$, above the $10^{-5}$ we had
-pre-registered, yet the $k$-NN prediction of every one of the 50{,}000 ImageNet validation images equals that of its
-mirror image. In bfloat16, rounding breaks the symmetry for about 2\% of images before healing and 0.27\% after.
+Let $\tilde{x}_l$ denote the tokens of the mirrored image at layer $l$, with the patch grid flipped back.
+
+\begin{proposition}[Exact equivariance]\label{prop:exact}
+After the projection, $\tilde{x}_l = x_l A^\star$ at every layer $l$ of the converted network, for every input image.
+Consequently the class-token feature after the even projection is the same for an image and its mirror image.
+\end{proposition}
+
+Numerically, in float64 the largest relative deviation over all 198 internal tensors on 1{,}000 validation images is
+$5.8\times10^{-14}$. In float32 it is $2.5\times10^{-5}$, above the $10^{-5}$ we had pre-registered, yet the $k$-NN
+prediction of every one of the 50{,}000 ImageNet validation images equals that of its mirror image. In bfloat16,
+rounding breaks the symmetry for about 2\% of images before healing and 0.27\% after.
 
 \paragraph{Healing.}
-The projection removes the part of each weight that broke the symmetry, which costs accuracy. We recover it with a
-short distillation from the original model: 780 steps (two epochs) on 100{,}000 ImageNet training images with random
-crops and flips, batch 256, AdamW, and a mean-squared loss on the final class and patch tokens and on the output of
-every block, each normalised by the size of its target. The final targets are the teacher's outputs averaged over the
-image and its mirror image. The weights are updated freely and projected again with Equation~\eqref{eq:projection}
-after every step, so the model stays exactly equivariant throughout. The learning rate is chosen from
-$\{10^{-5}, 5\cdot10^{-5}, 10^{-4}\}$ by the distillation loss on 5{,}000 held-out training images. Healing took 27
-minutes for one seed on an H200 shared with other jobs.
+The projection removes the part of each weight that broke the symmetry, which costs accuracy. We recover it with a short
+distillation from the original model: 780 steps (two epochs) on 100{,}000 ImageNet training images with random crops and
+flips, batch 256, AdamW, and a mean-squared loss on the final class and patch tokens and on the output of every block,
+each normalised by the size of its target. The final targets are the teacher's outputs averaged over the image and its
+mirror image. After every optimiser step the weights are projected again with Proposition~\ref{prop:projection}, so the
+model stays exactly equivariant throughout. The learning rate is chosen from $\{10^{-5}, 5\cdot10^{-5}, 10^{-4}\}$ by the
+distillation loss on 5{,}000 held-out training images. Healing took 27 minutes for one seed on an H200 shared with other
+jobs.

@@ -25,10 +25,8 @@ groups. We use the same even and odd decomposition, but obtain it by converting 
 training from scratch.
 
 \paragraph{Structured compression.}
-Post-training compression of transformers removes parameters by low-rank factorisation
-(plain SVD, activation-aware SVD~\citep{yuan2023asvd} and SVD-LLM~\citep{wang2025svdllm}), by slicing a rotated
-residual stream~\citep{ashkboos2024slicegpt}, by structured pruning~\citep{an2024flap}, or by merging correlated
-units~\citep{stoica2024zipit}; token merging~\citep{bolya2023tome} reduces the number of tokens instead. These methods
-look for redundancy in activation statistics. The symmetry tax is a different kind of redundancy: the two units of a
-twin pair respond to mirrored inputs, so they are almost uncorrelated on any single image and invisible to
-correlation-based merging.
+Post-training compression of transformers factorises weights at low rank (plain SVD, ASVD~\citep{yuan2023asvd},
+SVD-LLM~\citep{wang2025svdllm}), slices a rotated residual stream~\citep{ashkboos2024slicegpt}, prunes
+structures~\citep{an2024flap} or merges correlated units~\citep{stoica2024zipit}; token merging~\citep{bolya2023tome}
+reduces tokens instead. These methods use activation statistics. Twins respond to mirrored inputs, so they are almost
+uncorrelated on any single image and invisible to correlation-based merging.

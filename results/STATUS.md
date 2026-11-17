@@ -2,7 +2,7 @@
 
 ## Next phase (PROJECT_NEXT_PHASE.md, adopted 14 November 2026)
 
-### Paper draft, version 2 (17 November 2026)
+### Paper draft 2 (17 November 2026): "Learned Twice, Stored Once: Mirror Surgery for Vision Transformers"
 
 `paper/main.tex` (CPAL 2027 template, anonymous; main text 8.7 of 9 pages, 18 pages with references and appendix).
 Bibliography `paper/reference.bib`: 69 entries, each checked against an authoritative source
@@ -11,7 +11,7 @@ Bibliography `paper/reference.bib`: 69 entries, each checked against an authorit
 SVD-LLM +0.28 points, 95% interval +0.09 to +0.47, `results/paper_stats/healed_bootstrap.json`). An independent review
 of version 1 (`notes/paper/review_v1.md`, 2.5 of 5 as written) was applied in version 2: size and speed stated as a
 trade-off, exactness in float32 only, the natural-image explanation marked post hoc, "matches" instead of "beats",
-baseline and healing differences disclosed, Bökman et al. 2025 credited.
+baseline and healing differences disclosed, Bökman et al. 2025 credited. Then added: four propositions with proofs (operator fit, nearest equivariant weights, parameter count and tax, exact equivariance) and a power-spectrum lemma; a method diagram (TikZ, scripts/make_paper_fig_method.py) and a healing and size figure (scripts/make_paper_fig_results.py); all figures in one muted, colour-blind-safer palette (scripts/paper_style.py); the before-healing table moved to the appendix. Main text ends at the bottom of page 9. PDF: paper/Learned_Twice_Stored_Once_draft2.pdf.
 
 ### H200 run (Jarvis Labs instance 574820), finished 2026-11-15; instance deleted 20:30 UTC
 
