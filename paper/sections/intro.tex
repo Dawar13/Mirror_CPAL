@@ -3,16 +3,19 @@
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\linewidth]{figures/fig_twins.pdf}
-  \caption{\textbf{Mirror twins in DINOv2-B/14 with registers.} Each row is one of the most strongly matched pairs of
-  MLP neurons. Left: the image patches that activate neuron $i$ most strongly among 50{,}000 ImageNet training images;
-  right: the same for its twin $j$, which responds to mirror images of what neuron $i$ responds to. Tying all such
-  pairs would remove 42\% of the MLP weights of the first six blocks.}
-  \label{fig:twins}
+  \includegraphics[width=\linewidth]{figures/fig_method.pdf}
+  \caption{\textbf{Mirror Surgery.} (a) Twin neurons respond to mirror images of each other, and their input weights are
+  related by the stream's mirror operator, $w_j = A^\star w_i$. (b) In the eigenbasis of $A^\star$ an equivariant
+  weight matrix is block-diagonal, with an even block and a smaller odd block, so it has
+  $h_+ d_+ + h_- d_-$ instead of $hd$ free parameters. (c) The conversion fits the structure from 2{,}000 images, projects
+  the weights, rewrites them in even and odd coordinates and heals the model; it is exactly equivariant from the
+  projection onwards.}
+  \label{fig:method}
 \end{figure}
 
 Look inside an early block of a pretrained vision transformer and many of its MLP neurons come in pairs: one neuron
-responds to a pattern, and a second neuron responds to the mirror image of that pattern (Figure~\ref{fig:twins}).
+responds to a pattern, and a second neuron responds to the mirror image of that pattern (Figure~\ref{fig:method}a;
+real examples in Figure~\ref{fig:twins}).
 The network has learned the same feature twice, once for each orientation. This is not surprising for a model trained
 with random horizontal flips, which push it to treat an image and its mirror image alike. What is less obvious is how
 much of the network the duplication occupies, where it lives, why it is there, and whether it can be turned into a
@@ -23,7 +26,7 @@ pair were stored once. This paper measures the tax, offers a partial explanation
 \emph{Mirror Surgery}, a training-free conversion that rewrites a released vision transformer as a network that is
 exactly equivariant to left-right mirroring. In the new basis every feature is either \emph{even} (unchanged when the
 image is mirrored) or \emph{odd} (it changes sign), and a pair of twins becomes one even and one odd unit. A short
-distillation then recovers the accuracy lost in the conversion.
+distillation then recovers the accuracy lost in the conversion (Figure~\ref{fig:method}).
 
 Our contributions are:
 \begin{itemize}

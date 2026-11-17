@@ -81,17 +81,14 @@ the healed model lies on the size-accuracy line of the released DINOv2 models, s
 the small and base models (78.34 against 78.07, interpolated on a log scale; Figure~\ref{fig:results}b).
 
 \paragraph{Invariance and cost.}
-The usual way to make a model flip-invariant is to average its features over the image and its mirror image. On the
-original model this gives 79.00 but needs two forward passes, which halves throughput. Healed Mirror Surgery is 0.66
-points below flip averaging (mean of three seeds; for seed 0 a paired bootstrap gives $-0.68$, 95\% interval $-0.87$
-to $-0.51$) and needs one pass. There is a trade-off in how the model is stored. Stored densely with its projected
-weights, it has the architecture of the original and runs at the same speed, twice the throughput of flip averaging,
-but saves no parameters. In its even/odd form it has 23.5\% fewer parameters (and 77\% of the original's FLOPs,
-counted analytically), but our implementation of that form runs at 0.72 of the original's throughput, so we make no
-speed claim for it; the low-rank baselines are slower than the original in the same benchmark too. Int8 weight
-quantisation lowers the accuracy of Mirror Surgery by 0.006 points (original: 0.004), and token
-merging~\citep{bolya2023tome} by 0.18 points (original: 0.34); neither preserves exact invariance (flip consistency
-99.1\% and 96.8\%).
+Averaging the original model's features over the image and its mirror image gives 79.00 but needs two forward passes,
+which halves throughput. Healed Mirror Surgery is 0.66 points lower (seed 0: $-0.68$, 95\% interval $-0.87$ to $-0.51$)
+with one pass. Stored densely with its projected weights, it runs at the original's speed, twice the throughput of flip
+averaging, but saves no parameters. In its even/odd form it has 23.5\% fewer parameters (77\% of the FLOPs, counted
+analytically), but our implementation of that form runs at 0.72 of the original's throughput, so we make no speed claim
+for it; the low-rank baselines are slower than the original too. Int8 weight quantisation costs Mirror Surgery 0.006
+points (original: 0.004) and token merging~\citep{bolya2023tome} 0.18 (original: 0.34), but neither keeps exact
+invariance (flip consistency 99.1\% and 96.8\%).
 
 \begin{table}[t]
   \centering
@@ -114,17 +111,16 @@ merging~\citep{bolya2023tome} by 0.18 points (original: 0.34); neither preserves
 \end{table}
 
 \paragraph{Downstream tasks.}
-The $k$-NN result carries over to every downstream task we tried (Table~\ref{tab:downstream}). With frozen features,
-healed Mirror Surgery matches or exceeds healed SVD-LLM on the ImageNet linear probe (80.11 against 79.72), on the four
-transfer datasets~\citep{krizhevsky2009learning,cimpoi2014describing,parkhi2012cats,nilsback2008automated} and on ADE20K
-segmentation~\citep{zhou2017scene} (47.16 against 46.79 mIoU, 0.43 below the original). These are single runs except
-where noted, and the Pets and Flowers gaps are within noise. Under distribution shift, its accuracy drop from ImageNet to
-ImageNet-V2~\citep{recht2019imagenet} is 9.17 points against 8.62 for the original: within the one-point margin we
-pre-registered, though the paired interval of the difference ($+0.08$ to $+1.02$) shows the drop is larger. On
-ImageNet-Sketch~\citep{wang2019learning} Mirror Surgery leads SVD-LLM by 4.2 points, also after removing the
-flipped and rotated near-duplicates the dataset contains (55.03 against 50.43). For segmentation the converted backbone is exactly
-equivariant, and a head averaged over the image and its mirror image gives the mirrored mask for all but 422 of the
-487.7 million pixels of the 2{,}000 validation images (raw head: 98.98\% of pixels; original model: 95.03\%).
+With frozen features, healed Mirror Surgery matches or exceeds healed SVD-LLM on every downstream task we tried
+(Table~\ref{tab:downstream}): the ImageNet linear probe, four transfer
+datasets~\citep{krizhevsky2009learning,cimpoi2014describing,parkhi2012cats,nilsback2008automated} and ADE20K
+segmentation~\citep{zhou2017scene}, where it is 0.43 mIoU below the original. These are single runs except where noted,
+and the Pets and Flowers gaps are within noise. Its drop from ImageNet to ImageNet-V2~\citep{recht2019imagenet}, 9.17
+points against 8.62 for the original, is within our pre-registered one-point margin, though the paired interval of the
+difference ($+0.08$ to $+1.02$) shows it is larger. On ImageNet-Sketch~\citep{wang2019learning} it leads SVD-LLM by 4.2
+points, also after removing the flipped and rotated near-duplicates the dataset contains (55.03 against 50.43). For
+segmentation, a head averaged over the image and its mirror image gives the mirrored mask for all but 422 of 487.7
+million validation pixels (raw head: 98.98\%; original model: 95.03\%).
 
 \paragraph{Before healing.}
 Without training (Table~\ref{tab:zeroshot} in Appendix~\ref{app:extra}), converting the first six blocks costs Mirror
@@ -133,32 +129,19 @@ similarity falls 37 to 49 points lower, because twins respond to mirrored inputs
 single image (median same-token correlation 0.05). SVD-LLM, however, is better at every size, by 1.8 points on six MLPs
 and 22 points on the full model, where late blocks lose most. Mirror Surgery's value lies in the healed model.
 
-\begin{table}[t]
+\begin{figure}[t]
   \centering
-  \small
+  \includegraphics[width=\linewidth]{figures/fig_cub.pdf}
   \caption{\textbf{What the even and odd parts encode} (CUB-200-2011, linear probes on the class-token feature).
-  Species: 200-way accuracy on the test images. Facing: whether the bird faces left or right, on natural test images
-  and on a test set that contains every image and its mirror image. Mirror Surgery: mean of three healed seeds, with
-  its own operator ($d_- = 68$). The original model's split uses its last-layer operator ($d_- = 8$).}
-  \label{tab:cub}
-  \begin{tabular}{lccccc}
-    \toprule
-     & \multicolumn{3}{c}{Species} & \multicolumn{2}{c}{Facing} \\
-    \cmidrule(lr){2-4}\cmidrule(lr){5-6}
-    Model & full & even & odd & even (natural / mirrored set) & odd \\
-    \midrule
-    Original                & 90.01 & 89.96 & 25.01 & 86.70 / 86.31 & 94.99 \\
-    Mirror Surgery          & 89.42 & 89.47 & 3.71  & 50.57 / 50.00 & 99.21 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+  Light bars: original model (split with its last-layer operator); solid bars: healed Mirror Surgery (mean of three
+  seeds). Hatched: test set with every image and its mirror image, where an invariant feature must score 50\%.}
+  \label{fig:cub}
+\end{figure}
 
 \paragraph{What the even and odd parts encode.}
-An exactly invariant feature cannot know which way an object faces, while an odd feature changes sign when the image is
-mirrored. In the healed model this splits the representation cleanly (Table~\ref{tab:cub}). On CUB-200-2011
-birds~\citep{wah2011caltech}, the even part of the class token identifies the species as well as the full feature (89.47
-against 89.42), but a probe trained to read the facing direction from it is at chance: 50.57\% on natural test images
-and exactly 50\% on the mirrored test set, as it must be, since every image and its mirror image receive the same
-prediction. The odd part, 68 of 768 directions, predicts the facing direction at 99.2\% and the species at 3.7\%. In the
-original model the even part still knows the facing direction (86.7\%). Mirror Surgery therefore yields, at no extra
-cost, a feature for what is in the image and a separate small feature for which way it is oriented.
+An exactly invariant feature cannot know which way an object faces, and in the healed model this splits the
+representation cleanly (Figure~\ref{fig:cub}). On CUB-200-2011 birds~\citep{wah2011caltech}, the even part of the class
+token identifies the species as well as the full feature, but a probe reading the facing direction from it is at chance,
+as it must be. The odd part, 68 of 768 directions, predicts the facing direction at 99.2\% and the species at 3.7\%. The
+original model mixes the two. Mirror Surgery thus yields, at no extra cost, a feature for what is in the image and a
+separate small feature for which way it is oriented.

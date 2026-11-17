@@ -1,18 +1,6 @@
 \section{Mirror Surgery}
 \label{sec:method}
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{figures/fig_method.pdf}
-  \caption{\textbf{Mirror Surgery.} (a) Twin neurons respond to mirror images of each other, and their input weights are
-  related by the stream's mirror operator, $w_j = A^\star w_i$. (b) In the eigenbasis of $A^\star$ an equivariant
-  weight matrix is block-diagonal, with an even block and a smaller odd block, so it has
-  $h_+ d_+ + h_- d_-$ instead of $hd$ free parameters. (c) The conversion fits the structure from 2{,}000 images, projects
-  the weights, rewrites them in even and odd coordinates and heals the model; it is exactly equivariant from the
-  projection onwards.}
-  \label{fig:method}
-\end{figure}
-
 Mirror Surgery converts a pretrained ViT with GELU MLPs and learned position embeddings into a network that is exactly
 equivariant to left-right mirroring (Figure~\ref{fig:method}). The conversion needs no training, only an
 eigendecomposition and a matching per layer fitted on the activations of 2{,}000 images; a short distillation then

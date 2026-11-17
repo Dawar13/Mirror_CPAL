@@ -1,6 +1,16 @@
 \section{Where the symmetry tax lives}
 \label{sec:structure}
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_twins.pdf}
+  \caption{\textbf{Mirror twins in DINOv2-B/14 with registers.} Each row is one of the most strongly matched pairs of
+  MLP neurons. Left: the image patches that activate neuron $i$ most strongly among 50{,}000 ImageNet training images;
+  right: the same for its twin $j$, which responds to mirror images of what neuron $i$ responds to. Tying all such
+  pairs would remove 42\% of the MLP weights of the first six blocks.}
+  \label{fig:twins}
+\end{figure}
+
 \paragraph{The mirror operator.}
 Let $x_l \in \mathbb{R}^{T\times d}$ be the $T$ tokens of an image at layer $l$ of the residual stream, and
 $\tilde{x}_l$ the tokens of its mirror image, with the patch grid flipped back so that each token is compared with the
@@ -96,5 +106,5 @@ real scenes horizons and upright objects. Early features are local, and a patch 
 statistics pooled over the image. If such features are shaped mainly by second-order statistics, and the visual world
 has no preferred handedness, they should carry left-right and up-down pairing to a similar degree and 90-degree
 pairing much less, whatever the augmentation. Deeper features encode layout, for which up and down are not
-interchangeable: up-down structure fades with depth in all 14 models and 180-degree structure in all four where we
-measured it (Appendix~\ref{app:structure}). We have not tested this explanation causally.
+interchangeable: the up-down ratio to null rises with depth in all 14 models, and the 180-degree ratio in all
+four where we measured it (Appendix~\ref{app:structure}). We have not tested this explanation causally.

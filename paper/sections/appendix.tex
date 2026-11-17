@@ -25,7 +25,7 @@ logged with the code and do not change any result.
 \section{Mirror structure in all models}
 \label{app:structure}
 
-Table~\ref{tab:structure} gives the structure measurements of Section~\ref{sec:structure} for every model. In the four
+Table~\ref{tab:structure} gives the structure measurements of Section~\ref{sec:structure} for every model, Figure~\ref{fig:blocks} shows them block by block, and Figure~\ref{fig:twins_full} shows more twins. In the four
 models where we measured it, the ratio to null of 180-degree rotation rises from the first to the second half of the
 blocks: from 0.48 to 0.70 (DeiT~III), 0.51 to 0.60 (DINOv2-B), 0.53 to 0.60 (DINOv2-B with registers) and 0.57 to 0.66
 (DINOv2-L with registers). Early up-down structure can also be used: projecting the MLPs of blocks 1 to 6 onto exact
@@ -34,6 +34,26 @@ up-down symmetry, with no healing, costs 0.23 (DINOv2-L), 2.03 (DeiT~III), 3.63 
 symmetry.
 
 \input{sections/structure_table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_blocks.pdf}
+  \caption{\textbf{Mirror structure block by block} in the four models of Figure~\ref{fig:symmetry}a, for left-right
+  (solid) and up-down (dashed) mirroring. (a) Share of MLP hidden units in strong twin pairs (correlation at least 0.5).
+  (b) Number of odd directions of the stream at each layer (DINOv2-L has a 1{,}024-dimensional stream, the others 768).
+  Both decline with depth; early on, up-down tracks left-right closely.}
+  \label{fig:blocks}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_twins_full.pdf}
+  \caption{\textbf{More mirror twins} in DINOv2-B/14 with registers: the four most strongly matched pairs in blocks 1,
+  3 and 6, with the six most activating patches of each neuron among 50{,}000 ImageNet training images and the twin
+  correlation of each pair.}
+  \label{fig:twins_full}
+\end{figure}
+
 
 \section{Additional results}
 \label{app:extra}
@@ -83,6 +103,16 @@ symmetry.
     \bottomrule
   \end{tabular}
 \end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_zeroshot.pdf}
+  \caption{\textbf{Accuracy before healing} of DINOv2-B/14 with registers as more of the model is converted, at matched
+  parameter counts (the data of Table~\ref{tab:zeroshot}). Dashed grey lines are controls that use Mirror Surgery's
+  machinery with the wrong structure.}
+  \label{fig:zeroshot}
+\end{figure}
+
 
 \paragraph{Other models before healing.} Table~\ref{tab:core04} repeats the comparison before healing on the first
 half of eight models (fit seed 0). SVD-LLM is never worse than Mirror Surgery. Mirror Surgery is far better than plain
