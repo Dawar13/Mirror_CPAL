@@ -46,14 +46,15 @@ def main() -> None:
              "\\caption{Mirror structure per model, first and second half of the blocks. Ratio to null of the MLP "
              "breaking share for left-right (LR) and up-down (UD) mirroring (lower is stronger), share of hidden "
              "neurons in LR twin pairs with twin correlation at least 0.5, and number of odd LR directions of the "
-             "stream at the input of the first block and the output of the last. Flips: horizontal flips in the "
-             "published training recipe (DINOv3 inferred from its released configurations).}",
+             "stream at the input of the first block and the output of the last, with the width $d$ (for ConvNeXt the "
+             "first value is measured inside its first block). Flips: horizontal flips in the published training "
+             "recipe (DINOv3 inferred from its released configurations). DINOv2-g and EVA-02 have SwiGLU MLPs.}",
              "\\label{tab:structure}", "\\setlength{\\tabcolsep}{4pt}",
              "\\begin{tabular}{lccccccccc}", "\\toprule",
              " & & \\multicolumn{2}{c}{LR ratio} & \\multicolumn{2}{c}{UD ratio} & \\multicolumn{2}{c}{LR twins} & "
              "\\multicolumn{2}{c}{odd dirs ($d_-$)} \\\\",
              "\\cmidrule(lr){3-4}\\cmidrule(lr){5-6}\\cmidrule(lr){7-8}\\cmidrule(lr){9-10}",
-             "Model & Flips & early & late & early & late & early & late & first & last ($d$) \\\\", "\\midrule"]
+             "Model & Flips & early & late & early & late & early & late & first ($d$) & last ($d$) \\\\", "\\midrule"]
     for name in ORDER:
         if name not in dirs:
             continue
@@ -66,7 +67,7 @@ def main() -> None:
         tw_e, tw_l = blk.frac_2_t50.iloc[:h].mean(), blk.frac_2_t50.iloc[h:].mean()
         row = (f"{NAMES[name]} & {flip(name)} & {r('LR', 'first_half'):.2f} & {r('LR', 'second_half'):.2f} & "
                f"{r('UD', 'first_half'):.2f} & {r('UD', 'second_half'):.2f} & {tw_e:.2f} & {tw_l:.2f} & "
-               f"{int(lay.d_minus.iloc[0])} & {int(lay.d_minus.iloc[-1])} ({int(lay.d.iloc[-1])}) \\\\")
+               f"{int(lay.d_minus.iloc[0])} ({int(lay.d.iloc[0])}) & {int(lay.d_minus.iloc[-1])} ({int(lay.d.iloc[-1])}) \\\\")
         lines.append(row)
         print(row)
     lines += ["\\bottomrule", "\\end{tabular}", "\\end{table}"]

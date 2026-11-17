@@ -4,52 +4,51 @@
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{figures/fig_twins.pdf}
-  \caption{\textbf{Mirror twins in DINOv2-B/14 with registers.} Each row is one pair of MLP neurons. Left: the image
-  patches that activate neuron $i$ most strongly among 50{,}000 ImageNet training images; right: the same for its
-  twin $j$. The twin responds to mirror images of what the first neuron responds to. In the first six blocks, 42\% of
-  the MLP weights are redundant in this way.}
+  \caption{\textbf{Mirror twins in DINOv2-B/14 with registers.} Each row is one of the most strongly matched pairs of
+  MLP neurons. Left: the image patches that activate neuron $i$ most strongly among 50{,}000 ImageNet training images;
+  right: the same for its twin $j$, which responds to mirror images of what neuron $i$ responds to. Tying all such
+  pairs would remove 42\% of the MLP weights of the first six blocks.}
   \label{fig:twins}
 \end{figure}
 
 Look inside an early block of a pretrained vision transformer and many of its MLP neurons come in pairs: one neuron
-responds to a pattern, and a second neuron responds to the mirror image of that pattern
-(Figure~\ref{fig:twins}). The network has learned the same feature twice, once for each orientation. This is not
-surprising for a model trained with random horizontal flips, since such a model is pushed to treat an image and its
-mirror image alike. What is less obvious is how much of the network this duplication occupies, where it lives, why it
-is there, and whether it can be turned into a smaller model.
+responds to a pattern, and a second neuron responds to the mirror image of that pattern (Figure~\ref{fig:twins}).
+The network has learned the same feature twice, once for each orientation. This is not surprising for a model trained
+with random horizontal flips, which push it to treat an image and its mirror image alike. What is less obvious is how
+much of the network the duplication occupies, where it lives, why it is there, and whether it can be turned into a
+smaller model.
 
-We call the duplicated part the \emph{symmetry tax}. This paper measures it, explains part of it, and collects it.
-Our main tool is a closed-form conversion, which we call \emph{Mirror Surgery}, that rewrites a released vision
-transformer as a network that is exactly equivariant to left-right mirroring. In the new basis every feature is either
-\emph{even} (unchanged when the image is mirrored) or \emph{odd} (it changes sign). A pair of mirror twins becomes one
-even and one odd unit, and the weights that the pair stored twice are stored once. The number of parameters that
-survive is given exactly by a short counting formula from group representation theory.
+We call the duplicated part the \emph{symmetry tax}: the share of a layer's weights that would disappear if every twin
+pair were stored once. This paper measures the tax, offers a partial explanation of it, and collects it. Our tool is
+\emph{Mirror Surgery}, a training-free conversion that rewrites a released vision transformer as a network that is
+exactly equivariant to left-right mirroring. In the new basis every feature is either \emph{even} (unchanged when the
+image is mirrored) or \emph{odd} (it changes sign), and a pair of twins becomes one even and one odd unit. A short
+distillation then recovers the accuracy lost in the conversion.
 
-Our contributions are as follows.
+Our contributions are:
 \begin{itemize}
-  \item \textbf{Where the tax lives.} Across 14 released vision models, mirror structure is concentrated in the first
-  half of the network; deep features are almost mirror-invariant (Section~\ref{sec:structure}). In early blocks the
-  structure is about as strong for up-down flips and 180-degree rotations as for left-right flips, much weaker for
-  90-degree rotations, and just as strong in CLIP and DINOv3, which were trained without flips. Early structure
-  therefore tracks the symmetries of natural images rather than the training augmentation.
-  \item \textbf{Mirror Surgery.} We give a closed-form conversion of a pretrained ViT into an exactly mirror-equivariant
-  network that stores 23.5\% fewer parameters, and whose parameter count matches the counting formula on every one of
-  144 measured blocks (Section~\ref{sec:method}). The converted model is flip-invariant by construction: its
-  predictions on an image and on the mirrored image agree on all 50{,}000 ImageNet validation images.
-  \item \textbf{A competitive and exact compressed model.} After a short healing run, Mirror Surgery on DINOv2-B
-  matches or beats the strongest structured compressor we tested (SVD-LLM) at the same size, on ImageNet k-NN
-  (78.34 against 78.06, three seeds each), linear probing, four transfer datasets and ADE20K segmentation
-  (Section~\ref{sec:experiments}). It gives exact flip invariance at 39\% of the cost of test-time flip averaging,
-  within 0.7 points of its accuracy.
-  \item \textbf{A free split of what and which way.} In the converted model, the even features recognise bird species
-  as well as the full features do, but carry no information about which way the bird faces (exactly chance under
-  mirror augmentation), while the odd features predict the facing direction at 99\%.
-  \item \textbf{Pre-registration.} The experiments of this paper were specified, with pass and fail thresholds, in a
-  pre-registration committed before the runs. We report all 40 scored predictions, including the 16 that failed
-  (Appendix~\ref{app:prereg}).
+  \item \textbf{Where the tax lives} (Section~\ref{sec:structure}). Across 14 released vision models, mirror structure
+  is concentrated in the first half of the network, and deep features are almost mirror-invariant. In early blocks the
+  structure is about as strong for up-down flips as for left-right flips, much weaker for 90-degree rotations, and of
+  similar strength in CLIP and DINOv3, which were trained without flips.
+  \item \textbf{Mirror Surgery} (Section~\ref{sec:method}). A conversion of a pretrained ViT into an exactly
+  mirror-equivariant network with a flip-invariant class token. In even and odd coordinates the converted DINOv2-B
+  with registers has 23.5\% fewer parameters, and the count follows from a standard formula for equivariant linear
+  maps.
+  \item \textbf{A competitive, exactly invariant model} (Section~\ref{sec:experiments}). After 780 steps of
+  distillation, Mirror Surgery matches SVD-LLM, the strongest compressor we tested, at the same size on ImageNet
+  $k$-NN (78.34 against 78.06, three seeds each) and on every downstream task we tried. Unlike every compressor, its
+  prediction never changes when the image is mirrored (in float32), and it is flip-invariant in one forward pass, 0.66
+  points below two-pass flip averaging.
+  \item \textbf{What and which way.} In the converted model, the even features recognise bird species as well as the
+  full features do but carry essentially no information about which way the bird faces, while the odd features
+  predict the facing direction at 99\%.
+  \item \textbf{Pre-registration.} We specified the experiments, with pass and fail thresholds, before running them,
+  and report all 40 scored predictions, including the 16 that failed (Appendix~\ref{app:prereg}).
 \end{itemize}
 
-The failures are informative. Before healing, Mirror Surgery loses to SVD-LLM on every model we tried, so the method
-is a conversion followed by a short fine-tune, not a free lunch. And our original explanation, that flip augmentation
-creates the pairing, failed where we tested it, in the early blocks of small controlled models. The released models
-show why: early pairing does not need flips at all.
+Some of those failures shape the paper. Before healing, Mirror Surgery is a weaker compressor than SVD-LLM, so the
+method is a conversion followed by a short distillation, not a free lunch. Our even/odd implementation is slower than
+the dense original, so we make no speed claim for the smaller form. And we originally expected flip augmentation to
+create the pairing; the measurements in Section~\ref{sec:structure} suggest that, in early blocks, it does not need
+to.

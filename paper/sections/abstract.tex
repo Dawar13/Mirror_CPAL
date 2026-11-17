@@ -1,16 +1,17 @@
 \begin{abstract}
 Many MLP neurons in pretrained vision transformers come in mirror pairs: one neuron detects a pattern and its twin
-detects the mirror image of that pattern. We measure this duplication, which we call the symmetry tax, in 14
-released vision models. It is concentrated in the first half of the network, where it is about as strong for up-down
-flips and 180-degree rotations as for left-right flips, much weaker for 90-degree rotations, and present even in
-models trained without flips, so early pairing follows the symmetries of natural images rather than the training
-augmentation. We then introduce Mirror Surgery, a closed-form conversion of a pretrained transformer into a network
-that is exactly equivariant to left-right mirroring and stores each twin pair once. A counting formula from
-representation theory gives its parameter count exactly; for DINOv2-B it keeps 76.5\% of the parameters. After a
-short distillation, the converted model reaches 78.34\% ImageNet $k$-NN accuracy against 78.06\% for SVD-LLM at the
-same size (three seeds each) and leads it on linear probing, four transfer datasets and ADE20K segmentation; unlike
-every compressor we compare with, its prediction never changes when the image is mirrored. It gives exact flip invariance in
-one forward pass, at twice the throughput of test-time flip averaging and 0.66 points below it, and it separates
-what an object is (even features) from which way it faces (odd features). Before healing, however, Mirror Surgery is
-weaker than SVD-LLM. All experiments were pre-registered, and we report the predictions that failed.
+detects the mirror image of that pattern. We measure this duplication, which we call the symmetry tax, in 14 released
+vision models. It is concentrated in the first half of the network. There it is about as strong for up-down flips as
+for left-right flips, much weaker for 90-degree rotations, and of similar strength in two models trained without
+flips, which suggests that early pairing reflects the symmetries of natural images more than the training
+augmentation. We then present Mirror Surgery, a training-free conversion of a pretrained ViT into a network that is
+exactly equivariant to left-right mirroring, followed by a short distillation. In even and odd coordinates the
+converted DINOv2-B (with registers) has 23.5\% fewer parameters, a number given exactly by a standard count of equivariant linear
+maps. After healing it matches SVD-LLM at the same size on ImageNet $k$-NN (78.34 against 78.06, three seeds each;
+paired 95\% interval of the difference $+0.09$ to $+0.47$) and on linear probing, four transfer datasets and ADE20K,
+and in float32 its prediction never changes when an image is mirrored. It gives flip invariance in one forward pass,
+0.66 points below two-pass test-time flip averaging, and separates what an object is (even features) from which way
+it faces (odd features). Two limits matter: before healing Mirror Surgery is weaker than SVD-LLM, and our even/odd
+implementation is slower than the dense original. All experiments were pre-registered; we report every prediction,
+including the 16 that failed.
 \end{abstract}

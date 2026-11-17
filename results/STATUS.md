@@ -2,6 +2,17 @@
 
 ## Next phase (PROJECT_NEXT_PHASE.md, adopted 14 November 2026)
 
+### Paper draft, version 2 (17 November 2026)
+
+`paper/main.tex` (CPAL 2027 template, anonymous; main text 8.7 of 9 pages, 18 pages with references and appendix).
+Bibliography `paper/reference.bib`: 69 entries, each checked against an authoritative source
+(`paper/references_verification.md`). Numbers come from `notes/paper/numbers.md` (sourced) and scripts
+`scripts/make_paper_*.py` and `scripts/paper_bootstrap_healed.py` (new, post hoc: healed Mirror-exact minus healed
+SVD-LLM +0.28 points, 95% interval +0.09 to +0.47, `results/paper_stats/healed_bootstrap.json`). An independent review
+of version 1 (`notes/paper/review_v1.md`, 2.5 of 5 as written) was applied in version 2: size and speed stated as a
+trade-off, exactness in float32 only, the natural-image explanation marked post hoc, "matches" instead of "beats",
+baseline and healing differences disclosed, Bökman et al. 2025 credited.
+
 ### H200 run (Jarvis Labs instance 574820), finished 2026-11-15; instance deleted 20:30 UTC
 
 The VM booted at about 06:10 UTC, jobs ran 06:56 to 20:18 UTC, and the instance was deleted (not paused) at about
