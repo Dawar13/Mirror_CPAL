@@ -1,0 +1,65 @@
+\section{Mirror Surgery}
+\label{sec:method}
+
+Mirror Surgery converts a pretrained ViT into a network that is exactly equivariant to left-right mirroring and
+stores each twin pair once. It has four steps: fit one mirror operator for the whole residual stream, project every
+weight onto the equivariant form, rewrite the network in even and odd coordinates, and heal.
+
+\paragraph{One operator for the stream.}
+The per-layer operators of Equation~\eqref{eq:operator} differ from layer to layer, but in a residual network an
+exact end-to-end symmetry needs a single operator $A^\star$ for the stream, since every block writes into the same
+space. We fit $A^\star$ with Equation~\eqref{eq:operator} applied to $\sum_l C_l / \operatorname{tr}(G_l)$, where
+$G_l = \sum x_l^\top x_l$, so that every layer contributes with equal energy. For DINOv2-B with registers, $A^\star$
+has $d_+ = 700$ even and $d_- = 68$ odd directions. Before projecting, we fold every LayerNorm into an RMS
+normalisation on a mean-centred stream and absorb the affine parameters and LayerScale into the adjacent linear maps,
+as in SliceGPT~\citep{ashkboos2024slicegpt}; this changes no output, and afterwards exactness needs only that $A^\star$
+is orthogonal.
+
+\paragraph{Projection.}
+Each weight is replaced by its average over the mirror, which is the closest exactly equivariant weight in Frobenius
+norm. For an MLP with twin permutation $P$,
+\begin{equation}
+  W_1 \leftarrow \tfrac12\left(W_1 + P W_1 A^\star\right), \qquad
+  W_2 \leftarrow \tfrac12\left(W_2 + A^\star W_2 P\right), \qquad
+  b_1 \leftarrow \tfrac12\left(b_1 + P b_1\right), \qquad
+  b_2 \leftarrow \tfrac12\left(b_2 + A^\star b_2\right).
+  \label{eq:projection}
+\end{equation}
+Twin rows become tied ($w_j = A^\star w_i$), and a neuron that is its own twin keeps only its even part, since GELU is
+not an odd function. In attention, heads either map to themselves or swap in pairs. For a head $h$ with partner $g$ we
+require $W_Q^{g} A^\star = B_h W_Q^{h}$ and $W_K^{g} A^\star = B_h W_K^{h}$ with the same orthogonal $B_h$, so attention
+logits are unchanged, and analogous constraints with a second map $C_h$ for the values and the output projection; the
+head pairing and $B_h, C_h$ are fitted from the same mirrored activations. The patch embedding, the position
+embeddings of the $16\times16$ grid, the class token and the register tokens are projected in the same way. Finally,
+an \emph{even head} $y \mapsto y\,\tfrac12(I + A^\star)$ after the last normalisation keeps only the even part of each
+output token, which makes the class-token feature exactly invariant to mirroring.
+
+\paragraph{Even and odd coordinates.}
+In the eigenbasis of $A^\star$ a stream vector splits into $x = (x_+, x_-)$. A twin pair has weights $(a_+, a_-)$ and
+$(a_+, -a_-)$, so it can be computed as $u = a_+ \cdot x_+$, $v = a_- \cdot x_-$ with pre-activations $u+v$ and
+$u-v$: one even and one odd dot product instead of two full ones. A self-twin needs only $c_+ \cdot x_+$. Counting the
+remaining entries gives the number of free parameters of an equivariant $h \times d$ map,
+\begin{equation}
+  \tfrac12 \left( h d + \operatorname{tr}(P)\operatorname{tr}(A^\star) \right) = h_+ d_+ + h_- d_- ,
+  \label{eq:count}
+\end{equation}
+where $h_+$ and $h_-$ are the numbers of even and odd hidden units; this is the character formula of representation
+theory for the group of order two. A twin head pair likewise costs one head. Applied to every MLP and attention matrix
+of DINOv2-B with registers, Equation~\eqref{eq:count} leaves 66.2M of the model's 86.6M parameters (76.5\%). On 144
+MLP blocks of seven models, the count of the even/odd implementation matches the formula exactly.
+
+\paragraph{Exactness.}
+For a mirrored input the converted network's tokens equal the original tokens multiplied by $A^\star$ at every layer,
+and its class-token feature is unchanged. In float64 the largest relative deviation over all 198 components on 1{,}000
+validation images is $5.8\times10^{-14}$. In float32 it is $2.5\times10^{-5}$, and the $k$-NN prediction for every one
+of the 50{,}000 ImageNet validation images is the same as for its mirror image.
+
+\paragraph{Healing.}
+The projection removes the part of each weight that broke the symmetry, which costs accuracy, especially in late
+blocks where few directions are odd. We recover it with a short distillation from the original model: 780 steps
+(two epochs) on 100{,}000 ImageNet training images with random crops and flips, batch 256, AdamW, and a mean-squared
+loss on the final class and patch tokens and on the output of every block, each normalised by the size of its target.
+Because the converted model is invariant, its final targets are the teacher's outputs averaged over the image and its
+mirror image. The weights are updated freely and projected again with Equation~\eqref{eq:projection} after every step,
+so the model stays exactly equivariant throughout. The learning rate is chosen from
+$\{10^{-5}, 5\cdot10^{-5}, 10^{-4}\}$ by the distillation loss on 5{,}000 held-out training images.

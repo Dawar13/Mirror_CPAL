@@ -1,0 +1,89 @@
+\section{Pre-registration}
+\label{app:prereg}
+
+Before any of the experiments in this paper ran, we wrote down every prediction with a numeric bar and committed it
+to a version-controlled repository, which we will release with the code. Table~\ref{tab:prereg} lists all of them
+with the measured value and the verdict, scored by a script that reads the result files. A prediction is PENDING when
+an input is missing: CORE-01, CORE-02 and CORE-05 P5.2 depended on a set of small ViTs trained from scratch, which we
+dropped, as pre-registered, after the pilot failed its gate (gate C, MUST-12) at two image sizes; the upside items
+UP-01 to UP-05 were optional and were not run. The thresholds were not changed after the pre-registration was
+committed. Operational changes during the runs (splitting long jobs over parallel processes, a memory fix that reads
+images from disk instead of host memory, the rerun of one job after a bug fix) are logged with the code and do not
+change any result.
+
+\input{sections/prereg_table}
+
+\section{Mirror structure in all models}
+\label{app:structure}
+
+Table~\ref{tab:structure} gives the structure measurements of Section~\ref{sec:structure} for every model. Early
+up-down structure is real and usable, not only measurable: projecting the MLPs of blocks 1 to 6 onto exact up-down
+symmetry, with no healing, costs 0.23 (DINOv2-L), 2.03 (DeiT~III), 3.63 (DINOv2-B with registers) and 6.08 (DINOv2-B)
+points of $k$-NN accuracy, against 0.37, 1.39, 1.84 and 4.01 for the same projection onto left-right symmetry.
+
+\input{sections/structure_table}
+
+\section{Additional results}
+\label{app:extra}
+
+\paragraph{Healing curves.} $k$-NN top-1 of the healed full models during healing (steps 100 and 300 on a subset of
+10{,}000 validation images, steps 0 and 780 on all 50{,}000).
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    Method & step 0 & step 100 & step 300 & step 780 \\
+    \midrule
+    Mirror Surgery (3 seeds) & 53.84 & 78.02 & 78.38 & 78.34 \\
+    SVD-LLM (3 seeds)        & 75.80 & 77.50 & 78.10 & 78.06 \\
+    SliceGPT                 & 68.29 & 77.39 & 77.91 & 77.89 \\
+    Plain SVD                & 5.20  & 74.18 & 76.78 & 77.02 \\
+    Random structure         & 4.78  & 18.63 & 52.27 & 69.93 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Zero-shot surgery on other models.} Table~\ref{tab:core04} repeats the zero-shot comparison on the first
+half of eight models. SVD-LLM is never worse than Mirror Surgery. Mirror Surgery is far better than plain SVD on most
+DINOv2 models, but collapses on SigLIP~2.
+
+\input{sections/core04_table}
+
+\paragraph{Components and ablations.} Converting only the MLPs of the first six blocks keeps 76.60 (87.0\% of the
+parameters), only the attention 77.42 (94.3\%), and both 77.34 (80.6\%); for the full model the three numbers are
+52.55, 62.40 and 53.81 (zero-shot, three structure-fit seeds). The MLPs give 67\% of the saving at six blocks and 68\%
+for the full model. Using per-layer operators instead of one shared operator (\emph{Mirror-local}) keeps more accuracy
+zero-shot on the full model (62.10) but is not exactly equivariant and needs a basis change at every block (7.5\% more
+parameters). Stacking a low-rank factorisation inside the even and odd blocks never beat low rank alone at any of four
+budget points on DINOv2-B, DINOv2-L or DeiT~III (zero-shot).
+
+\paragraph{Efficiency.} Latency of DINOv2-B/14 with registers on one H200 (bf16, \texttt{torch.compile}, median of
+100 runs, one measurement per model; images per second at batch 64): original 8{,}137; flip averaging 4{,}220; healed
+Mirror Surgery as stored 8{,}167, and in even/odd form 5{,}897. Int8 weight-only quantisation lowers $k$-NN accuracy by
+0.006 points for Mirror Surgery and 0.004 for the original; token merging with $r = 8$ by 0.18 and 0.34.
+
+\section{Implementation details}
+\label{app:details}
+
+\paragraph{Data.} All images are resized to 256 pixels and centre-cropped to 224. From the ImageNet training set we
+draw, per class and disjointly, three fit sets of 2 images per class (2{,}000 images each; the paper uses the first),
+the $k$-NN bank (100 per class), the healing set (100 per class), a healing validation set (5 per class) and the
+method-selection set (10 per class). The 50{,}000 validation images are used only for reporting.
+
+\paragraph{Baselines.} All baselines compress the same matrices as Mirror Surgery after the same LayerNorm folding,
+with statistics from the fit images, and are matched to its parameter count from above within 1\%. SVD-LLM uses
+whitening by the Cholesky factor of the input second moment; ASVD-style scaling uses the mean absolute input to the
+power $\alpha \in \{0.25, 0.5, 1\}$; SliceGPT slices a PCA-rotated residual stream with per-block or shared bases;
+FLAP removes neurons and heads by a fluctuation score; ZipIt greedily merges correlated units. Hyperparameters are
+chosen by $k$-NN accuracy on the method-selection set. When healed, low-rank baselines keep their rank, SliceGPT its
+width and pruned models their width.
+
+\paragraph{Downstream protocols.} Linear probes use the class token concatenated with the mean patch token after the
+final normalisation (for Mirror Surgery, the even parts) and multinomial logistic regression with weight decay chosen
+on a held-out tenth of the training split. ADE20K uses a frozen backbone at 448 pixels, a batch-normalised linear head
+trained for 8{,}000 iterations, and sliding-window evaluation on 2{,}000 validation images. CUB probes use 5-fold
+cross-validation on the training split; facing labels come from the horizontal order of the beak and tail part
+annotations. Some CUB images also occur in the ImageNet training set; this affects all models alike and does not
+change the comparison between even and odd features.

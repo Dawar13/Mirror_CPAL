@@ -1,0 +1,34 @@
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Learned symmetry in trained networks.}
+Equivariance can be built into an architecture, as in group-equivariant CNNs~\citep{cohen2016group}, or learned from
+data. Networks trained on natural images often contain families of units related by a transformation, such as rotated
+or mirrored curve detectors in InceptionV1~\citep{olah2020naturally}, and their representations can be
+measured for equivariance directly~\citep{lenc2015understanding,gruver2023lie}.
+\citet{bokman2023investigating} showed that CNNs trained to be flip-invariant are close to group-equivariant CNNs whose
+channels permute under a flip, and merged such a network with its own mirrored copy.
+\citet{shahverdi2026identifiable} prove that, under identifiability conditions, an equivariant network must be
+equivariant layer by layer, and observe this in small models trained from scratch. We study released vision
+transformers, where the residual stream needs a learned mirror operator with odd directions rather than a channel
+permutation, we compare four symmetries in the same models, and we turn the structure into a smaller network.
+
+\paragraph{Making pretrained models equivariant.}
+Equivariance can be added to a pretrained model by averaging over the group at inference or during
+fine-tuning~\citep{basu2023equi,basu2023efficient}, by learning a canonicalisation of the
+input~\citep{kaba2023equivariance,mondal2023equivariant}, or by projecting the weights onto a designed equivariant
+subspace and fine-tuning~\citep{rahman2026tunable}. Group averaging multiplies the inference cost by the group size.
+Mirror Surgery instead estimates the mirror operator and the pairing of units from the model's own activations,
+gives exact rather than approximate equivariance, and reduces the parameter count rather than increasing the cost.
+Mirror-equivariant vision transformers can also be trained from scratch with fewer FLOPs~\citep{bokman2025flopping};
+our method needs no retraining.
+
+\paragraph{Structured compression.}
+Post-training compression of transformers removes parameters by low-rank factorisation
+(plain SVD, activation-aware SVD~\citep{yuan2023asvd} and SVD-LLM~\citep{wang2025svdllm}), by slicing a rotated
+residual stream~\citep{ashkboos2024slicegpt}, by structured pruning~\citep{an2024flap}, or by merging correlated
+units~\citep{stoica2024zipit}. Token merging~\citep{bolya2023tome} reduces the number of tokens instead. These methods
+look for redundancy in the statistics of the activations. The symmetry tax is a different kind of redundancy: the two
+units of a twin pair respond to mirrored inputs, so they are almost uncorrelated on any single image and invisible to
+correlation-based merging. We compare against these methods at equal parameter counts and also test whether the two
+kinds of redundancy stack.

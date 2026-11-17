@@ -1,0 +1,30 @@
+\section{Limitations and outlook}
+\label{sec:discussion}
+
+\paragraph{What did not work.}
+Several of our pre-registered predictions failed, and they bound what the paper can claim
+(Appendix~\ref{app:prereg}). Before healing, Mirror Surgery is the weaker compressor: on DINOv2-B it loses to SVD-LLM
+at every size we tried, and in a zero-shot comparison on eight models it never beats SVD-LLM
+(Appendix~\ref{app:extra}). It collapses on
+SigLIP~2, the model with the weakest pairing among those we converted. Stacking a low-rank factorisation inside the even and odd blocks did
+not beat low rank alone at any budget point. A per-layer rule that we froze in advance, to predict from weight
+statistics alone whether Mirror Surgery or SVD would hurt a block less, was right on 67\% of 48 held-out blocks against
+a target of 75\%. And the cause we originally proposed, that flip augmentation creates the pairing, failed in small
+ViTs trained from scratch on ImageNet-100: the model trained with flips and the model trained without them had
+similar early pairing, which Section~\ref{sec:structure} now explains.
+
+\paragraph{Scope.}
+All healed results are for one model, DINOv2-B/14 with registers, at one size (76.5\% of the parameters). Our
+structure measurements cover 14 models, but the healed comparison does not, and the speed-up from the smaller weight
+matrices depends on the kernels used. The pairing measure needs a few thousand images and a matching step per layer.
+
+\paragraph{Outlook.}
+Two directions follow directly from Section~\ref{sec:structure}. Early blocks are nearly symmetric under up-down
+flips and 180-degree rotations as well as left-right flips, so converting them to the four-element group of all three
+symmetries could remove more parameters while keeping the model exactly left-right equivariant. And the difference between vision-only and image-text models in deep left-right pairing is a concrete,
+testable question about what training objectives preserve.
+
+\paragraph{Conclusion.}
+Pretrained vision transformers spend a large part of their early capacity on mirror twins. Mirror Surgery turns this
+duplication into an exactly flip-equivariant model with 23.5\% fewer parameters which, after a short heal, matches the
+strongest structured compressor we tested and splits its features into what is in the image and which way it faces.
