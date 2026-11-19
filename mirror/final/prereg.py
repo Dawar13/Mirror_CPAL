@@ -32,7 +32,10 @@ class PreregError(RuntimeError):
 
 
 def sha256_of(path) -> str:
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    """sha256 of the file's text with line endings normalised to LF (CRLF -> LF), so the laptop's Windows checkout
+    (core.autocrlf) and the VM's Linux copy of the same committed file give the same hash; it equals the sha256 of
+    the committed blob, `git show <commit>:PREREG_FINAL_PHASE.md | sha256sum`."""
+    return hashlib.sha256(Path(path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def last_commit_of(rel_path: str, root: Path = REPO_ROOT) -> str | None:
