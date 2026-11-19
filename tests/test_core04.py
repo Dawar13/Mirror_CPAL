@@ -544,5 +544,7 @@ def test_runner_tiny_surgery_and_linear_probe(tmp_path):
     ok = rows[rows["method"] != "original"]
     assert (ok["status"] == "ok").all() and (ok["gap_rel"] >= -1e-12).all()
     lin = pd.read_csv(tmp_path / "surgery" / "linear_tiny.csv")
-    assert len(lin) == 5 and lin["top1"].between(0, 100).all()
-    assert set(lin["method"]) == {"original", "mirror_exact", "svd"}
+    # original + 2 sizes x (Mirror-exact, plain SVD, SVD-LLM); SVD-LLM joined the CORE-04 surgery methods during the
+    # H200 run (the paper's CORE-04 table compares Mirror-exact with plain SVD and SVD-LLM)
+    assert len(lin) == 7 and lin["top1"].between(0, 100).all()
+    assert set(lin["method"]) == {"original", "mirror_exact", "svd", "svdllm"}

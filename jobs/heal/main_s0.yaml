@@ -1,0 +1,57 @@
+model: dinov2_vitb14_reg
+micro_batch: 128
+compile: false
+out_root: runs/final
+queue_dir: runs/final/_queue
+structure: results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+adopted_structures:
+  wspace: results/A01/structure/dinov2_vitb14_reg_wspace_matched.npz
+  astar: results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+gate_b: results/MUST-07/gate_b.json
+random_seed: 1
+cache_dir: cache
+data:
+  mode: stream
+state_every: 100
+eval:
+  n_query_full: 50000
+  n_query_partial: 10000
+  fp32_last: false
+lr_selection:
+  budget_steps: 200
+experiment: A05
+group: main
+seed: 0
+students:
+- method: svdllm_full
+  lr_select: &id001
+    lrs:
+    - 0.0001
+    - 0.0002
+- method: iosvd
+  lr_select: *id001
+- method: flap
+  lr_select: *id001
+- method: blockdrop
+  lr_select: *id001
+- method: original
+  lr_select: *id001
+- method: slicegpt
+  lr: 0.0001
+- method: svd
+  lr: 0.0001
+- method: random_structure
+  lr: 0.0001
+  fp32: true
+- method: pair_random
+  variant: h1
+  structure: adopted
+  lr: 0.0001
+  fp32: true
+hook_steps:
+- 0
+- 100
+- 300
+job: main_s0
+blockdrop_score_fn: mirror.final.heal.blockdrop_score:msel_scorer
+gpu_frac: 0.49

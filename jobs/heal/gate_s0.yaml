@@ -1,0 +1,42 @@
+model: dinov2_vitb14_reg
+micro_batch: 128
+compile: false
+out_root: runs/final
+queue_dir: runs/final/_queue
+structure: results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+adopted_structures:
+  wspace: results/A01/structure/dinov2_vitb14_reg_wspace_matched.npz
+  astar: results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+gate_b: results/MUST-07/gate_b.json
+random_seed: 1
+cache_dir: cache
+data:
+  mode: stream
+state_every: 100
+eval:
+  n_query_full: 50000
+  n_query_partial: 10000
+  fp32_last: false
+lr_selection:
+  budget_steps: 200
+experiment: A01
+group: main
+seed: 0
+students:
+- method: mirror_exact
+  variant: astar
+  lr: 0.0001
+  fp32: true
+- method: svdllm
+  lr: 0.0001
+- method: mirror_exact
+  variant: wspace
+  structure: results/A01/structure/dinov2_vitb14_reg_wspace_matched.npz
+  lr: 0.0001
+  fp32: true
+hook_steps:
+- 0
+- 100
+- 300
+job: gate_s0
+gpu_frac: 0.26

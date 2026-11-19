@@ -1,0 +1,68 @@
+model: dinov2_vitb14_reg
+micro_batch: 128
+compile: false
+out_root: runs/final
+queue_dir: runs/final/_queue
+structure: results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+adopted_structures:
+  wspace: results/A01/structure/dinov2_vitb14_reg_wspace_matched.npz
+  astar: results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+gate_b: results/MUST-07/gate_b.json
+random_seed: 1
+cache_dir: cache
+data:
+  mode: stream
+state_every: 100
+eval:
+  n_query_full: 50000
+  n_query_partial: 10000
+  fp32_last: false
+lr_selection:
+  budget_steps: 200
+experiment: A06
+group: a06
+seed: 0
+students:
+- method: svdllm
+  variant: f065
+  frac: 0.65
+  lr: 0.0001
+- method: svdllm
+  variant: f050
+  frac: 0.5
+  lr: 0.0001
+- method: svdllm
+  variant: f040
+  frac: 0.4
+  lr: 0.0001
+- method: mirror_svdllm
+  variant: f065
+  frac: 0.65
+  structure: adopted
+  lr_select: &id001
+    lrs:
+    - 0.0001
+    - 0.0002
+- method: mirror_svdllm
+  variant: f050
+  frac: 0.5
+  structure: adopted
+  lr_select: *id001
+  fp32: true
+- method: mirror_svdllm
+  variant: f040
+  frac: 0.4
+  structure: adopted
+  lr_select: *id001
+- method: mirror_partial
+  variant: k9
+  k: 9
+  lr_select: *id001
+  structure:
+    adopted:
+      wspace: results/A01/k9/structure/dinov2_vitb14_reg_wspace_matched_k9.npz
+      astar: results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+hook_steps:
+- 0
+job: a06_s0
+gpu_frac: 0.35

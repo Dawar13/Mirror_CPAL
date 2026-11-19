@@ -122,6 +122,16 @@ padding mirrored with it), so the number tests the model and the head, not the l
 through rounding show up as near-ties (the largest top-2 margin among differing pixels is recorded). The same
 pass also scores mIoU of both heads on the original images (fp32). Results: seg/<model>/<variant>_maskeq.json
 and the mask_eq_* columns of t2_ade20k.csv; a finished variant is not retrained (its saved head is reused).
+Top-two margins (P11.2; PREREG_NEXT_PHASE.md Section 1: a differing pixel is a near-tie if its top-two logits
+differ by less than 1e-4 of their absolute value): for every differing pixel the relative margin
+(top-1 logit - top-2 logit) / max(|top-1|, |top-2|) (scripts/core06_orientation.rel_margin) is taken in both copies,
+the original image's logits mirrored into place and the mirrored image's logits, at label resolution. Per head the
+result records max_rel_margin_of_differing_pixels (the largest over differing pixels of the LARGER of the two copies:
+a near-tie needs both copies below 1e-4; the key scripts/collect_next_phase.find_margin reads),
+max_rel_margin_of_differing_pixels_one_copy (the smaller copy, the CORE-06 convention), n_differ_not_near_tie, a
+histogram of the margins, the margins themselves when at most 1,000 pixels differ, and every differing pixel (image,
+row, column, both margins, both top classes; up to 1,000,000 per head) in seg/<model>/<variant>_maskeq_margins.npz.
+A saved mask-equivariance result without these fields is recomputed on the next --mask-eq run (its head is reused).
 
 Outputs under --out (default runs/t2_seg): t2_ade20k.csv (one row per model and variant: mIoU, aAcc, mAcc,
 iterations, seed, git hash, timings and more), T2_ADE20K.md, seg/<model>/<variant>.json (row, settings,
@@ -833,6 +843,23 @@ def vexact_checks(factory, adapter, model, v, x: torch.Tensor, contrast_px: int 
 # Mask equivariance (MUST-11): mask(mirror x) against mirror(mask x), raw and symmetrised head
 # ----------------------------------------------------------------------------------------------
 MASK_EQ_RECIPE = "t2seg-maskeq-v1"
+NEAR_TIE_REL = 1e-4                       # PREREG_NEXT_PHASE.md Section 1, rounding allowance for masks
+MARGIN_LIST_MAX = 1000                    # margins listed in the JSON when at most this many pixels differ
+MARGIN_RECORDS_MAX = 1_000_000            # differing pixels recorded one by one (npz) per head
+MARGIN_HIST_EDGES = [0.0] + [10.0 ** e for e in range(-10, 1)] + [float("inf")]
+MARGIN_DEFINITION = ("relative top-two margin (top-1 logit - top-2 logit) / max(|top-1|, |top-2|) at label "
+                     "resolution, in both copies of a differing pixel (the original image's logits mirrored into "
+                     "place, and the mirrored image's logits); max_rel_margin_of_differing_pixels is the largest over "
+                     "differing pixels of the larger copy (a near-tie needs both copies below 1e-4), "
+                     "max_rel_margin_of_differing_pixels_one_copy of the smaller copy (CORE-06 convention)")
+
+
+def rel_top2_margin(logits: torch.Tensor) -> torch.Tensor:
+    """(top-1 - top-2) / max(|top-1|, |top-2|) over dim 0 of [C, n] logits (scripts/core06_orientation.rel_margin)."""
+    if logits.shape[0] < 2:
+        return torch.full((logits.shape[1],), float("inf"), device=logits.device)
+    t = logits.double().topk(2, dim=0).values
+    return (t[0] - t[1]) / torch.maximum(t[0].abs(), t[1].abs()).clamp_min(1e-30)
 
 
 def split_final_norm(model: nn.Module, skip_even: bool = False) -> tuple:
@@ -948,6 +975,9 @@ def mask_equivariance(head, pair_fn, store: RaggedStore, crop: int, stride: int,
     C = int(num_classes)
     st = {h: {"eq": 0, "n": 0, "eq_lab": 0, "n_lab": 0, "logit_diff": 0.0, "logit_ref": 0.0, "margin_diff": 0.0}
           for h in heads}
+    mg = {h: {"strict": 0.0, "one_copy": 0.0, "not_tie": 0, "hist": np.zeros(len(MARGIN_HIST_EDGES) - 1, np.int64),
+              "list": [], "rec": {k: [] for k in ("image", "y", "x", "rel_margin", "rel_margin_mirrored",
+                                                  "class", "class_mirrored")}, "n_rec": 0} for h in heads}
     conf = {h: torch.zeros(C * C, dtype=torch.int64, device=device) for h in heads}
 
     def logit_fn(xb):
@@ -987,6 +1017,7 @@ def mask_equivariance(head, pair_fn, store: RaggedStore, crop: int, stride: int,
                 top2 = lj.topk(2, dim=1).values[0]
                 margin = (top2[0] - top2[1]).flip(-1)
                 s["margin_diff"] = max(s["margin_diff"], float(margin[~eq].max()))
+                _record_margins(mg[hname], i, ~eq, lj[0].flip(-1), lmj[0])
             confusion_update(conf[hname], pred, lab, C)
         if log_every and (i + 1) % log_every == 0:
             log(f"  mask equivariance {i + 1}/{n} images, {(i + 1) / max(time.time() - t0, 1e-9):.1f} img/s")
@@ -1000,7 +1031,51 @@ def mask_equivariance(head, pair_fn, store: RaggedStore, crop: int, stride: int,
                       "max_logit_diff_rel": s["logit_diff"] / s["logit_ref"] if s["logit_ref"] > 0 else float("nan"),
                       "max_margin_of_differing_pixels": s["margin_diff"] if s["n"] > s["eq"] else None,
                       "mIoU": m["mIoU"], "aAcc": m["aAcc"], "mAcc": m["mAcc"]}
+        out[hname].update(_margin_fields(mg[hname], s["n"] - s["eq"]))
+    out["margin_definition"] = MARGIN_DEFINITION
+    out["_margin_records"] = {h: {k: np.concatenate(v) if v else np.zeros(0) for k, v in mg[h]["rec"].items()}
+                              for h in heads}
     return out
+
+
+def _record_margins(m: dict, image: int, differ: torch.Tensor, lo_img: torch.Tensor, lm_img: torch.Tensor) -> None:
+    """Accumulate the top-two margin record of the differing pixels of one image and head. lo_img: the original
+    image's logits [C, h, w] mirrored into the mirrored image's coordinates; lm_img: the mirrored image's logits."""
+    lo, lm = lo_img[:, differ], lm_img[:, differ]                       # [C, n]
+    ro, rm = rel_top2_margin(lo), rel_top2_margin(lm)
+    strict, lenient = torch.maximum(ro, rm), torch.minimum(ro, rm)
+    m["strict"] = max(m["strict"], float(strict.max()))
+    m["one_copy"] = max(m["one_copy"], float(lenient.max()))
+    m["not_tie"] += int((strict >= NEAR_TIE_REL).sum())
+    sc = strict.cpu().numpy()
+    m["hist"] += np.histogram(np.clip(sc, 0.0, 1e300), bins=np.asarray(MARGIN_HIST_EDGES[:-1] + [1e301]))[0]
+    if len(m["list"]) < MARGIN_LIST_MAX + 1:
+        m["list"].extend(sc[:MARGIN_LIST_MAX + 1 - len(m["list"])].tolist())
+    room = MARGIN_RECORDS_MAX - m["n_rec"]
+    if room > 0:
+        ys, xs = torch.nonzero(differ, as_tuple=True)
+        k = min(room, int(ys.numel()))
+        rec = m["rec"]
+        rec["image"].append(np.full(k, image, dtype=np.int32))
+        rec["y"].append(ys[:k].cpu().numpy().astype(np.int32))
+        rec["x"].append(xs[:k].cpu().numpy().astype(np.int32))
+        rec["rel_margin"].append(ro[:k].cpu().numpy().astype(np.float64))
+        rec["rel_margin_mirrored"].append(rm[:k].cpu().numpy().astype(np.float64))
+        rec["class"].append(lo.argmax(0)[:k].cpu().numpy().astype(np.int16))
+        rec["class_mirrored"].append(lm.argmax(0)[:k].cpu().numpy().astype(np.int16))
+        m["n_rec"] += k
+
+
+def _margin_fields(m: dict, n_differ: int) -> dict:
+    """The near-tie fields of one head (None where no pixel differs)."""
+    listed = n_differ <= MARGIN_LIST_MAX
+    return {"max_rel_margin_of_differing_pixels": m["strict"] if n_differ else None,
+            "max_rel_margin_of_differing_pixels_one_copy": m["one_copy"] if n_differ else None,
+            "n_differ_not_near_tie": int(m["not_tie"]), "near_tie_rel": NEAR_TIE_REL,
+            "rel_margin_histogram": {"edges": [e if math.isfinite(e) else None for e in MARGIN_HIST_EDGES],
+                                     "counts": [int(c) for c in m["hist"]]},
+            "rel_margins_of_differing_pixels": [float(x) for x in m["list"]] if listed else None,
+            "n_differ_recorded": int(m["n_rec"])}
 
 
 def mask_eq_fields(res: dict, operator: str | None, precision: str) -> dict:
@@ -1010,7 +1085,17 @@ def mask_eq_fields(res: dict, operator: str | None, precision: str) -> dict:
             "mask_eq_sym_n_differ": s.get("n_differ"), "mask_eq_n_pixels": r["n_pixels"],
             "mask_eq_n_images": res["n_images"], "mask_eq_raw_logit_diff_rel": r["max_logit_diff_rel"],
             "mask_eq_sym_logit_diff_rel": s.get("max_logit_diff_rel"), "mask_eq_mIoU_raw": r["mIoU"],
-            "mask_eq_mIoU_sym": s.get("mIoU"), "mask_eq_operator": operator, "mask_eq_precision": precision}
+            "mask_eq_mIoU_sym": s.get("mIoU"), "mask_eq_operator": operator, "mask_eq_precision": precision,
+            "mask_eq_raw_max_rel_margin": r.get("max_rel_margin_of_differing_pixels"),
+            "mask_eq_sym_max_rel_margin": s.get("max_rel_margin_of_differing_pixels"),
+            "mask_eq_raw_n_differ_not_near_tie": r.get("n_differ_not_near_tie"),
+            "mask_eq_sym_n_differ_not_near_tie": s.get("n_differ_not_near_tie")}
+
+
+def has_margins(result: dict) -> bool:
+    """True if a saved mask-equivariance result holds the top-two margin fields of every head (P11.2)."""
+    heads = (result or {}).get("heads") or ["raw"]
+    return all("max_rel_margin_of_differing_pixels" in ((result or {}).get(h) or {}) for h in heads)
 
 
 def mask_eq_path(vdir: Path, v) -> Path:
@@ -1033,7 +1118,9 @@ def mask_eq_reusable(a, v, vdir: Path, settings_j: dict, factory):
     if path.exists() and not a.force:
         prev = json.loads(path.read_text(encoding="utf-8"))
         if prev.get("settings") == mask_eq_settings(a, settings_j, factory):
-            return prev["fields"]
+            if has_margins(prev.get("result")):
+                return prev["fields"]
+            log(f"  {v.name}: the saved mask-equivariance result has no top-two margins (P11.2); recomputing")
     return None
 
 
@@ -1051,6 +1138,11 @@ def run_mask_eq(a, v, adapter, model, factory, head, data, lut, C, device, vdir:
     pair_fn = make_pair_feature_fn(adapter, model, device, A, full_tokens=not a.even_tokens)
     res = mask_equivariance(head, pair_fn, data["val"], a.crop, a.eval_stride, lut, C, device, a.eval_batch,
                             a.mask_eq_images)
+    records = res.pop("_margin_records", None)
+    if records is not None:
+        rpath = path.with_name(f"{v.name}_maskeq_margins.npz")
+        np.savez_compressed(rpath, **{f"{h}_{k}": arr for h, rec in records.items() for k, arr in rec.items()})
+        res["margin_records_file"] = rpath.name
     fields = mask_eq_fields(res, desc, "fp32 (no autocast, TF32 off)")
     log(f"  {v.name}: mask equivariance (fp32, {res['n_images']} images): raw head {fields['mask_eq_raw']:.4f}% "
         f"({fields['mask_eq_raw_n_differ']} pixels differ)"
@@ -1125,7 +1217,8 @@ CSV_COLUMNS = ["model", "variant", "label", "family", "method", "k", "mIoU", "aA
                "resumed_from_iter", "peak_mem_gb", "amp", "hf_id", "hf_revision", "git_hash", "git_dirty", "date",
                "mask_eq_raw", "mask_eq_sym", "mask_eq_raw_n_differ", "mask_eq_sym_n_differ", "mask_eq_n_pixels",
                "mask_eq_n_images", "mask_eq_raw_logit_diff_rel", "mask_eq_sym_logit_diff_rel", "mask_eq_mIoU_raw",
-               "mask_eq_mIoU_sym", "mask_eq_operator", "mask_eq_precision"]
+               "mask_eq_mIoU_sym", "mask_eq_operator", "mask_eq_precision", "mask_eq_raw_max_rel_margin",
+               "mask_eq_sym_max_rel_margin", "mask_eq_raw_n_differ_not_near_tie", "mask_eq_sym_n_differ_not_near_tie"]
 
 
 def _f(x, nd=2) -> str:
@@ -1238,6 +1331,20 @@ def write_summary(path: Path, rows: list) -> None:
                          f"{_f(r.get('mask_eq_mIoU_raw'))} / {_f(r.get('mask_eq_mIoU_sym'))} | {r['mask_eq_n_images']} | "
                          f"{r.get('mask_eq_operator')} |")
         lines.append("")
+        mm = [r for r in me if "mask_eq_raw_n_differ_not_near_tie" in r and
+              r.get("mask_eq_raw_n_differ_not_near_tie") is not None]
+        if mm:
+            lines += ["Near-ties among the differing pixels (PREREG_NEXT_PHASE.md Section 1): a differing pixel is a "
+                      "near-tie when its relative top-two logit margin, (top-1 - top-2) / max(|top-1|, |top-2|), is "
+                      "below 1e-4 in both copies (the image and its mirror). Largest margin among differing pixels "
+                      "and the number of differing pixels that are not near-ties, per head:", ""]
+            for r in mm:
+                sym = ("-" if r.get("mask_eq_sym_n_differ_not_near_tie") is None else
+                       f"{_e(r.get('mask_eq_sym_max_rel_margin'))}, {int(r['mask_eq_sym_n_differ_not_near_tie']):,} "
+                       "not near-ties")
+                lines.append(f"- {r['model']} {r['variant']}: raw {_e(r.get('mask_eq_raw_max_rel_margin'))}, "
+                             f"{int(r['mask_eq_raw_n_differ_not_near_tie']):,} not near-ties; symmetrised {sym}.")
+            lines.append("")
     if any(r.get("method") == "vexact" for r in rows):
         c = r0["crop"]
         lines += ["V-exact: `mirror.m1.build_vexact` projects the position embedding on the grid in use, and "

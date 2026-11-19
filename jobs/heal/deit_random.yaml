@@ -1,0 +1,34 @@
+model: deit3_b16
+micro_batch: 128
+compile: false
+out_root: runs/final
+queue_dir: runs/final/_queue
+structure: results/MUST-07/structure/deit3_b16_s0.npz
+adopted_structures:
+  wspace: results/A01/deit3_b16/structure/deit3_b16_wspace_matched.npz
+  astar: results/MUST-07/structure/deit3_b16_s0.npz
+gate_b: results/MUST-07/gate_b.json
+random_seed: 1
+cache_dir: cache
+data:
+  mode: stream
+state_every: 100
+eval:
+  n_query_full: 50000
+  n_query_partial: 10000
+  fp32_last: false
+lr_selection:
+  budget_steps: 200
+experiment: A08
+group: a08
+seed: 0
+students:
+- method: random_structure
+  lr_select:
+    lrs:
+    - 0.0001
+    - 0.0002
+  logits: true
+hook_steps: []
+job: deit_random
+gpu_frac: 0.18

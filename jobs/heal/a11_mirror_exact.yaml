@@ -1,0 +1,43 @@
+model: dinov2_vitb14_reg
+micro_batch: 128
+compile: false
+out_root: runs/final
+queue_dir: runs/final/_queue
+structure: results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+adopted_structures:
+  wspace: results/A01/structure/dinov2_vitb14_reg_wspace_matched.npz
+  astar: results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+gate_b: results/MUST-07/gate_b.json
+random_seed: 1
+cache_dir: cache
+data:
+  sources:
+  - images: cache/heal256_uint8.npy
+    index: cache/train_index.npz
+    key: heal_rows
+  - images: cache/heal_ext256_uint8.npy
+    index: cache/heal_ext_index.npz
+    key: rows
+  heldout_key: healval_rows
+  heldout_source: 0
+  mode: stream
+state_every: 100
+eval:
+  n_query_full: 50000
+  n_query_partial: 10000
+  fp32_last: false
+lr_selection:
+  budget_steps: 200
+experiment: A11
+group: a11
+seed: 0
+students:
+- method: mirror_exact
+  variant: ext
+  lr: 0.0001
+  structure: adopted
+hook_steps:
+- 0
+job: a11_mirror_exact
+steps: 2340
+gpu_frac: 0.22
