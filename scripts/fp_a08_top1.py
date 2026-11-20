@@ -131,7 +131,8 @@ def main(argv=None) -> int:
 
     device = torch.device(a.device or ("cuda" if torch.cuda.is_available() else "cpu"))
     if device.type == "cuda":
-        torch.cuda.set_per_process_memory_fraction(float(a.gpu_frac), device)
+        from mirror.utils import cuda_index
+        torch.cuda.set_per_process_memory_fraction(float(a.gpu_frac), cuda_index(device))
     pre = require_prereg()
     from mirror.final.heal.students import load_student
     from mirror.protocol import Protocol

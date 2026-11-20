@@ -327,7 +327,8 @@ def run(a) -> dict:
         if not torch.cuda.is_available():
             raise SystemExit("CUDA is not available; use --dry-run on a CPU machine")
         if spec.get("gpu_frac"):
-            torch.cuda.set_per_process_memory_fraction(float(spec["gpu_frac"]), device)
+            from mirror.utils import cuda_index
+            torch.cuda.set_per_process_memory_fraction(float(spec["gpu_frac"]), cuda_index(device))
         torch.backends.cuda.matmul.allow_tf32 = False                  # configs/must09.yaml compute.tf32: false
         torch.backends.cudnn.allow_tf32 = False
         torch.set_float32_matmul_precision("highest")

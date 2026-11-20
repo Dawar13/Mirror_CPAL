@@ -59,6 +59,18 @@ def set_seed(seed: int) -> None:
         torch.cuda.manual_seed_all(seed)
 
 
+def cuda_index(device=None) -> int:
+    """Index of a CUDA device, for the torch.cuda calls that refuse a torch.device without one: in torch 2.11,
+    torch.cuda.set_per_process_memory_fraction(f, torch.device("cuda")) raises ValueError. None or an index-less
+    device means the current device."""
+    if device is None:
+        return torch.cuda.current_device()
+    if isinstance(device, int):
+        return device
+    d = torch.device(device)
+    return d.index if d.index is not None else torch.cuda.current_device()
+
+
 def setup_torch(cfg: dict) -> torch.device:
     """Pick the device, cap GPU memory (shared VM) and fix matmul precision."""
     comp = cfg["compute"]

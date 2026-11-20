@@ -262,7 +262,8 @@ def main(argv=None) -> dict:
             vb = int(np.prod(np.load(Path(a.cache_dir) / "val224_uint8.npy", mmap_mode="r").shape)) \
                 if a.val_on == "device" else 0
             frac = a.gpu_frac if a.gpu_frac is not None else KF.auto_gpu_fraction(vb, a.reserve_gb, device)
-            torch.cuda.set_per_process_memory_fraction(float(frac), device)
+            from mirror.utils import cuda_index
+            torch.cuda.set_per_process_memory_fraction(float(frac), cuda_index(device))
         st = require_prereg()
         loader, build_original = a.loader, a.original_builder
         lcfg = LinearConfig(batch_size=a.linear_batch, iterations=a.linear_iters, holdout_frac=a.holdout_frac,
@@ -274,7 +275,8 @@ def main(argv=None) -> dict:
         raise SystemExit("give at least one --model NAME=SOURCE")
     models = load_models(specs, device, loader, build_original)
     if frac is not None:
-        torch.cuda.set_per_process_memory_fraction(float(frac), device)       # after imports that set their own cap
+        from mirror.utils import cuda_index
+        torch.cuda.set_per_process_memory_fraction(float(frac), cuda_index(device))       # after imports that set their own cap
     log(f"fp_fullbank: {len(models)} model(s) {[m.name for m in models]}, stages {stages}, device {device}")
     timing = {}
     if "features" in stages:

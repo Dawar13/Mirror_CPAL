@@ -322,7 +322,8 @@ def main(argv=None) -> dict:
             loader = KF.resolve_callable(loader)             # import now, then re-apply this process's cap
         except Exception as err:                             # requests will fail one by one (failed/), not the server
             log(f"WARNING: the loader {loader} cannot be imported yet ({type(err).__name__}: {err})")
-        torch.cuda.set_per_process_memory_fraction(float(frac), device)
+        from mirror.utils import cuda_index
+        torch.cuda.set_per_process_memory_fraction(float(frac), cuda_index(device))
     write_final_meta(queue / "server", name="meta.json", experiment="fp_eval_server",
                      config={k: v for k, v in vars(a).items()}, seeds={"note": "no random parts"},
                      device=device, extra={"data": ev.data.source, "gpu_frac": frac, "prereg_ok": st.get("ok"),

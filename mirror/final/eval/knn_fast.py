@@ -842,7 +842,8 @@ def make_evaluator(*, dry_run: bool = False, cache_dir="cache", device=None, bat
     if device.type == "cuda":
         frac = gpu_frac if gpu_frac is not None else auto_gpu_fraction(
             cache_bytes(cache_dir) if data_on == "device" else 0, reserve_gb, device)
-        torch.cuda.set_per_process_memory_fraction(float(frac), device)
+        from ...utils import cuda_index
+        torch.cuda.set_per_process_memory_fraction(float(frac), cuda_index(device))
     st = require_prereg()
     on = device if data_on == "device" else torch.device("cpu")
     data = EvalData.from_cache(cache_dir, on, pin=data_on == "host", log=log)

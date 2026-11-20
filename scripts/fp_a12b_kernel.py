@@ -723,7 +723,8 @@ def main(argv=None) -> dict:
             return {**old, "ok": bool(old.get("ok")), "skipped": True}
     prereg = require_prereg(allow_missing=True if a.dry_run else None)     # before the GPU is touched
     if device.type == "cuda":
-        torch.cuda.set_per_process_memory_fraction(a.gpu_frac, device)    # cap before anything is allocated
+        from mirror.utils import cuda_index
+        torch.cuda.set_per_process_memory_fraction(a.gpu_frac, cuda_index(device))    # cap before anything is allocated
         torch.backends.cuda.matmul.allow_tf32 = False                    # float32 checks without TF32
         torch.backends.cudnn.allow_tf32 = False
         torch.set_float32_matmul_precision("highest")

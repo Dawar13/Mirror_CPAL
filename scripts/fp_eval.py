@@ -146,7 +146,8 @@ def main(argv=None) -> dict:
     if frac is not None and not a.dry_run:
         if a.run_dir:
             loader = KF.resolve_callable(loader)             # import now, then re-apply this process's cap
-        torch.cuda.set_per_process_memory_fraction(float(frac), device)
+        from mirror.utils import cuda_index
+        torch.cuda.set_per_process_memory_fraction(float(frac), cuda_index(device))
     reqs = requests_of(a)
     if not reqs:
         raise SystemExit("nothing to evaluate: give --run-dir (with --step or --all-steps) or --original")
