@@ -194,6 +194,12 @@ def heal_jobs():
     spec, gb = heal_spec("posthoc_iosvd_lr5e-05", "A05-posthoc", "posthoc", 0, st, hook_steps=(), lowrank=1)
     add("heal_posthoc_iosvd", "W2", spec, gb, units_of(st), deps=["gate_p"], prio=58,
         note="post hoc, not pre-registered: IO-SVD at 5e-5 after its divergence at 1e-4")
+    # seeds 1 and 2 of the same post-hoc run (Dawar, 20 November 2026, after seed 0 reached 78.71 against Mirror's
+    # 78.35), so the strongest baseline has a 3-seed mean; still post hoc and outside every pre-registered score
+    for s in (1, 2):
+        spec, gb = heal_spec(f"posthoc_iosvd_lr5e-05_s{s}", "A05-posthoc", "posthoc", s, st, hook_steps=(), lowrank=1)
+        add(f"heal_posthoc_iosvd_s{s}", "W2", spec, gb, units_of(st), deps=["gate_p"], prio=57,
+            note=f"post hoc, not pre-registered: IO-SVD at 5e-5, seed {s}")
 
     # W2: A02 heals from fit sets 1, 2 and COCO (the adopted operator type fitted on each fit set)
     st = ([{"method": "mirror_exact", "variant": r, "lr": LR1,
