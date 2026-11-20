@@ -885,13 +885,10 @@ jobs:
   gpu_mem_gb: 45
   host_mem_gb: 32
   priority: 35
-  command: X=(); for m in mirror_exact_ext svdllm_ext; do d=runs/final/a11/dinov2_vitb14_reg/$m/s0; [ -f $d/DONE ] && X+=(--model
-    a11_$m=$d); done; python scripts/fp_fullbank.py --model original=original:dinov2_vitb14_reg --model mirror_s0=runs/final/main/dinov2_vitb14_reg/$(python
+  command: python scripts/fp_fullbank.py --model original=original:dinov2_vitb14_reg --model mirror_s0=runs/final/main/dinov2_vitb14_reg/$(python
     scripts/fp_main_arm.py)/s0 --model mirror_s1=runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s1 --model
     mirror_s2=runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s2 --model svdllm_s0=runs/final/main/dinov2_vitb14_reg/svdllm/s0
-    --model svdllm_s1=runs/final/main/dinov2_vitb14_reg/svdllm/s1 --model svdllm_s2=runs/final/main/dinov2_vitb14_reg/svdllm/s2
-    --model svdllm_full_s0=runs/final/main/dinov2_vitb14_reg/svdllm_full/s0 --model iosvd_s0=runs/final/main/dinov2_vitb14_reg/iosvd/s0
-    "${X[@]}" --knn-only svdllm_full_s0,iosvd_s0 --linear-tf32 --out runs/final/A10/fullbank
+    --linear-tf32 --out runs/final/A10/fullbank
   deps:
   - a01_decide
   - heal_main_s0

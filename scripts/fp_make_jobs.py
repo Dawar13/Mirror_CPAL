@@ -446,15 +446,13 @@ def manifest(heals):
         note="A12b timing, alone on the GPU; the bar is scored only on whole-model compiled timings")
 
     # A10: full bank and the DINOv2 linear protocol; downstream; P11.2
-    fb = [f"--model original=original:{B}"] + [f"--model mirror_s{s}={arm_dir(s)}" for s in (0, 1, 2)] + \
-         [f"--model svdllm_s{s}={run_dir('main', B, 'svdllm', s)}" for s in (0, 1, 2)] + \
-         [f"--model svdllm_full_s0={run_dir('main', B, 'svdllm_full', 0)}",
-          f"--model iosvd_s0={run_dir('main', B, 'iosvd', 0)}"]
-    ext = (f'X=(); for m in mirror_exact_ext svdllm_ext; do d=runs/final/a11/{B}/$m/s0; '
-           f'[ -f $d/DONE ] && X+=(--model a11_$m=$d); done; ')
+    # A10 scores Mirror against the original only; SVD-LLM seed 0 is kept for context. The other SVD-LLM seeds, full
+    # SVD-LLM, the diverged pre-registered IO-SVD and A11 were dropped at 16:30 UTC on 20 November 2026 (the pass ran
+    # at 44 images/s over 10 models on a shared GPU, about 8 hours, against Dawar's 6 to 7 hour limit)
+    fb = [f"--model original=original:{B}"] + [f"--model mirror_s{s}={arm_dir(s)}" for s in (0, 1, 2)] + [
+        f"--model svdllm_s0={run_dir('main', B, 'svdllm', 0)}"]
     job(id="a10_fullbank", wave="W5", kind="eval", gpu_mem_gb=45, host_mem_gb=32, priority=35,
-        command=(ext + "python scripts/fp_fullbank.py " + " ".join(fb) + ' "${X[@]}" '
-                 "--knn-only svdllm_full_s0,iosvd_s0 --linear-tf32 --out runs/final/A10/fullbank"),
+        command=("python scripts/fp_fullbank.py " + " ".join(fb) + " --linear-tf32 --out runs/final/A10/fullbank"),
         deps=["a01_decide", "heal_main_s0", "heal_main_s1", "heal_main_s2"],
         after=["heal_gate_s2", "heal_a01_wspace_s2", "heal_a11_mirror_exact", "heal_a11_svdllm"],
         done="runs/final/A10/fullbank/summary.json", note="one stream over the 1.28M training images for every model")
