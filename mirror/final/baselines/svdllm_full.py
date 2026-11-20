@@ -90,11 +90,13 @@ from mirror import baselines as B
 METHOD = "svdllm_full"
 ORDERS = ("u_first", "v_first")
 DEFAULT_HPARAMS = {"damp": B.DEFAULT_DAMP, "order": "u_first", "split": 0.5, "closed_form_update": False,
-                   "stage_schedule": "own"}
-# stage_schedule "own": each stage has its own warm-up (the run's warm-up fraction) and cosine to the end of the stage,
-# as two separate fine-tunes in the official code; "shared" (the first Phase G runs, 20 November 2026): one warm-up and
-# cosine over the whole run, so the second factor started with a fresh optimiser state at about half the peak rate
-# and no warm-up, which made the loss jump (2.0 -> 11.2 after step 390) and the student end worse than it began.
+                   "stage_schedule": "shared"}
+# stage_schedule "shared" (the pre-registered port, the default): one warm-up and cosine over the whole run, the
+# second factor starting with a fresh optimiser state at about half the peak rate; in Phase G its loss jumped after
+# step 390 (2.0 -> 11.2) and the student ended slightly worse than it began. "own" (tried on 20 November 2026 and
+# abandoned): each stage with its own warm-up and cosine, as two separate fine-tunes; the second stage then reaches
+# the full peak rate and diverged harder (2.1 -> 152). Both train the factors directly with AdamW; the official code
+# updates them through LoRA adapters, which this port does not reproduce.
 STAGE_SCHEDULES = ("own", "shared")
 HPARAM_GRID = [dict(DEFAULT_HPARAMS)]           # one point, as the whitening-only "svdllm" (gate B)
 RECORD_PATHS = {"fc1": "mlp.fc1", "fc2": "mlp.fc2", "wq": "attn.qkv.q", "wk": "attn.qkv.k", "wv": "attn.qkv.v",

@@ -171,18 +171,6 @@ def heal_jobs():
     spec, gb = heal_spec("main_s2", "A05", "main", 2, st, hook_steps=(), lowrank=1)
     add("heal_main_s2", "W2", spec, gb, units_of(st), deps=["gate_p"], when=[sel_file("svdllm_full")], prio=55,
         note="A05 seed 2 of full SVD-LLM")
-    # Full SVD-LLM again with each stage's own warm-up and cosine (Dawar, 20 November 2026): the first runs (inside
-    # main_s0 and main_s1, and the stopped main_s2) shared one schedule over both stages, so the second factor
-    # started cold at half the peak rate; they are kept in runs/final/_superseded/svdllm_full_shared_schedule/.
-    # Seed 0 selects its rate again (the trial also changed); seeds 1 and 2 (heal_main_s2) take it from seed 0.
-    st = [{"method": "svdllm_full", "lr_select": LRSEL}]
-    spec, gb = heal_spec("svdllm_full_s0", "A05", "main", 0, st, lowrank=1)
-    add("heal_svdllm_full_s0", "W2", spec, gb, units_of(st), deps=["gate_p"], prio=65,
-        note="full SVD-LLM seed 0, per-stage schedules (selects its rate again)")
-    st = [{"method": "svdllm_full", "lr_from": lrf("svdllm_full")}]
-    spec, gb = heal_spec("svdllm_full_s1", "A05", "main", 1, st, hook_steps=(), lowrank=1)
-    add("heal_svdllm_full_s1", "W2", spec, gb, units_of(st), deps=["gate_p"], when=[sel_file("svdllm_full")],
-        prio=62, note="full SVD-LLM seed 1, per-stage schedules")
     st = [{"method": "iosvd", "lr_from": lrf("iosvd")}]
     spec, gb = heal_spec("main_s2_iosvd", "A05", "main", 2, st, hook_steps=(), lowrank=1)
     add("heal_main_s2_iosvd", "W2", spec, gb, units_of(st), cut=6, deps=["gate_p"], when=[sel_file("iosvd")],
@@ -467,8 +455,7 @@ def manifest(heals):
     job(id="a10_fullbank", wave="W5", kind="eval", gpu_mem_gb=45, host_mem_gb=32, priority=35,
         command=(ext + "python scripts/fp_fullbank.py " + " ".join(fb) + ' "${X[@]}" '
                  "--knn-only svdllm_full_s0,iosvd_s0 --linear-tf32 --out runs/final/A10/fullbank"),
-        deps=["a01_decide", "heal_main_s0", "heal_main_s1", "heal_main_s2", "heal_svdllm_full_s0",
-              "heal_svdllm_full_s1"],
+        deps=["a01_decide", "heal_main_s0", "heal_main_s1", "heal_main_s2"],
         after=["heal_gate_s2", "heal_a01_wspace_s2", "heal_a11_mirror_exact", "heal_a11_svdllm"],
         done="runs/final/A10/fullbank/summary.json", note="one stream over the 1.28M training images for every model")
     dl = ([f"--healed-run vexact_s{s}={arm_dir(s)}" for s in (0, 1, 2)]

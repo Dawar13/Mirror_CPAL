@@ -429,32 +429,6 @@ jobs:
   command: python scripts/fp_heal.py --spec jobs/heal/main_s2.yaml --resume
   done: runs/final/main/dinov2_vitb14_reg/_jobs/main_s2/s2/DONE
   note: A05 seed 2 of full SVD-LLM
-- id: heal_svdllm_full_s0
-  wave: W2
-  kind: heal
-  gpu_mem_gb: 27.0
-  heal_units: 1.5
-  cut_rank: never_cut
-  priority: 65
-  deps:
-  - gate_p
-  command: python scripts/fp_heal.py --spec jobs/heal/svdllm_full_s0.yaml --resume
-  done: runs/final/main/dinov2_vitb14_reg/_jobs/svdllm_full_s0/s0/DONE
-  note: full SVD-LLM seed 0, per-stage schedules (selects its rate again)
-- id: heal_svdllm_full_s1
-  wave: W2
-  kind: heal
-  gpu_mem_gb: 27.0
-  heal_units: 1.0
-  cut_rank: never_cut
-  priority: 62
-  deps:
-  - gate_p
-  when:
-  - file: runs/final/main/dinov2_vitb14_reg/svdllm_full/s0/lr_selection/lr_selection.json
-  command: python scripts/fp_heal.py --spec jobs/heal/svdllm_full_s1.yaml --resume
-  done: runs/final/main/dinov2_vitb14_reg/_jobs/svdllm_full_s1/s1/DONE
-  note: full SVD-LLM seed 1, per-stage schedules
 - id: heal_main_s2_iosvd
   wave: W2
   kind: heal
@@ -921,8 +895,6 @@ jobs:
   - heal_main_s0
   - heal_main_s1
   - heal_main_s2
-  - heal_svdllm_full_s0
-  - heal_svdllm_full_s1
   after:
   - heal_gate_s2
   - heal_a01_wspace_s2
