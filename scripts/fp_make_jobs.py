@@ -500,8 +500,9 @@ def manifest(heals):
                        "reason": "Gate P failed (FINAL_PHASE_PLAN.md Section 6): stop and report"}],
         "barrier_waves": [], "max_heals": 3, "max_cpu": 6,
         # Dawar, 20 November 2026 11:10 UTC (3.9 VM-hours used): finish within 6 to 7 more hours. The governor
-        # cuts in the Section 9 order to fit 10.75 VM-hours; no new heal after 10.25; hard stop at 11.25.
-        "ceiling_hours": 11.25, "heal_stop_hours": 10.25, "projection": {"target_hours": 10.75},
+        # cuts in the Section 9 order to fit 10.75 VM-hours; no new heal after 10.25; hard stop at 11.75 (raised from
+        # 11.25 at 16:40 UTC by Dawar so A12 and the report finish).
+        "ceiling_hours": 11.75, "heal_stop_hours": 10.25, "projection": {"target_hours": 10.75},
         # 15:30 UTC, the last heals running: admit jobs by measured free memory, not by declared GB (the declared
         # budget held the 45 GB full-bank pass back with 67 GB free); a new job's declared GB stays reserved for
         # 10 minutes while it builds
