@@ -89,7 +89,13 @@ from mirror import baselines as B
 
 METHOD = "svdllm_full"
 ORDERS = ("u_first", "v_first")
-DEFAULT_HPARAMS = {"damp": B.DEFAULT_DAMP, "order": "u_first", "split": 0.5, "closed_form_update": False}
+DEFAULT_HPARAMS = {"damp": B.DEFAULT_DAMP, "order": "u_first", "split": 0.5, "closed_form_update": False,
+                   "stage_schedule": "own"}
+# stage_schedule "own": each stage has its own warm-up (the run's warm-up fraction) and cosine to the end of the stage,
+# as two separate fine-tunes in the official code; "shared" (the first Phase G runs, 20 November 2026): one warm-up and
+# cosine over the whole run, so the second factor started with a fresh optimiser state at about half the peak rate
+# and no warm-up, which made the loss jump (2.0 -> 11.2 after step 390) and the student end worse than it began.
+STAGE_SCHEDULES = ("own", "shared")
 HPARAM_GRID = [dict(DEFAULT_HPARAMS)]           # one point, as the whitening-only "svdllm" (gate B)
 RECORD_PATHS = {"fc1": "mlp.fc1", "fc2": "mlp.fc2", "wq": "attn.qkv.q", "wk": "attn.qkv.k", "wv": "attn.qkv.v",
                 "wo": "attn.proj"}          # where heal_structured.make_trainable puts each matrix
@@ -167,6 +173,7 @@ def compress(model: nn.Module, blocks, components, budget, stats, hparams: dict 
     info.update({
         "method": METHOD, "hparams": dict(hp), "base_method": "svdllm",
         "schedule": {"type": "SequentialFactorSchedule", "order": hp["order"], "split": hp["split"],
+                     "stage_schedule": hp["stage_schedule"],
                      "rounds": [f"train every {first} factor, {second} frozen: steps [0, round(split * total))",
                                 f"train every {second} factor, {first} frozen: steps [round(split * total), total)"],
                      "note": "applied by training_hooks(info) during healing (paper v5 Algorithm 3)"},
@@ -297,9 +304,12 @@ class SequentialFactorSchedule:
     clamped to [0, total]. Nothing is frozen for the whole run (frozen_parameters is empty, so the optimiser holds
     both groups) and nothing is projected (__call__ does nothing); the structure is kept by the factorised modules."""
 
-    def __init__(self, entries, order: str = "u_first", split: float = 0.5):
+    def __init__(self, entries, order: str = "u_first", split: float = 0.5, stage_schedule: str = "own"):
         if order not in ORDERS:
             raise ValueError(f"order must be one of {ORDERS}")
+        if stage_schedule not in STAGE_SCHEDULES:
+            raise ValueError(f"stage_schedule must be one of {STAGE_SCHEDULES}")
+        self.stage_schedule = stage_schedule
         if not 0.0 <= float(split) <= 1.0:
             raise ValueError("split must lie in [0, 1]")
         self.entries = [(int(e["block"]), str(e["name"])) for e in entries]
@@ -327,6 +337,22 @@ class SequentialFactorSchedule:
                                 "heal_structured.make_trainable(..., lowrank_factors='given') first")
             out.append(mod)
         return out
+
+    def lr_at(self, step: int, base_lr: float, total: int, warmup: int, min_lr_ratio: float = 0.0) -> float:
+        """Learning rate of step `step` for this student (the lockstep trainer uses it instead of the run's).
+        "own": each stage [0, boundary) and [boundary, total) is a run of its own: linear warm-up over the run's
+        warm-up fraction of the stage, then cosine to the end of the stage. "shared": the run's schedule."""
+        from mirror.heal import lr_at as run_lr_at
+
+        total, step = int(total), int(step)
+        if self.stage_schedule == "shared":
+            return run_lr_at(step, base_lr, total, int(warmup), min_lr_ratio)
+        b = self.boundary(total)
+        start, n = (0, b) if step < b else (b, total - b)
+        if n <= 0:                                  # split 0 or 1: one stage, the run's schedule
+            return run_lr_at(step, base_lr, total, int(warmup), min_lr_ratio)
+        w = int(round(n * int(warmup) / total)) if total > 0 else 0
+        return run_lr_at(step - start, base_lr, n, min(w, n), min_lr_ratio)
 
     def factor_parameters(self, model: nn.Module) -> dict:
         mods = self.modules(model)
@@ -374,4 +400,5 @@ def training_hooks(info: dict) -> list:
     with the order and split from info["hparams"] (defaults u_first, 0.5)."""
     hp = {**DEFAULT_HPARAMS, **(info.get("hparams") or {})}
     entries = [pm for pm in info["per_matrix"] if pm["kind"] == "lowrank"]
-    return [SequentialFactorSchedule(entries, order=hp["order"], split=float(hp["split"]))]
+    return [SequentialFactorSchedule(entries, order=hp["order"], split=float(hp["split"]),
+                                     stage_schedule=str(hp["stage_schedule"]))]

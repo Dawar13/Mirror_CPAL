@@ -233,3 +233,34 @@ def test_lockstep_lr_selection_equals_select_lr(ad, kinds, tmp_path):
         saved = json.loads((tmp_path / kind / "lr_selection.json").read_text())
         assert saved["best_lr"] == sel[kind]["best_lr"] and saved["budget_steps"] == 3 and saved["seed"] == 0
         assert (tmp_path / kind / "lr_1e-02" / "train_log.csv").is_file()
+
+
+def test_hook_lr_at_sets_the_students_learning_rate(ad, kinds, tmp_path):
+    """A constraint that defines lr_at(step, base_lr, total, warmup, min_lr_ratio) gives its student's learning rate
+    (full SVD-LLM's per-stage warm-up and cosine); the trainer calls it every step and logs the value it returns."""
+    import csv
+
+    class StageLR:
+        def __init__(self):
+            self.calls = []
+
+        def __call__(self, model):
+            return None
+
+        def lr_at(self, step, base_lr, total, warmup, min_lr_ratio=0.0):
+            self.calls.append((step, base_lr, total))
+            return base_lr * (step + 1) / 10.0
+
+    data = heal_data()
+    c = cfg(range(ad.depth), max_steps=4)
+    s = kinds["lowrank"].lockstep("s", 1e-2)
+    hk = StageLR()
+    s.constraints = list(s.constraints) + [hk]
+    s.run_dir = tmp_path / "run"                                       # the per-student training log lives here
+    train_lockstep(ad, [s], data, c, job_dir=tmp_path / "job")
+    assert [x[0] for x in hk.calls] == [0, 1, 2, 3] and all(x[1] == 1e-2 and x[2] == 4 for x in hk.calls)
+    logs = [p for p in tmp_path.rglob("*.csv") if "lr" in (p.read_text(encoding="utf-8").splitlines() or [""])[0]]
+    assert logs, "no training log with an lr column"
+    rows = list(csv.DictReader(open(logs[0], encoding="utf-8")))
+    got = [float(r["lr"]) for r in rows]
+    assert got == pytest.approx([1e-2 * (k + 1) / 10.0 for k in range(len(got))])

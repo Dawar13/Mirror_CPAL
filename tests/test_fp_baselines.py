@@ -160,6 +160,18 @@ def test_svdllm_full_given_factors_and_sequential_schedule(ad, st, bud, x64):
     vf = SF.SequentialFactorSchedule(info["per_matrix"], order="v_first", split=0.25)
     assert vf.trained_factor(0, 8) == "V" and vf.trained_factor(1, 8) == "V" and vf.trained_factor(2, 8) == "U"
     assert SF.SequentialFactorSchedule(info["per_matrix"], split=0.0).trained_factor(0, 8) == "V"
+    # per-stage schedule (default "own"): each stage warms up again and decays to its own end; "shared" is the run's
+    from mirror.heal import lr_at as run_lr
+    assert hk.stage_schedule == "own" and info["schedule"]["stage_schedule"] == "own"
+    own = [hk.lr_at(t, 1e-4, 780, 39) for t in range(780)]
+    assert own[0] == pytest.approx(1e-4 / 20) and own[19] == pytest.approx(1e-4)          # warm-up 20 = 5% of 390
+    assert own[389] < 1e-6 and own[390] == pytest.approx(1e-4 / 20) and own[409] == pytest.approx(1e-4)
+    assert own[779] < 1e-6 and own[200] == pytest.approx(run_lr(200, 1e-4, 390, 20))
+    sh = SF.SequentialFactorSchedule(info["per_matrix"], stage_schedule="shared")
+    assert all(sh.lr_at(t, 1e-4, 780, 39) == run_lr(t, 1e-4, 780, 39) for t in (0, 38, 389, 390, 779))
+    assert SF.SequentialFactorSchedule(info["per_matrix"], split=0.0).lr_at(5, 1e-4, 200, 10) == run_lr(5, 1e-4, 200, 10)
+    with pytest.raises(ValueError):
+        SF.SequentialFactorSchedule(info["per_matrix"], stage_schedule="later")
     # in a real optimiser loop (mirror/heal.py's trainable set and zeroing), only the scheduled group changes
     hooks = SF.training_hooks(info)
     trainable = configure_trainable(mt, list(range(L)), "all", cons + hooks)

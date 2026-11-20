@@ -576,11 +576,15 @@ def train_lockstep(teacher_adapter, students: Sequence[LockstepStudent], data, c
             crop = sample_crop_params(B, S, S, cfg.crop_scale, cfg.crop_ratio, cfg.hflip_p, gen)
             crop_dev = crop.pin_memory().to(device, non_blocking=True) if pin else crop.to(device)
             for r in live:
-                for c in r.constraints:                       # optional hook (full SVD-LLM's factor schedule)
+                lr_hook = None
+                for c in r.constraints:                       # optional hooks (full SVD-LLM's factor schedule)
                     bs = getattr(c, "begin_step", None)
                     if callable(bs):
                         bs(step, total, r.model)
-                r.lr_now = lr_at(step, float(r.cfg.lr), total, warmup, cfg.min_lr_ratio)
+                    if callable(getattr(c, "lr_at", None)):
+                        lr_hook = c.lr_at                     # a student-specific schedule (per-stage warm-up)
+                r.lr_now = (lr_hook(step, float(r.cfg.lr), total, warmup, cfg.min_lr_ratio) if lr_hook is not None
+                            else lr_at(step, float(r.cfg.lr), total, warmup, cfg.min_lr_ratio))
                 for g in r.opt.param_groups:
                     g["lr"] = r.lr_now
                 r.opt.zero_grad(set_to_none=True)
