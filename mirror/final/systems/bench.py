@@ -265,9 +265,14 @@ def time_module(module: nn.Module, batch: int, *, img_px: int, device, dtype=tor
     timer = timer or default_timer(device)
     g = torch.Generator(device=device).manual_seed(int(seed) + int(batch))
     x = torch.randn(int(batch), 3, int(img_px), int(img_px), generator=g, device=device).to(dtype)
+    base = own = 0
     if device.type == "cuda":
         torch.cuda.empty_cache()
         torch.cuda.reset_peak_memory_stats(device)
+        # other models loaded in the same process stay allocated: subtract them, keep this model's weights and input
+        base = torch.cuda.memory_allocated(device)
+        own = sum(t.numel() * t.element_size() for t in list(module.parameters()) + list(module.buffers())
+                  if t.is_cuda) + x.numel() * x.element_size()
     fn, info = (_compile(module, x, compile_mode) if compile else
                 (module, {"mode_used": "eager", "compile_ok": None, "compile_s": None, "compile_error": ""}))
     try:
@@ -280,7 +285,9 @@ def time_module(module: nn.Module, batch: int, *, img_px: int, device, dtype=tor
     lat = r["latency_ms_median"]
     out = {**info, **r, "batch": int(batch), "error": err,
            "throughput_img_s": int(batch) * 1e3 / lat if lat and math.isfinite(lat) and lat > 0 else float("nan"),
-           "peak_memory_gb": torch.cuda.max_memory_allocated(device) / 2 ** 30 if device.type == "cuda" else None}
+           "peak_memory_gb": ((torch.cuda.max_memory_allocated(device) - base + own) / 2 ** 30
+                              if device.type == "cuda" else None),
+           "peak_memory_process_gb": torch.cuda.max_memory_allocated(device) / 2 ** 30 if device.type == "cuda" else None}
     return out
 
 

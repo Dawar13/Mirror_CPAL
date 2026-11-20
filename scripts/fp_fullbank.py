@@ -175,7 +175,11 @@ def role_stream_factory(cache_dir, batch_size: int, workers: int | None = None):
                 shard_rows = np.asarray(z["shard_rows"], dtype=np.int64)
     except OSError:
         shard_rows = None
-    kw = {} if workers is None else {"workers": int(workers)}
+    # delete each shard once read: keeping all of them would put about 147 GB under HF_HOME (stream_batches keeps
+    # shards that were on disk before, such as the train cache's)
+    kw = {"delete_after": True}
+    if workers is not None:
+        kw["workers"] = int(workers)
 
     def factory(start: int = 0):
         if not start or shard_rows is None:

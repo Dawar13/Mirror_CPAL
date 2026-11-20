@@ -148,3 +148,33 @@ def test_fp_eval_cli_dry_run_with_probes(tmp_path):
     assert E.steps_of(run) == []
     res2 = E.main(["--dry-run", "--out", str(out), "--step", "1", "--flip-average", "--probe"])     # resumed
     assert res2["results"][0]["probe"]["top1"] == pr["top1"]
+
+
+def test_failed_request_is_requeued_then_failed(tmp_path, data):
+    """A passing error (not a bad request) sends the request back to the queue at most twice; a decision job waiting
+    for it is then not left waiting for ever."""
+    q = tmp_path / "_queue"
+    S.queue_dirs(q)
+    run = tmp_path / "runs" / "tiny" / "mirror_exact" / "s0"
+    _req(q, "20261120T000001_flaky", run_dir=str(run), step=1, passes=["bf16"], n_query=8)
+    _req(q, "20261120T000002_broken", run_dir=str(run / "x"), step=1, passes=["bf16"], n_query=8)
+    calls = {"flaky": 0, "broken": 0}
+
+    def loader(run_dir, step, device):
+        if str(run_dir).endswith("x"):
+            calls["broken"] += 1
+            raise RuntimeError("disk went away")
+        calls["flaky"] += 1
+        if calls["flaky"] == 1:
+            raise RuntimeError("a passing error")
+        return KF.tiny_loader(run_dir, step, device)
+
+    ev = KF.KnnEvaluator(data, "cpu", 8)
+    counts = S.serve(q, ev, loader, _orig, poll=0.01, settle=30.0, once=True)
+    assert counts["done"] == 1 and counts["failed"] == 1 and counts["requeued"] == 3
+    assert calls == {"flaky": 2, "broken": 3}
+    failed = json.loads((q / "failed" / "20261120T000002_broken.json").read_text(encoding="utf-8"))
+    assert failed["request"][S.RETRY_KEY] == 2 and "disk went away" in failed["error"]
+    assert not list(q.glob("*.json"))
+    assert S.sticky_cuda_error(RuntimeError("CUDA error: an illegal memory access was encountered"))
+    assert not S.sticky_cuda_error(RuntimeError("CUDA out of memory. Tried to allocate 2.00 GiB"))

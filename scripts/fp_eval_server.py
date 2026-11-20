@@ -126,6 +126,20 @@ def pending(queue: Path, high_first: bool = True, settle: float = 30.0) -> list:
     return [(p, r) for p, r, _ in items]
 
 
+RETRY_KEY = "_server_retries"
+MAX_RETRIES = 2
+
+
+def sticky_cuda_error(err: BaseException) -> bool:
+    """True for CUDA errors after which the context cannot be used (illegal access, launch failures, ECC);
+    out-of-memory errors are not sticky."""
+    msg = f"{type(err).__name__}: {err}"
+    if "out of memory" in msg.lower():
+        return False
+    return any(k in msg for k in ("CUDA error", "illegal memory access", "CUBLAS_STATUS", "cuDNN error",
+                                  "unspecified launch failure", "AcceleratorError"))
+
+
 def claim(path: Path, queue: Path):
     """Move a pending request to running/ (atomic); None if another reader took it first."""
     dest = queue / "running" / path.name
@@ -274,10 +288,31 @@ def serve(queue, ev, loader, build_original=None, *, poll: float = 5.0, settle: 
                 KF.free_memory(ev.device)                    # give cached blocks back on a shared GPU
                 log(f"request {path.name}: done in {time.time() - t0:.0f} s")
             except Exception as err:                       # a bad request must not stop the server
-                fail(claimed, queue, req, err)
-                counts["failed"] += 1
-                log(f"request {path.name}: FAILED ({type(err).__name__}: {err}); moved to failed/")
-                KF.free_memory(ev.device)
+                tries = int(req.get(RETRY_KEY, 0) or 0) if isinstance(req, dict) else MAX_RETRIES
+                if tries < MAX_RETRIES and not isinstance(err, ValueError):
+                    # a passing failure (memory, disk, a CUDA error): back to the queue, at most MAX_RETRIES times,
+                    # so a decision job waiting for this evaluation does not wait for ever
+                    KF.write_json_atomic(queue / claimed.name, {**req, RETRY_KEY: tries + 1})
+                    claimed.unlink(missing_ok=True)
+                    counts["requeued"] = counts.get("requeued", 0) + 1
+                    log(f"request {path.name}: error ({type(err).__name__}: {err}); back in the queue "
+                        f"(retry {tries + 1} of {MAX_RETRIES})")
+                else:
+                    fail(claimed, queue, req, err)
+                    counts["failed"] += 1
+                    log(f"request {path.name}: FAILED ({type(err).__name__}: {err}); moved to failed/")
+                if sticky_cuda_error(err):
+                    # the CUDA context is unusable after such an error: start this process again with a fresh one
+                    # (same pid, so the runner keeps the service; the request is already back in the queue)
+                    log("CUDA error that poisons the context: restarting the server process")
+                    lock.release()
+                    sys.stdout.flush()
+                    sys.stderr.flush()
+                    os.execv(sys.executable, [sys.executable] + sys.argv)
+                try:
+                    KF.free_memory(ev.device)
+                except Exception as e2:                    # noqa: BLE001 - freeing memory must not stop the server
+                    log(f"free_memory failed after the error: {type(e2).__name__}: {e2}")
             idle_since = time.time()
             if max_requests is not None and counts["done"] + counts["failed"] >= max_requests:
                 break
