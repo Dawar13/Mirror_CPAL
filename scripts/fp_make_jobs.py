@@ -126,17 +126,22 @@ def heal_jobs():
 
     ready = ["w0_timing", "w0_data", "w0_models"]
     # W1: Gate P (current A*, SVD-LLM; 3 seeds) and the A*_w heals (seeds 0, 1), packed by seed
-    gate = lambda s, with_w: ([{"method": "mirror_exact", "variant": "astar", "lr": LR1, "fp32": True},  # noqa: E731
-                               {"method": "svdllm", "lr": LR1}]
-                              + ([{"method": "mirror_exact", "variant": "wspace", "structure": WSPACE[B], "lr": LR1,
-                                   "fp32": True}] if with_w else []))
+    # Gate P runs first and alone (PREREG_FINAL_PHASE.md 2.2: no other heal before it passes); it does not wait for
+    # the CPU-bound A*_w fit. The float32 k-NN pass (about 200k float32 forwards) runs on seed 0 of each Mirror arm.
     for s in (0, 1, 2):
-        st = gate(s, s in (0, 1))
+        st = [{"method": "mirror_exact", "variant": "astar", "lr": LR1, "fp32": s == 0}, {"method": "svdllm", "lr": LR1}]
         spec, gb = heal_spec(f"gate_s{s}", "A01", "main", s, st, hook_steps=(0, 100, 300) if s == 0 else (),
                              lowrank=1)
-        add(f"heal_gate_s{s}", "W1", spec, gb, units_of(st), deps=ready + (["a01_fit"] if s in (0, 1) else []),
-            prio=80, note="Gate P and A01 (FINAL_PHASE_PLAN.md A01); never cut")
-    st = [{"method": "mirror_exact", "variant": "wspace", "structure": WSPACE[B], "lr": LR1, "fp32": True}]
+        add(f"heal_gate_s{s}", "W1", spec, gb, units_of(st), deps=ready, prio=80,
+            note="Gate P (FINAL_PHASE_PLAN.md A01); never cut")
+    # A01: the A*_w heals, seeds 0 and 1, once the fit is done and Gate P has passed (step 0 of seed 0 is A01's
+    # pre-registered zero-shot value)
+    for s in (0, 1):
+        st = [{"method": "mirror_exact", "variant": "wspace", "structure": WSPACE[B], "lr": LR1, "fp32": s == 0}]
+        spec, gb = heal_spec(f"a01_wspace_s{s}", "A01", "main", s, st, hook_steps=(0, 100, 300) if s == 0 else ())
+        add(f"heal_a01_wspace_s{s}", "W1", spec, gb, units_of(st), deps=["a01_fit", "gate_p"], prio=85,
+            note="A01 healed comparison; never cut")
+    st = [{"method": "mirror_exact", "variant": "wspace", "structure": WSPACE[B], "lr": LR1}]
     spec, gb = heal_spec("a01_wspace_s2", "A01", "main", 2, st, hook_steps=())
     add("heal_a01_wspace_s2", "W2", spec, gb, units_of(st), deps=["a01_decide"],
         when={"file": "results/A01/decision.json", "key": "adopted", "equals": True}, prio=70,
@@ -146,51 +151,54 @@ def heal_jobs():
     st0 = [{"method": "svdllm_full", "lr_select": LRSEL}, {"method": "iosvd", "lr_select": LRSEL},
            {"method": "flap", "lr_select": LRSEL}, {"method": "blockdrop", "lr_select": LRSEL},
            {"method": "original", "lr_select": LRSEL}, {"method": "slicegpt", "lr": LR1},
-           {"method": "svd", "lr": LR1}, {"method": "random_structure", "lr": LR1, "fp32": True},
-           {"method": "pair_random", "variant": "h1", "structure": "adopted", "lr": LR1, "fp32": True}]
+           {"method": "svd", "lr": LR1}, {"method": "random_structure", "lr": LR1}]
     spec, gb = heal_spec("main_s0", "A05", "main", 0, st0, lowrank=4, extra_gb=17.0,
                          extra={"blockdrop_score_fn": "mirror.final.heal.blockdrop_score:msel_scorer"})
-    add("heal_main_s0", "W2", spec, gb, units_of(st0), deps=["a01_decide"], prio=75,
+    add("heal_main_s0", "W2", spec, gb, units_of(st0), deps=["gate_p"], prio=75,
         note="A04 and A05 seed 0 (learning-rate trials of the new methods first); the block-drop scorer holds the "
              "bank and method-selection images on the GPU while it builds (+17 GB)")
     lrf = lambda m: run_dir("main", B, m, 0)  # noqa: E731
     sel_file = lambda m: {"file": f"{lrf(m)}/lr_selection/lr_selection.json"}  # noqa: E731
     st = [{"method": "svdllm_full", "lr_from": lrf("svdllm_full")}, {"method": "iosvd", "lr_from": lrf("iosvd")}]
     spec, gb = heal_spec("main_s1", "A05", "main", 1, st, hook_steps=(), lowrank=2)
-    add("heal_main_s1", "W2", spec, gb, units_of(st), deps=["a01_decide"],
+    add("heal_main_s1", "W2", spec, gb, units_of(st), deps=["gate_p"],
         when=[sel_file("svdllm_full"), sel_file("iosvd")], prio=60, note="A05 seed 1 of the new low-rank methods")
     st = [{"method": "slicegpt", "lr": LR1}]
     spec, gb = heal_spec("main_s1_slicegpt", "A05", "main", 1, st, hook_steps=())
-    add("heal_main_s1_slicegpt", "W2", spec, gb, units_of(st), cut=6, deps=["a01_decide"], prio=40,
+    add("heal_main_s1_slicegpt", "W2", spec, gb, units_of(st), cut=6, deps=["gate_p"], prio=40,
         note="second SliceGPT seed (cut order 6)")
     st = [{"method": "svdllm_full", "lr_from": lrf("svdllm_full")}]
     spec, gb = heal_spec("main_s2", "A05", "main", 2, st, hook_steps=(), lowrank=1)
-    add("heal_main_s2", "W2", spec, gb, units_of(st), deps=["a01_decide"], when=[sel_file("svdllm_full")], prio=55,
+    add("heal_main_s2", "W2", spec, gb, units_of(st), deps=["gate_p"], when=[sel_file("svdllm_full")], prio=55,
         note="A05 seed 2 of full SVD-LLM")
     st = [{"method": "iosvd", "lr_from": lrf("iosvd")}]
     spec, gb = heal_spec("main_s2_iosvd", "A05", "main", 2, st, hook_steps=(), lowrank=1)
-    add("heal_main_s2_iosvd", "W2", spec, gb, units_of(st), cut=6, deps=["a01_decide"], when=[sel_file("iosvd")],
+    add("heal_main_s2_iosvd", "W2", spec, gb, units_of(st), cut=6, deps=["gate_p"], when=[sel_file("iosvd")],
         prio=40, note="third IO-SVD seed (cut order 6)")
 
     # W2: A02 heals from fit sets 1, 2 and COCO (the adopted operator type fitted on each fit set)
-    st = [{"method": "mirror_exact", "variant": r, "lr": LR1,
-           "structure": {"adopted": {"wspace": a02_wspace(r), "astar": a02_fit(r)}}} for r in A02_ROLES]
+    st = ([{"method": "mirror_exact", "variant": r, "lr": LR1,
+            "structure": {"adopted": {"wspace": a02_wspace(r), "astar": a02_fit(r)}}} for r in A02_ROLES]
+          + [{"method": "pair_random", "variant": "h1", "structure": "adopted", "lr": LR1}])
     spec, gb = heal_spec("a02_heals", "A02", "main", 0, st, hook_steps=(0,))
     add("heal_a02", "W2", spec, gb, units_of(st), deps=["a01_decide", "a02_fit_fit1", "a02_fit_fit2", "a02_fit_coco"],
         after=["a02_wspace_fit1", "a02_wspace_fit2", "a02_wspace_coco"], prio=65,
-        note="A02-5 and A02-6; never cut")
+        note="A02-5, A02-6 and A03-2 (H1); never cut")
 
-    # W3: A06 frontier and stacking, seed 0 (Mirror + SVD-LLM and the 9-block point select their rate here)
+    # W3: A06 frontier and stacking, seed 0. The SVD-LLM points need only Gate P; Mirror + SVD-LLM and the 9-block
+    # point use the adopted operator (they select their learning rate here)
     adopted_b = "adopted"
-    st = ([{"method": "svdllm", "variant": f"f{int(round(f * 100)):03d}", "frac": f, "lr": LR1}
-           for f in (0.65, 0.50, 0.40)]
-          + [{"method": "mirror_svdllm", "variant": f"f{int(round(f * 100)):03d}", "frac": f, "structure": adopted_b,
-              "lr_select": LRSEL, **({"fp32": True} if f == 0.50 else {})} for f in (0.65, 0.50, 0.40)]
+    st = [{"method": "svdllm", "variant": f"f{int(round(f * 100)):03d}", "frac": f, "lr": LR1} for f in (0.65, 0.50, 0.40)]
+    spec, gb = heal_spec("a06_svd_s0", "A06", "a06", 0, st, hook_steps=(), lowrank=3)
+    add("heal_a06_svd_s0", "W2", spec, gb, units_of(st), deps=["gate_p"], prio=60,
+        note="A06 SVD-LLM frontier at 1 seed: never cut")
+    st = ([{"method": "mirror_svdllm", "variant": f"f{int(round(f * 100)):03d}", "frac": f, "structure": adopted_b,
+            "lr_select": LRSEL, **({"fp32": True} if f == 0.50 else {})} for f in (0.65, 0.50, 0.40)]
           + [{"method": "mirror_partial", "variant": "k9", "k": 9, "lr_select": LRSEL,
               "structure": {"adopted": {"wspace": K9_WSPACE, "astar": CANON[B]}}}])
-    spec, gb = heal_spec("a06_s0", "A06", "a06", 0, st, hook_steps=(0,), lowrank=6)
-    add("heal_a06_s0", "W3", spec, gb, units_of(st), deps=["a01_decide"], after=["a01_fit_k9"], prio=60,
-        note="A06 stacking at 1 seed: never cut")
+    spec, gb = heal_spec("a06_mirror_s0", "A06", "a06", 0, st, hook_steps=(), lowrank=3)
+    add("heal_a06_mirror_s0", "W3", spec, gb, units_of(st), deps=["a01_decide"], after=["a01_fit_k9"], prio=60,
+        note="A06 stacking and the price of exactness at 1 seed: never cut")
     st = [{"method": "svdllm", "variant": "f050", "frac": 0.50, "lr": LR1},
           {"method": "mirror_svdllm", "variant": "f050", "frac": 0.50, "structure": adopted_b,
            "lr_from": run_dir("a06", B, "mirror_svdllm_f050", 0)}]
@@ -201,14 +209,14 @@ def heal_jobs():
 
     # W4: DeiT-III-B (rates: the DINOv2-B choice against the other grid value, 200-step trials, seed 0)
     dl = {"logits": True}
-    st = [{"method": "mirror_exact", "structure": "adopted", "lr_select": LRSEL, "fp32": True, **dl},
+    st = [{"method": "mirror_exact", "structure": "adopted", "lr_select": LRSEL, **dl},
           {"method": "svdllm", "lr_select": LRSEL, **dl}]
     spec, gb = heal_spec("deit_s0", "A08", "a08", 0, st, model=DT, lowrank=1)
     add("heal_deit_s0", "W4", spec, gb, units_of(st, DT), deps=["a01_decide"], after=["a01_fit_deit"], prio=55,
         note="A08-1 seed 0; never cut")
     for s, cut in ((1, "never_cut"), (2, 7)):
         st = [{"method": "mirror_exact", "structure": "adopted", "lr_from": run_dir("a08", DT, "mirror_exact", 0),
-               "fp32": True, **dl},
+               **dl},
               {"method": "svdllm", "lr_from": run_dir("a08", DT, "svdllm", 0), **dl}]
         spec, gb = heal_spec(f"deit_s{s}", "A08", "a08", s, st, model=DT, hook_steps=(), lowrank=1)
         add(f"heal_deit_s{s}", "W4", spec, gb, units_of(st, DT), cut=cut, deps=["heal_deit_s0"], prio=50,
@@ -221,17 +229,17 @@ def heal_jobs():
     # W5: A11 extended healing, DINOv2-L, A15b
     for m, cut in (("mirror_exact", 4), ("svdllm", 3)):
         st = [{"method": m, "variant": "ext", "lr": LR1, **({"structure": "adopted"} if m == "mirror_exact" else {})}]
-        spec, gb = heal_spec(f"a11_{m}", "A11", "a11", 0, st, steps=2340, hook_steps=(0,), data=EXT_DATA,
+        spec, gb = heal_spec(f"a11_{m}", "A11", "a11", 0, st, steps=2340, hook_steps=(), data=EXT_DATA,
                              lowrank=int(m == "svdllm"))
         add(f"heal_a11_{m}", "W5", spec, gb, units_of(st, B, 2340), cut=cut,
-            deps=["a01_decide", "w0_roles_ext"], prio=45,
+            deps=(["a01_decide"] if m == "mirror_exact" else ["gate_p"]) + ["w0_roles_ext"], prio=45,
             note=f"A11 extended healing, {m} (cut order {cut})")
     st = [{"method": "mirror_exact", "structure": "adopted", "lr": LR1, "fp32": True}, {"method": "svdllm", "lr": LR1}]
-    spec, gb = heal_spec("l_s0", "A08", "a08", 0, st, model=LM, hook_steps=(0,), lowrank=1)
+    spec, gb = heal_spec("l_s0", "A08", "a08", 0, st, model=LM, hook_steps=(), lowrank=1)
     add("heal_l_s0", "W5", spec, gb, units_of(st, LM), cut=2, deps=["a01_decide"], after=["a01_fit_l"], prio=40,
         note="DINOv2-L, indicative (cut order 2)")
     st = [{"method": "rot90_probe", "lr_select": LRSEL}]
-    spec, gb = heal_spec("rot90", "A15b", "a15", 0, st, hook_steps=(0,))
+    spec, gb = heal_spec("rot90", "A15b", "a15", 0, st, hook_steps=())
     add("heal_a15b", "W5", spec, gb, units_of(st), cut=1, deps=["gate_p"], prio=10,
         note="A15b cause probe (cut first)")
     return J
@@ -351,7 +359,7 @@ def manifest(heals):
         command=(f"python scripts/fp_wait_eval.py {' '.join('--run-dir ' + r for r in wruns)} --passes bf16 && "
                  f"python scripts/fp_wait_eval.py --run-dir {wruns[0]} --step 0 --passes bf16 && "
                  f"python scripts/fp_a01_decide.py --decisions-log notes/decisions.md"),
-        deps=["gate_p"], done="results/A01/decision.json")
+        deps=["gate_p", "heal_a01_wspace_s0", "heal_a01_wspace_s1"], done="results/A01/decision.json")
 
     arm = "$(python scripts/fp_main_arm.py)"
     arm_dir = lambda s: f"runs/final/main/{B}/{arm}/s{s}"  # noqa: E731
@@ -387,7 +395,7 @@ def manifest(heals):
     job(id="a07_flipavg_svdllm", wave="W3", kind="eval", gpu_mem_gb=30, priority=40,
         command=py(" ".join(["scripts/fp_eval.py", *(f"--run-dir {r}" for r in a06r),
                              "--step 780 --flip-average --passes bf16 --probe --probe-flipavg --cost --experiment A07"])),
-        deps=["heal_a06_s0"], done=f"{a06r[-1]}/eval/step780_probe_flipavg.json")
+        deps=["heal_a06_svd_s0"], done=f"{a06r[-1]}/eval/step780_probe_flipavg.json")
     for m in (B, "dinov2_vits14_reg"):
         job(id=f"a07_flipavg_{m}", wave="W3", kind="eval", gpu_mem_gb=30, priority=40,
             command=py(f"scripts/fp_eval.py --original {m} --flip-average --passes bf16 --probe --probe-flipavg "
@@ -403,7 +411,7 @@ def manifest(heals):
     job(id="a12_bench_b", wave="W3", kind="light", gpu_mem_gb=40, exclusive=True, priority=35,
         command=py(f"scripts/fp_a12_bench.py --manifest jobs/a12/{B}_$(python scripts/fp_main_arm.py --variant).json "
                    f"--out results/A12/{B}"),
-        deps=["heal_main_s0", "heal_a06_s0", "a01_decide"], done=f"results/A12/{B}/metrics.json")
+        deps=["heal_main_s0", "heal_a06_svd_s0", "a01_decide"], done=f"results/A12/{B}/metrics.json")
     job(id="a12_bench_deit", wave="W4", kind="light", gpu_mem_gb=30, exclusive=True, priority=30,
         command=py(f"scripts/fp_a12_bench.py --manifest jobs/a12/{DT}.json --out results/A12/{DT}"),
         deps=["heal_deit_s0"], done=f"results/A12/{DT}/metrics.json")
@@ -433,7 +441,7 @@ def manifest(heals):
            f'[ -f $d/DONE ] && X+=(--model a11_$m=$d); done; ')
     job(id="a10_fullbank", wave="W5", kind="eval", gpu_mem_gb=45, host_mem_gb=32, priority=35,
         command=(ext + "python scripts/fp_fullbank.py " + " ".join(fb) + ' "${X[@]}" '
-                 "--knn-only svdllm_full_s0,iosvd_s0 --out runs/final/A10/fullbank"),
+                 "--knn-only svdllm_full_s0,iosvd_s0 --linear-tf32 --out runs/final/A10/fullbank"),
         deps=["a01_decide", "heal_main_s0", "heal_main_s1", "heal_main_s2"],
         after=["heal_gate_s2", "heal_a01_wspace_s2", "heal_a11_mirror_exact", "heal_a11_svdllm"],
         done="runs/final/A10/fullbank/summary.json", note="one stream over the 1.28M training images for every model")

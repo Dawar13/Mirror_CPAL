@@ -290,33 +290,31 @@ jobs:
 - id: heal_gate_s0
   wave: W1
   kind: heal
-  gpu_mem_gb: 30.0
-  heal_units: 3.0
+  gpu_mem_gb: 28.0
+  heal_units: 2.0
   cut_rank: never_cut
   priority: 80
   deps:
   - w0_timing
   - w0_data
   - w0_models
-  - a01_fit
   command: python scripts/fp_heal.py --spec jobs/heal/gate_s0.yaml --resume
   done: runs/final/main/dinov2_vitb14_reg/_jobs/gate_s0/s0/DONE
-  note: Gate P and A01 (FINAL_PHASE_PLAN.md A01); never cut
+  note: Gate P (FINAL_PHASE_PLAN.md A01); never cut
 - id: heal_gate_s1
   wave: W1
   kind: heal
-  gpu_mem_gb: 30.0
-  heal_units: 3.0
+  gpu_mem_gb: 28.0
+  heal_units: 2.0
   cut_rank: never_cut
   priority: 80
   deps:
   - w0_timing
   - w0_data
   - w0_models
-  - a01_fit
   command: python scripts/fp_heal.py --spec jobs/heal/gate_s1.yaml --resume
   done: runs/final/main/dinov2_vitb14_reg/_jobs/gate_s1/s1/DONE
-  note: Gate P and A01 (FINAL_PHASE_PLAN.md A01); never cut
+  note: Gate P (FINAL_PHASE_PLAN.md A01); never cut
 - id: heal_gate_s2
   wave: W1
   kind: heal
@@ -330,7 +328,33 @@ jobs:
   - w0_models
   command: python scripts/fp_heal.py --spec jobs/heal/gate_s2.yaml --resume
   done: runs/final/main/dinov2_vitb14_reg/_jobs/gate_s2/s2/DONE
-  note: Gate P and A01 (FINAL_PHASE_PLAN.md A01); never cut
+  note: Gate P (FINAL_PHASE_PLAN.md A01); never cut
+- id: heal_a01_wspace_s0
+  wave: W1
+  kind: heal
+  gpu_mem_gb: 25.0
+  heal_units: 1.0
+  cut_rank: never_cut
+  priority: 85
+  deps:
+  - a01_fit
+  - gate_p
+  command: python scripts/fp_heal.py --spec jobs/heal/a01_wspace_s0.yaml --resume
+  done: runs/final/main/dinov2_vitb14_reg/_jobs/a01_wspace_s0/s0/DONE
+  note: A01 healed comparison; never cut
+- id: heal_a01_wspace_s1
+  wave: W1
+  kind: heal
+  gpu_mem_gb: 25.0
+  heal_units: 1.0
+  cut_rank: never_cut
+  priority: 85
+  deps:
+  - a01_fit
+  - gate_p
+  command: python scripts/fp_heal.py --spec jobs/heal/a01_wspace_s1.yaml --resume
+  done: runs/final/main/dinov2_vitb14_reg/_jobs/a01_wspace_s1/s1/DONE
+  note: A01 healed comparison; never cut
 - id: heal_a01_wspace_s2
   wave: W2
   kind: heal
@@ -350,12 +374,12 @@ jobs:
 - id: heal_main_s0
   wave: W2
   kind: heal
-  gpu_mem_gb: 63.0
-  heal_units: 11.5
+  gpu_mem_gb: 61.0
+  heal_units: 10.5
   cut_rank: never_cut
   priority: 75
   deps:
-  - a01_decide
+  - gate_p
   command: python scripts/fp_heal.py --spec jobs/heal/main_s0.yaml --resume
   done: runs/final/main/dinov2_vitb14_reg/_jobs/main_s0/s0/DONE
   note: A04 and A05 seed 0 (learning-rate trials of the new methods first); the block-drop scorer holds the bank and method-selection
@@ -368,7 +392,7 @@ jobs:
   cut_rank: never_cut
   priority: 60
   deps:
-  - a01_decide
+  - gate_p
   when:
   - file: runs/final/main/dinov2_vitb14_reg/svdllm_full/s0/lr_selection/lr_selection.json
   - file: runs/final/main/dinov2_vitb14_reg/iosvd/s0/lr_selection/lr_selection.json
@@ -383,7 +407,7 @@ jobs:
   cut_rank: 6
   priority: 40
   deps:
-  - a01_decide
+  - gate_p
   command: python scripts/fp_heal.py --spec jobs/heal/main_s1_slicegpt.yaml --resume
   done: runs/final/main/dinov2_vitb14_reg/_jobs/main_s1_slicegpt/s1/DONE
   note: second SliceGPT seed (cut order 6)
@@ -395,7 +419,7 @@ jobs:
   cut_rank: never_cut
   priority: 55
   deps:
-  - a01_decide
+  - gate_p
   when:
   - file: runs/final/main/dinov2_vitb14_reg/svdllm_full/s0/lr_selection/lr_selection.json
   command: python scripts/fp_heal.py --spec jobs/heal/main_s2.yaml --resume
@@ -409,7 +433,7 @@ jobs:
   cut_rank: 6
   priority: 40
   deps:
-  - a01_decide
+  - gate_p
   when:
   - file: runs/final/main/dinov2_vitb14_reg/iosvd/s0/lr_selection/lr_selection.json
   command: python scripts/fp_heal.py --spec jobs/heal/main_s2_iosvd.yaml --resume
@@ -418,8 +442,8 @@ jobs:
 - id: heal_a02
   wave: W2
   kind: heal
-  gpu_mem_gb: 28.0
-  heal_units: 3.0
+  gpu_mem_gb: 30.0
+  heal_units: 4.0
   cut_rank: never_cut
   priority: 65
   deps:
@@ -433,21 +457,33 @@ jobs:
   - a02_wspace_coco
   command: python scripts/fp_heal.py --spec jobs/heal/a02_heals.yaml --resume
   done: runs/final/main/dinov2_vitb14_reg/_jobs/a02_heals/s0/DONE
-  note: A02-5 and A02-6; never cut
-- id: heal_a06_s0
+  note: A02-5, A02-6 and A03-2 (H1); never cut
+- id: heal_a06_svd_s0
+  wave: W2
+  kind: heal
+  gpu_mem_gb: 33.0
+  heal_units: 3.0
+  cut_rank: never_cut
+  priority: 60
+  deps:
+  - gate_p
+  command: python scripts/fp_heal.py --spec jobs/heal/a06_svd_s0.yaml --resume
+  done: runs/final/a06/dinov2_vitb14_reg/_jobs/a06_svd_s0/s0/DONE
+  note: 'A06 SVD-LLM frontier at 1 seed: never cut'
+- id: heal_a06_mirror_s0
   wave: W3
   kind: heal
-  gpu_mem_gb: 44.0
-  heal_units: 9.0
+  gpu_mem_gb: 34.0
+  heal_units: 6.0
   cut_rank: never_cut
   priority: 60
   deps:
   - a01_decide
   after:
   - a01_fit_k9
-  command: python scripts/fp_heal.py --spec jobs/heal/a06_s0.yaml --resume
-  done: runs/final/a06/dinov2_vitb14_reg/_jobs/a06_s0/s0/DONE
-  note: 'A06 stacking at 1 seed: never cut'
+  command: python scripts/fp_heal.py --spec jobs/heal/a06_mirror_s0.yaml --resume
+  done: runs/final/a06/dinov2_vitb14_reg/_jobs/a06_mirror_s0/s0/DONE
+  note: 'A06 stacking and the price of exactness at 1 seed: never cut'
 - id: heal_a06_s1
   wave: W3
   kind: heal
@@ -533,7 +569,7 @@ jobs:
   cut_rank: 3
   priority: 45
   deps:
-  - a01_decide
+  - gate_p
   - w0_roles_ext
   command: python scripts/fp_heal.py --spec jobs/heal/a11_svdllm.yaml --resume
   done: runs/final/a11/dinov2_vitb14_reg/_jobs/a11_svdllm/s0/DONE
@@ -586,6 +622,8 @@ jobs:
     0 --passes bf16 && python scripts/fp_a01_decide.py --decisions-log notes/decisions.md
   deps:
   - gate_p
+  - heal_a01_wspace_s0
+  - heal_a01_wspace_s1
   done: results/A01/decision.json
 - id: a09_audit_b
   wave: W2
@@ -708,7 +746,7 @@ jobs:
     --run-dir runs/final/a06/dinov2_vitb14_reg/svdllm_f065/s0 --step 780 --flip-average --passes bf16 --probe --probe-flipavg
     --cost --experiment A07
   deps:
-  - heal_a06_s0
+  - heal_a06_svd_s0
   done: runs/final/a06/dinov2_vitb14_reg/svdllm_f065/s0/eval/step780_probe_flipavg.json
 - id: a07_flipavg_dinov2_vitb14_reg
   wave: W3
@@ -757,7 +795,7 @@ jobs:
     --out results/A12/dinov2_vitb14_reg
   deps:
   - heal_main_s0
-  - heal_a06_s0
+  - heal_a06_svd_s0
   - a01_decide
   done: results/A12/dinov2_vitb14_reg/metrics.json
 - id: a12_bench_deit
@@ -811,7 +849,7 @@ jobs:
     mirror_s2=runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s2 --model svdllm_s0=runs/final/main/dinov2_vitb14_reg/svdllm/s0
     --model svdllm_s1=runs/final/main/dinov2_vitb14_reg/svdllm/s1 --model svdllm_s2=runs/final/main/dinov2_vitb14_reg/svdllm/s2
     --model svdllm_full_s0=runs/final/main/dinov2_vitb14_reg/svdllm_full/s0 --model iosvd_s0=runs/final/main/dinov2_vitb14_reg/iosvd/s0
-    "${X[@]}" --knn-only svdllm_full_s0,iosvd_s0 --out runs/final/A10/fullbank
+    "${X[@]}" --knn-only svdllm_full_s0,iosvd_s0 --linear-tf32 --out runs/final/A10/fullbank
   deps:
   - a01_decide
   - heal_main_s0
