@@ -46,18 +46,22 @@ results/*
 results/**/*.npy
 results/**/*.npz
 results/**/*.pt
-# final phase: the arrays behind the paper's statistics and figures are kept (k-NN predictions, spectra, fit
-# sidecars, figure data; under 20 MB each); structure files and checkpoints stay local
-!results/A0*/**/*.npz
-!results/A1*/**/*.npz
-!results/A0*/**/*.npy
-!results/A1*/**/*.npy
-!results/final/**/*.npz
+# paper handoff (21 November 2026): every array under results/ is kept (predictions, probes, spectra, fit
+# sidecars, figure data, the operator structure files; files of 50 MB or more go through Git LFS, see
+# .gitattributes), except the rebuildable feature caches of CORE-07 and a duplicate structure file in CORE-05
+!results/**/*.npz
+!results/**/*.npy
+!results/e1_operators.npz
+results/CORE-07/features/
+results/CORE-05/structure/
 tiny_out/
 runs/**/*_log.txt
 
-# large artefacts copied from the VM (operators, statistics, checkpoints)
-artifacts/
+# large artefacts copied from the VM (operators, statistics, checkpoints); the final phase's three Mirror
+# checkpoints are kept (Git LFS)
+artifacts/*
+!artifacts/final_phase/
+!artifacts/final_phase/**/*.pt
 
 # local copies of VM logs; the final phase's run logs are kept (runner timeline, GPU log, job logs), except the
 # environment log, which names the Hugging Face account
@@ -68,3 +72,10 @@ logs/final/w0_env.out
 
 # local smoke-test outputs
 runs/t2_seg_smoke/
+
+# paper handoff: the A02 fit inputs (Git LFS) and small run arrays are kept; runs/MUST-09 (previous phase's
+# healed states, 2.9 GB) stays local
+!runs/x2/**/*.npz
+!runs/M7_shards/**
+!runs/m1/**
+!runs/MUST-10/**
