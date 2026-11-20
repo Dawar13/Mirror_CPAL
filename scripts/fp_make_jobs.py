@@ -488,6 +488,9 @@ def manifest(heals):
         "stop_when": [{"file": "results/A01/gate_p.json", "key": "pass", "equals": False,
                        "reason": "Gate P failed (FINAL_PHASE_PLAN.md Section 6): stop and report"}],
         "barrier_waves": [], "max_heals": 3, "max_cpu": 6,
+        # Dawar, 20 November 2026 11:10 UTC (3.9 VM-hours used): finish within 6 to 7 more hours. The governor
+        # cuts in the Section 9 order to fit 10.75 VM-hours; no new heal after 10.25; hard stop at 11.25.
+        "ceiling_hours": 11.25, "heal_stop_hours": 10.25, "projection": {"target_hours": 10.75},
     }
     return {"version": 1, "settings": settings, "jobs": jobs}
 
