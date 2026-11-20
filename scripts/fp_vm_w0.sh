@@ -199,7 +199,9 @@ timing_cmd() {   # $1 model, $2 seed, $3 tag
 elapsed() { awk -v a="$1" -v b="$2" 'BEGIN { printf "%.3f", b - a }'; }
 
 step_timing() {
-  local f="$W0/timing.tsv" m c t0 t1 i rc pids=()
+  local f="$W0/timing.tsv" m c t0 t1 i rc pids=() first
+  first=$(echo "$TIMING_MODELS" | awk '{print $1}')
+  rm -rf runs/final/_timing                                    # fp_heal skips finished runs: a retry must start clean
   mkdir -p runs/final/_timing results/final
   printf "run\tmodel\tseconds\trc\n" > "$f"
   for m in $TIMING_MODELS; do                                  # one heal per model, alone on the GPU
@@ -209,7 +211,8 @@ step_timing() {
     bash -c "$c"; rc=$?
     t1=$(date +%s.%N)
     printf "alone\t%s\t%s\t%s\n" "$m" "$(elapsed "$t0" "$t1")" "$rc" >> "$f"
-    [ $rc -eq 0 ] || return 1
+    [ $rc -eq 0 ] || [ "$m" != "$first" ] || return 1
+    [ $rc -eq 0 ] || echo "WARNING: the timing heal of $m failed (rc $rc); recorded, the step continues"
   done
   m=$(echo "$TIMING_MODELS" | awk '{print $1}')                  # three concurrent heals of the first model
   t0=$(date +%s.%N)
@@ -233,13 +236,49 @@ import time
 path, steps, full, units_txt = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), sys.argv[4]
 units = {k: float(v) for k, v in (x.split("=") for x in units_txt.split(",") if x)}
 rows = list(csv.DictReader(open(path), delimiter="\t"))
-if any(r["rc"] != "0" for r in rows):
-    sys.exit("a timing run failed: " + str([r for r in rows if r["rc"] != "0"]))
-scale = full / steps
-alone = {r["model"]: float(r["seconds"]) * scale / 3600 for r in rows if r["run"] == "alone"}
-conc = [float(r["seconds"]) * scale / 3600 for r in rows if r["run"].startswith("concurrent") and r["run"][-1].isdigit()]
-batch = next(float(r["seconds"]) * scale / 3600 for r in rows if r["run"] == "concurrent_all")
 first = next(r["model"] for r in rows if r["run"].startswith("concurrent"))
+failed = [r for r in rows if r["rc"] != "0"]
+if any(r["model"] == first for r in failed):
+    sys.exit("a timing run of the first model failed: " + str(failed))
+rows = [r for r in rows if r["rc"] == "0"]
+
+
+def per_step(run_dir):
+    """Measured seconds per training step (seconds_train / steps_done over the students' metrics.json), or None."""
+    from pathlib import Path
+    vals = []
+    for m in Path(run_dir).rglob("metrics.json"):
+        try:
+            d = json.load(open(m))
+        except (OSError, ValueError):
+            continue
+        st, sd = d.get("seconds_train"), d.get("steps_done")
+        if st and sd:
+            vals.append(float(st) / float(sd))
+    return max(vals) if vals else None
+
+
+how = {}
+
+
+def full_hours(r, run_dir):
+    """Wall time of a full heal: the measured wall time (start-up included once) plus the remaining steps at the
+    measured seconds per step; linear scaling only when no metrics.json is found (recorded in `how`)."""
+    wall = float(r["seconds"])
+    ps = per_step(run_dir)
+    if ps is None:
+        how[run_dir] = "linear scaling (no metrics.json)"
+        return wall * full / steps / 3600
+    how[run_dir] = f"wall {wall:.1f} s + {full - steps} steps x {ps:.3f} s"
+    return (wall + (full - steps) * ps) / 3600
+
+
+alone = {r["model"]: full_hours(r, f"runs/final/_timing/{r['model']}_alone") for r in rows if r["run"] == "alone"}
+conc = [full_hours(r, f"runs/final/_timing/{r['model']}_{r['run']}") for r in rows
+        if r["run"].startswith("concurrent") and r["run"][-1].isdigit()]
+batch_row = next(r for r in rows if r["run"] == "concurrent_all")
+batch = (float(batch_row["seconds"]) + (full - steps) * max(
+    per_step(f"runs/final/_timing/{first}_concurrent{i}") or 0.0 for i in (1, 2, 3))) / 3600
 u = units.get(first, 1.0)
 out = {
     "hours_per_unit": sum(conc) / len(conc) / u, "concurrency": float(len(conc)),
@@ -248,10 +287,11 @@ out = {
     "throughput_gain": len(conc) * alone[first] / batch,
     "alone_hours_per_full_heal": alone, "concurrent_hours_per_full_heal": conc, "batch_hours": batch,
     "units": units, "measured_unit_ratio": {m: (alone[m] / alone[first]) for m in alone},
-    "timing_steps": steps, "full_steps": full,
-    "note": "wall time per heal scaled linearly from timing_steps to full_steps (fixed start-up costs make this an "
-            "overestimate when timing_steps < full_steps); the runner uses hours_per_unit / concurrency as the wall "
-            "time of one heal-unit when 3 heals run at once",
+    "timing_steps": steps, "full_steps": full, "estimate": how,
+    "failed_runs": failed,
+    "note": "wall time of a full heal = the timing run's wall time (start-up counted once) + (full_steps - "
+            "timing_steps) x the measured seconds per training step; the runner uses hours_per_unit / concurrency "
+            "as the wall time of one heal-unit when 3 heals run at once",
     "date_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
 }
 json.dump(out, open("results/final/w0_timing.json", "w"), indent=2)
