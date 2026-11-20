@@ -1,0 +1,151 @@
+{
+  "top1": 80.054,
+  "top5": 95.566,
+  "chosen_wd": 0.00316,
+  "wd_at_grid_edge": false,
+  "knn_check_top1": 78.33200097084045,
+  "n_bank": 100000,
+  "n_val": 50000,
+  "flip_average": false,
+  "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+  "amp": "bf16",
+  "wd_grid": [
+    1e-07,
+    1e-06,
+    1e-05,
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "seed": 0,
+  "seconds": 163.5,
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 82.01,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 81.76,
+        "holdout_top5": 95.79,
+        "holdout_loss": 0.9605412109375,
+        "train_objective": 1.420409917831421,
+        "grad_max": 3.996043233200908e-05,
+        "n_iter": 102,
+        "n_eval": 109,
+        "hit_limit": false,
+        "seconds": 9.54
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 81.65,
+        "holdout_top5": 95.78,
+        "holdout_loss": 0.7298193359375,
+        "train_objective": 0.4311487078666687,
+        "grad_max": 1.709352363832295e-05,
+        "n_iter": 167,
+        "n_eval": 174,
+        "hit_limit": false,
+        "seconds": 13.02
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 81.09,
+        "holdout_top5": 95.42,
+        "holdout_loss": 0.7899826171875,
+        "train_objective": 0.09861056506633759,
+        "grad_max": 1.5724692730145762e-06,
+        "n_iter": 333,
+        "n_eval": 355,
+        "hit_limit": false,
+        "seconds": 30.58
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 80.66,
+        "holdout_top5": 94.95,
+        "holdout_loss": 0.94802900390625,
+        "train_objective": 0.01924990490078926,
+        "grad_max": 8.149158361447917e-07,
+        "n_iter": 109,
+        "n_eval": 117,
+        "hit_limit": false,
+        "seconds": 8.43
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 80.45,
+        "holdout_top5": 94.66,
+        "holdout_loss": 1.1693515625,
+        "train_objective": 0.0037626801058650017,
+        "grad_max": 9.684013093647081e-07,
+        "n_iter": 85,
+        "n_eval": 90,
+        "hit_limit": false,
+        "seconds": 8.08
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 80.45,
+        "holdout_top5": 94.66,
+        "holdout_loss": 1.1693515625,
+        "train_objective": 0.001514063565991819,
+        "grad_max": 9.866504342426197e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.03
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 80.63,
+        "holdout_top5": 95.34,
+        "holdout_loss": 1.41013388671875,
+        "train_objective": 2.468484878540039,
+        "grad_max": 3.947408185922541e-05,
+        "n_iter": 36,
+        "n_eval": 41,
+        "hit_limit": false,
+        "seconds": 2.49
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 82.01,
+        "holdout_top5": 95.88,
+        "holdout_loss": 0.78056884765625,
+        "train_objective": 0.8081051111221313,
+        "grad_max": 1.6728576156310737e-05,
+        "n_iter": 105,
+        "n_eval": 112,
+        "hit_limit": false,
+        "seconds": 10.65
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "settings": {
+    "seed": 0,
+    "flip_average": false,
+    "data": "cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)",
+    "checkpoint_sha256": "cb41674485071b97ac7a4a1106faedbe1148ac96e492d6883c255c591a476c4f"
+  },
+  "model": "dinov2_vitb14_reg",
+  "run_dir": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1",
+  "step": 780,
+  "predictions": "knn/step780_probe_pred.npz",
+  "git": {
+    "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+    "git_dirty": true
+  }
+}

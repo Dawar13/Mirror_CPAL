@@ -1,0 +1,1611 @@
+{
+  "passes": {
+    "bf16": {
+      "top1": 78.3519983291626,
+      "top1_mirrored_queries": 78.37600111961365,
+      "flip_consistency": 99.70200061798096,
+      "n_disagree": 149,
+      "max_vote_margin_rel": 0.08194094896316528,
+      "max_vote_margin_rel_one_copy": 0.04188788682222366,
+      "n_disagree_not_near_tie": 149,
+      "near_tie_rel": 0.0001,
+      "feature_flip_max_abs": 0.01630474254488945,
+      "feature_identical_pct": 0.0,
+      "pass": "bf16",
+      "amp": "bf16",
+      "flip_average": false,
+      "n_bank": 100000,
+      "n_query": 50000,
+      "k": 20,
+      "temperature": 0.07,
+      "batch_size": 512,
+      "forward_passes_per_image": 1,
+      "seconds": 121.81,
+      "precision": "bf16 autocast for every forward pass, TF32 off; k-NN in fp32",
+      "bank_subset": null,
+      "query_subset": null,
+      "n_disagree_listed": 149,
+      "settings": {
+        "protocol": "fp-knn-v1",
+        "pass": "bf16",
+        "k": 20,
+        "temperature": 0.07,
+        "n_query": 50000,
+        "n_bank": 100000,
+        "data": "cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)",
+        "checkpoint_sha256": "446be1d3364be0ebb596ef47020409f4acefe89d8a42fc9e4f1fd3c8cb21b18c"
+      },
+      "predictions": "knn/step780_bf16.npz",
+      "disagreements": [
+        {
+          "query_row": 229,
+          "label": 449,
+          "pred": 536,
+          "pred_flip": 449,
+          "vote_margin_rel": 0.046366237103939056,
+          "vote_margin_rel_mirrored": 0.026935499161481857,
+          "kth_sim_gap": 0.0012735724449157715,
+          "kth_sim_gap_mirrored": 0.0019348859786987305
+        },
+        {
+          "query_row": 321,
+          "label": 850,
+          "pred": 516,
+          "pred_flip": 765,
+          "vote_margin_rel": 0.018123865127563477,
+          "vote_margin_rel_mirrored": 0.013449239544570446,
+          "kth_sim_gap": 0.0031765401363372803,
+          "kth_sim_gap_mirrored": 0.001542806625366211
+        },
+        {
+          "query_row": 820,
+          "label": 165,
+          "pred": 165,
+          "pred_flip": 236,
+          "vote_margin_rel": 0.0014245843049138784,
+          "vote_margin_rel_mirrored": 0.0011712406994774938,
+          "kth_sim_gap": 0.0023268461227416992,
+          "kth_sim_gap_mirrored": 0.0030051469802856445
+        },
+        {
+          "query_row": 901,
+          "label": 747,
+          "pred": 899,
+          "pred_flip": 792,
+          "vote_margin_rel": 0.00041519696242175996,
+          "vote_margin_rel_mirrored": 0.00210579507984221,
+          "kth_sim_gap": 0.0012352466583251953,
+          "kth_sim_gap_mirrored": 0.0024769604206085205
+        },
+        {
+          "query_row": 1164,
+          "label": 799,
+          "pred": 799,
+          "pred_flip": 539,
+          "vote_margin_rel": 0.006928126327693462,
+          "vote_margin_rel_mirrored": 0.009939577430486679,
+          "kth_sim_gap": 0.0034277141094207764,
+          "kth_sim_gap_mirrored": 0.007124036550521851
+        },
+        {
+          "query_row": 1269,
+          "label": 304,
+          "pred": 316,
+          "pred_flip": 304,
+          "vote_margin_rel": 0.07614457607269287,
+          "vote_margin_rel_mirrored": 0.03031298518180847,
+          "kth_sim_gap": 0.0021598339080810547,
+          "kth_sim_gap_mirrored": 3.603100776672363e-05
+        },
+        {
+          "query_row": 1301,
+          "label": 774,
+          "pred": 398,
+          "pred_flip": 622,
+          "vote_margin_rel": 0.001357435598038137,
+          "vote_margin_rel_mirrored": 0.003946904093027115,
+          "kth_sim_gap": 0.0005958080291748047,
+          "kth_sim_gap_mirrored": 0.002454698085784912
+        },
+        {
+          "query_row": 1821,
+          "label": 846,
+          "pred": 846,
+          "pred_flip": 619,
+          "vote_margin_rel": 0.036786265671253204,
+          "vote_margin_rel_mirrored": 0.02681136503815651,
+          "kth_sim_gap": 0.00019228458404541016,
+          "kth_sim_gap_mirrored": 0.0001888275146484375
+        },
+        {
+          "query_row": 1854,
+          "label": 517,
+          "pred": 856,
+          "pred_flip": 517,
+          "vote_margin_rel": 0.023933669552206993,
+          "vote_margin_rel_mirrored": 0.0495610274374485,
+          "kth_sim_gap": 0.001559823751449585,
+          "kth_sim_gap_mirrored": 0.0003128349781036377
+        },
+        {
+          "query_row": 2020,
+          "label": 386,
+          "pred": 101,
+          "pred_flip": 386,
+          "vote_margin_rel": 0.00012590888945851475,
+          "vote_margin_rel_mirrored": 5.407946810009889e-05,
+          "kth_sim_gap": 0.000286102294921875,
+          "kth_sim_gap_mirrored": 8.64267349243164e-06
+        },
+        {
+          "query_row": 2132,
+          "label": 246,
+          "pred": 159,
+          "pred_flip": 246,
+          "vote_margin_rel": 0.00022076486493460834,
+          "vote_margin_rel_mirrored": 0.0043488433584570885,
+          "kth_sim_gap": 0.0046596527099609375,
+          "kth_sim_gap_mirrored": 0.00426405668258667
+        },
+        {
+          "query_row": 4089,
+          "label": 463,
+          "pred": 427,
+          "pred_flip": 463,
+          "vote_margin_rel": 0.006710321642458439,
+          "vote_margin_rel_mirrored": 0.0030579944141209126,
+          "kth_sim_gap": 0.004523098468780518,
+          "kth_sim_gap_mirrored": 0.0047577619552612305
+        },
+        {
+          "query_row": 4198,
+          "label": 413,
+          "pred": 652,
+          "pred_flip": 413,
+          "vote_margin_rel": 0.026665544137358665,
+          "vote_margin_rel_mirrored": 0.005121434573084116,
+          "kth_sim_gap": 0.0026745200157165527,
+          "kth_sim_gap_mirrored": 0.0008949041366577148
+        },
+        {
+          "query_row": 4332,
+          "label": 266,
+          "pred": 265,
+          "pred_flip": 266,
+          "vote_margin_rel": 0.016486220061779022,
+          "vote_margin_rel_mirrored": 0.04793201759457588,
+          "kth_sim_gap": 8.857250213623047e-05,
+          "kth_sim_gap_mirrored": 0.00017470121383666992
+        },
+        {
+          "query_row": 4564,
+          "label": 790,
+          "pred": 791,
+          "pred_flip": 790,
+          "vote_margin_rel": 0.0006916234851814806,
+          "vote_margin_rel_mirrored": 0.0010186306899413466,
+          "kth_sim_gap": 0.0015602707862854004,
+          "kth_sim_gap_mirrored": 0.0013399124145507812
+        },
+        {
+          "query_row": 4569,
+          "label": 250,
+          "pred": 250,
+          "pred_flip": 249,
+          "vote_margin_rel": 0.020165126770734787,
+          "vote_margin_rel_mirrored": 0.006135913077741861,
+          "kth_sim_gap": 0.0008453726768493652,
+          "kth_sim_gap_mirrored": 7.331371307373047e-06
+        },
+        {
+          "query_row": 4662,
+          "label": 467,
+          "pred": 467,
+          "pred_flip": 934,
+          "vote_margin_rel": 0.0015097471186891198,
+          "vote_margin_rel_mirrored": 0.008879277855157852,
+          "kth_sim_gap": 0.0010358691215515137,
+          "kth_sim_gap_mirrored": 0.00027433037757873535
+        },
+        {
+          "query_row": 5166,
+          "label": 165,
+          "pred": 164,
+          "pred_flip": 165,
+          "vote_margin_rel": 0.004148568492382765,
+          "vote_margin_rel_mirrored": 0.0003573833382688463,
+          "kth_sim_gap": 0.0011606216430664062,
+          "kth_sim_gap_mirrored": 0.000700533390045166
+        },
+        {
+          "query_row": 5356,
+          "label": 240,
+          "pred": 241,
+          "pred_flip": 240,
+          "vote_margin_rel": 0.021438270807266235,
+          "vote_margin_rel_mirrored": 0.04766698181629181,
+          "kth_sim_gap": 0.0011038780212402344,
+          "kth_sim_gap_mirrored": 0.0012004971504211426
+        },
+        {
+          "query_row": 5585,
+          "label": 981,
+          "pred": 981,
+          "pred_flip": 560,
+          "vote_margin_rel": 0.006025420967489481,
+          "vote_margin_rel_mirrored": 0.006237733643501997,
+          "kth_sim_gap": 0.0038271546363830566,
+          "kth_sim_gap_mirrored": 0.0028620362281799316
+        },
+        {
+          "query_row": 5713,
+          "label": 222,
+          "pred": 258,
+          "pred_flip": 257,
+          "vote_margin_rel": 0.07265987247228622,
+          "vote_margin_rel_mirrored": 0.004607521463185549,
+          "kth_sim_gap": 0.00022852420806884766,
+          "kth_sim_gap_mirrored": 0.0002219676971435547
+        },
+        {
+          "query_row": 6814,
+          "label": 44,
+          "pred": 419,
+          "pred_flip": 696,
+          "vote_margin_rel": 0.001604944933205843,
+          "vote_margin_rel_mirrored": 0.013135404326021671,
+          "kth_sim_gap": 0.00032067298889160156,
+          "kth_sim_gap_mirrored": 0.0004601776599884033
+        },
+        {
+          "query_row": 7342,
+          "label": 700,
+          "pred": 700,
+          "pred_flip": 999,
+          "vote_margin_rel": 0.0014431591844186187,
+          "vote_margin_rel_mirrored": 0.0072833881713449955,
+          "kth_sim_gap": 0.0011495351791381836,
+          "kth_sim_gap_mirrored": 0.0027388930320739746
+        },
+        {
+          "query_row": 7436,
+          "label": 587,
+          "pred": 462,
+          "pred_flip": 767,
+          "vote_margin_rel": 0.01623333990573883,
+          "vote_margin_rel_mirrored": 0.013193032704293728,
+          "kth_sim_gap": 0.0005036294460296631,
+          "kth_sim_gap_mirrored": 0.0033031702041625977
+        },
+        {
+          "query_row": 7591,
+          "label": 192,
+          "pred": 182,
+          "pred_flip": 192,
+          "vote_margin_rel": 0.002511353464797139,
+          "vote_margin_rel_mirrored": 0.0002913266944233328,
+          "kth_sim_gap": 0.0018393993377685547,
+          "kth_sim_gap_mirrored": 0.001328587532043457
+        },
+        {
+          "query_row": 8234,
+          "label": 917,
+          "pred": 917,
+          "pred_flip": 549,
+          "vote_margin_rel": 0.029371481388807297,
+          "vote_margin_rel_mirrored": 0.0027950447984039783,
+          "kth_sim_gap": 7.25090503692627e-05,
+          "kth_sim_gap_mirrored": 0.0008250176906585693
+        },
+        {
+          "query_row": 8938,
+          "label": 569,
+          "pred": 569,
+          "pred_flip": 867,
+          "vote_margin_rel": 0.0024857674725353718,
+          "vote_margin_rel_mirrored": 0.06867362558841705,
+          "kth_sim_gap": 0.0007271170616149902,
+          "kth_sim_gap_mirrored": 0.0007506012916564941
+        },
+        {
+          "query_row": 9050,
+          "label": 765,
+          "pred": 621,
+          "pred_flip": 870,
+          "vote_margin_rel": 0.0027060885913670063,
+          "vote_margin_rel_mirrored": 0.005789325572550297,
+          "kth_sim_gap": 0.0009285807609558105,
+          "kth_sim_gap_mirrored": 0.0008492469787597656
+        },
+        {
+          "query_row": 9113,
+          "label": 226,
+          "pred": 170,
+          "pred_flip": 177,
+          "vote_margin_rel": 0.026234153658151627,
+          "vote_margin_rel_mirrored": 0.0012725889682769775,
+          "kth_sim_gap": 0.0001010894775390625,
+          "kth_sim_gap_mirrored": 0.0003895759582519531
+        },
+        {
+          "query_row": 9557,
+          "label": 487,
+          "pred": 590,
+          "pred_flip": 487,
+          "vote_margin_rel": 0.0006163635407574475,
+          "vote_margin_rel_mirrored": 0.005352615844458342,
+          "kth_sim_gap": 0.0015788674354553223,
+          "kth_sim_gap_mirrored": 0.0010022521018981934
+        },
+        {
+          "query_row": 9983,
+          "label": 358,
+          "pred": 359,
+          "pred_flip": 358,
+          "vote_margin_rel": 0.009276689030230045,
+          "vote_margin_rel_mirrored": 0.07672544568777084,
+          "kth_sim_gap": 8.463859558105469e-06,
+          "kth_sim_gap_mirrored": 0.0006288290023803711
+        },
+        {
+          "query_row": 10542,
+          "label": 722,
+          "pred": 722,
+          "pred_flip": 582,
+          "vote_margin_rel": 0.028569236397743225,
+          "vote_margin_rel_mirrored": 0.011624075472354889,
+          "kth_sim_gap": 0.0004500150680541992,
+          "kth_sim_gap_mirrored": 0.0005522370338439941
+        },
+        {
+          "query_row": 10593,
+          "label": 407,
+          "pred": 734,
+          "pred_flip": 407,
+          "vote_margin_rel": 0.0007820437313057482,
+          "vote_margin_rel_mirrored": 0.0004991191090084612,
+          "kth_sim_gap": 0.006003439426422119,
+          "kth_sim_gap_mirrored": 0.005376636981964111
+        },
+        {
+          "query_row": 10630,
+          "label": 760,
+          "pred": 617,
+          "pred_flip": 760,
+          "vote_margin_rel": 0.011712457984685898,
+          "vote_margin_rel_mirrored": 0.08194094896316528,
+          "kth_sim_gap": 8.407235145568848e-05,
+          "kth_sim_gap_mirrored": 0.0003948807716369629
+        },
+        {
+          "query_row": 10868,
+          "label": 566,
+          "pred": 566,
+          "pred_flip": 513,
+          "vote_margin_rel": 0.0007819567108526826,
+          "vote_margin_rel_mirrored": 0.009887021966278553,
+          "kth_sim_gap": 0.00036090612411499023,
+          "kth_sim_gap_mirrored": 0.00165557861328125
+        },
+        {
+          "query_row": 11729,
+          "label": 446,
+          "pred": 478,
+          "pred_flip": 921,
+          "vote_margin_rel": 8.566070755477995e-05,
+          "vote_margin_rel_mirrored": 0.04132096469402313,
+          "kth_sim_gap": 0.00204622745513916,
+          "kth_sim_gap_mirrored": 0.0010767877101898193
+        },
+        {
+          "query_row": 11960,
+          "label": 833,
+          "pred": 693,
+          "pred_flip": 472,
+          "vote_margin_rel": 0.008098123595118523,
+          "vote_margin_rel_mirrored": 0.004631150513887405,
+          "kth_sim_gap": 0.001336604356765747,
+          "kth_sim_gap_mirrored": 0.0008020401000976562
+        },
+        {
+          "query_row": 12044,
+          "label": 367,
+          "pred": 267,
+          "pred_flip": 369,
+          "vote_margin_rel": 0.0033248772379010916,
+          "vote_margin_rel_mirrored": 0.013208183459937572,
+          "kth_sim_gap": 0.0023297369480133057,
+          "kth_sim_gap_mirrored": 0.0015056729316711426
+        },
+        {
+          "query_row": 12312,
+          "label": 828,
+          "pred": 618,
+          "pred_flip": 828,
+          "vote_margin_rel": 0.003862077835947275,
+          "vote_margin_rel_mirrored": 0.024079689756035805,
+          "kth_sim_gap": 0.00021517276763916016,
+          "kth_sim_gap_mirrored": 0.0010439157485961914
+        },
+        {
+          "query_row": 13267,
+          "label": 67,
+          "pred": 68,
+          "pred_flip": 67,
+          "vote_margin_rel": 0.0328202098608017,
+          "vote_margin_rel_mirrored": 0.004016808234155178,
+          "kth_sim_gap": 0.00010132789611816406,
+          "kth_sim_gap_mirrored": 0.0008330345153808594
+        },
+        {
+          "query_row": 13575,
+          "label": 265,
+          "pred": 266,
+          "pred_flip": 267,
+          "vote_margin_rel": 0.0028191949240863323,
+          "vote_margin_rel_mirrored": 0.0011040064273402095,
+          "kth_sim_gap": 0.008158862590789795,
+          "kth_sim_gap_mirrored": 0.00809904932975769
+        },
+        {
+          "query_row": 13906,
+          "label": 699,
+          "pred": 541,
+          "pred_flip": 699,
+          "vote_margin_rel": 0.006233483087271452,
+          "vote_margin_rel_mirrored": 0.025892004370689392,
+          "kth_sim_gap": 0.0015355944633483887,
+          "kth_sim_gap_mirrored": 0.0006012916564941406
+        },
+        {
+          "query_row": 13984,
+          "label": 385,
+          "pred": 101,
+          "pred_flip": 385,
+          "vote_margin_rel": 0.024417517706751823,
+          "vote_margin_rel_mirrored": 0.016859520226716995,
+          "kth_sim_gap": 0.0003433823585510254,
+          "kth_sim_gap_mirrored": 0.0009108781814575195
+        },
+        {
+          "query_row": 15181,
+          "label": 440,
+          "pred": 440,
+          "pred_flip": 838,
+          "vote_margin_rel": 0.018048305064439774,
+          "vote_margin_rel_mirrored": 0.009865617379546165,
+          "kth_sim_gap": 8.818507194519043e-05,
+          "kth_sim_gap_mirrored": 0.0018157660961151123
+        },
+        {
+          "query_row": 15292,
+          "label": 480,
+          "pred": 801,
+          "pred_flip": 480,
+          "vote_margin_rel": 0.022901024669408798,
+          "vote_margin_rel_mirrored": 0.024827677756547928,
+          "kth_sim_gap": 0.003988176584243774,
+          "kth_sim_gap_mirrored": 0.0022410154342651367
+        },
+        {
+          "query_row": 15387,
+          "label": 247,
+          "pred": 263,
+          "pred_flip": 264,
+          "vote_margin_rel": 0.018084371462464333,
+          "vote_margin_rel_mirrored": 0.015330735594034195,
+          "kth_sim_gap": 0.0003177225589752197,
+          "kth_sim_gap_mirrored": 0.0008315145969390869
+        },
+        {
+          "query_row": 15621,
+          "label": 241,
+          "pred": 240,
+          "pred_flip": 241,
+          "vote_margin_rel": 0.0001856287708505988,
+          "vote_margin_rel_mirrored": 0.0004162984259892255,
+          "kth_sim_gap": 0.00439763069152832,
+          "kth_sim_gap_mirrored": 0.004349768161773682
+        },
+        {
+          "query_row": 15881,
+          "label": 149,
+          "pred": 392,
+          "pred_flip": 149,
+          "vote_margin_rel": 0.004145006649196148,
+          "vote_margin_rel_mirrored": 0.007833092473447323,
+          "kth_sim_gap": 0.005064725875854492,
+          "kth_sim_gap_mirrored": 0.003294140100479126
+        },
+        {
+          "query_row": 16267,
+          "label": 733,
+          "pred": 920,
+          "pred_flip": 733,
+          "vote_margin_rel": 0.005591369234025478,
+          "vote_margin_rel_mirrored": 0.017333226278424263,
+          "kth_sim_gap": 0.0005742311477661133,
+          "kth_sim_gap_mirrored": 0.004025518894195557
+        },
+        {
+          "query_row": 16415,
+          "label": 470,
+          "pred": 773,
+          "pred_flip": 503,
+          "vote_margin_rel": 0.06126119941473007,
+          "vote_margin_rel_mirrored": 0.007906663231551647,
+          "kth_sim_gap": 0.0006827116012573242,
+          "kth_sim_gap_mirrored": 0.001469939947128296
+        },
+        {
+          "query_row": 17143,
+          "label": 883,
+          "pred": 285,
+          "pred_flip": 309,
+          "vote_margin_rel": 0.00027608778327703476,
+          "vote_margin_rel_mirrored": 0.0008953008218668401,
+          "kth_sim_gap": 0.0026929378509521484,
+          "kth_sim_gap_mirrored": 0.0029751956462860107
+        },
+        {
+          "query_row": 17328,
+          "label": 868,
+          "pred": 813,
+          "pred_flip": 909,
+          "vote_margin_rel": 0.017559275031089783,
+          "vote_margin_rel_mirrored": 0.013507611118257046,
+          "kth_sim_gap": 0.00021860003471374512,
+          "kth_sim_gap_mirrored": 0.00038236379623413086
+        },
+        {
+          "query_row": 17570,
+          "label": 721,
+          "pred": 721,
+          "pred_flip": 451,
+          "vote_margin_rel": 0.005410769954323769,
+          "vote_margin_rel_mirrored": 0.00047800916945561767,
+          "kth_sim_gap": 0.0013858675956726074,
+          "kth_sim_gap_mirrored": 5.888938903808594e-05
+        },
+        {
+          "query_row": 18057,
+          "label": 737,
+          "pred": 737,
+          "pred_flip": 440,
+          "vote_margin_rel": 0.0020506924483925104,
+          "vote_margin_rel_mirrored": 0.0022722745779901743,
+          "kth_sim_gap": 0.00032782554626464844,
+          "kth_sim_gap_mirrored": 0.0012772083282470703
+        },
+        {
+          "query_row": 18114,
+          "label": 114,
+          "pred": 110,
+          "pred_flip": 115,
+          "vote_margin_rel": 0.05927686393260956,
+          "vote_margin_rel_mirrored": 0.019348811358213425,
+          "kth_sim_gap": 0.00024837255477905273,
+          "kth_sim_gap_mirrored": 0.000537574291229248
+        },
+        {
+          "query_row": 18449,
+          "label": 441,
+          "pred": 441,
+          "pred_flip": 966,
+          "vote_margin_rel": 0.007374887820333242,
+          "vote_margin_rel_mirrored": 0.017755798995494843,
+          "kth_sim_gap": 3.936886787414551e-05,
+          "kth_sim_gap_mirrored": 0.0009537339210510254
+        },
+        {
+          "query_row": 18752,
+          "label": 664,
+          "pred": 851,
+          "pred_flip": 745,
+          "vote_margin_rel": 0.010685674846172333,
+          "vote_margin_rel_mirrored": 0.03037123940885067,
+          "kth_sim_gap": 0.00013723969459533691,
+          "kth_sim_gap_mirrored": 0.0006145834922790527
+        },
+        {
+          "query_row": 19272,
+          "label": 256,
+          "pred": 155,
+          "pred_flip": 226,
+          "vote_margin_rel": 0.0008301567286252975,
+          "vote_margin_rel_mirrored": 0.0029947252478450537,
+          "kth_sim_gap": 0.002108931541442871,
+          "kth_sim_gap_mirrored": 0.0019039809703826904
+        },
+        {
+          "query_row": 19601,
+          "label": 329,
+          "pred": 126,
+          "pred_flip": 116,
+          "vote_margin_rel": 0.004375670570880175,
+          "vote_margin_rel_mirrored": 0.016171684488654137,
+          "kth_sim_gap": 0.0007530450820922852,
+          "kth_sim_gap_mirrored": 0.0006923079490661621
+        },
+        {
+          "query_row": 19839,
+          "label": 67,
+          "pred": 62,
+          "pred_flip": 67,
+          "vote_margin_rel": 0.0017299369210377336,
+          "vote_margin_rel_mirrored": 0.004398601595312357,
+          "kth_sim_gap": 0.0003801882266998291,
+          "kth_sim_gap_mirrored": 0.00019297003746032715
+        },
+        {
+          "query_row": 20133,
+          "label": 312,
+          "pred": 311,
+          "pred_flip": 312,
+          "vote_margin_rel": 0.0005687340162694454,
+          "vote_margin_rel_mirrored": 8.377101767109707e-05,
+          "kth_sim_gap": 0.0005120038986206055,
+          "kth_sim_gap_mirrored": 7.575750350952148e-05
+        },
+        {
+          "query_row": 20212,
+          "label": 230,
+          "pred": 231,
+          "pred_flip": 230,
+          "vote_margin_rel": 0.013522081077098846,
+          "vote_margin_rel_mirrored": 0.015642249956727028,
+          "kth_sim_gap": 0.0009230375289916992,
+          "kth_sim_gap_mirrored": 0.0002484321594238281
+        },
+        {
+          "query_row": 20322,
+          "label": 388,
+          "pred": 388,
+          "pred_flip": 850,
+          "vote_margin_rel": 0.06675548106431961,
+          "vote_margin_rel_mirrored": 0.0039650266990065575,
+          "kth_sim_gap": 0.00167769193649292,
+          "kth_sim_gap_mirrored": 0.0005969405174255371
+        },
+        {
+          "query_row": 20395,
+          "label": 173,
+          "pred": 176,
+          "pred_flip": 173,
+          "vote_margin_rel": 0.03087134286761284,
+          "vote_margin_rel_mirrored": 0.0126221664249897,
+          "kth_sim_gap": 0.0003689229488372803,
+          "kth_sim_gap_mirrored": 2.491474151611328e-05
+        },
+        {
+          "query_row": 20492,
+          "label": 245,
+          "pred": 254,
+          "pred_flip": 245,
+          "vote_margin_rel": 0.0006347559974528849,
+          "vote_margin_rel_mirrored": 0.003453554818406701,
+          "kth_sim_gap": 0.0030492544174194336,
+          "kth_sim_gap_mirrored": 0.002015829086303711
+        },
+        {
+          "query_row": 20544,
+          "label": 119,
+          "pred": 120,
+          "pred_flip": 119,
+          "vote_margin_rel": 0.04542646184563637,
+          "vote_margin_rel_mirrored": 0.026655152440071106,
+          "kth_sim_gap": 2.2470951080322266e-05,
+          "kth_sim_gap_mirrored": 0.0013680458068847656
+        },
+        {
+          "query_row": 20800,
+          "label": 759,
+          "pred": 759,
+          "pred_flip": 732,
+          "vote_margin_rel": 0.02161256968975067,
+          "vote_margin_rel_mirrored": 0.0583081990480423,
+          "kth_sim_gap": 0.0005373954772949219,
+          "kth_sim_gap_mirrored": 0.0006859302520751953
+        },
+        {
+          "query_row": 21107,
+          "label": 269,
+          "pred": 269,
+          "pred_flip": 270,
+          "vote_margin_rel": 0.008425630629062653,
+          "vote_margin_rel_mirrored": 0.011790863238275051,
+          "kth_sim_gap": 0.000522613525390625,
+          "kth_sim_gap_mirrored": 0.0005094408988952637
+        },
+        {
+          "query_row": 22354,
+          "label": 361,
+          "pred": 797,
+          "pred_flip": 475,
+          "vote_margin_rel": 5.3216906962916255e-05,
+          "vote_margin_rel_mirrored": 0.001916962442919612,
+          "kth_sim_gap": 0.01216772198677063,
+          "kth_sim_gap_mirrored": 0.010972917079925537
+        },
+        {
+          "query_row": 22363,
+          "label": 515,
+          "pred": 836,
+          "pred_flip": 837,
+          "vote_margin_rel": 0.019833838567137718,
+          "vote_margin_rel_mirrored": 0.03556687757372856,
+          "kth_sim_gap": 0.0007634758949279785,
+          "kth_sim_gap_mirrored": 0.00012880563735961914
+        },
+        {
+          "query_row": 22880,
+          "label": 303,
+          "pred": 303,
+          "pred_flip": 304,
+          "vote_margin_rel": 0.0018293180037289858,
+          "vote_margin_rel_mirrored": 0.004097432363778353,
+          "kth_sim_gap": 0.005756020545959473,
+          "kth_sim_gap_mirrored": 0.005616873502731323
+        },
+        {
+          "query_row": 22970,
+          "label": 542,
+          "pred": 709,
+          "pred_flip": 477,
+          "vote_margin_rel": 0.00034556505852378905,
+          "vote_margin_rel_mirrored": 0.004985122941434383,
+          "kth_sim_gap": 0.000675588846206665,
+          "kth_sim_gap_mirrored": 0.0018862485885620117
+        },
+        {
+          "query_row": 23395,
+          "label": 49,
+          "pred": 49,
+          "pred_flip": 99,
+          "vote_margin_rel": 0.04509720951318741,
+          "vote_margin_rel_mirrored": 0.04188788682222366,
+          "kth_sim_gap": 0.0010936856269836426,
+          "kth_sim_gap_mirrored": 0.001590818166732788
+        },
+        {
+          "query_row": 23546,
+          "label": 897,
+          "pred": 534,
+          "pred_flip": 897,
+          "vote_margin_rel": 0.0008018964435905218,
+          "vote_margin_rel_mirrored": 0.00339118717238307,
+          "kth_sim_gap": 0.010136991739273071,
+          "kth_sim_gap_mirrored": 0.009685754776000977
+        },
+        {
+          "query_row": 25116,
+          "label": 949,
+          "pred": 956,
+          "pred_flip": 995,
+          "vote_margin_rel": 0.0028903172351419926,
+          "vote_margin_rel_mirrored": 0.00379990809597075,
+          "kth_sim_gap": 0.0007070600986480713,
+          "kth_sim_gap_mirrored": 0.0007344484329223633
+        },
+        {
+          "query_row": 25165,
+          "label": 869,
+          "pred": 649,
+          "pred_flip": 825,
+          "vote_margin_rel": 0.03164464607834816,
+          "vote_margin_rel_mirrored": 0.006481158081442118,
+          "kth_sim_gap": 0.0005526542663574219,
+          "kth_sim_gap_mirrored": 0.001587510108947754
+        },
+        {
+          "query_row": 25440,
+          "label": 939,
+          "pred": 939,
+          "pred_flip": 943,
+          "vote_margin_rel": 0.002769470913335681,
+          "vote_margin_rel_mirrored": 0.004120047204196453,
+          "kth_sim_gap": 0.002022087574005127,
+          "kth_sim_gap_mirrored": 0.002138495445251465
+        },
+        {
+          "query_row": 25820,
+          "label": 782,
+          "pred": 664,
+          "pred_flip": 527,
+          "vote_margin_rel": 0.004804567433893681,
+          "vote_margin_rel_mirrored": 0.014328647404909134,
+          "kth_sim_gap": 0.0006570816040039062,
+          "kth_sim_gap_mirrored": 0.0003274679183959961
+        },
+        {
+          "query_row": 27023,
+          "label": 257,
+          "pred": 207,
+          "pred_flip": 208,
+          "vote_margin_rel": 0.0033717460464686155,
+          "vote_margin_rel_mirrored": 0.0010182452388107777,
+          "kth_sim_gap": 0.0020309090614318848,
+          "kth_sim_gap_mirrored": 0.0018050670623779297
+        },
+        {
+          "query_row": 27113,
+          "label": 636,
+          "pred": 748,
+          "pred_flip": 636,
+          "vote_margin_rel": 0.0007389277452602983,
+          "vote_margin_rel_mirrored": 0.0009282765095122159,
+          "kth_sim_gap": 0.0008507370948791504,
+          "kth_sim_gap_mirrored": 0.000884711742401123
+        },
+        {
+          "query_row": 27202,
+          "label": 400,
+          "pred": 667,
+          "pred_flip": 400,
+          "vote_margin_rel": 0.001455418998375535,
+          "vote_margin_rel_mirrored": 0.002985808067023754,
+          "kth_sim_gap": 0.0008217692375183105,
+          "kth_sim_gap_mirrored": 0.0019196271896362305
+        },
+        {
+          "query_row": 27447,
+          "label": 345,
+          "pred": 690,
+          "pred_flip": 345,
+          "vote_margin_rel": 0.01816656067967415,
+          "vote_margin_rel_mirrored": 0.03984540328383446,
+          "kth_sim_gap": 0.0016331672668457031,
+          "kth_sim_gap_mirrored": 0.00011414289474487305
+        },
+        {
+          "query_row": 27786,
+          "label": 907,
+          "pred": 907,
+          "pred_flip": 747,
+          "vote_margin_rel": 0.0020855122711509466,
+          "vote_margin_rel_mirrored": 0.0037319250404834747,
+          "kth_sim_gap": 0.0015052556991577148,
+          "kth_sim_gap_mirrored": 0.0008156895637512207
+        },
+        {
+          "query_row": 28097,
+          "label": 162,
+          "pred": 162,
+          "pred_flip": 161,
+          "vote_margin_rel": 0.00882725790143013,
+          "vote_margin_rel_mirrored": 0.03747433423995972,
+          "kth_sim_gap": 3.170967102050781e-05,
+          "kth_sim_gap_mirrored": 0.0012488365173339844
+        },
+        {
+          "query_row": 28272,
+          "label": 811,
+          "pred": 859,
+          "pred_flip": 882,
+          "vote_margin_rel": 0.024113869294524193,
+          "vote_margin_rel_mirrored": 0.0007425671210512519,
+          "kth_sim_gap": 0.0001645982265472412,
+          "kth_sim_gap_mirrored": 0.0006317198276519775
+        },
+        {
+          "query_row": 28402,
+          "label": 393,
+          "pred": 973,
+          "pred_flip": 393,
+          "vote_margin_rel": 0.01390731893479824,
+          "vote_margin_rel_mirrored": 0.046138059347867966,
+          "kth_sim_gap": 0.0004945993423461914,
+          "kth_sim_gap_mirrored": 0.00012415647506713867
+        },
+        {
+          "query_row": 28429,
+          "label": 414,
+          "pred": 446,
+          "pred_flip": 414,
+          "vote_margin_rel": 0.0017007754649966955,
+          "vote_margin_rel_mirrored": 0.00040415258263237774,
+          "kth_sim_gap": 0.0057517290115356445,
+          "kth_sim_gap_mirrored": 0.004417300224304199
+        },
+        {
+          "query_row": 28677,
+          "label": 854,
+          "pred": 854,
+          "pred_flip": 655,
+          "vote_margin_rel": 0.017271678894758224,
+          "vote_margin_rel_mirrored": 0.00949172955006361,
+          "kth_sim_gap": 0.0006498098373413086,
+          "kth_sim_gap_mirrored": 0.0018120408058166504
+        },
+        {
+          "query_row": 29443,
+          "label": 111,
+          "pred": 126,
+          "pred_flip": 310,
+          "vote_margin_rel": 0.005810507107526064,
+          "vote_margin_rel_mirrored": 0.01896507479250431,
+          "kth_sim_gap": 0.00038930773735046387,
+          "kth_sim_gap_mirrored": 0.0010977387428283691
+        },
+        {
+          "query_row": 29560,
+          "label": 630,
+          "pred": 514,
+          "pred_flip": 630,
+          "vote_margin_rel": 0.015992848202586174,
+          "vote_margin_rel_mirrored": 0.006570755969733,
+          "kth_sim_gap": 0.00045034289360046387,
+          "kth_sim_gap_mirrored": 0.00042384862899780273
+        },
+        {
+          "query_row": 29776,
+          "label": 167,
+          "pred": 162,
+          "pred_flip": 161,
+          "vote_margin_rel": 0.05128222331404686,
+          "vote_margin_rel_mirrored": 0.01827089674770832,
+          "kth_sim_gap": 0.00022357702255249023,
+          "kth_sim_gap_mirrored": 1.4126300811767578e-05
+        },
+        {
+          "query_row": 30041,
+          "label": 249,
+          "pred": 250,
+          "pred_flip": 248,
+          "vote_margin_rel": 0.0014221312012523413,
+          "vote_margin_rel_mirrored": 0.03699102625250816,
+          "kth_sim_gap": 0.0003923773765563965,
+          "kth_sim_gap_mirrored": 0.00041943788528442383
+        },
+        {
+          "query_row": 30197,
+          "label": 892,
+          "pred": 868,
+          "pred_flip": 787,
+          "vote_margin_rel": 0.008704678155481815,
+          "vote_margin_rel_mirrored": 0.013838780112564564,
+          "kth_sim_gap": 0.0010464191436767578,
+          "kth_sim_gap_mirrored": 0.0008126497268676758
+        },
+        {
+          "query_row": 30549,
+          "label": 782,
+          "pred": 526,
+          "pred_flip": 664,
+          "vote_margin_rel": 0.010694962926208973,
+          "vote_margin_rel_mirrored": 0.020370393991470337,
+          "kth_sim_gap": 5.048513412475586e-05,
+          "kth_sim_gap_mirrored": 0.00010377168655395508
+        },
+        {
+          "query_row": 31250,
+          "label": 733,
+          "pred": 715,
+          "pred_flip": 652,
+          "vote_margin_rel": 0.0010107008274644613,
+          "vote_margin_rel_mirrored": 0.00025078037288039923,
+          "kth_sim_gap": 0.002522379159927368,
+          "kth_sim_gap_mirrored": 0.0021212399005889893
+        },
+        {
+          "query_row": 31645,
+          "label": 159,
+          "pred": 242,
+          "pred_flip": 243,
+          "vote_margin_rel": 0.001962740207090974,
+          "vote_margin_rel_mirrored": 0.021747838705778122,
+          "kth_sim_gap": 0.0005604922771453857,
+          "kth_sim_gap_mirrored": 0.00019931793212890625
+        },
+        {
+          "query_row": 31719,
+          "label": 620,
+          "pred": 620,
+          "pred_flip": 681,
+          "vote_margin_rel": 0.020175950601696968,
+          "vote_margin_rel_mirrored": 0.026622356846928596,
+          "kth_sim_gap": 0.00039082765579223633,
+          "kth_sim_gap_mirrored": 0.0001493990421295166
+        },
+        {
+          "query_row": 32806,
+          "label": 201,
+          "pred": 193,
+          "pred_flip": 187,
+          "vote_margin_rel": 0.026905814185738564,
+          "vote_margin_rel_mirrored": 0.02154817245900631,
+          "kth_sim_gap": 5.7756900787353516e-05,
+          "kth_sim_gap_mirrored": 0.000511467456817627
+        },
+        {
+          "query_row": 33041,
+          "label": 742,
+          "pred": 713,
+          "pred_flip": 742,
+          "vote_margin_rel": 0.0019553881138563156,
+          "vote_margin_rel_mirrored": 0.0036654386203736067,
+          "kth_sim_gap": 0.0024872422218322754,
+          "kth_sim_gap_mirrored": 0.002408444881439209
+        },
+        {
+          "query_row": 33198,
+          "label": 655,
+          "pred": 700,
+          "pred_flip": 617,
+          "vote_margin_rel": 0.003663533367216587,
+          "vote_margin_rel_mirrored": 0.0002698394237086177,
+          "kth_sim_gap": 0.002418220043182373,
+          "kth_sim_gap_mirrored": 0.0026133060455322266
+        },
+        {
+          "query_row": 33562,
+          "label": 378,
+          "pred": 378,
+          "pred_flip": 373,
+          "vote_margin_rel": 0.035590313374996185,
+          "vote_margin_rel_mirrored": 0.0312642827630043,
+          "kth_sim_gap": 0.00040596723556518555,
+          "kth_sim_gap_mirrored": 0.0013256669044494629
+        },
+        {
+          "query_row": 33872,
+          "label": 55,
+          "pred": 62,
+          "pred_flip": 61,
+          "vote_margin_rel": 0.02225356549024582,
+          "vote_margin_rel_mirrored": 0.019681820645928383,
+          "kth_sim_gap": 0.0001990199089050293,
+          "kth_sim_gap_mirrored": 0.00035053491592407227
+        },
+        {
+          "query_row": 34603,
+          "label": 324,
+          "pred": 309,
+          "pred_flip": 325,
+          "vote_margin_rel": 0.0012173654977232218,
+          "vote_margin_rel_mirrored": 0.0019154283218085766,
+          "kth_sim_gap": 0.0070168375968933105,
+          "kth_sim_gap_mirrored": 0.005367398262023926
+        },
+        {
+          "query_row": 34654,
+          "label": 624,
+          "pred": 887,
+          "pred_flip": 624,
+          "vote_margin_rel": 0.01509417500346899,
+          "vote_margin_rel_mirrored": 0.0020215073600411415,
+          "kth_sim_gap": 0.0012103021144866943,
+          "kth_sim_gap_mirrored": 0.0010239183902740479
+        },
+        {
+          "query_row": 35014,
+          "label": 844,
+          "pred": 600,
+          "pred_flip": 823,
+          "vote_margin_rel": 0.007725164294242859,
+          "vote_margin_rel_mirrored": 0.0011058863019570708,
+          "kth_sim_gap": 0.0006211996078491211,
+          "kth_sim_gap_mirrored": 0.0006239116191864014
+        },
+        {
+          "query_row": 35149,
+          "label": 411,
+          "pred": 459,
+          "pred_flip": 865,
+          "vote_margin_rel": 0.029282525181770325,
+          "vote_margin_rel_mirrored": 0.0050385622307658195,
+          "kth_sim_gap": 0.00027740001678466797,
+          "kth_sim_gap_mirrored": 0.00016999244689941406
+        },
+        {
+          "query_row": 35355,
+          "label": 50,
+          "pred": 50,
+          "pred_flip": 49,
+          "vote_margin_rel": 0.05098150670528412,
+          "vote_margin_rel_mirrored": 0.004597366787493229,
+          "kth_sim_gap": 0.0026963353157043457,
+          "kth_sim_gap_mirrored": 0.0011574625968933105
+        },
+        {
+          "query_row": 36139,
+          "label": 501,
+          "pred": 841,
+          "pred_flip": 399,
+          "vote_margin_rel": 0.00938874389976263,
+          "vote_margin_rel_mirrored": 0.001579941133968532,
+          "kth_sim_gap": 0.005338191986083984,
+          "kth_sim_gap_mirrored": 0.0023079514503479004
+        },
+        {
+          "query_row": 36340,
+          "label": 664,
+          "pred": 664,
+          "pred_flip": 916,
+          "vote_margin_rel": 0.00031712252530269325,
+          "vote_margin_rel_mirrored": 0.0010131170274689794,
+          "kth_sim_gap": 0.0027671456336975098,
+          "kth_sim_gap_mirrored": 0.0031105875968933105
+        },
+        {
+          "query_row": 36653,
+          "label": 973,
+          "pred": 983,
+          "pred_flip": 973,
+          "vote_margin_rel": 0.006174012087285519,
+          "vote_margin_rel_mirrored": 0.0034635933116078377,
+          "kth_sim_gap": 0.0017877817153930664,
+          "kth_sim_gap_mirrored": 0.0008876919746398926
+        },
+        {
+          "query_row": 36692,
+          "label": 571,
+          "pred": 535,
+          "pred_flip": 488,
+          "vote_margin_rel": 0.0029685806948691607,
+          "vote_margin_rel_mirrored": 0.003373953513801098,
+          "kth_sim_gap": 0.004685550928115845,
+          "kth_sim_gap_mirrored": 0.0021607279777526855
+        },
+        {
+          "query_row": 36941,
+          "label": 673,
+          "pred": 613,
+          "pred_flip": 732,
+          "vote_margin_rel": 0.0013687527971342206,
+          "vote_margin_rel_mirrored": 0.0033060049172490835,
+          "kth_sim_gap": 0.0004087090492248535,
+          "kth_sim_gap_mirrored": 0.0002974271774291992
+        },
+        {
+          "query_row": 37313,
+          "label": 205,
+          "pred": 205,
+          "pred_flip": 223,
+          "vote_margin_rel": 0.00018057211127597839,
+          "vote_margin_rel_mirrored": 0.002284437185153365,
+          "kth_sim_gap": 0.00326693058013916,
+          "kth_sim_gap_mirrored": 0.0020173192024230957
+        },
+        {
+          "query_row": 37694,
+          "label": 733,
+          "pred": 840,
+          "pred_flip": 872,
+          "vote_margin_rel": 0.004162495024502277,
+          "vote_margin_rel_mirrored": 0.06525029987096786,
+          "kth_sim_gap": 0.0008158385753631592,
+          "kth_sim_gap_mirrored": 0.00017306208610534668
+        },
+        {
+          "query_row": 39559,
+          "label": 675,
+          "pred": 867,
+          "pred_flip": 675,
+          "vote_margin_rel": 0.0010269512422382832,
+          "vote_margin_rel_mirrored": 0.0036367245484143496,
+          "kth_sim_gap": 0.0005617737770080566,
+          "kth_sim_gap_mirrored": 0.0010115504264831543
+        },
+        {
+          "query_row": 40114,
+          "label": 34,
+          "pred": 34,
+          "pred_flip": 33,
+          "vote_margin_rel": 0.019076436758041382,
+          "vote_margin_rel_mirrored": 0.002834009239450097,
+          "kth_sim_gap": 0.0001112222671508789,
+          "kth_sim_gap_mirrored": 0.0002970695495605469
+        },
+        {
+          "query_row": 40681,
+          "label": 775,
+          "pred": 639,
+          "pred_flip": 655,
+          "vote_margin_rel": 0.009586840867996216,
+          "vote_margin_rel_mirrored": 0.020920483395457268,
+          "kth_sim_gap": 0.00018024444580078125,
+          "kth_sim_gap_mirrored": 8.612871170043945e-06
+        },
+        {
+          "query_row": 41383,
+          "label": 515,
+          "pred": 823,
+          "pred_flip": 652,
+          "vote_margin_rel": 0.004984391387552023,
+          "vote_margin_rel_mirrored": 0.002328266855329275,
+          "kth_sim_gap": 0.004497438669204712,
+          "kth_sim_gap_mirrored": 0.004140645265579224
+        },
+        {
+          "query_row": 41411,
+          "label": 705,
+          "pred": 757,
+          "pred_flip": 874,
+          "vote_margin_rel": 0.013753450475633144,
+          "vote_margin_rel_mirrored": 0.010747796855866909,
+          "kth_sim_gap": 0.0009642243385314941,
+          "kth_sim_gap_mirrored": 0.0004273653030395508
+        },
+        {
+          "query_row": 41444,
+          "label": 676,
+          "pred": 205,
+          "pred_flip": 232,
+          "vote_margin_rel": 0.0006755909998901188,
+          "vote_margin_rel_mirrored": 0.005479996092617512,
+          "kth_sim_gap": 0.0038432180881500244,
+          "kth_sim_gap_mirrored": 0.004516631364822388
+        },
+        {
+          "query_row": 42078,
+          "label": 248,
+          "pred": 250,
+          "pred_flip": 248,
+          "vote_margin_rel": 0.0363713763654232,
+          "vote_margin_rel_mirrored": 0.037467360496520996,
+          "kth_sim_gap": 9.03010368347168e-05,
+          "kth_sim_gap_mirrored": 1.4901161193847656e-06
+        },
+        {
+          "query_row": 42085,
+          "label": 73,
+          "pred": 74,
+          "pred_flip": 77,
+          "vote_margin_rel": 0.03361570090055466,
+          "vote_margin_rel_mirrored": 0.005085339304059744,
+          "kth_sim_gap": 0.0009301304817199707,
+          "kth_sim_gap_mirrored": 0.0006845593452453613
+        },
+        {
+          "query_row": 42211,
+          "label": 969,
+          "pred": 659,
+          "pred_flip": 967,
+          "vote_margin_rel": 0.006503350101411343,
+          "vote_margin_rel_mirrored": 0.0041695949621498585,
+          "kth_sim_gap": 0.001958876848220825,
+          "kth_sim_gap_mirrored": 0.0024012327194213867
+        },
+        {
+          "query_row": 42294,
+          "label": 581,
+          "pred": 581,
+          "pred_flip": 468,
+          "vote_margin_rel": 0.0006299785454757512,
+          "vote_margin_rel_mirrored": 0.0011849388247355819,
+          "kth_sim_gap": 0.0007523298263549805,
+          "kth_sim_gap_mirrored": 8.684396743774414e-05
+        },
+        {
+          "query_row": 42591,
+          "label": 302,
+          "pred": 304,
+          "pred_flip": 307,
+          "vote_margin_rel": 0.012738924473524094,
+          "vote_margin_rel_mirrored": 0.01545856986194849,
+          "kth_sim_gap": 8.392333984375e-05,
+          "kth_sim_gap_mirrored": 0.0001563429832458496
+        },
+        {
+          "query_row": 42834,
+          "label": 725,
+          "pred": 849,
+          "pred_flip": 505,
+          "vote_margin_rel": 0.0009962235344573855,
+          "vote_margin_rel_mirrored": 0.000689164677169174,
+          "kth_sim_gap": 0.0036794543266296387,
+          "kth_sim_gap_mirrored": 0.0035076141357421875
+        },
+        {
+          "query_row": 43264,
+          "label": 32,
+          "pred": 32,
+          "pred_flip": 37,
+          "vote_margin_rel": 0.0387401282787323,
+          "vote_margin_rel_mirrored": 0.05370790511369705,
+          "kth_sim_gap": 0.002204716205596924,
+          "kth_sim_gap_mirrored": 0.0004736185073852539
+        },
+        {
+          "query_row": 43384,
+          "label": 775,
+          "pred": 775,
+          "pred_flip": 669,
+          "vote_margin_rel": 0.008926530368626118,
+          "vote_margin_rel_mirrored": 0.008351986296474934,
+          "kth_sim_gap": 5.5730342864990234e-05,
+          "kth_sim_gap_mirrored": 0.00021395087242126465
+        },
+        {
+          "query_row": 43695,
+          "label": 228,
+          "pred": 267,
+          "pred_flip": 229,
+          "vote_margin_rel": 0.002890291390940547,
+          "vote_margin_rel_mirrored": 0.0010310873622074723,
+          "kth_sim_gap": 0.00017589330673217773,
+          "kth_sim_gap_mirrored": 0.002735227346420288
+        },
+        {
+          "query_row": 43736,
+          "label": 215,
+          "pred": 215,
+          "pred_flip": 218,
+          "vote_margin_rel": 0.03251191973686218,
+          "vote_margin_rel_mirrored": 0.037980660796165466,
+          "kth_sim_gap": 6.67572021484375e-06,
+          "kth_sim_gap_mirrored": 0.00013428926467895508
+        },
+        {
+          "query_row": 44636,
+          "label": 926,
+          "pred": 925,
+          "pred_flip": 926,
+          "vote_margin_rel": 0.0019511203281581402,
+          "vote_margin_rel_mirrored": 0.0004414959403220564,
+          "kth_sim_gap": 0.0012847185134887695,
+          "kth_sim_gap_mirrored": 0.001681506633758545
+        },
+        {
+          "query_row": 44643,
+          "label": 35,
+          "pred": 37,
+          "pred_flip": 35,
+          "vote_margin_rel": 0.02358286827802658,
+          "vote_margin_rel_mirrored": 0.007058107294142246,
+          "kth_sim_gap": 0.0007339119911193848,
+          "kth_sim_gap_mirrored": 5.0902366638183594e-05
+        },
+        {
+          "query_row": 45084,
+          "label": 676,
+          "pred": 235,
+          "pred_flip": 255,
+          "vote_margin_rel": 0.010211757384240627,
+          "vote_margin_rel_mirrored": 0.07246307283639908,
+          "kth_sim_gap": 0.00010669231414794922,
+          "kth_sim_gap_mirrored": 0.0003014206886291504
+        },
+        {
+          "query_row": 45376,
+          "label": 906,
+          "pred": 906,
+          "pred_flip": 819,
+          "vote_margin_rel": 0.004080502316355705,
+          "vote_margin_rel_mirrored": 0.02211477793753147,
+          "kth_sim_gap": 0.00044795870780944824,
+          "kth_sim_gap_mirrored": 0.0004654526710510254
+        },
+        {
+          "query_row": 45446,
+          "label": 444,
+          "pred": 414,
+          "pred_flip": 444,
+          "vote_margin_rel": 7.19742092769593e-05,
+          "vote_margin_rel_mirrored": 0.0004814299172721803,
+          "kth_sim_gap": 0.0039525628089904785,
+          "kth_sim_gap_mirrored": 0.004785060882568359
+        },
+        {
+          "query_row": 45551,
+          "label": 32,
+          "pred": 30,
+          "pred_flip": 32,
+          "vote_margin_rel": 0.00864375475794077,
+          "vote_margin_rel_mirrored": 0.07130394876003265,
+          "kth_sim_gap": 0.0006316900253295898,
+          "kth_sim_gap_mirrored": 0.0002643465995788574
+        },
+        {
+          "query_row": 46094,
+          "label": 596,
+          "pred": 568,
+          "pred_flip": 652,
+          "vote_margin_rel": 0.0021945873741060495,
+          "vote_margin_rel_mirrored": 0.0011757755419239402,
+          "kth_sim_gap": 0.0015644729137420654,
+          "kth_sim_gap_mirrored": 0.0022771060466766357
+        },
+        {
+          "query_row": 46110,
+          "label": 975,
+          "pred": 625,
+          "pred_flip": 975,
+          "vote_margin_rel": 7.872671994846314e-05,
+          "vote_margin_rel_mirrored": 0.001548407832160592,
+          "kth_sim_gap": 0.0030407309532165527,
+          "kth_sim_gap_mirrored": 0.003675699234008789
+        },
+        {
+          "query_row": 46710,
+          "label": 775,
+          "pred": 969,
+          "pred_flip": 824,
+          "vote_margin_rel": 0.0010315632680431008,
+          "vote_margin_rel_mirrored": 0.005934782791882753,
+          "kth_sim_gap": 0.001500844955444336,
+          "kth_sim_gap_mirrored": 0.0003725886344909668
+        },
+        {
+          "query_row": 46751,
+          "label": 657,
+          "pred": 744,
+          "pred_flip": 652,
+          "vote_margin_rel": 0.002776853274554014,
+          "vote_margin_rel_mirrored": 0.0010803757468238473,
+          "kth_sim_gap": 0.0005601048469543457,
+          "kth_sim_gap_mirrored": 0.00048220157623291016
+        },
+        {
+          "query_row": 48165,
+          "label": 483,
+          "pred": 663,
+          "pred_flip": 698,
+          "vote_margin_rel": 0.00045024484279565513,
+          "vote_margin_rel_mirrored": 0.0010056678438559175,
+          "kth_sim_gap": 0.0037693381309509277,
+          "kth_sim_gap_mirrored": 0.0016393959522247314
+        },
+        {
+          "query_row": 48401,
+          "label": 228,
+          "pred": 265,
+          "pred_flip": 203,
+          "vote_margin_rel": 0.002603632165119052,
+          "vote_margin_rel_mirrored": 0.005043206736445427,
+          "kth_sim_gap": 0.0013591349124908447,
+          "kth_sim_gap_mirrored": 0.003441452980041504
+        },
+        {
+          "query_row": 48503,
+          "label": 266,
+          "pred": 266,
+          "pred_flip": 267,
+          "vote_margin_rel": 0.012892812490463257,
+          "vote_margin_rel_mirrored": 0.04601799324154854,
+          "kth_sim_gap": 0.0008746981620788574,
+          "kth_sim_gap_mirrored": 8.636713027954102e-05
+        },
+        {
+          "query_row": 48874,
+          "label": 461,
+          "pred": 793,
+          "pred_flip": 740,
+          "vote_margin_rel": 0.0032473145984113216,
+          "vote_margin_rel_mirrored": 0.006189652252942324,
+          "kth_sim_gap": 0.0010791420936584473,
+          "kth_sim_gap_mirrored": 0.0019428133964538574
+        },
+        {
+          "query_row": 49080,
+          "label": 872,
+          "pred": 282,
+          "pred_flip": 281,
+          "vote_margin_rel": 0.0017038487130776048,
+          "vote_margin_rel_mirrored": 0.0646897628903389,
+          "kth_sim_gap": 0.00022870302200317383,
+          "kth_sim_gap_mirrored": 0.0001849532127380371
+        },
+        {
+          "query_row": 49581,
+          "label": 441,
+          "pred": 549,
+          "pred_flip": 441,
+          "vote_margin_rel": 0.004329918418079615,
+          "vote_margin_rel_mirrored": 0.007179769221693277,
+          "kth_sim_gap": 3.972649574279785e-05,
+          "kth_sim_gap_mirrored": 0.001189112663269043
+        },
+        {
+          "query_row": 49723,
+          "label": 101,
+          "pred": 101,
+          "pred_flip": 386,
+          "vote_margin_rel": 0.016911344602704048,
+          "vote_margin_rel_mirrored": 0.05561669543385506,
+          "kth_sim_gap": 8.440017700195312e-05,
+          "kth_sim_gap_mirrored": 0.0010303258895874023
+        },
+        {
+          "query_row": 49743,
+          "label": 837,
+          "pred": 665,
+          "pred_flip": 444,
+          "vote_margin_rel": 0.029268212616443634,
+          "vote_margin_rel_mirrored": 0.0362594835460186,
+          "kth_sim_gap": 5.367398262023926e-05,
+          "kth_sim_gap_mirrored": 0.0011478662490844727
+        },
+        {
+          "query_row": 49764,
+          "label": 502,
+          "pred": 774,
+          "pred_flip": 502,
+          "vote_margin_rel": 0.007133068982511759,
+          "vote_margin_rel_mirrored": 0.0014634752878919244,
+          "kth_sim_gap": 0.00841975212097168,
+          "kth_sim_gap_mirrored": 0.009648442268371582
+        }
+      ],
+      "git_hash": "87f1d9b1e6b634c250ce8aeceae73278e54dccb3",
+      "date_utc": "2026-11-20T12:07:47Z"
+    }
+  },
+  "model": "dinov2_vitb14_reg",
+  "model_key": "dinov2_vitb14_reg-5ea0d7431336",
+  "loader_info": {
+    "method": "mirror_exact",
+    "family": "mirror",
+    "variant": "coco",
+    "step": 780
+  },
+  "format": "fp-knn-v1",
+  "tag": "step780",
+  "run_dir": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_coco/s0",
+  "step": 780,
+  "original": false,
+  "checkpoint": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_coco/s0/ckpt/step780.pt",
+  "checkpoint_sha256": "446be1d3364be0ebb596ef47020409f4acefe89d8a42fc9e4f1fd3c8cb21b18c",
+  "data": "cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)",
+  "original_reference": {
+    "bf16": {
+      "top1": 78.93800139427185,
+      "top1_mirrored_queries": 78.9139986038208,
+      "flip_consistency": 96.315997838974,
+      "n_disagree": 1842,
+      "max_vote_margin_rel": 1.0,
+      "max_vote_margin_rel_one_copy": 0.8837220072746277,
+      "n_disagree_not_near_tie": 1842,
+      "near_tie_rel": 0.0001,
+      "feature_flip_max_abs": 0.1562861204147339,
+      "feature_identical_pct": 0.0,
+      "pass": "bf16",
+      "amp": "bf16",
+      "flip_average": false,
+      "n_bank": 100000,
+      "n_query": 50000,
+      "k": 20,
+      "temperature": 0.07,
+      "batch_size": 512,
+      "forward_passes_per_image": 1,
+      "seconds": 105.93,
+      "precision": "bf16 autocast for every forward pass, TF32 off; k-NN in fp32",
+      "bank_subset": null,
+      "query_subset": null,
+      "n_disagree_listed": 1000
+    }
+  },
+  "request": {
+    "run_dir": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_coco/s0",
+    "step": 780,
+    "passes": [
+      "bf16"
+    ],
+    "n_query": 50000,
+    "priority": 2,
+    "out_dir": null,
+    "original": false,
+    "model": null,
+    "fp32_n_query": null,
+    "fp32_bank_per_class": null,
+    "with_original": [
+      "bf16"
+    ],
+    "flip_average": false,
+    "cost": false,
+    "experiment": null,
+    "id": null,
+    "ckpt": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_coco/s0/ckpt/step780.pt",
+    "tags": {
+      "experiment": "A02",
+      "group": "main",
+      "model": "dinov2_vitb14_reg",
+      "method": "mirror_exact",
+      "variant": "coco",
+      "seed": 0,
+      "student": "mirror_exact_coco"
+    },
+    "created_utc": "2026-11-20T11:59:24Z"
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "experiment": "Tier 2 ImageNet linear probe",
+  "model": "dinov2_vitb14_reg",
+  "variants": [
+    "original",
+    "vexact_s0",
+    "vexact_s1",
+    "vexact_s2",
+    "best_svdllm_s0",
+    "best_svdllm_s1",
+    "best_svdllm_s2"
+  ],
+  "args": {
+    "model": "dinov2_vitb14_reg",
+    "variants": "original",
+    "out": "runs/final/A10/t2",
+    "operators": null,
+    "m1_structure": null,
+    "heal_dir": null,
+    "heal_config": null,
+    "vexact_dir": null,
+    "vexact_checkpoint": null,
+    "vexact_config": null,
+    "healed_run": [
+      "vexact_s0=runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+      "vexact_s1=runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1",
+      "vexact_s2=runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2",
+      "best_svdllm_s0=runs/final/main/dinov2_vitb14_reg/svdllm/s0",
+      "best_svdllm_s1=runs/final/main/dinov2_vitb14_reg/svdllm/s1",
+      "best_svdllm_s2=runs/final/main/dinov2_vitb14_reg/svdllm/s2"
+    ],
+    "full_patch_view": false,
+    "random_seed": 1,
+    "seed": 0,
+    "cache_dir": "cache",
+    "img_size": 224,
+    "batch_size": 256,
+    "num_workers": 6,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "no_wd_refine": false,
+    "holdout_frac": 0.1,
+    "max_iter": 1000,
+    "history_size": 20,
+    "tol_grad": 1e-06,
+    "probe_tf32": false,
+    "skip_probe": false,
+    "force_features": false,
+    "force_probe": false,
+    "memory_fraction": null,
+    "device": null,
+    "tiny": false,
+    "tiny_classes": 4,
+    "tiny_bank_per_class": 20,
+    "tiny_val_per_class": 8
+  },
+  "paths": {
+    "operators": "runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "m1_structure": "runs/m1/m1_structure.npz",
+    "heal_dir": "runs/m3_pilot",
+    "vexact_dir": "runs/m3_vexact",
+    "vexact_checkpoint": null,
+    "vexact_config": null,
+    "healed_runs": {
+      "vexact_s0": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+      "vexact_s1": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1",
+      "vexact_s2": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2",
+      "best_svdllm_s0": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0",
+      "best_svdllm_s1": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s1",
+      "best_svdllm_s2": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2"
+    }
+  },
+  "git": {
+    "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "seed": 0,
+  "feature_recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+  "timing": {
+    "stages": {
+      "load": 1.96
+    },
+    "variants": {
+      "original": {
+        "build original": 0.0,
+        "extract original bank": 58.46,
+        "extract original val": 28.42,
+        "probe original": 360.83
+      },
+      "vexact_s0": {
+        "build vexact_s0": 2.31,
+        "extract vexact_s0 bank": 65.42,
+        "extract vexact_s0 val": 25.63,
+        "probe vexact_s0": 194.75
+      },
+      "vexact_s1": {
+        "build vexact_s1": 2.14,
+        "extract vexact_s1 bank": 52.1,
+        "extract vexact_s1 val": 33.33,
+        "probe vexact_s1": 219.06
+      },
+      "vexact_s2": {
+        "build vexact_s2": 1.7,
+        "extract vexact_s2 bank": 50.64,
+        "extract vexact_s2 val": 32.01,
+        "probe vexact_s2": 75.3
+      },
+      "best_svdllm_s0": {
+        "build best_svdllm_s0": 1.82,
+        "extract best_svdllm_s0 bank": 82.25,
+        "extract best_svdllm_s0 val": 34.72,
+        "probe best_svdllm_s0": 255.07
+      },
+      "best_svdllm_s1": {
+        "build best_svdllm_s1": 1.82,
+        "extract best_svdllm_s1 bank": 100.72,
+        "extract best_svdllm_s1 val": 44.74,
+        "probe best_svdllm_s1": 169.93
+      },
+      "best_svdllm_s2": {
+        "build best_svdllm_s2": 2.27,
+        "extract best_svdllm_s2 bank": 153.1,
+        "extract best_svdllm_s2 val": 70.35,
+        "probe best_svdllm_s2": 149.77
+      }
+    },
+    "total_s": 2280.84
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "experiment": "A09",
+  "date_utc": "2026-11-20T16:53:25Z",
+  "git": {
+    "git_hash": "547224c624c537c29843f5f72a86b28fdabd5685",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_FINAL_PHASE.md",
+    "sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+    "recorded_sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+    "recorded_commit": "fd83c955d76a8e85228c7e9ed736e29727979540",
+    "ok": true,
+    "reason": "unchanged since the recorded commit"
+  },
+  "config": {
+    "run": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+    "step": null,
+    "model": "dinov2_vitb14_reg",
+    "span_structure": null,
+    "img_size": 224,
+    "n_images": 1000,
+    "batch_size": 16,
+    "forms": "dense,even_odd",
+    "bf16_weights": false,
+    "align": 8,
+    "no_original": false,
+    "a09_2_floor": "exact",
+    "flip_queries": 0,
+    "flip_bank_per_class": 0,
+    "flip_precisions": "float32,bf16_autocast",
+    "no_flip": false,
+    "knn_k": 20,
+    "knn_temperature": 0.07,
+    "knn_batch_size": 256,
+    "knn_impl": "knn_fast",
+    "bitwise_images": 16,
+    "no_bitwise": false,
+    "cache_dir": "cache",
+    "num_workers": 4,
+    "seed": 0,
+    "out": "results/A09/dinov2_vitb14_reg",
+    "force": false,
+    "gpu_frac": 0.25,
+    "device": null,
+    "dry_run": false,
+    "dry_model": "dinov2_reg"
+  },
+  "seeds": {
+    "seed": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+      "loader": "mirror.final.heal.students.load_student",
+      "method": "mirror_exact",
+      "step": null,
+      "family": "mirror"
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 4270.14,
+  "peak_memory_gb": 7.914,
+  "extra": {
+    "n_images": 1000,
+    "forms": [
+      "dense",
+      "even_odd"
+    ],
+    "scores": {
+      "A09-1": "PASS",
+      "A09-2": "FAIL",
+      "A09-3": "REPORT"
+    }
+  }
+}

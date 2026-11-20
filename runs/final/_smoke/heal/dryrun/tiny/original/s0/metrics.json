@@ -1,0 +1,252 @@
+{
+  "config": {
+    "blocks": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "seed": 0,
+    "lr": 0.001,
+    "epochs": 1.0,
+    "max_steps": 4,
+    "batch_size": 8,
+    "micro_batch": 4,
+    "weight_decay": 0.05,
+    "decay_1d": false,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "warmup_frac": 0.05,
+    "warmup_steps": null,
+    "min_lr_ratio": 0.0,
+    "grad_clip": null,
+    "crop_size": 56,
+    "crop_scale": [
+      0.35,
+      1.0
+    ],
+    "crop_ratio": [
+      0.75,
+      1.3333333333333333
+    ],
+    "hflip_p": 0.5,
+    "w_cls": 1.0,
+    "w_patch": 1.0,
+    "w_block": 1.0,
+    "normaliser": "fixed",
+    "calib_images": 8,
+    "train_scope": "all",
+    "grad_checkpoint": false,
+    "amp": "auto",
+    "share_prefix": true,
+    "eval_every": 2,
+    "eval_batch": null,
+    "max_heldout": null,
+    "log_every": 2,
+    "prefetch": 0,
+    "save_checkpoint": true,
+    "checkpoint_path": null
+  },
+  "seed": 0,
+  "git_hash": "3a848ec7edd845dbad94dacdd053b64774f148b2",
+  "git_dirty": false,
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda:0",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "student": "original",
+  "tags": {
+    "experiment": "dryrun",
+    "group": "dryrun",
+    "model": "tiny",
+    "method": "original",
+    "variant": null,
+    "seed": 0
+  },
+  "target_mode": {
+    "final": "symmetrised",
+    "blocks": "raw",
+    "k": null,
+    "logits": false,
+    "input_transform": null,
+    "block_map": null,
+    "reg_perm": []
+  },
+  "target_key": "('symmetrised', 'raw', None, '22dd0956b1627f9f', None, None, False, (0, 1, 2, 3))",
+  "constraints": [
+    {
+      "type": "StructuredTrainable",
+      "blocks": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "kinds": {},
+      "embeddings_train": true,
+      "frozen": "everything outside the converted blocks and the embeddings; norm affines and LayerScale inside the converted blocks"
+    }
+  ],
+  "constraint_checks": {
+    "0:StructuredTrainable": {
+      "ok": true,
+      "n_matrices": 0,
+      "kinds": {},
+      "numerical_ranks": [],
+      "target_ranks": [],
+      "per_matrix": []
+    }
+  },
+  "n_trainable": 237760,
+  "n_trainable_tensors": 36,
+  "trainable_names": [
+    "cls_token",
+    "pos_embed",
+    "patch_embed.proj.weight",
+    "patch_embed.proj.bias",
+    "blocks.0.attn.qkv.weight",
+    "blocks.0.attn.qkv.bias",
+    "blocks.0.attn.proj.weight",
+    "blocks.0.attn.proj.bias",
+    "blocks.0.mlp.fc1.weight",
+    "blocks.0.mlp.fc1.bias",
+    "blocks.0.mlp.fc2.weight",
+    "blocks.0.mlp.fc2.bias",
+    "blocks.1.attn.qkv.weight",
+    "blocks.1.attn.qkv.bias",
+    "blocks.1.attn.proj.weight",
+    "blocks.1.attn.proj.bias",
+    "blocks.1.mlp.fc1.weight",
+    "blocks.1.mlp.fc1.bias",
+    "blocks.1.mlp.fc2.weight",
+    "blocks.1.mlp.fc2.bias",
+    "blocks.2.attn.qkv.weight",
+    "blocks.2.attn.qkv.bias",
+    "blocks.2.attn.proj.weight",
+    "blocks.2.attn.proj.bias",
+    "blocks.2.mlp.fc1.weight",
+    "blocks.2.mlp.fc1.bias",
+    "blocks.2.mlp.fc2.weight",
+    "blocks.2.mlp.fc2.bias",
+    "blocks.3.attn.qkv.weight",
+    "blocks.3.attn.qkv.bias",
+    "blocks.3.attn.proj.weight",
+    "blocks.3.attn.proj.bias",
+    "blocks.3.mlp.fc1.weight",
+    "blocks.3.mlp.fc1.bias",
+    "blocks.3.mlp.fc2.weight",
+    "blocks.3.mlp.fc2.bias"
+  ],
+  "amp": "bf16",
+  "share_prefix_used": false,
+  "first_grad_block": 0,
+  "normalisers": {
+    "block0": 0.5353627691326499,
+    "block1": 0.5355074768641335,
+    "block2": 0.539106991924195,
+    "block3": 0.5395494053119738,
+    "cls": 1.018357849124782,
+    "patch": 0.6071161999626057
+  },
+  "weights": {
+    "cls": 1.0,
+    "patch": 1.0,
+    "block0": 1.0,
+    "block1": 1.0,
+    "block2": 1.0,
+    "block3": 1.0
+  },
+  "total_steps": 4,
+  "steps_done": 4,
+  "warmup_steps": 0,
+  "steps_per_epoch": 4,
+  "images_seen": 32,
+  "diverged": false,
+  "heldout_images": 8,
+  "heldout_initial": {
+    "total": 0.8798483101399105,
+    "block0": 5.116500812009208e-11,
+    "block1": 6.224401440042477e-11,
+    "block2": 4.3061512657562077e-10,
+    "block3": 1.4326484144497573e-09,
+    "cls": 0.01605772658655241,
+    "patch": 0.8637905815766855
+  },
+  "heldout_final": {
+    "total": 0.9508455646939546,
+    "block0": 0.00979558406210753,
+    "block1": 0.011748724961875137,
+    "block2": 0.015009078466045617,
+    "block3": 0.019600633560071364,
+    "cls": 0.10523014400254414,
+    "patch": 0.7894613996413108
+  },
+  "train_loss_first": 0.8194696111604571,
+  "train_loss_last": 0.8643602579832077,
+  "train_loss_last10_mean": 1.0933383092051372,
+  "seconds_total": 0.6,
+  "seconds_train": 0.5,
+  "peak_memory_gb": 0.0773625373840332,
+  "persistent_memory_gb": 0.0038,
+  "checkpoint": "/home/Mirror_CPAL/runs/final/_smoke/heal/dryrun/tiny/original/s0/ckpt/step4.pt",
+  "lockstep": {
+    "students": [
+      "mirror_exact",
+      "svdllm",
+      "original"
+    ],
+    "data": {
+      "mode": "stream",
+      "n_train": 32,
+      "n_heldout": 8,
+      "image_size": 64,
+      "resident_gb": 0.0,
+      "prefetch": 0
+    },
+    "fused_adamw": true,
+    "divergence_check": "device flag (found_inf), at flushes",
+    "teacher_flip": true,
+    "n_target_modes": 2
+  },
+  "resumed_from_step": null,
+  "hook_steps": [
+    0,
+    2,
+    4
+  ],
+  "hook_seconds": 0.05,
+  "state_path": "/home/Mirror_CPAL/runs/final/_smoke/heal/dryrun/tiny/_jobs/dryrun_2eb9c437/s0/train_state.pt",
+  "state_every": 2,
+  "job": "dryrun_2eb9c437",
+  "method": "original",
+  "variant": null,
+  "lr": 0.001,
+  "lr_selection": {
+    "given": true,
+    "best_lr": 0.001
+  },
+  "params": {
+    "model_params": 304424,
+    "model_params_stored": 304424,
+    "converted_params_kept": 196608,
+    "converted_params_dense": 196608,
+    "model_params_structured": 304424,
+    "model_params_original": 304424,
+    "model_params_frac": 1.0,
+    "params_source": "structured modules as executed"
+  },
+  "build": {
+    "method": "original",
+    "trainable": "must09",
+    "source": "the original model"
+  },
+  "complete": true
+}

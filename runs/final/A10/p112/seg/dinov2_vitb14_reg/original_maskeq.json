@@ -1,0 +1,171 @@
+{
+  "fields": {
+    "mask_eq_raw": 95.03088797073237,
+    "mask_eq_sym": 94.74133499409656,
+    "mask_eq_raw_n_differ": 24232697,
+    "mask_eq_sym_n_differ": 25644750,
+    "mask_eq_n_pixels": 487666546,
+    "mask_eq_n_images": 2000,
+    "mask_eq_raw_logit_diff_rel": 0.7980011939508277,
+    "mask_eq_sym_logit_diff_rel": 0.8005072559801631,
+    "mask_eq_mIoU_raw": 47.57792709990321,
+    "mask_eq_mIoU_sym": 47.56846962343364,
+    "mask_eq_operator": "A_L: last-layer per-layer operator (layer 12) from /home/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+    "mask_eq_precision": "fp32 (no autocast, TF32 off)",
+    "mask_eq_raw_max_rel_margin": 0.7574499647517423,
+    "mask_eq_sym_max_rel_margin": 0.7443490906450294,
+    "mask_eq_raw_n_differ_not_near_tie": 24232618,
+    "mask_eq_sym_n_differ_not_near_tie": 25644692
+  },
+  "result": {
+    "n_images": 2000,
+    "heads": [
+      "raw",
+      "sym"
+    ],
+    "seconds": 581.4,
+    "raw": {
+      "share": 95.03088797073237,
+      "n_pixels": 487666546,
+      "n_differ": 24232697,
+      "share_labelled": 95.4143373544048,
+      "n_labelled": 448102043,
+      "max_logit_diff": 15.914791107177734,
+      "max_logit_diff_rel": 0.7980011939508277,
+      "max_margin_of_differing_pixels": 9.945937156677246,
+      "mIoU": 47.57792709990321,
+      "aAcc": 80.97867052125892,
+      "mAcc": 59.37966787086973,
+      "max_rel_margin_of_differing_pixels": 0.7574499647517423,
+      "max_rel_margin_of_differing_pixels_one_copy": 0.5093986044422258,
+      "n_differ_not_near_tie": 24232618,
+      "near_tie_rel": 0.0001,
+      "rel_margin_histogram": {
+        "edges": [
+          0.0,
+          1e-10,
+          1e-09,
+          1e-08,
+          1e-07,
+          1e-06,
+          1e-05,
+          0.0001,
+          0.001,
+          0.01,
+          0.1,
+          1.0,
+          null
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          79,
+          7089,
+          663187,
+          17315749,
+          6246593,
+          0
+        ]
+      },
+      "rel_margins_of_differing_pixels": null,
+      "n_differ_recorded": 1000000
+    },
+    "sym": {
+      "share": 94.74133499409656,
+      "n_pixels": 487666546,
+      "n_differ": 25644750,
+      "share_labelled": 95.13086040538316,
+      "n_labelled": 448102043,
+      "max_logit_diff": 15.91062068939209,
+      "max_logit_diff_rel": 0.8005072559801631,
+      "max_margin_of_differing_pixels": 9.908869743347168,
+      "mIoU": 47.56846962343364,
+      "aAcc": 80.95541064069641,
+      "mAcc": 59.36770306599377,
+      "max_rel_margin_of_differing_pixels": 0.7443490906450294,
+      "max_rel_margin_of_differing_pixels_one_copy": 0.515236528750603,
+      "n_differ_not_near_tie": 25644692,
+      "near_tie_rel": 0.0001,
+      "rel_margin_histogram": {
+        "edges": [
+          0.0,
+          1e-10,
+          1e-09,
+          1e-08,
+          1e-07,
+          1e-06,
+          1e-05,
+          0.0001,
+          0.001,
+          0.01,
+          0.1,
+          1.0,
+          null
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          58,
+          6400,
+          629948,
+          17940432,
+          7067912,
+          0
+        ]
+      },
+      "rel_margins_of_differing_pixels": null,
+      "n_differ_recorded": 1000000
+    },
+    "margin_definition": "relative top-two margin (top-1 logit - top-2 logit) / max(|top-1|, |top-2|) at label resolution, in both copies of a differing pixel (the original image's logits mirrored into place, and the mirrored image's logits); max_rel_margin_of_differing_pixels is the largest over differing pixels of the larger copy (a near-tie needs both copies below 1e-4), max_rel_margin_of_differing_pixels_one_copy of the smaller copy (CORE-06 convention)",
+    "margin_records_file": "original_maskeq_margins.npz"
+  },
+  "settings": {
+    "recipe": "t2seg-maskeq-v1",
+    "run": {
+      "recipe": "t2seg-v1",
+      "model": "dinov2_vitb14_reg",
+      "variant": "original",
+      "crop": 448,
+      "iters": 8000,
+      "batch": 16,
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "warmup": 300,
+      "min_lr_ratio": 0.0,
+      "bn": true,
+      "head_init_std": 0.01,
+      "seed": 0,
+      "eval_stride": 298,
+      "max_val_images": null,
+      "amp": "bf16",
+      "ignore_index": 255,
+      "dataset": {
+        "hf_id": "merve/scene_parse_150",
+        "revision": "b83d71b405b381bc5e495f7d497fb844a8de5ffc",
+        "counts": {
+          "train": 20210,
+          "val": 2000
+        },
+        "short_side": 448
+      },
+      "random_seed": null,
+      "sources": {}
+    },
+    "max_images": null,
+    "operator_file": {
+      "path": "/home/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz",
+      "sha256": "9ca69899622e2d2f9af4c7be180b9bdd1c8567ac9520622d1af36932b43965f6"
+    },
+    "precision": "fp32 (no autocast, TF32 off)",
+    "final_tokens": "full"
+  },
+  "operator": "A_L: last-layer per-layer operator (layer 12) from /home/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz"
+}

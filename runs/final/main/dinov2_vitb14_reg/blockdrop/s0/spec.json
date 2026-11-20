@@ -1,0 +1,189 @@
+{
+  "format": "final-blockdrop-v1",
+  "family": "blockdrop",
+  "method": "blockdrop",
+  "blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "kept": [
+    0,
+    1,
+    2,
+    4,
+    5,
+    7,
+    8,
+    9,
+    11
+  ],
+  "order": [
+    3,
+    6,
+    10
+  ],
+  "n_blocks_teacher": 12,
+  "block_map": {
+    "0": 0,
+    "1": 1,
+    "2": 2,
+    "3": 4,
+    "4": 5,
+    "5": 7,
+    "6": 8,
+    "7": 9,
+    "8": 11
+  },
+  "teacher_blocks": [
+    0,
+    1,
+    2,
+    4,
+    5,
+    7,
+    8,
+    9,
+    11
+  ],
+  "base": {
+    "materialise_pos_embed": true,
+    "absorbed": true,
+    "fold": false
+  },
+  "targets": {
+    "blocks": "raw (student block j against teacher block kept[j])",
+    "final": "as every method"
+  },
+  "params": {
+    "params_model": 65315328,
+    "params_original": 86583552,
+    "params_removed": 21268224,
+    "params_frac": 0.7543618446145522,
+    "target": null,
+    "gap": null,
+    "eligible": null,
+    "block_params": 7089408
+  },
+  "trainable": "every block's weights and biases and the embeddings (patch embedding, position grid, CLS, registers); frozen: absorbed norm affines and LayerScale, final norm affine, mask token",
+  "adapter": {
+    "kind": "dinov2",
+    "hub_repo": "facebookresearch/dinov2",
+    "name": "dinov2_vitb14_reg",
+    "img_size": 224
+  },
+  "model": "dinov2_vitb14_reg",
+  "fp_heal": {
+    "loader": {
+      "kind": "module",
+      "module": "mirror.final.baselines.dense_students",
+      "function": "load_blockdrop"
+    },
+    "method": "blockdrop",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "raw",
+      "k": null,
+      "logits": false,
+      "input_transform": null,
+      "block_map": {
+        "0": 0,
+        "1": 1,
+        "2": 2,
+        "3": 4,
+        "4": 5,
+        "5": 7,
+        "6": 8,
+        "7": 9,
+        "8": 11
+      },
+      "reg_perm": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "builder_options": {},
+    "variant": null,
+    "lr": 0.0002,
+    "job": "main_s0",
+    "lr_selection": {
+      "best_lr": 0.0002,
+      "lrs": [
+        0.0001,
+        0.0002
+      ],
+      "budget_steps": 200,
+      "seed": 0,
+      "trials": [
+        {
+          "lr": 0.0001,
+          "heldout_loss": 2.391642652821571,
+          "heldout_terms": {
+            "total": 2.391642652821571,
+            "block0": 0.0029204736410686515,
+            "block1": 0.009107057669845965,
+            "block2": 0.04919336790077235,
+            "block3": 0.1454387741929059,
+            "block4": 0.15827642879113388,
+            "block5": 0.20001746469741297,
+            "block6": 0.21399338028085316,
+            "block7": 0.24970126826118572,
+            "block8": 0.4094766890984466,
+            "cls": 0.4729314278592748,
+            "patch": 0.48058632042867155
+          },
+          "heldout_initial": 7.584290345891397,
+          "train_loss_last": 2.4355131406337023,
+          "diverged": false,
+          "trial_dir": "/home/Mirror_CPAL/runs/final/lr/dinov2_vitb14_reg/blockdrop_lr1e-04/s0"
+        },
+        {
+          "lr": 0.0002,
+          "heldout_loss": 2.267834600022906,
+          "heldout_terms": {
+            "total": 2.267834600022906,
+            "block0": 0.005030595367021485,
+            "block1": 0.013464249038384817,
+            "block2": 0.0504678849861779,
+            "block3": 0.14278596367458007,
+            "block4": 0.15833092693543688,
+            "block5": 0.1947586053342754,
+            "block6": 0.20861748846412062,
+            "block7": 0.24356135434262685,
+            "block8": 0.380214333256903,
+            "cls": 0.42585727809940727,
+            "patch": 0.44474592052397194
+          },
+          "heldout_initial": 7.584290345891397,
+          "train_loss_last": 2.2974611003883183,
+          "diverged": false,
+          "trial_dir": "/home/Mirror_CPAL/runs/final/lr/dinov2_vitb14_reg/blockdrop_lr2e-04/s0"
+        }
+      ],
+      "lockstep": true,
+      "rule": "lowest held-out distillation loss on the LR-selection rows (centre view) after the trial budget, each trial with its own warm-up and cosine; ties go to the smaller rate; diverged trials score +inf",
+      "heldout_images": 5000,
+      "git_hash": "87f1d9b1e6b634c250ce8aeceae73278e54dccb3",
+      "git_dirty": true
+    },
+    "params": {
+      "params_model": 65315328,
+      "params_frac": 0.7543618446145522,
+      "target": null,
+      "gap": null,
+      "eligible": null,
+      "model_params": 64460544
+    }
+  },
+  "experiment": "A05",
+  "seed": 0,
+  "state_file": "ckpt/step780.pt"
+}

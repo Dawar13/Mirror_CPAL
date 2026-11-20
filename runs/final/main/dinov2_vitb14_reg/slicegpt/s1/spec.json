@@ -1,0 +1,2297 @@
+{
+  "format": "must09-healed-v1",
+  "family": "compressed",
+  "method": "slicegpt",
+  "blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": true,
+    "fold": true,
+    "even_head": false
+  },
+  "wrappers": [
+    {
+      "block": 0,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": [
+          768,
+          525
+        ],
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 1,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 2,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 3,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 4,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 5,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 6,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 7,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 8,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 9,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 10,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    },
+    {
+      "block": 11,
+      "type": "SlicedBlock",
+      "buffers": {
+        "entry": null,
+        "attn_shortcut": [
+          768,
+          525
+        ],
+        "mlp_shortcut": [
+          768,
+          525
+        ]
+      }
+    }
+  ],
+  "modules": [
+    {
+      "block": 0,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 0,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 0,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 0,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 1,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 2,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 3,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 4,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 4,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 4,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 4,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 5,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 5,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 5,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 5,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 6,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 6,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 6,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 6,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 7,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 7,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 7,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 7,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 8,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 8,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 8,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 8,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 9,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 9,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 9,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 9,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 10,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 10,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 10,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 10,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 11,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 3072,
+        "d_in": 525,
+        "d_out": 3072,
+        "bias": true
+      }
+    },
+    {
+      "block": 11,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "sliced",
+        "in": 3072,
+        "out": 768,
+        "d_in": 3072,
+        "d_out": 525,
+        "bias": true
+      }
+    },
+    {
+      "block": 11,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          },
+          {
+            "type": "sliced",
+            "in": 768,
+            "out": 768,
+            "d_in": 525,
+            "d_out": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 11,
+      "path": "attn.proj",
+      "module": {
+        "type": "sliced",
+        "in": 768,
+        "out": 768,
+        "d_in": 768,
+        "d_out": 525,
+        "bias": true
+      }
+    }
+  ],
+  "matrices": [
+    {
+      "block": 0,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.7706741200304096e-08,
+      "basis_in_sha": "b757661c7cd0318d",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 0,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 5.0826927855143297e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "8f3760704ff248cf",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 0,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.6678581799976134e-08,
+      "basis_in_sha": "0cdc14421c20030f",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 0,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.709262388230478e-08,
+      "basis_in_sha": "0cdc14421c20030f",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 0,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.7307809711028163e-08,
+      "basis_in_sha": "0cdc14421c20030f",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 0,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.4611430314618036e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "b757661c7cd0318d",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 1,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.8613329730065246e-08,
+      "basis_in_sha": "bf0d58ebacb2a122",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 1,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 5.424832758207921e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "e34d004be42cbf38",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 1,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.7304993663111135e-08,
+      "basis_in_sha": "8f3760704ff248cf",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 1,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.74274314359477e-08,
+      "basis_in_sha": "8f3760704ff248cf",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 1,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.828037006260996e-08,
+      "basis_in_sha": "8f3760704ff248cf",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 1,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.7190646240626594e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "bf0d58ebacb2a122",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 2,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.8926770234018357e-08,
+      "basis_in_sha": "264c43c3c56c8d6b",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 2,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 5.9092003411677794e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "2ef811187ed62a4a",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 2,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.8019942363643805e-08,
+      "basis_in_sha": "e34d004be42cbf38",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 2,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.79920146840495e-08,
+      "basis_in_sha": "e34d004be42cbf38",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 2,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.8682891716051225e-08,
+      "basis_in_sha": "e34d004be42cbf38",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 2,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.650412989501639e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "264c43c3c56c8d6b",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 3,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.82416666239495e-08,
+      "basis_in_sha": "7d731c4a1ab18f6c",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 3,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 3.775740099332577e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "dff70fa09498ce32",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 3,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.787645486081971e-08,
+      "basis_in_sha": "2ef811187ed62a4a",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 3,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.810549459354926e-08,
+      "basis_in_sha": "2ef811187ed62a4a",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 3,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.848206973516631e-08,
+      "basis_in_sha": "2ef811187ed62a4a",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 3,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.6975413076033814e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "7d731c4a1ab18f6c",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 4,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.844458861205111e-08,
+      "basis_in_sha": "1a7bfbedb6adf6b8",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 4,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 5.8459226889024937e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "f4493f3889504d92",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 4,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.822886024367191e-08,
+      "basis_in_sha": "dff70fa09498ce32",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 4,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.8184896164564394e-08,
+      "basis_in_sha": "dff70fa09498ce32",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 4,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.8530376187958426e-08,
+      "basis_in_sha": "dff70fa09498ce32",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 4,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 4.2111743390752254e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "1a7bfbedb6adf6b8",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 5,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.85136343302187e-08,
+      "basis_in_sha": "fbebc5970be7f191",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 5,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 3.832438454713001e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "1ab49c45d341572d",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 5,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.875611000843601e-08,
+      "basis_in_sha": "f4493f3889504d92",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 5,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.88459777075714e-08,
+      "basis_in_sha": "f4493f3889504d92",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 5,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.871982600398365e-08,
+      "basis_in_sha": "f4493f3889504d92",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 5,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.89003219170709e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "fbebc5970be7f191",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 6,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.84216428733433e-08,
+      "basis_in_sha": "461bf7e1716890e7",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 6,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 4.7283053480219375e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "11611ca9cb52ebbe",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 6,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.868369781382734e-08,
+      "basis_in_sha": "1ab49c45d341572d",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 6,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.880914386388286e-08,
+      "basis_in_sha": "1ab49c45d341572d",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 6,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.863895786416651e-08,
+      "basis_in_sha": "1ab49c45d341572d",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 6,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.754851093336277e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "461bf7e1716890e7",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 7,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.840065664297814e-08,
+      "basis_in_sha": "5832092859ee195b",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 7,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 3.827739011285579e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "5ff89457fc4fdabb",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 7,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.8473692797395273e-08,
+      "basis_in_sha": "11611ca9cb52ebbe",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 7,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.8551009446610964e-08,
+      "basis_in_sha": "11611ca9cb52ebbe",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 7,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.845328194933158e-08,
+      "basis_in_sha": "11611ca9cb52ebbe",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 7,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.768294594630399e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "5832092859ee195b",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 8,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.831984645935905e-08,
+      "basis_in_sha": "0f914bae8bb87f8b",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 8,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 3.787711903969138e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "d1884c20e4835e53",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 8,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.855934239652663e-08,
+      "basis_in_sha": "5ff89457fc4fdabb",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 8,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.842422023109883e-08,
+      "basis_in_sha": "5ff89457fc4fdabb",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 8,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.8495219728703664e-08,
+      "basis_in_sha": "5ff89457fc4fdabb",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 8,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.730736459168886e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "0f914bae8bb87f8b",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 9,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.837520099914438e-08,
+      "basis_in_sha": "03065d0929cd28ad",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 9,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 3.751711683754924e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "cf9e01a95a20e67f",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 9,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.8434974167794896e-08,
+      "basis_in_sha": "d1884c20e4835e53",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 9,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.844273898285497e-08,
+      "basis_in_sha": "d1884c20e4835e53",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 9,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.844562108648729e-08,
+      "basis_in_sha": "d1884c20e4835e53",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 9,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.974906604610853e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "03065d0929cd28ad",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 10,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.8292122281550544e-08,
+      "basis_in_sha": "9a66f895596e0076",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 10,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 3.776149683866082e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "e499958668e99fa3",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 10,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.841451732685585e-08,
+      "basis_in_sha": "cf9e01a95a20e67f",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 10,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.841844313587449e-08,
+      "basis_in_sha": "cf9e01a95a20e67f",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 10,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.843557735291686e-08,
+      "basis_in_sha": "cf9e01a95a20e67f",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 10,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.812088451288864e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "9a66f895596e0076",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    },
+    {
+      "block": 11,
+      "name": "fc1",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 3072,
+      "conversion_rel_err": 3.8186474136594625e-08,
+      "basis_in_sha": "90240aa5f0aa8d5d",
+      "basis_out_sha": null,
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 11,
+      "name": "fc2",
+      "kind": "slice",
+      "d_in": 3072,
+      "d_out": 525,
+      "conversion_rel_err": 3.757089790884357e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "2ab8e76f53510380",
+      "params": 2016000,
+      "params_compressor": 1612800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 11,
+      "name": "wq",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.832694964033948e-08,
+      "basis_in_sha": "e499958668e99fa3",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 11,
+      "name": "wk",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.855444592376947e-08,
+      "basis_in_sha": "e499958668e99fa3",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 11,
+      "name": "wv",
+      "kind": "slice",
+      "d_in": 525,
+      "d_out": 768,
+      "conversion_rel_err": 3.85406367414955e-08,
+      "basis_in_sha": "e499958668e99fa3",
+      "basis_out_sha": null,
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 11,
+      "name": "wo",
+      "kind": "slice",
+      "d_in": 768,
+      "d_out": 525,
+      "conversion_rel_err": 3.75299443322733e-08,
+      "basis_in_sha": null,
+      "basis_out_sha": "90240aa5f0aa8d5d",
+      "params": 806400,
+      "params_compressor": 403200,
+      "path": "attn.proj"
+    }
+  ],
+  "compressor": {
+    "params_total": 64675800,
+    "params_matrices": 58060800,
+    "params_basis_change": 6615000,
+    "budget_total": 64554464,
+    "gap": 0.0018795911619682876,
+    "source": "mirror.baselines.compress",
+    "model_form": "folded copy (mirror/fold.py, final affine in the model); span blocks are SlicedBlock (dense form of the sliced residual stream)",
+    "hparams": {
+      "basis": "per_block",
+      "pca": "stream"
+    },
+    "basis": [
+      {
+        "block": 0,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 0,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 1,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 1,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 2,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 2,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 3,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 3,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 4,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 4,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 5,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 5,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 6,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 6,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 7,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 7,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 8,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 8,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 9,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 9,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 10,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 10,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 11,
+        "name": "shortcut_attn",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      },
+      {
+        "block": 11,
+        "name": "shortcut_mlp",
+        "kind": "basis",
+        "shape": [
+          525,
+          525
+        ],
+        "params": 275625
+      }
+    ]
+  },
+  "lowrank_factors": "balanced",
+  "trainable": "structured parameters of the converted blocks (and their biases) and the embeddings, free (nothing re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+  "adapter": {
+    "kind": "dinov2",
+    "hub_repo": "facebookresearch/dinov2",
+    "name": "dinov2_vitb14_reg",
+    "img_size": 224
+  },
+  "targets": "sym",
+  "model": "dinov2_vitb14_reg",
+  "hparams": {
+    "basis": "per_block",
+    "pca": "stream"
+  },
+  "fp_heal": {
+    "loader": {
+      "kind": "heal_structured"
+    },
+    "method": "slicegpt",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "centred",
+      "k": null,
+      "logits": false,
+      "input_transform": null,
+      "block_map": null,
+      "reg_perm": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "builder_options": {},
+    "variant": null,
+    "lr": 0.0001,
+    "job": "main_s1_slicegpt",
+    "lr_selection": {
+      "given": true,
+      "best_lr": 0.0001
+    },
+    "params": {
+      "model_params": 58812216,
+      "model_params_stored": 97922616,
+      "converted_params_kept": 64675800,
+      "converted_params_dense": 84934656,
+      "model_params_structured": 66324696,
+      "model_params_original": 86583552,
+      "model_params_frac": 0.7660195784067625,
+      "params_source": "compressor's own per-matrix and basis-change counts",
+      "params_total": 64675800,
+      "params_matrices": 58060800,
+      "params_basis_change": 6615000,
+      "budget_total": 64554464,
+      "gap": 0.0018795911619682876,
+      "gap_ok": true
+    }
+  },
+  "experiment": "A05",
+  "seed": 1,
+  "state_file": "ckpt/step780.pt"
+}

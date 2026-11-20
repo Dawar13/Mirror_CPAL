@@ -1,0 +1,1191 @@
+{
+  "row": {
+    "model": "dinov2_vitb14_reg",
+    "variant": "best_svdllm_s2",
+    "label": "healed model from a run directory (mirror.heal_structured.load_healed_model)",
+    "family": "healed_run",
+    "method": "run",
+    "k": 0,
+    "top1": 79.814,
+    "top5": 95.518,
+    "mean_per_class_top1": 79.81400000000001,
+    "knn_check_top1": 78.07799577713013,
+    "chosen_wd": 0.00316,
+    "wd_at_grid_edge": false,
+    "holdout_top1_at_chosen": 81.66,
+    "final_hit_iter_limit": false,
+    "final_lbfgs_iters": 101,
+    "feature_dim": 1536,
+    "feature_kind": "cls",
+    "n_bank": 100000,
+    "n_val": 50000,
+    "n_wd_train": 90000,
+    "n_wd_holdout": 10000,
+    "converted_params_kept": 64555008,
+    "converted_params_dense": 84934656,
+    "model_params": 65349120,
+    "t_build_s": 2.3,
+    "t_extract_s": 223.5,
+    "t_probe_s": 149.8,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-20 16:28:56",
+    "notes": "healed run /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2 (mirror.heal_structured.load_healed_model); method svdllm; position embedding as loaded (257 rows; the original model has 1370), used as the model uses it at 224 px"
+  },
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 81.66,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 81.15,
+        "holdout_top5": 95.67,
+        "holdout_loss": 0.9660224609375,
+        "train_objective": 1.4138550758361816,
+        "grad_max": 4.1519546357449144e-05,
+        "n_iter": 104,
+        "n_eval": 111,
+        "hit_limit": false,
+        "seconds": 19.62
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 81.66,
+        "holdout_top5": 95.37,
+        "holdout_loss": 0.7409935546875,
+        "train_objective": 0.4421136975288391,
+        "grad_max": 1.341389724984765e-05,
+        "n_iter": 185,
+        "n_eval": 192,
+        "hit_limit": false,
+        "seconds": 20.05
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 81.16,
+        "holdout_top5": 95.07,
+        "holdout_loss": 0.8065095703125,
+        "train_objective": 0.10375151038169861,
+        "grad_max": 1.394758101014304e-06,
+        "n_iter": 338,
+        "n_eval": 355,
+        "hit_limit": false,
+        "seconds": 40.29
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 80.99,
+        "holdout_top5": 94.61,
+        "holdout_loss": 0.9723234375,
+        "train_objective": 0.02052667737007141,
+        "grad_max": 9.263928859581938e-07,
+        "n_iter": 157,
+        "n_eval": 170,
+        "hit_limit": false,
+        "seconds": 18.69
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 80.65,
+        "holdout_top5": 94.36,
+        "holdout_loss": 1.20689091796875,
+        "train_objective": 0.00401206873357296,
+        "grad_max": 9.476054856349947e-07,
+        "n_iter": 85,
+        "n_eval": 93,
+        "hit_limit": false,
+        "seconds": 8.31
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 80.52,
+        "holdout_top5": 94.16,
+        "holdout_loss": 1.47698671875,
+        "train_objective": 0.0011429957812651992,
+        "grad_max": 9.954051165550482e-07,
+        "n_iter": 70,
+        "n_eval": 75,
+        "hit_limit": false,
+        "seconds": 6.32
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 81.66,
+        "holdout_top5": 95.73,
+        "holdout_loss": 0.790134033203125,
+        "train_objective": 0.815014123916626,
+        "grad_max": 2.5904173526214436e-05,
+        "n_iter": 109,
+        "n_eval": 119,
+        "hit_limit": false,
+        "seconds": 7.56
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 81.38,
+        "holdout_top5": 95.33,
+        "holdout_loss": 0.75601044921875,
+        "train_objective": 0.2206205576658249,
+        "grad_max": 4.442572389962152e-06,
+        "n_iter": 248,
+        "n_eval": 267,
+        "hit_limit": false,
+        "seconds": 19.32
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.00316,
+    "train_objective": 0.8318967819213867,
+    "grad_max": 1.1365402315277606e-05,
+    "n_iter": 101,
+    "n_eval": 105,
+    "hit_limit": false,
+    "seconds": 8.77,
+    "train_top1": 91.993
+  },
+  "test": {
+    "top1": 79.814,
+    "top5": 95.518,
+    "mean_per_class_top1": 79.81400000000001,
+    "loss": 0.8497684191894531,
+    "n": 50000
+  },
+  "variant_info": {
+    "variant": "best_svdllm_s2",
+    "label": "healed model from a run directory (mirror.heal_structured.load_healed_model)",
+    "family": "healed_run",
+    "method": "run",
+    "k": 0,
+    "blocks": [],
+    "model_params_original": 86583552,
+    "builder": "mirror.heal_structured.load_healed_model",
+    "healed_run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2",
+    "healed_info": {
+      "run_dir": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2",
+      "step": 780,
+      "ckpt": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2/ckpt/step780.pt",
+      "steps_saved": [
+        780
+      ],
+      "spec": {
+        "format": "must09-healed-v1",
+        "family": "compressed",
+        "method": "svdllm",
+        "blocks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "components": [
+          "mlp",
+          "attn"
+        ],
+        "base": {
+          "materialise_pos_embed": true,
+          "fold": false,
+          "even_head": false
+        },
+        "wrappers": [],
+        "modules": [
+          {
+            "block": 0,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 368,
+              "bias": true
+            }
+          },
+          {
+            "block": 0,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 368,
+              "bias": true
+            }
+          },
+          {
+            "block": 0,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 255,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 255,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 236,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 0,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 236,
+              "bias": true
+            }
+          },
+          {
+            "block": 1,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 377,
+              "bias": true
+            }
+          },
+          {
+            "block": 1,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 377,
+              "bias": true
+            }
+          },
+          {
+            "block": 1,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 257,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 257,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 235,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 1,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 235,
+              "bias": true
+            }
+          },
+          {
+            "block": 2,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 393,
+              "bias": true
+            }
+          },
+          {
+            "block": 2,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 393,
+              "bias": true
+            }
+          },
+          {
+            "block": 2,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 274,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 274,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 255,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 2,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 255,
+              "bias": true
+            }
+          },
+          {
+            "block": 3,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 402,
+              "bias": true
+            }
+          },
+          {
+            "block": 3,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 402,
+              "bias": true
+            }
+          },
+          {
+            "block": 3,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 301,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 301,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 293,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 3,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 293,
+              "bias": true
+            }
+          },
+          {
+            "block": 4,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 416,
+              "bias": true
+            }
+          },
+          {
+            "block": 4,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 416,
+              "bias": true
+            }
+          },
+          {
+            "block": 4,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 290,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 290,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 281,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 4,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 281,
+              "bias": true
+            }
+          },
+          {
+            "block": 5,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 450,
+              "bias": true
+            }
+          },
+          {
+            "block": 5,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 450,
+              "bias": true
+            }
+          },
+          {
+            "block": 5,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 294,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 294,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 281,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 5,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 281,
+              "bias": true
+            }
+          },
+          {
+            "block": 6,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 469,
+              "bias": true
+            }
+          },
+          {
+            "block": 6,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 469,
+              "bias": true
+            }
+          },
+          {
+            "block": 6,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 296,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 296,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 289,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 6,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 289,
+              "bias": true
+            }
+          },
+          {
+            "block": 7,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 493,
+              "bias": true
+            }
+          },
+          {
+            "block": 7,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 493,
+              "bias": true
+            }
+          },
+          {
+            "block": 7,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 300,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 300,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 303,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 7,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 303,
+              "bias": true
+            }
+          },
+          {
+            "block": 8,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 535,
+              "bias": true
+            }
+          },
+          {
+            "block": 8,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 535,
+              "bias": true
+            }
+          },
+          {
+            "block": 8,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 331,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 331,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 332,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 8,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 332,
+              "bias": true
+            }
+          },
+          {
+            "block": 9,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 545,
+              "bias": true
+            }
+          },
+          {
+            "block": 9,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 545,
+              "bias": true
+            }
+          },
+          {
+            "block": 9,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 310,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 310,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 317,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 9,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 317,
+              "bias": true
+            }
+          },
+          {
+            "block": 10,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 557,
+              "bias": true
+            }
+          },
+          {
+            "block": 10,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 557,
+              "bias": true
+            }
+          },
+          {
+            "block": 10,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 341,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 341,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 348,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 10,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 348,
+              "bias": true
+            }
+          },
+          {
+            "block": 11,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 557,
+              "bias": true
+            }
+          },
+          {
+            "block": 11,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 557,
+              "bias": true
+            }
+          },
+          {
+            "block": 11,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 343,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 343,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 347,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 11,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 347,
+              "bias": true
+            }
+          }
+        ],
+        "matrices": "list of length 72",
+        "compressor": {
+          "params_total": 64555008,
+          "params_matrices": 64555008,
+          "params_basis_change": 0,
+          "budget_total": 64554464,
+          "gap": 8.426992748324887e-06,
+          "source": "mirror.baselines.compress",
+          "model_form": "absorbed weights in the unfolded model (norm affine and LayerScale folded)",
+          "hparams": {
+            "damp": 1e-06
+          },
+          "basis": []
+        },
+        "lowrank_factors": "balanced",
+        "trainable": "structured parameters of the converted blocks (and their biases) and the embeddings, free (nothing re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+        "adapter": {
+          "kind": "dinov2",
+          "hub_repo": "facebookresearch/dinov2",
+          "name": "dinov2_vitb14_reg",
+          "img_size": 224
+        },
+        "targets": "sym",
+        "model": "dinov2_vitb14_reg",
+        "hparams": {
+          "damp": 1e-06
+        },
+        "fp_heal": {
+          "loader": {
+            "kind": "heal_structured"
+          },
+          "method": "svdllm",
+          "targets": {
+            "final": "symmetrised",
+            "blocks": "raw",
+            "k": null,
+            "logits": false,
+            "input_transform": null,
+            "block_map": null,
+            "reg_perm": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "builder_options": {},
+          "variant": null,
+          "lr": 0.0001,
+          "job": "gate_s2",
+          "lr_selection": {
+            "given": true,
+            "best_lr": 0.0001
+          },
+          "params": {
+            "model_params": 65349120,
+            "model_params_stored": 65349120,
+            "converted_params_kept": 64555008,
+            "converted_params_dense": 84934656,
+            "model_params_structured": 66203904,
+            "model_params_original": 86583552,
+            "model_params_frac": 0.7646244866461473,
+            "params_source": "compressor's own per-matrix and basis-change counts",
+            "params_total": 64555008,
+            "params_matrices": 64555008,
+            "params_basis_change": 0,
+            "budget_total": 64554464,
+            "gap": 8.426992748324887e-06,
+            "gap_ok": true
+          }
+        },
+        "experiment": "A01",
+        "seed": 2,
+        "state_file": "ckpt/step780.pt"
+      },
+      "method": "svdllm",
+      "variant": null,
+      "family": "compressed",
+      "targets": {
+        "final": "symmetrised",
+        "blocks": "raw",
+        "k": null,
+        "logits": false,
+        "input_transform": null,
+        "block_map": null,
+        "reg_perm": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "meta": {
+        "job": "gate_s2",
+        "experiment": "A01",
+        "group": "main",
+        "model": "dinov2_vitb14_reg",
+        "method": "svdllm",
+        "variant": null,
+        "seed": 2,
+        "student": "svdllm",
+        "lr": 0.0001
+      },
+      "structure": null,
+      "model_params": 65349120,
+      "model_params_stored": 65349120,
+      "converted_params_kept": 64555008,
+      "converted_params_dense": 84934656,
+      "model_params_structured": 66203904,
+      "model_params_original": 86583552,
+      "model_params_frac": 0.7646244866461473,
+      "params_source": "compressor's own per-matrix and basis-change counts",
+      "loaded_by": "scripts/fp_eval_downstream.py bridge: load_student(run_dir, step=None)"
+    },
+    "healed_k": 12,
+    "exact_operator": null,
+    "even_head": false,
+    "reg_perm": null,
+    "position_grid": null,
+    "healed_run_checks": null,
+    "converted_params_dense": 84934656,
+    "converted_params_kept": 64555008,
+    "model_params": 65349120,
+    "mlp_params_kept": null,
+    "attn_params_kept": null,
+    "position_grid_note": "position embedding as loaded (257 rows; the original model has 1370), used as the model uses it at 224 px"
+  },
+  "sources": {
+    "healed_run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2",
+    "weights_sha256": {
+      "ckpt/step780.pt": "afef64cc929173d05e31bddd2783829d03a04e68bd09964629e1e53b3d5a0f41"
+    }
+  },
+  "feature_meta": {
+    "bank": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "best_svdllm_s2",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "healed_run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2",
+        "weights_sha256": {
+          "ckpt/step780.pt": "afef64cc929173d05e31bddd2783829d03a04e68bd09964629e1e53b3d5a0f41"
+        }
+      },
+      "img_size": 224,
+      "split": "bank",
+      "n": 100000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+      "seed": 0,
+      "seconds": 153.1,
+      "batch_size": 256
+    },
+    "val": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "best_svdllm_s2",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "healed_run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2",
+        "weights_sha256": {
+          "ckpt/step780.pt": "afef64cc929173d05e31bddd2783829d03a04e68bd09964629e1e53b3d5a0f41"
+        }
+      },
+      "img_size": 224,
+      "split": "val",
+      "n": 50000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+      "seed": 0,
+      "seconds": 70.35,
+      "batch_size": 256
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "timing": {
+    "build best_svdllm_s2": 2.27,
+    "extract best_svdllm_s2 bank": 153.1,
+    "extract best_svdllm_s2 val": 70.35,
+    "probe best_svdllm_s2": 149.77
+  },
+  "git": {
+    "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "format": "must09-healed-v1",
+  "family": "mirror",
+  "method": "mirror_exact",
+  "blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": false,
+    "fold": true,
+    "even_head": true
+  },
+  "modules": [],
+  "matrices": [],
+  "mirror": {
+    "d_plus": 724,
+    "structure_file": "structure.npz",
+    "n_pairs": [
+      1128,
+      1041,
+      934,
+      699,
+      410,
+      173,
+      56,
+      4,
+      0,
+      0,
+      0,
+      0
+    ],
+    "n_head_pairs": [
+      0,
+      0,
+      1,
+      1,
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "builder": "mirror.mirror_family.build_mirror_variant"
+  },
+  "trainable": "converted blocks (re-projected with A* after every step) and the embeddings (re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+  "adapter": {
+    "kind": "registry",
+    "name": "deit3_b16",
+    "img_size": 224
+  },
+  "targets": "sym",
+  "model": "deit3_b16",
+  "hparams": null,
+  "fp_heal": {
+    "loader": {
+      "kind": "heal_structured"
+    },
+    "method": "mirror_exact",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "symmetrised",
+      "k": 12,
+      "logits": true,
+      "input_transform": null,
+      "block_map": null,
+      "reg_perm": [],
+      "A_digest": "ce9b111f0523184d",
+      "A_dim": 768,
+      "A_d_plus": 724
+    },
+    "builder_options": {
+      "structure": "adopted",
+      "logits": true
+    },
+    "variant": null,
+    "lr": 0.0002,
+    "job": "deit_s0",
+    "lr_selection": {
+      "best_lr": 0.0002,
+      "lrs": [
+        0.0001,
+        0.0002
+      ],
+      "budget_steps": 200,
+      "seed": 0,
+      "trials": [
+        {
+          "lr": 0.0001,
+          "heldout_loss": 2.008309829634854,
+          "heldout_terms": {
+            "total": 2.008309829634854,
+            "block0": 0.05586468832014948,
+            "block1": 0.07894389663578504,
+            "block2": 0.09266595005114502,
+            "block3": 0.11293733413071497,
+            "block4": 0.13419558304734067,
+            "block5": 0.15189017079837813,
+            "block6": 0.16840264373905958,
+            "block7": 0.1863860076199248,
+            "block8": 0.19538625005998148,
+            "block9": 0.19151817885224423,
+            "block10": 0.1814183440394796,
+            "block11": 0.16309844415748012,
+            "cls": 0.060668342559262504,
+            "patch": 0.23401654635606908,
+            "logits": 0.000917449267839121
+          },
+          "heldout_initial": 5.998065529896071,
+          "train_loss_last": 1.905600761383539,
+          "diverged": false,
+          "trial_dir": "/home/Mirror_CPAL/runs/final/lr/deit3_b16/mirror_exact_lr1e-04/s0"
+        },
+        {
+          "lr": 0.0002,
+          "heldout_loss": 1.8807331025964704,
+          "heldout_terms": {
+            "total": 1.8807331025964704,
+            "block0": 0.04884542473264969,
+            "block1": 0.07351825876279772,
+            "block2": 0.08627246227531658,
+            "block3": 0.10504795293392205,
+            "block4": 0.12485977165641393,
+            "block5": 0.14162125882881593,
+            "block6": 0.15741550575595178,
+            "block7": 0.17482746904825752,
+            "block8": 0.18397234493716058,
+            "block9": 0.1805790872292275,
+            "block10": 0.17116050954561604,
+            "block11": 0.15350272639631043,
+            "cls": 0.05753597595250268,
+            "patch": 0.22070015260908188,
+            "logits": 0.0008742019324458616
+          },
+          "heldout_initial": 5.998065529896071,
+          "train_loss_last": 1.781352572113974,
+          "diverged": false,
+          "trial_dir": "/home/Mirror_CPAL/runs/final/lr/deit3_b16/mirror_exact_lr2e-04/s0"
+        }
+      ],
+      "lockstep": true,
+      "rule": "lowest held-out distillation loss on the LR-selection rows (centre view) after the trial budget, each trial with its own warm-up and cosine; ties go to the smaller rate; diverged trials score +inf",
+      "heldout_images": 5000,
+      "git_hash": "579ada6c2a5a80a63adc67e2e143bdea06344ba6",
+      "git_dirty": true
+    },
+    "params": {
+      "model_params": 86548456,
+      "model_params_stored": 87138280,
+      "converted_params_kept": 70562208,
+      "converted_params_dense": 84934656,
+      "model_params_structured": 72212872,
+      "model_params_original": 86585320,
+      "model_params_frac": 0.8340082591367682,
+      "params_source": "free parameters",
+      "params_total": 70562208,
+      "params_matrices": 70562208,
+      "params_basis_change": 0,
+      "budget_total": 70562208,
+      "gap": 0
+    }
+  },
+  "experiment": "A08",
+  "seed": 0,
+  "state_file": "ckpt/step780.pt"
+}

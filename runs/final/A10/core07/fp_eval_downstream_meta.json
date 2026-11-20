@@ -1,0 +1,93 @@
+{
+  "experiment": "downstream via core07_shift",
+  "date_utc": "2026-11-20T16:36:37Z",
+  "git": {
+    "git_hash": "547224c624c537c29843f5f72a86b28fdabd5685",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_FINAL_PHASE.md",
+    "sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+    "recorded_sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+    "recorded_commit": "fd83c955d76a8e85228c7e9ed736e29727979540",
+    "ok": true,
+    "reason": "unchanged since the recorded commit"
+  },
+  "config": {
+    "script": "core07_shift",
+    "script_args": [
+      "--model",
+      "dinov2_vitb14_reg",
+      "--variants",
+      "original",
+      "--healed-run",
+      "vexact_s0=runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+      "--healed-run",
+      "vexact_s1=runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1",
+      "--healed-run",
+      "vexact_s2=runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2",
+      "--healed-run",
+      "best_svdllm_s0=runs/final/main/dinov2_vitb14_reg/svdllm/s0",
+      "--healed-run",
+      "best_svdllm_s1=runs/final/main/dinov2_vitb14_reg/svdllm/s1",
+      "--healed-run",
+      "best_svdllm_s2=runs/final/main/dinov2_vitb14_reg/svdllm/s2",
+      "--probe-from",
+      "runs/final/A10/t2",
+      "--out",
+      "runs/final/A10/core07"
+    ],
+    "step": null,
+    "run_steps": {},
+    "loader": "mirror.final.heal.students:load_student"
+  },
+  "seeds": {},
+  "models": {},
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 458.88,
+  "peak_memory_gb": 2.161,
+  "extra": {
+    "bridge_calls": [
+      [
+        "load_student",
+        "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+        null
+      ],
+      [
+        "load_student",
+        "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1",
+        null
+      ],
+      [
+        "load_student",
+        "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2",
+        null
+      ],
+      [
+        "load_student",
+        "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0",
+        null
+      ],
+      [
+        "load_student",
+        "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s1",
+        null
+      ],
+      [
+        "load_student",
+        "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2",
+        null
+      ]
+    ],
+    "prereg_ok": true,
+    "prereg_allowed_without_check": false
+  }
+}

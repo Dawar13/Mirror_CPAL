@@ -1,0 +1,1126 @@
+{
+  "config": {
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "seed": 0,
+    "lr": 0.0002,
+    "epochs": 2.0,
+    "max_steps": null,
+    "batch_size": 256,
+    "micro_batch": 128,
+    "weight_decay": 0.05,
+    "decay_1d": false,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "warmup_frac": 0.05,
+    "warmup_steps": null,
+    "min_lr_ratio": 0.0,
+    "grad_clip": null,
+    "crop_size": 224,
+    "crop_scale": [
+      0.35,
+      1.0
+    ],
+    "crop_ratio": [
+      0.75,
+      1.3333333333333333
+    ],
+    "hflip_p": 0.5,
+    "w_cls": 1.0,
+    "w_patch": 1.0,
+    "w_block": 1.0,
+    "normaliser": "fixed",
+    "calib_images": 1024,
+    "train_scope": "all",
+    "grad_checkpoint": false,
+    "amp": "auto",
+    "share_prefix": true,
+    "eval_every": 200,
+    "eval_batch": null,
+    "max_heldout": null,
+    "log_every": 20,
+    "prefetch": 2,
+    "save_checkpoint": true,
+    "checkpoint_path": null
+  },
+  "seed": 0,
+  "git_hash": "579ada6c2a5a80a63adc67e2e143bdea06344ba6",
+  "git_dirty": true,
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda:0",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "student": "mirror_svdllm_f040",
+  "tags": {
+    "experiment": "A06",
+    "group": "a06",
+    "model": "dinov2_vitb14_reg",
+    "method": "mirror_svdllm",
+    "variant": "f040",
+    "seed": 0
+  },
+  "target_mode": {
+    "final": "symmetrised",
+    "blocks": "symmetrised",
+    "k": 12,
+    "logits": false,
+    "input_transform": null,
+    "block_map": null,
+    "reg_perm": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "A_digest": "b22f3ab61229a5fa",
+    "A_dim": 768,
+    "A_d_plus": 700
+  },
+  "target_key": "('symmetrised', 'symmetrised', 'b22f3ab61229a5fa', 'cb25a2a36aef8ee2', 12, None, False, (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))",
+  "constraints": [
+    {
+      "type": "MirrorFactorTrainable",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "n_matrices": 72,
+      "frozen": "everything outside the converted blocks and the embeddings; norm affines and LayerScale inside the converted blocks; nothing projected (structure by construction)"
+    },
+    {
+      "type": "VExactEmbeddings",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "d_plus": 700,
+      "embeddings": "trained, re-projected every step",
+      "reg_perm": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "constraint_checks": {
+    "0:MirrorFactorTrainable": {
+      "ok": true,
+      "max_offdiag": 2.5753166956501893e-08,
+      "max_bias_odd": 1.8728107251125458e-08,
+      "n_matrices": 72,
+      "per_matrix": [
+        {
+          "block": 0,
+          "name": "fc1",
+          "offdiag": 1.5177615299475594e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 0,
+          "name": "fc2",
+          "offdiag": 1.9101226807657068e-08,
+          "bias_odd": 8.540245053614485e-09
+        },
+        {
+          "block": 0,
+          "name": "wq",
+          "offdiag": 2.023416975106891e-08,
+          "bias_odd": 1.4967251588182317e-08
+        },
+        {
+          "block": 0,
+          "name": "wk",
+          "offdiag": 2.1302265099781305e-08,
+          "bias_odd": 1.4417385100651547e-08
+        },
+        {
+          "block": 0,
+          "name": "wv",
+          "offdiag": 2.4676550760518523e-08,
+          "bias_odd": 1.8444085160724945e-08
+        },
+        {
+          "block": 0,
+          "name": "wo",
+          "offdiag": 1.8641124578176432e-08,
+          "bias_odd": 6.555158511472283e-09
+        },
+        {
+          "block": 1,
+          "name": "fc1",
+          "offdiag": 1.565293007029379e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 1,
+          "name": "fc2",
+          "offdiag": 1.8212644486756064e-08,
+          "bias_odd": 8.809880510093058e-09
+        },
+        {
+          "block": 1,
+          "name": "wq",
+          "offdiag": 2.1236557574082395e-08,
+          "bias_odd": 1.3909923443464512e-08
+        },
+        {
+          "block": 1,
+          "name": "wk",
+          "offdiag": 2.0877033559443427e-08,
+          "bias_odd": 1.4514264258594354e-08
+        },
+        {
+          "block": 1,
+          "name": "wv",
+          "offdiag": 2.5753166956501893e-08,
+          "bias_odd": 1.6778656239257724e-08
+        },
+        {
+          "block": 1,
+          "name": "wo",
+          "offdiag": 2.3206560324298038e-08,
+          "bias_odd": 8.648722660425997e-09
+        },
+        {
+          "block": 2,
+          "name": "fc1",
+          "offdiag": 1.5993025324440583e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 2,
+          "name": "fc2",
+          "offdiag": 1.691741656773513e-08,
+          "bias_odd": 8.7946566738446e-09
+        },
+        {
+          "block": 2,
+          "name": "wq",
+          "offdiag": 2.3018527117337413e-08,
+          "bias_odd": 1.1674918060777943e-08
+        },
+        {
+          "block": 2,
+          "name": "wk",
+          "offdiag": 2.3771473891668622e-08,
+          "bias_odd": 1.8728107251125458e-08
+        },
+        {
+          "block": 2,
+          "name": "wv",
+          "offdiag": 2.2265895617746656e-08,
+          "bias_odd": 1.4931864634544314e-08
+        },
+        {
+          "block": 2,
+          "name": "wo",
+          "offdiag": 1.74718718228772e-08,
+          "bias_odd": 8.704949595653308e-09
+        },
+        {
+          "block": 3,
+          "name": "fc1",
+          "offdiag": 1.524646585088756e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 3,
+          "name": "fc2",
+          "offdiag": 1.6304304169911053e-08,
+          "bias_odd": 8.589644662764071e-09
+        },
+        {
+          "block": 3,
+          "name": "wq",
+          "offdiag": 2.351983838494201e-08,
+          "bias_odd": 1.3166414476456369e-08
+        },
+        {
+          "block": 3,
+          "name": "wk",
+          "offdiag": 2.391686341408773e-08,
+          "bias_odd": 1.422377935688559e-08
+        },
+        {
+          "block": 3,
+          "name": "wv",
+          "offdiag": 1.931602191546863e-08,
+          "bias_odd": 1.411730010209158e-08
+        },
+        {
+          "block": 3,
+          "name": "wo",
+          "offdiag": 1.6662130585070408e-08,
+          "bias_odd": 8.533764006305348e-09
+        },
+        {
+          "block": 4,
+          "name": "fc1",
+          "offdiag": 1.5271825766197956e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 4,
+          "name": "fc2",
+          "offdiag": 1.474474033352805e-08,
+          "bias_odd": 7.564101051160656e-09
+        },
+        {
+          "block": 4,
+          "name": "wq",
+          "offdiag": 2.189248556170121e-08,
+          "bias_odd": 1.0520633415947257e-08
+        },
+        {
+          "block": 4,
+          "name": "wk",
+          "offdiag": 2.2881151634527283e-08,
+          "bias_odd": 1.2581142516288317e-08
+        },
+        {
+          "block": 4,
+          "name": "wv",
+          "offdiag": 1.8400891615839638e-08,
+          "bias_odd": 1.258006433042421e-08
+        },
+        {
+          "block": 4,
+          "name": "wo",
+          "offdiag": 1.931234679450582e-08,
+          "bias_odd": 7.803611460749147e-09
+        },
+        {
+          "block": 5,
+          "name": "fc1",
+          "offdiag": 1.4934866308213007e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 5,
+          "name": "fc2",
+          "offdiag": 1.3564696087538144e-08,
+          "bias_odd": 7.50508763580541e-09
+        },
+        {
+          "block": 5,
+          "name": "wq",
+          "offdiag": 2.004104682801854e-08,
+          "bias_odd": 1.0642955952730056e-08
+        },
+        {
+          "block": 5,
+          "name": "wk",
+          "offdiag": 2.0224159414026638e-08,
+          "bias_odd": 7.943723546409777e-09
+        },
+        {
+          "block": 5,
+          "name": "wv",
+          "offdiag": 2.014710550831768e-08,
+          "bias_odd": 1.2605455842502693e-08
+        },
+        {
+          "block": 5,
+          "name": "wo",
+          "offdiag": 1.866631415949977e-08,
+          "bias_odd": 6.806556231976288e-09
+        },
+        {
+          "block": 6,
+          "name": "fc1",
+          "offdiag": 1.4846963757417229e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 6,
+          "name": "fc2",
+          "offdiag": 1.3493603706569693e-08,
+          "bias_odd": 7.84860330752721e-09
+        },
+        {
+          "block": 6,
+          "name": "wq",
+          "offdiag": 2.2527589829551788e-08,
+          "bias_odd": 6.824712702811495e-09
+        },
+        {
+          "block": 6,
+          "name": "wk",
+          "offdiag": 2.362083603996249e-08,
+          "bias_odd": 1.0504477435534788e-08
+        },
+        {
+          "block": 6,
+          "name": "wv",
+          "offdiag": 1.7399251769496858e-08,
+          "bias_odd": 1.1190818770163298e-08
+        },
+        {
+          "block": 6,
+          "name": "wo",
+          "offdiag": 1.6880959976083255e-08,
+          "bias_odd": 7.526808673571416e-09
+        },
+        {
+          "block": 7,
+          "name": "fc1",
+          "offdiag": 1.5117070050624613e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 7,
+          "name": "fc2",
+          "offdiag": 1.210940394324791e-08,
+          "bias_odd": 6.814698418186545e-09
+        },
+        {
+          "block": 7,
+          "name": "wq",
+          "offdiag": 2.0864120582572575e-08,
+          "bias_odd": 9.459102921099679e-09
+        },
+        {
+          "block": 7,
+          "name": "wk",
+          "offdiag": 2.09583138673592e-08,
+          "bias_odd": 8.822772509826498e-09
+        },
+        {
+          "block": 7,
+          "name": "wv",
+          "offdiag": 1.7208456915924867e-08,
+          "bias_odd": 7.912639977407622e-09
+        },
+        {
+          "block": 7,
+          "name": "wo",
+          "offdiag": 1.656896330282167e-08,
+          "bias_odd": 8.268190296454986e-09
+        },
+        {
+          "block": 8,
+          "name": "fc1",
+          "offdiag": 1.3094861179762e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 8,
+          "name": "fc2",
+          "offdiag": 1.0885022257528357e-08,
+          "bias_odd": 7.426761735574739e-09
+        },
+        {
+          "block": 8,
+          "name": "wq",
+          "offdiag": 2.2777864903505852e-08,
+          "bias_odd": 5.968504578064611e-09
+        },
+        {
+          "block": 8,
+          "name": "wk",
+          "offdiag": 2.2116976333602637e-08,
+          "bias_odd": 8.509645173748695e-09
+        },
+        {
+          "block": 8,
+          "name": "wv",
+          "offdiag": 1.5550955984222212e-08,
+          "bias_odd": 6.692210033916914e-09
+        },
+        {
+          "block": 8,
+          "name": "wo",
+          "offdiag": 1.4130465065651478e-08,
+          "bias_odd": 7.562704210223542e-09
+        },
+        {
+          "block": 9,
+          "name": "fc1",
+          "offdiag": 1.1751356942015354e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 9,
+          "name": "fc2",
+          "offdiag": 1.037029567016389e-08,
+          "bias_odd": 7.559499070781653e-09
+        },
+        {
+          "block": 9,
+          "name": "wq",
+          "offdiag": 1.9712125352405713e-08,
+          "bias_odd": 6.8896093576797305e-09
+        },
+        {
+          "block": 9,
+          "name": "wk",
+          "offdiag": 1.9890351017420385e-08,
+          "bias_odd": 8.300653594999822e-09
+        },
+        {
+          "block": 9,
+          "name": "wv",
+          "offdiag": 1.4289951359181134e-08,
+          "bias_odd": 4.419555414912225e-09
+        },
+        {
+          "block": 9,
+          "name": "wo",
+          "offdiag": 1.267335205593543e-08,
+          "bias_odd": 8.552756172990929e-09
+        },
+        {
+          "block": 10,
+          "name": "fc1",
+          "offdiag": 1.0650905378833912e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 10,
+          "name": "fc2",
+          "offdiag": 1.0246549835029045e-08,
+          "bias_odd": 7.459722714168574e-09
+        },
+        {
+          "block": 10,
+          "name": "wq",
+          "offdiag": 1.4786425481041857e-08,
+          "bias_odd": 5.136108046656864e-09
+        },
+        {
+          "block": 10,
+          "name": "wk",
+          "offdiag": 1.4464458086511538e-08,
+          "bias_odd": 5.534595606927657e-09
+        },
+        {
+          "block": 10,
+          "name": "wv",
+          "offdiag": 1.097508858183185e-08,
+          "bias_odd": 4.080751784656833e-09
+        },
+        {
+          "block": 10,
+          "name": "wo",
+          "offdiag": 1.0527093078966415e-08,
+          "bias_odd": 7.091463230011283e-09
+        },
+        {
+          "block": 11,
+          "name": "fc1",
+          "offdiag": 1.139295034052187e-08,
+          "bias_odd": 0.0
+        },
+        {
+          "block": 11,
+          "name": "fc2",
+          "offdiag": 9.940154131059467e-09,
+          "bias_odd": 8.303849449332783e-09
+        },
+        {
+          "block": 11,
+          "name": "wq",
+          "offdiag": 1.4428452316312368e-08,
+          "bias_odd": 4.362598688935007e-09
+        },
+        {
+          "block": 11,
+          "name": "wk",
+          "offdiag": 1.43293028297647e-08,
+          "bias_odd": 6.247691166808238e-09
+        },
+        {
+          "block": 11,
+          "name": "wv",
+          "offdiag": 1.201355517998032e-08,
+          "bias_odd": 2.96528709259109e-09
+        },
+        {
+          "block": 11,
+          "name": "wo",
+          "offdiag": 1.1166732978016316e-08,
+          "bias_odd": 8.639264773187728e-09
+        }
+      ]
+    },
+    "1:VExactEmbeddings": {
+      "max_share": 2.827249023345449e-16,
+      "shares": {
+        "patch_embed.weight": 1.7224250252318453e-16,
+        "patch_embed.bias": 3.0414008129483684e-18,
+        "pos_embed.patches": 2.827249023345449e-16,
+        "pos_embed.cls": 2.600608770113577e-17,
+        "cls_token": 2.600608770113577e-17,
+        "registers": 1.8508312259801246e-17
+      },
+      "embeddings_train": true,
+      "even_head_max_abs_err": 2.9776049292884466e-08
+    }
+  },
+  "n_trainable": 33709241,
+  "n_trainable_tensors": 325,
+  "trainable_names": [
+    "cls_token",
+    "pos_embed",
+    "register_tokens",
+    "patch_embed.proj.weight",
+    "patch_embed.proj.bias",
+    "blocks.0.attn.qkv.q.U_e",
+    "blocks.0.attn.qkv.q.V_e",
+    "blocks.0.attn.qkv.q.U_o",
+    "blocks.0.attn.qkv.q.V_o",
+    "blocks.0.attn.qkv.q.b_e",
+    "blocks.0.attn.qkv.k.U_e",
+    "blocks.0.attn.qkv.k.V_e",
+    "blocks.0.attn.qkv.k.U_o",
+    "blocks.0.attn.qkv.k.V_o",
+    "blocks.0.attn.qkv.k.b_e",
+    "blocks.0.attn.qkv.v.U_e",
+    "blocks.0.attn.qkv.v.V_e",
+    "blocks.0.attn.qkv.v.U_o",
+    "blocks.0.attn.qkv.v.V_o",
+    "blocks.0.attn.qkv.v.b_e",
+    "blocks.0.attn.proj.U_e",
+    "blocks.0.attn.proj.V_e",
+    "blocks.0.attn.proj.U_o",
+    "blocks.0.attn.proj.V_o",
+    "blocks.0.attn.proj.b_e",
+    "blocks.0.mlp.fc1.U_e",
+    "blocks.0.mlp.fc1.V_e",
+    "blocks.0.mlp.fc1.U_o",
+    "blocks.0.mlp.fc1.V_o",
+    "blocks.0.mlp.fc1.b_e",
+    "blocks.0.mlp.fc2.U_e",
+    "blocks.0.mlp.fc2.V_e",
+    "blocks.0.mlp.fc2.U_o",
+    "blocks.0.mlp.fc2.V_o",
+    "blocks.0.mlp.fc2.b_e",
+    "blocks.1.attn.qkv.q.U_e",
+    "blocks.1.attn.qkv.q.V_e",
+    "blocks.1.attn.qkv.q.W_o",
+    "blocks.1.attn.qkv.q.b_e",
+    "blocks.1.attn.qkv.k.U_e",
+    "blocks.1.attn.qkv.k.V_e",
+    "blocks.1.attn.qkv.k.W_o",
+    "blocks.1.attn.qkv.k.b_e",
+    "blocks.1.attn.qkv.v.U_e",
+    "blocks.1.attn.qkv.v.V_e",
+    "blocks.1.attn.qkv.v.W_o",
+    "blocks.1.attn.qkv.v.b_e",
+    "blocks.1.attn.proj.U_e",
+    "blocks.1.attn.proj.V_e",
+    "blocks.1.attn.proj.U_o",
+    "blocks.1.attn.proj.V_o",
+    "blocks.1.attn.proj.b_e",
+    "blocks.1.mlp.fc1.U_e",
+    "blocks.1.mlp.fc1.V_e",
+    "blocks.1.mlp.fc1.U_o",
+    "blocks.1.mlp.fc1.V_o",
+    "blocks.1.mlp.fc1.b_e",
+    "blocks.1.mlp.fc2.U_e",
+    "blocks.1.mlp.fc2.V_e",
+    "blocks.1.mlp.fc2.U_o",
+    "blocks.1.mlp.fc2.V_o",
+    "blocks.1.mlp.fc2.b_e",
+    "blocks.2.attn.qkv.q.U_e",
+    "blocks.2.attn.qkv.q.V_e",
+    "blocks.2.attn.qkv.q.W_o",
+    "blocks.2.attn.qkv.q.b_e",
+    "blocks.2.attn.qkv.k.U_e",
+    "blocks.2.attn.qkv.k.V_e",
+    "blocks.2.attn.qkv.k.W_o",
+    "blocks.2.attn.qkv.k.b_e",
+    "blocks.2.attn.qkv.v.W_e",
+    "blocks.2.attn.qkv.v.W_o",
+    "blocks.2.attn.qkv.v.b_e",
+    "blocks.2.attn.proj.U_e",
+    "blocks.2.attn.proj.V_e",
+    "blocks.2.attn.proj.U_o",
+    "blocks.2.attn.proj.V_o",
+    "blocks.2.attn.proj.b_e",
+    "blocks.2.mlp.fc1.U_e",
+    "blocks.2.mlp.fc1.V_e",
+    "blocks.2.mlp.fc1.W_o",
+    "blocks.2.mlp.fc1.b_e",
+    "blocks.2.mlp.fc2.U_e",
+    "blocks.2.mlp.fc2.V_e",
+    "blocks.2.mlp.fc2.U_o",
+    "blocks.2.mlp.fc2.V_o",
+    "blocks.2.mlp.fc2.b_e",
+    "blocks.3.attn.qkv.q.U_e",
+    "blocks.3.attn.qkv.q.V_e",
+    "blocks.3.attn.qkv.q.W_o",
+    "blocks.3.attn.qkv.q.b_e",
+    "blocks.3.attn.qkv.k.U_e",
+    "blocks.3.attn.qkv.k.V_e",
+    "blocks.3.attn.qkv.k.U_o",
+    "blocks.3.attn.qkv.k.V_o",
+    "blocks.3.attn.qkv.k.b_e",
+    "blocks.3.attn.qkv.v.U_e",
+    "blocks.3.attn.qkv.v.V_e",
+    "blocks.3.attn.qkv.v.W_o",
+    "blocks.3.attn.qkv.v.b_e",
+    "blocks.3.attn.proj.U_e",
+    "blocks.3.attn.proj.V_e",
+    "blocks.3.attn.proj.U_o",
+    "blocks.3.attn.proj.V_o",
+    "blocks.3.attn.proj.b_e",
+    "blocks.3.mlp.fc1.U_e",
+    "blocks.3.mlp.fc1.V_e",
+    "blocks.3.mlp.fc1.U_o",
+    "blocks.3.mlp.fc1.V_o",
+    "blocks.3.mlp.fc1.b_e",
+    "blocks.3.mlp.fc2.U_e",
+    "blocks.3.mlp.fc2.V_e",
+    "blocks.3.mlp.fc2.U_o",
+    "blocks.3.mlp.fc2.V_o",
+    "blocks.3.mlp.fc2.b_e",
+    "blocks.4.attn.qkv.q.U_e",
+    "blocks.4.attn.qkv.q.V_e",
+    "blocks.4.attn.qkv.q.W_o",
+    "blocks.4.attn.qkv.q.b_e",
+    "blocks.4.attn.qkv.k.U_e",
+    "blocks.4.attn.qkv.k.V_e",
+    "blocks.4.attn.qkv.k.U_o",
+    "blocks.4.attn.qkv.k.V_o",
+    "blocks.4.attn.qkv.k.b_e",
+    "blocks.4.attn.qkv.v.W_e",
+    "blocks.4.attn.qkv.v.W_o",
+    "blocks.4.attn.qkv.v.b_e",
+    "blocks.4.attn.proj.U_e",
+    "blocks.4.attn.proj.V_e",
+    "blocks.4.attn.proj.W_o",
+    "blocks.4.attn.proj.b_e",
+    "blocks.4.mlp.fc1.U_e",
+    "blocks.4.mlp.fc1.V_e",
+    "blocks.4.mlp.fc1.U_o",
+    "blocks.4.mlp.fc1.V_o",
+    "blocks.4.mlp.fc1.b_e",
+    "blocks.4.mlp.fc2.U_e",
+    "blocks.4.mlp.fc2.V_e",
+    "blocks.4.mlp.fc2.U_o",
+    "blocks.4.mlp.fc2.V_o",
+    "blocks.4.mlp.fc2.b_e",
+    "blocks.5.attn.qkv.q.U_e",
+    "blocks.5.attn.qkv.q.V_e",
+    "blocks.5.attn.qkv.q.W_o",
+    "blocks.5.attn.qkv.q.b_e",
+    "blocks.5.attn.qkv.k.U_e",
+    "blocks.5.attn.qkv.k.V_e",
+    "blocks.5.attn.qkv.k.U_o",
+    "blocks.5.attn.qkv.k.V_o",
+    "blocks.5.attn.qkv.k.b_e",
+    "blocks.5.attn.qkv.v.U_e",
+    "blocks.5.attn.qkv.v.V_e",
+    "blocks.5.attn.qkv.v.W_o",
+    "blocks.5.attn.qkv.v.b_e",
+    "blocks.5.attn.proj.U_e",
+    "blocks.5.attn.proj.V_e",
+    "blocks.5.attn.proj.W_o",
+    "blocks.5.attn.proj.b_e",
+    "blocks.5.mlp.fc1.U_e",
+    "blocks.5.mlp.fc1.V_e",
+    "blocks.5.mlp.fc1.U_o",
+    "blocks.5.mlp.fc1.V_o",
+    "blocks.5.mlp.fc1.b_e",
+    "blocks.5.mlp.fc2.U_e",
+    "blocks.5.mlp.fc2.V_e",
+    "blocks.5.mlp.fc2.U_o",
+    "blocks.5.mlp.fc2.V_o",
+    "blocks.5.mlp.fc2.b_e",
+    "blocks.6.attn.qkv.q.U_e",
+    "blocks.6.attn.qkv.q.V_e",
+    "blocks.6.attn.qkv.q.W_o",
+    "blocks.6.attn.qkv.q.b_e",
+    "blocks.6.attn.qkv.k.U_e",
+    "blocks.6.attn.qkv.k.V_e",
+    "blocks.6.attn.qkv.k.W_o",
+    "blocks.6.attn.qkv.k.b_e",
+    "blocks.6.attn.qkv.v.W_e",
+    "blocks.6.attn.qkv.v.W_o",
+    "blocks.6.attn.qkv.v.b_e",
+    "blocks.6.attn.proj.U_e",
+    "blocks.6.attn.proj.V_e",
+    "blocks.6.attn.proj.U_o",
+    "blocks.6.attn.proj.V_o",
+    "blocks.6.attn.proj.b_e",
+    "blocks.6.mlp.fc1.U_e",
+    "blocks.6.mlp.fc1.V_e",
+    "blocks.6.mlp.fc1.U_o",
+    "blocks.6.mlp.fc1.V_o",
+    "blocks.6.mlp.fc1.b_e",
+    "blocks.6.mlp.fc2.U_e",
+    "blocks.6.mlp.fc2.V_e",
+    "blocks.6.mlp.fc2.U_o",
+    "blocks.6.mlp.fc2.V_o",
+    "blocks.6.mlp.fc2.b_e",
+    "blocks.7.attn.qkv.q.U_e",
+    "blocks.7.attn.qkv.q.V_e",
+    "blocks.7.attn.qkv.q.W_o",
+    "blocks.7.attn.qkv.q.b_e",
+    "blocks.7.attn.qkv.k.U_e",
+    "blocks.7.attn.qkv.k.V_e",
+    "blocks.7.attn.qkv.k.W_o",
+    "blocks.7.attn.qkv.k.b_e",
+    "blocks.7.attn.qkv.v.W_e",
+    "blocks.7.attn.qkv.v.W_o",
+    "blocks.7.attn.qkv.v.b_e",
+    "blocks.7.attn.proj.U_e",
+    "blocks.7.attn.proj.V_e",
+    "blocks.7.attn.proj.W_o",
+    "blocks.7.attn.proj.b_e",
+    "blocks.7.mlp.fc1.U_e",
+    "blocks.7.mlp.fc1.V_e",
+    "blocks.7.mlp.fc1.U_o",
+    "blocks.7.mlp.fc1.V_o",
+    "blocks.7.mlp.fc1.b_e",
+    "blocks.7.mlp.fc2.U_e",
+    "blocks.7.mlp.fc2.V_e",
+    "blocks.7.mlp.fc2.U_o",
+    "blocks.7.mlp.fc2.V_o",
+    "blocks.7.mlp.fc2.b_e",
+    "blocks.8.attn.qkv.q.U_e",
+    "blocks.8.attn.qkv.q.V_e",
+    "blocks.8.attn.qkv.q.W_o",
+    "blocks.8.attn.qkv.q.b_e",
+    "blocks.8.attn.qkv.k.U_e",
+    "blocks.8.attn.qkv.k.V_e",
+    "blocks.8.attn.qkv.k.W_o",
+    "blocks.8.attn.qkv.k.b_e",
+    "blocks.8.attn.qkv.v.W_e",
+    "blocks.8.attn.qkv.v.W_o",
+    "blocks.8.attn.qkv.v.b_e",
+    "blocks.8.attn.proj.U_e",
+    "blocks.8.attn.proj.V_e",
+    "blocks.8.attn.proj.W_o",
+    "blocks.8.attn.proj.b_e",
+    "blocks.8.mlp.fc1.U_e",
+    "blocks.8.mlp.fc1.V_e",
+    "blocks.8.mlp.fc1.U_o",
+    "blocks.8.mlp.fc1.V_o",
+    "blocks.8.mlp.fc1.b_e",
+    "blocks.8.mlp.fc2.U_e",
+    "blocks.8.mlp.fc2.V_e",
+    "blocks.8.mlp.fc2.U_o",
+    "blocks.8.mlp.fc2.V_o",
+    "blocks.8.mlp.fc2.b_e",
+    "blocks.9.attn.qkv.q.U_e",
+    "blocks.9.attn.qkv.q.V_e",
+    "blocks.9.attn.qkv.q.U_o",
+    "blocks.9.attn.qkv.q.V_o",
+    "blocks.9.attn.qkv.q.b_e",
+    "blocks.9.attn.qkv.k.U_e",
+    "blocks.9.attn.qkv.k.V_e",
+    "blocks.9.attn.qkv.k.U_o",
+    "blocks.9.attn.qkv.k.V_o",
+    "blocks.9.attn.qkv.k.b_e",
+    "blocks.9.attn.qkv.v.W_e",
+    "blocks.9.attn.qkv.v.U_o",
+    "blocks.9.attn.qkv.v.V_o",
+    "blocks.9.attn.qkv.v.b_e",
+    "blocks.9.attn.proj.U_e",
+    "blocks.9.attn.proj.V_e",
+    "blocks.9.attn.proj.U_o",
+    "blocks.9.attn.proj.V_o",
+    "blocks.9.attn.proj.b_e",
+    "blocks.9.mlp.fc1.U_e",
+    "blocks.9.mlp.fc1.V_e",
+    "blocks.9.mlp.fc1.U_o",
+    "blocks.9.mlp.fc1.V_o",
+    "blocks.9.mlp.fc1.b_e",
+    "blocks.9.mlp.fc2.U_e",
+    "blocks.9.mlp.fc2.V_e",
+    "blocks.9.mlp.fc2.U_o",
+    "blocks.9.mlp.fc2.V_o",
+    "blocks.9.mlp.fc2.b_e",
+    "blocks.10.attn.qkv.q.W_e",
+    "blocks.10.attn.qkv.q.U_o",
+    "blocks.10.attn.qkv.q.V_o",
+    "blocks.10.attn.qkv.q.b_e",
+    "blocks.10.attn.qkv.k.W_e",
+    "blocks.10.attn.qkv.k.U_o",
+    "blocks.10.attn.qkv.k.V_o",
+    "blocks.10.attn.qkv.k.b_e",
+    "blocks.10.attn.qkv.v.W_e",
+    "blocks.10.attn.qkv.v.W_o",
+    "blocks.10.attn.qkv.v.b_e",
+    "blocks.10.attn.proj.U_e",
+    "blocks.10.attn.proj.V_e",
+    "blocks.10.attn.proj.U_o",
+    "blocks.10.attn.proj.V_o",
+    "blocks.10.attn.proj.b_e",
+    "blocks.10.mlp.fc1.U_e",
+    "blocks.10.mlp.fc1.V_e",
+    "blocks.10.mlp.fc1.U_o",
+    "blocks.10.mlp.fc1.V_o",
+    "blocks.10.mlp.fc1.b_e",
+    "blocks.10.mlp.fc2.U_e",
+    "blocks.10.mlp.fc2.V_e",
+    "blocks.10.mlp.fc2.U_o",
+    "blocks.10.mlp.fc2.V_o",
+    "blocks.10.mlp.fc2.b_e",
+    "blocks.11.attn.qkv.q.W_e",
+    "blocks.11.attn.qkv.q.U_o",
+    "blocks.11.attn.qkv.q.V_o",
+    "blocks.11.attn.qkv.q.b_e",
+    "blocks.11.attn.qkv.k.U_e",
+    "blocks.11.attn.qkv.k.V_e",
+    "blocks.11.attn.qkv.k.U_o",
+    "blocks.11.attn.qkv.k.V_o",
+    "blocks.11.attn.qkv.k.b_e",
+    "blocks.11.attn.qkv.v.W_e",
+    "blocks.11.attn.qkv.v.W_o",
+    "blocks.11.attn.qkv.v.b_e",
+    "blocks.11.attn.proj.W_e",
+    "blocks.11.attn.proj.U_o",
+    "blocks.11.attn.proj.V_o",
+    "blocks.11.attn.proj.b_e",
+    "blocks.11.mlp.fc1.U_e",
+    "blocks.11.mlp.fc1.V_e",
+    "blocks.11.mlp.fc1.U_o",
+    "blocks.11.mlp.fc1.V_o",
+    "blocks.11.mlp.fc1.b_e",
+    "blocks.11.mlp.fc2.U_e",
+    "blocks.11.mlp.fc2.V_e",
+    "blocks.11.mlp.fc2.U_o",
+    "blocks.11.mlp.fc2.V_o",
+    "blocks.11.mlp.fc2.b_e"
+  ],
+  "amp": "bf16",
+  "share_prefix_used": false,
+  "first_grad_block": 0,
+  "normalisers": {
+    "block0": 0.024072084139388196,
+    "block1": 0.01418551035909584,
+    "block2": 0.01264460816192687,
+    "block3": 0.01863632993068356,
+    "block4": 0.025570897754596297,
+    "block5": 0.042482150534106325,
+    "block6": 0.07781782654354392,
+    "block7": 0.3393260734530781,
+    "block8": 0.6727231107374876,
+    "block9": 1.7651378967582099,
+    "block10": 4.963536233407544,
+    "block11": 23.980406953235995,
+    "cls": 0.8559266133037872,
+    "patch": 0.792014704305418
+  },
+  "weights": {
+    "cls": 1.0,
+    "patch": 1.0,
+    "block0": 1.0,
+    "block1": 1.0,
+    "block2": 1.0,
+    "block3": 1.0,
+    "block4": 1.0,
+    "block5": 1.0,
+    "block6": 1.0,
+    "block7": 1.0,
+    "block8": 1.0,
+    "block9": 1.0,
+    "block10": 1.0,
+    "block11": 1.0
+  },
+  "total_steps": 780,
+  "steps_done": 780,
+  "warmup_steps": 39,
+  "steps_per_epoch": 390,
+  "images_seen": 199680,
+  "diverged": false,
+  "heldout_images": 5000,
+  "heldout_initial": {
+    "total": 11.074583226464856,
+    "block0": 0.08623023671285918,
+    "block1": 0.21345957960172335,
+    "block2": 0.4753897187069642,
+    "block3": 0.5257432445138681,
+    "block4": 0.6045335000905308,
+    "block5": 0.7927236110439109,
+    "block6": 0.8487836388633765,
+    "block7": 0.6127296884540946,
+    "block8": 0.753503284501972,
+    "block9": 0.9324844740462618,
+    "block10": 0.9779169269668295,
+    "block11": 1.0841137456133239,
+    "cls": 1.6366408429777768,
+    "patch": 1.5303307343713644
+  },
+  "heldout_final": {
+    "total": 4.258743812418832,
+    "block0": 0.03942602787599834,
+    "block1": 0.09002134409428628,
+    "block2": 0.1500632298246193,
+    "block3": 0.16533220419535372,
+    "block4": 0.19151818189958167,
+    "block5": 0.25083738939625827,
+    "block6": 0.3125283903473981,
+    "block7": 0.23018814857577333,
+    "block8": 0.30273747311011096,
+    "block9": 0.3959653285957085,
+    "block10": 0.4059596266716016,
+    "block11": 0.44461007729633695,
+    "cls": 0.6982443550818253,
+    "patch": 0.5813120354539802
+  },
+  "train_loss_first": 10.4183976855129,
+  "train_loss_last": 4.025897233746946,
+  "train_loss_last10_mean": 4.046353320404887,
+  "seconds_total": 3875.75,
+  "seconds_train": 3852.37,
+  "peak_memory_gb": 22.3655366897583,
+  "persistent_memory_gb": 0.5606,
+  "checkpoint": "/home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f040/s0/ckpt/step780.pt",
+  "lockstep": {
+    "students": [
+      "mirror_svdllm_f065",
+      "mirror_svdllm_f050",
+      "mirror_svdllm_f040",
+      "mirror_partial_k9"
+    ],
+    "data": {
+      "mode": "stream",
+      "n_train": 100000,
+      "n_heldout": 5000,
+      "image_size": 256,
+      "resident_gb": 0.0,
+      "prefetch": 2
+    },
+    "fused_adamw": true,
+    "divergence_check": "device flag (found_inf), at flushes",
+    "teacher_flip": true,
+    "n_target_modes": 2
+  },
+  "resumed_from_step": null,
+  "hook_steps": [
+    780
+  ],
+  "hook_seconds": 1.22,
+  "state_path": "/home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/_jobs/a06_mirror_s0/s0/train_state.pt",
+  "state_every": 100,
+  "job": "a06_mirror_s0",
+  "method": "mirror_svdllm",
+  "variant": "f040",
+  "lr": 0.0002,
+  "lr_selection": {
+    "best_lr": 0.0002,
+    "lrs": [
+      0.0001,
+      0.0002
+    ],
+    "budget_steps": 200,
+    "seed": 0,
+    "trials": [
+      {
+        "lr": 0.0001,
+        "heldout_loss": 5.267684037637459,
+        "heldout_terms": {
+          "total": 5.267684037637459,
+          "block0": 0.044987619353257124,
+          "block1": 0.11215746100073991,
+          "block2": 0.2028155232190354,
+          "block3": 0.2185076048870782,
+          "block4": 0.25784949366075516,
+          "block5": 0.3264216242518866,
+          "block6": 0.3907847313861235,
+          "block7": 0.27681973052287256,
+          "block8": 0.36441622144087565,
+          "block9": 0.47400383501442594,
+          "block10": 0.48473203746505245,
+          "block11": 0.5595614775814656,
+          "cls": 0.8469059911918451,
+          "patch": 0.7077206866620467
+        },
+        "heldout_initial": 11.074583226464856,
+        "train_loss_last": 5.032095033675432,
+        "diverged": false,
+        "trial_dir": "/home/Mirror_CPAL/runs/final/lr/dinov2_vitb14_reg/mirror_svdllm_f040_lr1e-04/s0"
+      },
+      {
+        "lr": 0.0002,
+        "heldout_loss": 5.059644869576264,
+        "heldout_terms": {
+          "total": 5.059644869576264,
+          "block0": 0.043194429399215965,
+          "block1": 0.10742623809636713,
+          "block2": 0.19171542741924322,
+          "block3": 0.20733684737742206,
+          "block4": 0.24380957845686835,
+          "block5": 0.31024773570786723,
+          "block6": 0.374210698081283,
+          "block7": 0.2667232286990585,
+          "block8": 0.3508538010850728,
+          "block9": 0.456627712573363,
+          "block10": 0.46736340953638567,
+          "block11": 0.5366175158597531,
+          "cls": 0.8209897525126959,
+          "patch": 0.682528494771668
+        },
+        "heldout_initial": 11.074583226464856,
+        "train_loss_last": 4.840709635987878,
+        "diverged": false,
+        "trial_dir": "/home/Mirror_CPAL/runs/final/lr/dinov2_vitb14_reg/mirror_svdllm_f040_lr2e-04/s0"
+      }
+    ],
+    "lockstep": true,
+    "rule": "lowest held-out distillation loss on the LR-selection rows (centre view) after the trial budget, each trial with its own warm-up and cosine; ties go to the smaller rate; diverged trials score +inf",
+    "heldout_images": 5000,
+    "git_hash": "11e50a15265afa283852e7389930d545c48931c1",
+    "git_dirty": true
+  },
+  "params": {
+    "params_model": 34634901,
+    "params_frac": 0.40001709562573734,
+    "target": 34633421,
+    "gap": 4.273328932766994e-05,
+    "eligible": true,
+    "model_params": 33729977
+  },
+  "build": {
+    "frac": 0.4,
+    "hparams": {
+      "damp": 1e-06
+    }
+  },
+  "complete": true
+}

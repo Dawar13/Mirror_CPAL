@@ -1,0 +1,151 @@
+{
+  "top1": 78.282,
+  "top5": 94.708,
+  "chosen_wd": 0.00316,
+  "wd_at_grid_edge": false,
+  "knn_check_top1": 76.58999562263489,
+  "n_bank": 100000,
+  "n_val": 50000,
+  "flip_average": false,
+  "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+  "amp": "bf16",
+  "wd_grid": [
+    1e-07,
+    1e-06,
+    1e-05,
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "seed": 0,
+  "seconds": 255.4,
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 79.9,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 79.64,
+        "holdout_top5": 94.92,
+        "holdout_loss": 1.037716015625,
+        "train_objective": 1.4804326295852661,
+        "grad_max": 5.107019023853354e-05,
+        "n_iter": 112,
+        "n_eval": 121,
+        "hit_limit": false,
+        "seconds": 5.26
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 79.85,
+        "holdout_top5": 94.84,
+        "holdout_loss": 0.805711279296875,
+        "train_objective": 0.49839234352111816,
+        "grad_max": 1.3260340892884415e-05,
+        "n_iter": 202,
+        "n_eval": 210,
+        "hit_limit": false,
+        "seconds": 9.54
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 79.19,
+        "holdout_top5": 94.39,
+        "holdout_loss": 0.8852482421875,
+        "train_objective": 0.12241120636463165,
+        "grad_max": 1.5811810953891836e-06,
+        "n_iter": 394,
+        "n_eval": 417,
+        "hit_limit": false,
+        "seconds": 21.83
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 78.78,
+        "holdout_top5": 93.98,
+        "holdout_loss": 1.077072265625,
+        "train_objective": 0.02464340254664421,
+        "grad_max": 6.501123834823375e-07,
+        "n_iter": 164,
+        "n_eval": 176,
+        "hit_limit": false,
+        "seconds": 9.96
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 78.55,
+        "holdout_top5": 93.55,
+        "holdout_loss": 1.34912109375,
+        "train_objective": 0.004771470092236996,
+        "grad_max": 8.656523959871265e-07,
+        "n_iter": 81,
+        "n_eval": 88,
+        "hit_limit": false,
+        "seconds": 4.75
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 78.55,
+        "holdout_top5": 93.55,
+        "holdout_loss": 1.34912109375,
+        "train_objective": 0.0018348353914916515,
+        "grad_max": 9.80408231043839e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.03
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 79.9,
+        "holdout_top5": 95.07,
+        "holdout_loss": 0.8560748046875,
+        "train_objective": 0.8841387033462524,
+        "grad_max": 2.380354817432817e-05,
+        "n_iter": 112,
+        "n_eval": 119,
+        "hit_limit": false,
+        "seconds": 5.05
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 79.55,
+        "holdout_top5": 94.65,
+        "holdout_loss": 0.8259671875,
+        "train_objective": 0.2557668685913086,
+        "grad_max": 1.4234836271498352e-05,
+        "n_iter": 252,
+        "n_eval": 265,
+        "hit_limit": false,
+        "seconds": 36.79
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "settings": {
+    "seed": 0,
+    "flip_average": false,
+    "data": "cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)",
+    "checkpoint_sha256": "add611fe8d847e167fd3af57b0b5b0ead4f069d7b1900ad0e4c4008a18751ad5"
+  },
+  "model": "dinov2_vitb14_reg",
+  "run_dir": "runs/final/a06/dinov2_vitb14_reg/svdllm_f065/s0",
+  "step": 780,
+  "predictions": "knn/step780_probe_pred.npz",
+  "git": {
+    "git_hash": "547224c624c537c29843f5f72a86b28fdabd5685",
+    "git_dirty": true
+  }
+}

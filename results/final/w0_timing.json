@@ -1,0 +1,40 @@
+{
+  "hours_per_unit": 0.3112540740740741,
+  "concurrency": 3.0,
+  "hours_per_unit_alone": 0.14696861111111112,
+  "throughput_gain": 1.4133774165714623,
+  "alone_hours_per_full_heal": {
+    "dinov2_vitb14_reg": 0.14696861111111112,
+    "deit3_b16": 0.12859916666666668,
+    "dinov2_vitl14_reg": 0.35368416666666663
+  },
+  "concurrent_hours_per_full_heal": [
+    0.31028333333333336,
+    0.31192861111111114,
+    0.31155027777777783
+  ],
+  "batch_hours": 0.3119519444444445,
+  "units": {
+    "dinov2_vitb14_reg": 1.0,
+    "deit3_b16": 1.0,
+    "dinov2_vitl14_reg": 3.0
+  },
+  "measured_unit_ratio": {
+    "dinov2_vitb14_reg": 1.0,
+    "deit3_b16": 0.8750111040339302,
+    "dinov2_vitl14_reg": 2.406528604936428
+  },
+  "timing_steps": 60,
+  "full_steps": 780,
+  "estimate": {
+    "runs/final/_timing/dinov2_vitb14_reg_alone": "wall 51.8 s + 720 steps x 0.663 s",
+    "runs/final/_timing/deit3_b16_alone": "wall 52.6 s + 720 steps x 0.570 s",
+    "runs/final/_timing/dinov2_vitl14_reg_alone": "wall 123.3 s + 720 steps x 1.597 s",
+    "runs/final/_timing/dinov2_vitb14_reg_concurrent1": "wall 106.4 s + 720 steps x 1.404 s",
+    "runs/final/_timing/dinov2_vitb14_reg_concurrent3": "wall 106.8 s + 720 steps x 1.411 s",
+    "runs/final/_timing/dinov2_vitb14_reg_concurrent2": "wall 106.9 s + 720 steps x 1.409 s"
+  },
+  "failed_runs": [],
+  "note": "wall time of a full heal = the timing run's wall time (start-up counted once) + (full_steps - timing_steps) x the measured seconds per training step; the runner uses hours_per_unit / concurrency as the wall time of one heal-unit when 3 heals run at once",
+  "date_utc": "2026-11-20T08:43:46Z"
+}

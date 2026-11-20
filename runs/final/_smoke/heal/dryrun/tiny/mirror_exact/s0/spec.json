@@ -1,0 +1,93 @@
+{
+  "format": "must09-healed-v1",
+  "family": "mirror",
+  "method": "mirror_exact",
+  "blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": false,
+    "fold": true,
+    "even_head": true
+  },
+  "modules": [],
+  "matrices": [],
+  "mirror": {
+    "d_plus": 36,
+    "structure_file": "structure.npz",
+    "n_pairs": [
+      85,
+      85,
+      85,
+      85
+    ],
+    "n_head_pairs": [
+      1,
+      2,
+      0,
+      1
+    ],
+    "builder": "mirror.mirror_family.build_mirror_variant"
+  },
+  "trainable": "converted blocks (re-projected with A* after every step) and the embeddings (re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+  "adapter": {
+    "kind": "tiny",
+    "img_size": 56,
+    "seed": 0,
+    "dtype": "float32"
+  },
+  "targets": "sym",
+  "model": "tiny",
+  "hparams": null,
+  "fp_heal": {
+    "loader": {
+      "kind": "heal_structured"
+    },
+    "method": "mirror_exact",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "symmetrised",
+      "k": 4,
+      "logits": false,
+      "input_transform": null,
+      "block_map": null,
+      "reg_perm": [],
+      "A_digest": "b597358b7a40f0d1",
+      "A_dim": 64,
+      "A_d_plus": 36
+    },
+    "builder_options": {},
+    "variant": null,
+    "lr": 0.001,
+    "job": "dryrun_2eb9c437",
+    "lr_selection": {
+      "given": true,
+      "best_lr": 0.001
+    },
+    "params": {
+      "model_params": 303400,
+      "model_params_stored": 307496,
+      "converted_params_kept": 100816,
+      "converted_params_dense": 196608,
+      "model_params_structured": 208632,
+      "model_params_original": 304424,
+      "model_params_frac": 0.6853336136441279,
+      "params_source": "free parameters",
+      "params_total": 100816,
+      "params_matrices": 100816,
+      "params_basis_change": 0,
+      "budget_total": 100816,
+      "gap": 0
+    }
+  },
+  "experiment": "dryrun",
+  "seed": 0,
+  "state_file": "ckpt/step4.pt"
+}

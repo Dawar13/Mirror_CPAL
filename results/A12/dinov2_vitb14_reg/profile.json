@@ -1,0 +1,626 @@
+{
+  "mirror_even_odd": {
+    "groups": {
+      "ms": {
+        "GEMM": 1.3882099,
+        "attention": 5.682583300000018,
+        "butterflies and permutes": 18.849079399999937,
+        "rest": 14.062992199999936
+      },
+      "share": {
+        "GEMM": 0.03472012090539355,
+        "attention": 0.1421254662072147,
+        "butterflies and permutes": 0.4714289357274867,
+        "rest": 0.35172547715990515
+      },
+      "total_ms": 39.98286479999989
+    },
+    "categories": {
+      "gemm": {
+        "ms": 1.3882099,
+        "launches": 2.0
+      },
+      "attention": {
+        "ms": 5.682583300000018,
+        "launches": 17.0
+      },
+      "triton": {
+        "ms": 18.05469060000003,
+        "launches": 113.0
+      },
+      "elementwise": {
+        "ms": 0.0,
+        "launches": 0.0
+      },
+      "norm": {
+        "ms": 0.0,
+        "launches": 0.0
+      },
+      "memory": {
+        "ms": 0.7943887999999073,
+        "launches": 89.0
+      },
+      "other": {
+        "ms": 14.062992199999936,
+        "launches": 96.0
+      }
+    },
+    "top_kernels": [
+      {
+        "rank": 1,
+        "short_name": "nvjet_tst_176x128_64x5_1x2_h_bz_coopA_bias_TNN",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 5.266712000000011,
+        "share": 0.1317242280248019,
+        "calls_per_forward": 24.0,
+        "mean_us": 219.4463333333338,
+        "name": "nvjet_tst_176x128_64x5_1x2_h_bz_coopA_bias_TNN"
+      },
+      {
+        "rank": 2,
+        "short_name": "cudnn_generated_fort_native_sdpa_sm90_flash_fprop_wgmma_f16_knob_7_64x128x64_4x1x1_cga1x1x1_kernel0_0",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 4.037573400000013,
+        "share": 0.10098259392358559,
+        "calls_per_forward": 12.0,
+        "mean_us": 336.4644500000011,
+        "name": "cudnn_generated_fort_native_sdpa_sm90_flash_fprop_wgmma_f16_knob_7_64x128x64_4x1x1_cga1x1x1_kernel0_0"
+      },
+      {
+        "rank": 3,
+        "short_name": "nvjet_tst_256x136_64x4_1x2_h_bz_coopA_TNT",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 3.901637800000002,
+        "share": 0.09758274749737324,
+        "calls_per_forward": 15.0,
+        "mean_us": 260.1091866666668,
+        "name": "nvjet_tst_256x136_64x4_1x2_h_bz_coopA_TNT"
+      },
+      {
+        "rank": 4,
+        "short_name": "nvjet_tst_128x136_64x6_1x2_h_bz_TNT",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 1.8887822999999728,
+        "share": 0.04723979408298872,
+        "calls_per_forward": 9.0,
+        "mean_us": 209.86469999999696,
+        "name": "nvjet_tst_128x136_64x6_1x2_h_bz_TNT"
+      },
+      {
+        "rank": 5,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_79",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 1.7198640999999975,
+        "share": 0.04301502927824227,
+        "calls_per_forward": 2.0,
+        "mean_us": 859.9320499999988,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_79"
+      },
+      {
+        "rank": 6,
+        "short_name": "cutlass__5x_cudnn::Kernel<cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8>",
+        "category": "gemm",
+        "triton_tag": "",
+        "ms_per_forward": 1.3774065999999918,
+        "share": 0.034449922657868066,
+        "calls_per_forward": 1.0,
+        "mean_us": 1377.4065999999916,
+        "name": "void cutlass__5x_cudnn::Kernel<cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8>(cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8::Params)"
+      },
+      {
+        "rank": 7,
+        "short_name": "triton_per_fused__fused_rms_norm__to_copy__unsafe_view_add_cat_slice_view_9",
+        "category": "triton",
+        "triton_tag": "norm + cat/gather/pad",
+        "ms_per_forward": 1.2939667000000081,
+        "share": 0.03236303117529517,
+        "calls_per_forward": 11.0,
+        "mean_us": 117.6333363636371,
+        "name": "triton_per_fused__fused_rms_norm__to_copy__unsafe_view_add_cat_slice_view_9"
+      },
+      {
+        "rank": 8,
+        "short_name": "nvjet_tst_256x88_64x4_2x1_v_bz_TNT",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 1.1276053000000057,
+        "share": 0.028202213764332587,
+        "calls_per_forward": 4.0,
+        "mean_us": 281.9013250000014,
+        "name": "nvjet_tst_256x88_64x4_2x1_v_bz_TNT"
+      },
+      {
+        "rank": 9,
+        "short_name": "triton_red_fused__fused_rms_norm__to_copy__unsafe_view_add_cat_slice_view_6",
+        "category": "triton",
+        "triton_tag": "norm + cat/gather/pad",
+        "ms_per_forward": 0.8965395999999805,
+        "share": 0.02242309560569514,
+        "calls_per_forward": 12.0,
+        "mean_us": 74.7116333333317,
+        "name": "triton_red_fused__fused_rms_norm__to_copy__unsafe_view_add_cat_slice_view_6"
+      },
+      {
+        "rank": 10,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_72",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.8365048000000046,
+        "share": 0.020921582387463316,
+        "calls_per_forward": 1.0,
+        "mean_us": 836.5048000000046,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_72"
+      },
+      {
+        "rank": 11,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_64",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.8181530000000039,
+        "share": 0.02046259076463191,
+        "calls_per_forward": 1.0,
+        "mean_us": 818.1530000000039,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_64"
+      },
+      {
+        "rank": 12,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_56",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.7440761999999937,
+        "share": 0.01860987709915163,
+        "calls_per_forward": 1.0,
+        "mean_us": 744.0761999999937,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_56"
+      },
+      {
+        "rank": 13,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_48",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.7047098999999932,
+        "share": 0.017625297825082188,
+        "calls_per_forward": 1.0,
+        "mean_us": 704.7098999999932,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_48"
+      },
+      {
+        "rank": 14,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_40",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.6698651999999998,
+        "share": 0.01675380699584092,
+        "calls_per_forward": 1.0,
+        "mean_us": 669.8651999999998,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_40"
+      },
+      {
+        "rank": 15,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_36",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.6200217999999943,
+        "share": 0.01550718796918214,
+        "calls_per_forward": 1.0,
+        "mean_us": 620.0217999999943,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_36"
+      },
+      {
+        "rank": 16,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_28",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.5985175999999958,
+        "share": 0.01496935257125441,
+        "calls_per_forward": 1.0,
+        "mean_us": 598.5175999999958,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_28"
+      },
+      {
+        "rank": 17,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_20",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.5774712999999976,
+        "share": 0.014442969579308363,
+        "calls_per_forward": 1.0,
+        "mean_us": 577.4712999999977,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_20"
+      },
+      {
+        "rank": 18,
+        "short_name": "cudnn::engines_precompiled::nchwToNhwcKernel<__nv_bfloat16, __nv_bfloat16, float, false, true, ",
+        "category": "memory",
+        "triton_tag": "",
+        "ms_per_forward": 0.5711324999999917,
+        "share": 0.014284431664836415,
+        "calls_per_forward": 2.0,
+        "mean_us": 285.5662499999959,
+        "name": "void cudnn::engines_precompiled::nchwToNhwcKernel<__nv_bfloat16, __nv_bfloat16, float, false, true, (cudnnKernelDataType_t)0>(cudnn::engines_precompiled::nchw2nhwc_params_t<float>, __nv_bfloat16 const*, __nv_bfloat16*)"
+      },
+      {
+        "rank": 19,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_13",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.5547639999999966,
+        "share": 0.013875043791259253,
+        "calls_per_forward": 1.0,
+        "mean_us": 554.7639999999966,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_13"
+      },
+      {
+        "rank": 20,
+        "short_name": "nvjet_tst_192x144_64x5_1x2_h_bz_coopB_TNT",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 0.5504444999999998,
+        "share": 0.013767010011748865,
+        "calls_per_forward": 2.0,
+        "mean_us": 275.2222499999999,
+        "name": "nvjet_tst_192x144_64x5_1x2_h_bz_coopB_TNT"
+      },
+      {
+        "rank": 21,
+        "short_name": "nvjet_tst_72x512_64x2_1x2_h_bz_coopA_TNN",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 0.5416989999999854,
+        "share": 0.01354827881167702,
+        "calls_per_forward": 24.0,
+        "mean_us": 22.570791666666057,
+        "name": "nvjet_tst_72x512_64x2_1x2_h_bz_coopA_TNN"
+      },
+      {
+        "rank": 22,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_7",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.5339962999999976,
+        "share": 0.01335562878425858,
+        "calls_per_forward": 1.0,
+        "mean_us": 533.9962999999977,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_7"
+      },
+      {
+        "rank": 23,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_67",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.5130619000000064,
+        "share": 0.012832044491219344,
+        "calls_per_forward": 1.0,
+        "mean_us": 513.0619000000064,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_67"
+      },
+      {
+        "rank": 24,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_43",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.5113308000000106,
+        "share": 0.012788748444058768,
+        "calls_per_forward": 1.0,
+        "mean_us": 511.33080000001064,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_43"
+      },
+      {
+        "rank": 25,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_10",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.5108443000000048,
+        "share": 0.012776580731653981,
+        "calls_per_forward": 1.0,
+        "mean_us": 510.84430000000486,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_10"
+      },
+      {
+        "rank": 26,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_51",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.5108344999999958,
+        "share": 0.012776335626655677,
+        "calls_per_forward": 1.0,
+        "mean_us": 510.8344999999957,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_51"
+      },
+      {
+        "rank": 27,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_31",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.5107675000000063,
+        "share": 0.01277465990881193,
+        "calls_per_forward": 1.0,
+        "mean_us": 510.7675000000063,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_31"
+      },
+      {
+        "rank": 28,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_15",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.5105278,
+        "share": 0.01276866484064447,
+        "calls_per_forward": 1.0,
+        "mean_us": 510.5278,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_15"
+      },
+      {
+        "rank": 29,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_39",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.5096476000000035,
+        "share": 0.012746650410102804,
+        "calls_per_forward": 1.0,
+        "mean_us": 509.64760000000354,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_39"
+      },
+      {
+        "rank": 30,
+        "short_name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_1",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 0.3325309000000041,
+        "share": 0.00831683526589133,
+        "calls_per_forward": 1.0,
+        "mean_us": 332.5309000000041,
+        "name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_1"
+      }
+    ],
+    "batch": 256,
+    "iters": 10,
+    "mode_used": "compile",
+    "compile_ok": true,
+    "compile_s": 1.7,
+    "compile_error": "",
+    "time_source": "cuda kernel time (torch.profiler)",
+    "annotations_skipped": 0,
+    "kernel_span_us": 405011.582,
+    "kernel_sum_over_span": 0.9872029980614205
+  },
+  "original": {
+    "groups": {
+      "ms": {
+        "GEMM": 1.5513039999999978,
+        "attention": 4.542700699999999,
+        "butterflies and permutes": 7.807235099999987,
+        "rest": 16.820122299999987
+      },
+      "share": {
+        "GEMM": 0.05049593813420139,
+        "attention": 0.14786781540522917,
+        "butterflies and permutes": 0.25413049963692835,
+        "rest": 0.5475057468236411
+      },
+      "total_ms": 30.721362099999972
+    },
+    "categories": {
+      "gemm": {
+        "ms": 1.5513039999999978,
+        "launches": 1.0
+      },
+      "attention": {
+        "ms": 4.542700699999999,
+        "launches": 12.0
+      },
+      "triton": {
+        "ms": 6.927521000000058,
+        "launches": 39.0
+      },
+      "elementwise": {
+        "ms": 0.0,
+        "launches": 0.0
+      },
+      "norm": {
+        "ms": 0.0,
+        "launches": 0.0
+      },
+      "memory": {
+        "ms": 0.8797140999999291,
+        "launches": 67.0
+      },
+      "other": {
+        "ms": 16.820122299999987,
+        "launches": 48.0
+      }
+    },
+    "top_kernels": [
+      {
+        "rank": 1,
+        "short_name": "nvjet_tst_192x192_64x4_2x1_v_bz_coopB_bias_TNN",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 16.820122299999987,
+        "share": 0.5475057468236411,
+        "calls_per_forward": 48.0,
+        "mean_us": 350.4192145833331,
+        "name": "nvjet_tst_192x192_64x4_2x1_v_bz_coopB_bias_TNN"
+      },
+      {
+        "rank": 2,
+        "short_name": "cudnn_generated_fort_native_sdpa_sm90_flash_fprop_wgmma_f16_knob_7_64x128x64_4x1x1_cga1x1x1_kernel0_0",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 4.542700699999999,
+        "share": 0.14786781540522917,
+        "calls_per_forward": 12.0,
+        "mean_us": 378.55839166666664,
+        "name": "cudnn_generated_fort_native_sdpa_sm90_flash_fprop_wgmma_f16_knob_7_64x128x64_4x1x1_cga1x1x1_kernel0_0"
+      },
+      {
+        "rank": 3,
+        "short_name": "triton_poi_fused_gelu_view_4",
+        "category": "triton",
+        "triton_tag": "activation",
+        "ms_per_forward": 3.8587063000000192,
+        "share": 0.12560335988488033,
+        "calls_per_forward": 12.0,
+        "mean_us": 321.5588583333349,
+        "name": "triton_poi_fused_gelu_view_4"
+      },
+      {
+        "rank": 4,
+        "short_name": "cutlass__5x_cudnn::Kernel<cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8>",
+        "category": "gemm",
+        "triton_tag": "",
+        "ms_per_forward": 1.5513039999999978,
+        "share": 0.05049593813420139,
+        "calls_per_forward": 1.0,
+        "mean_us": 1551.3039999999978,
+        "name": "void cutlass__5x_cudnn::Kernel<cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8>(cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8::Params)"
+      },
+      {
+        "rank": 5,
+        "short_name": "triton_per_fused_add_mul_native_layer_norm_view_6",
+        "category": "triton",
+        "triton_tag": "norm",
+        "ms_per_forward": 1.328931000000015,
+        "share": 0.04325755465119876,
+        "calls_per_forward": 11.0,
+        "mean_us": 120.81190909091046,
+        "name": "triton_per_fused_add_mul_native_layer_norm_view_6"
+      },
+      {
+        "rank": 6,
+        "short_name": "triton_per_fused_add_mul_native_layer_norm_view_5",
+        "category": "triton",
+        "triton_tag": "norm",
+        "ms_per_forward": 0.7679321000000143,
+        "share": 0.02499668138086934,
+        "calls_per_forward": 11.0,
+        "mean_us": 69.8120090909104,
+        "name": "triton_per_fused_add_mul_native_layer_norm_view_5"
+      },
+      {
+        "rank": 7,
+        "short_name": "cudnn::engines_precompiled::nchwToNhwcKernel<__nv_bfloat16, __nv_bfloat16, float, false, true, ",
+        "category": "memory",
+        "triton_tag": "",
+        "ms_per_forward": 0.6292123999999921,
+        "share": 0.020481266356350544,
+        "calls_per_forward": 2.0,
+        "mean_us": 314.6061999999961,
+        "name": "void cudnn::engines_precompiled::nchwToNhwcKernel<__nv_bfloat16, __nv_bfloat16, float, false, true, (cudnnKernelDataType_t)0>(cudnn::engines_precompiled::nchw2nhwc_params_t<float>, __nv_bfloat16 const*, __nv_bfloat16*)"
+      },
+      {
+        "rank": 8,
+        "short_name": "triton_poi_fused__to_copy_add_cat_convolution_expand_permute_select_transpose_unsqueeze_view_1",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.623548500000008,
+        "share": 0.020296902786091267,
+        "calls_per_forward": 1.0,
+        "mean_us": 623.5485000000081,
+        "name": "triton_poi_fused__to_copy_add_cat_convolution_expand_permute_select_transpose_unsqueeze_view_1"
+      },
+      {
+        "rank": 9,
+        "short_name": "triton_red_fused_cat_expand_native_layer_norm_slice_2",
+        "category": "triton",
+        "triton_tag": "norm + cat/gather/pad",
+        "ms_per_forward": 0.17804760000000466,
+        "share": 0.005795563341900287,
+        "calls_per_forward": 1.0,
+        "mean_us": 178.04760000000465,
+        "name": "triton_red_fused_cat_expand_native_layer_norm_slice_2"
+      },
+      {
+        "rank": 10,
+        "short_name": "Memset ",
+        "category": "memory",
+        "triton_tag": "",
+        "ms_per_forward": 0.10710049999993412,
+        "share": 0.003486189826197004,
+        "calls_per_forward": 62.0,
+        "mean_us": 1.7274274193537762,
+        "name": "Memset (Device)"
+      },
+      {
+        "rank": 11,
+        "short_name": "cudnn::engines_precompiled::nhwcToNchwKernel<__nv_bfloat16, __nv_bfloat16, float, true, false, ",
+        "category": "memory",
+        "triton_tag": "",
+        "ms_per_forward": 0.09785580000000209,
+        "share": 0.0031852689239974218,
+        "calls_per_forward": 1.0,
+        "mean_us": 97.85580000000209,
+        "name": "void cudnn::engines_precompiled::nhwcToNchwKernel<__nv_bfloat16, __nv_bfloat16, float, true, false, (cudnnKernelDataType_t)0>(cudnn::engines_precompiled::nhwc2nchw_params_t<float>, __nv_bfloat16 const*, __nv_bfloat16*)"
+      },
+      {
+        "rank": 12,
+        "short_name": "triton_per_fused_add_cat_expand_mul_native_layer_norm_slice_view_3",
+        "category": "triton",
+        "triton_tag": "norm + cat/gather/pad",
+        "ms_per_forward": 0.09720329999999858,
+        "share": 0.003164029631355397,
+        "calls_per_forward": 1.0,
+        "mean_us": 97.20329999999858,
+        "name": "triton_per_fused_add_cat_expand_mul_native_layer_norm_slice_view_3"
+      },
+      {
+        "rank": 13,
+        "short_name": "triton_per_fused_add_mul_native_layer_norm_view_7",
+        "category": "triton",
+        "triton_tag": "norm",
+        "ms_per_forward": 0.06996170000000093,
+        "share": 0.0022772981149817247,
+        "calls_per_forward": 1.0,
+        "mean_us": 69.96170000000093,
+        "name": "triton_per_fused_add_mul_native_layer_norm_view_7"
+      },
+      {
+        "rank": 14,
+        "short_name": "at::native::",
+        "category": "memory",
+        "triton_tag": "",
+        "ms_per_forward": 0.036262499999997186,
+        "share": 0.001180367585329077,
+        "calls_per_forward": 1.0,
+        "mean_us": 36.26249999999718,
+        "name": "void at::native::(anonymous namespace)::upsample_gen2d_aa_out_frame<float, float, at::native::upsample_antialias::BicubicFilterFunctor>(float, float, torch::headeronly::detail::GenericPackedTensorAccessor<torch::headeronly::detail::TensorAccessor<c10::ArrayRef<long>, float const, 3ul, torch::headeronly::DefaultPtrTraits, long>, at::detail::IndexBoundsCheck<4ul, long>, float const, 4ul, torch::headeronly::DefaultPtrTraits, long>, torch::headeronly::detail::GenericPackedTensorAccessor<torch::headeronly::detail::TensorAccessor<c10::ArrayRef<long>, float, 3ul, torch::headeronly::DefaultPtrTraits, long>, at::detail::IndexBoundsCheck<4ul, long>, float, 4ul, torch::headeronly::DefaultPtrTraits, long>, at::native::upsample_antialias::BicubicFilterFunctor const&)"
+      },
+      {
+        "rank": 15,
+        "short_name": "at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda",
+        "category": "memory",
+        "triton_tag": "",
+        "ms_per_forward": 0.00928290000000361,
+        "share": 0.0003021643366523654,
+        "calls_per_forward": 1.0,
+        "mean_us": 9.282900000003611,
+        "name": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}>(at::TensorIteratorBase&, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1} const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}>(at::TensorIteratorBase&, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1} const&)::{lambda(int)#1})"
+      },
+      {
+        "rank": 16,
+        "short_name": "triton_poi_fused__to_copy_0",
+        "category": "triton",
+        "triton_tag": "pointwise",
+        "ms_per_forward": 0.003190499999996837,
+        "share": 0.00010385281712482533,
+        "calls_per_forward": 1.0,
+        "mean_us": 3.190499999996837,
+        "name": "triton_poi_fused__to_copy_0"
+      }
+    ],
+    "batch": 256,
+    "iters": 10,
+    "mode_used": "compile",
+    "compile_ok": true,
+    "compile_s": 1.2,
+    "compile_error": "",
+    "time_source": "cuda kernel time (torch.profiler)",
+    "annotations_skipped": 0,
+    "kernel_span_us": 309993.76999999996,
+    "kernel_sum_over_span": 0.9910315971833877
+  }
+}

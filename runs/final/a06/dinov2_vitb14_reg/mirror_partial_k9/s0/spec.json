@@ -1,0 +1,197 @@
+{
+  "format": "fp-mirror-partial-v1",
+  "family": "mirror_partial",
+  "method": "mirror_partial",
+  "k": 9,
+  "blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": true,
+    "fold": true,
+    "even_head": false
+  },
+  "structure_file": "structure.npz",
+  "params": {
+    "k": 9,
+    "params_matrices": 42852816,
+    "params_basis_change": 589824,
+    "params_total": 43442640,
+    "span_dense": 63700992,
+    "params_model": 66325200,
+    "params_frac": 0.7660253993737748,
+    "full_params": 86583552,
+    "target": 66203360,
+    "target_frac": 0.7646182036976261,
+    "target_matrices": 64554464,
+    "gap": 0.0018403899741644533,
+    "eligible": true
+  },
+  "train_scope": "all",
+  "targets": {
+    "final": "symmetrised",
+    "blocks": "symmetrised",
+    "k": 9,
+    "note": "flip-averaged final targets (as every MUST-09 method); A*_k-symmetrised block targets for blocks 0..k-1, centred teacher outputs for the later blocks"
+  },
+  "mirror": {
+    "d_plus": 636,
+    "n_pairs": [
+      1168,
+      1116,
+      1013,
+      963,
+      878,
+      672,
+      554,
+      406,
+      155
+    ],
+    "n_head_pairs": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0
+    ]
+  },
+  "trainable": "span blocks re-projected with A*_k after every step, embeddings re-projected, blocks k.. dense and free; final norm affine, mask token, heads and the span's absorbed norms and LayerScale frozen",
+  "adapter": {
+    "kind": "dinov2",
+    "hub_repo": "facebookresearch/dinov2",
+    "name": "dinov2_vitb14_reg",
+    "img_size": 224
+  },
+  "model": "dinov2_vitb14_reg",
+  "fp_heal": {
+    "loader": {
+      "kind": "module",
+      "module": "mirror.final.baselines.partial_span",
+      "function": "load_partial"
+    },
+    "method": "mirror_partial",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "symmetrised",
+      "k": 9,
+      "logits": false,
+      "input_transform": null,
+      "block_map": null,
+      "reg_perm": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "A_digest": "aa38d270f66f2dde",
+      "A_dim": 768,
+      "A_d_plus": 636
+    },
+    "builder_options": {
+      "structure": {
+        "adopted": {
+          "wspace": "results/A01/k9/structure/dinov2_vitb14_reg_wspace_matched_k9.npz",
+          "astar": "results/MUST-07/structure/dinov2_vitb14_reg_s0.npz"
+        }
+      },
+      "k": 9
+    },
+    "variant": "k9",
+    "lr": 0.0001,
+    "job": "a06_mirror_s0",
+    "lr_selection": {
+      "best_lr": 0.0001,
+      "lrs": [
+        0.0001,
+        0.0002
+      ],
+      "budget_steps": 200,
+      "seed": 0,
+      "trials": [
+        {
+          "lr": 0.0001,
+          "heldout_loss": 1.222975179416702,
+          "heldout_terms": {
+            "total": 1.222975179416702,
+            "block0": 0.01766645134681921,
+            "block1": 0.035037286412766114,
+            "block2": 0.0535069369254183,
+            "block3": 0.0596499254371929,
+            "block4": 0.08118188163503244,
+            "block5": 0.10211008183614752,
+            "block6": 0.11771550749893205,
+            "block7": 0.0736936093059626,
+            "block8": 0.1003272168892089,
+            "block9": 0.17354451701860082,
+            "block10": 0.15621298336189224,
+            "block11": 0.09334091035847975,
+            "cls": 0.052729224883152175,
+            "patch": 0.10625864650709711
+          },
+          "heldout_initial": 4.272133672665897,
+          "train_loss_last": 1.1715262811630964,
+          "diverged": false,
+          "trial_dir": "/home/Mirror_CPAL/runs/final/lr/dinov2_vitb14_reg/mirror_partial_k9_lr1e-04/s0"
+        },
+        {
+          "lr": 0.0002,
+          "heldout_loss": 1.3275645226780948,
+          "heldout_terms": {
+            "total": 1.3275645226780948,
+            "block0": 0.024469146651597856,
+            "block1": 0.04573603238206789,
+            "block2": 0.06753279253303868,
+            "block3": 0.06999473881859923,
+            "block4": 0.0915560194516796,
+            "block5": 0.11274662227863408,
+            "block6": 0.12798592330540348,
+            "block7": 0.07899263759399844,
+            "block8": 0.10565282914222723,
+            "block9": 0.1780769680661105,
+            "block10": 0.1610534712321003,
+            "block11": 0.09729938416621708,
+            "cls": 0.05611539777378169,
+            "patch": 0.11035255928263858
+          },
+          "heldout_initial": 4.272133672665897,
+          "train_loss_last": 1.260467459447682,
+          "diverged": false,
+          "trial_dir": "/home/Mirror_CPAL/runs/final/lr/dinov2_vitb14_reg/mirror_partial_k9_lr2e-04/s0"
+        }
+      ],
+      "lockstep": true,
+      "rule": "lowest held-out distillation loss on the LR-selection rows (centre view) after the trial budget, each trial with its own warm-up and cosine; ties go to the smaller rate; diverged trials score +inf",
+      "heldout_images": 5000,
+      "git_hash": "11e50a15265afa283852e7389930d545c48931c1",
+      "git_dirty": true
+    },
+    "params": {
+      "params_model": 66325200,
+      "params_frac": 0.7660253993737748,
+      "target": 66203360,
+      "gap": 0.0018403899741644533,
+      "eligible": true,
+      "params_total": 43442640,
+      "model_params": 85691904
+    }
+  },
+  "experiment": "A06",
+  "seed": 0,
+  "state_file": "ckpt/step780.pt"
+}

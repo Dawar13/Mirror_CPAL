@@ -1,0 +1,15 @@
+== start 2026-11-20 08:10:22 job a12b_check pid 21558 host jl-vm-581628
+== cmd python scripts/fp_a12b_kernel.py --correctness-only --out results/A12b/correctness_only; [ -f results/A12b/correctness_only/metrics.json ] || { mkdir -p results/A12b/correctness_only; echo '{"correctness": {"pass": false, "error": "no output"}}' > results/A12b/correctness_only/metrics.json; }; mkdir -p logs/final && touch logs/final/a12b_check.done
+Traceback (most recent call last):
+  File "/home/Mirror_CPAL/scripts/fp_a12b_kernel.py", line 833, in <module>
+    sys.exit(0 if main().get("ok") else 1)
+  File "/home/Mirror_CPAL/scripts/fp_a12b_kernel.py", line 726, in main
+    torch.cuda.set_per_process_memory_fraction(a.gpu_frac, device)    # cap before anything is allocated
+  File "/home/Mirror_CPAL/.venv/lib/python3.10/site-packages/torch/cuda/memory.py", line 187, in set_per_process_memory_fraction
+    device = _get_device_index(device)
+  File "/home/Mirror_CPAL/.venv/lib/python3.10/site-packages/torch/cuda/_utils.py", line 546, in _get_device_index
+    return _torch_get_device_index(device, optional, allow_cpu)
+  File "/home/Mirror_CPAL/.venv/lib/python3.10/site-packages/torch/_utils.py", line 888, in _get_device_index
+    raise ValueError(
+ValueError: Expected a torch.device with a specified index or an integer, but got:cuda
+== end rc=0 2026-11-20 08:10:24

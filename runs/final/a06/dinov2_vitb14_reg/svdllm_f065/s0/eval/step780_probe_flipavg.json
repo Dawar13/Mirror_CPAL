@@ -1,0 +1,151 @@
+{
+  "top1": 78.436,
+  "top5": 94.824,
+  "chosen_wd": 0.00316,
+  "wd_at_grid_edge": false,
+  "knn_check_top1": 76.61799788475037,
+  "n_bank": 100000,
+  "n_val": 50000,
+  "flip_average": true,
+  "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]; flip-averaged: (p(x) + p(mirror x)) / 2",
+  "amp": "bf16",
+  "wd_grid": [
+    1e-07,
+    1e-06,
+    1e-05,
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "seed": 0,
+  "seconds": 598.2,
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 80.24,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 79.64,
+        "holdout_top5": 94.92,
+        "holdout_loss": 1.032194921875,
+        "train_objective": 1.4752488136291504,
+        "grad_max": 3.905722769559361e-05,
+        "n_iter": 111,
+        "n_eval": 119,
+        "hit_limit": false,
+        "seconds": 20.39
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 80.12,
+        "holdout_top5": 94.93,
+        "holdout_loss": 0.79960419921875,
+        "train_objective": 0.49781426787376404,
+        "grad_max": 1.2807873645215295e-05,
+        "n_iter": 199,
+        "n_eval": 207,
+        "hit_limit": false,
+        "seconds": 39.78
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 79.5,
+        "holdout_top5": 94.51,
+        "holdout_loss": 0.87871435546875,
+        "train_objective": 0.12287026643753052,
+        "grad_max": 1.5391151464427821e-06,
+        "n_iter": 397,
+        "n_eval": 418,
+        "hit_limit": false,
+        "seconds": 61.89
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 79.06,
+        "holdout_top5": 94.09,
+        "holdout_loss": 1.0693212890625,
+        "train_objective": 0.02481714077293873,
+        "grad_max": 6.348734586936189e-07,
+        "n_iter": 172,
+        "n_eval": 184,
+        "hit_limit": false,
+        "seconds": 27.92
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 78.67,
+        "holdout_top5": 93.66,
+        "holdout_loss": 1.33625859375,
+        "train_objective": 0.004803305026143789,
+        "grad_max": 6.891801263009256e-07,
+        "n_iter": 107,
+        "n_eval": 115,
+        "hit_limit": false,
+        "seconds": 18.72
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 78.67,
+        "holdout_top5": 93.66,
+        "holdout_loss": 1.33625859375,
+        "train_objective": 0.0018547310028225183,
+        "grad_max": 8.222166911764361e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.06
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 80.24,
+        "holdout_top5": 95.1,
+        "holdout_loss": 0.850565625,
+        "train_objective": 0.8814280033111572,
+        "grad_max": 2.4743681933614425e-05,
+        "n_iter": 120,
+        "n_eval": 131,
+        "hit_limit": false,
+        "seconds": 17.87
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 79.71,
+        "holdout_top5": 94.72,
+        "holdout_loss": 0.8195283203125,
+        "train_objective": 0.2561333179473877,
+        "grad_max": 3.927239959011786e-06,
+        "n_iter": 270,
+        "n_eval": 284,
+        "hit_limit": false,
+        "seconds": 41.4
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "settings": {
+    "seed": 0,
+    "flip_average": true,
+    "data": "cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)",
+    "checkpoint_sha256": "add611fe8d847e167fd3af57b0b5b0ead4f069d7b1900ad0e4c4008a18751ad5"
+  },
+  "model": "dinov2_vitb14_reg",
+  "run_dir": "runs/final/a06/dinov2_vitb14_reg/svdllm_f065/s0",
+  "step": 780,
+  "predictions": "knn/step780_probe_flipavg_pred.npz",
+  "git": {
+    "git_hash": "547224c624c537c29843f5f72a86b28fdabd5685",
+    "git_dirty": true
+  }
+}

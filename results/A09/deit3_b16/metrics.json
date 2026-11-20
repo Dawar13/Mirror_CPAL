@@ -1,0 +1,89 @@
+{
+  "experiment": "A09",
+  "model": "deit3_base_patch16_224.fb_in1k",
+  "variant": "mirror_exact_s0",
+  "scores": {
+    "A09-1": {
+      "verdict": "PASS",
+      "max_rel_error": 3.34774479884326e-13,
+      "where": "even_odd block 1 attn_probs",
+      "bar": 1e-10,
+      "n_tensors": 376,
+      "max_rel_error_by_form": {
+        "dense": 2.8224492913933925e-13,
+        "even_odd": 3.34774479884326e-13
+      }
+    },
+    "A09-2": {
+      "verdict": "FAIL",
+      "floor": "exact",
+      "tensors_pass": false,
+      "n_tensors": 376,
+      "n_tensors_fail": 1,
+      "tensors_pass_cast_floor": false,
+      "n_tensors_fail_cast_floor": 2,
+      "worst_ratio": 2.0000000098084247,
+      "worst_ratio_where": "dense embed tokens0_prefix",
+      "factor": 2.0,
+      "failing": [
+        "dense embed tokens0_prefix"
+      ],
+      "flip_consistency_fp32_pass": {
+        "dense": null,
+        "even_odd": null
+      },
+      "max_eq_error_fp32": 0.00014660805863202903,
+      "max_eq_error_fp32_where": "dense block 12 act",
+      "reason": ""
+    },
+    "A09-3": {
+      "verdict": "REPORT",
+      "by_form": {
+        "dense/bf16_autocast": {
+          "max_rel_error": 0.3946122689864582,
+          "where": "dense block 1 attn_probs",
+          "flip_consistency": null,
+          "n_disagree": null
+        },
+        "even_odd/bf16_autocast": {
+          "max_rel_error": 0.051343251956601395,
+          "where": "even_odd block 1 attn_probs",
+          "flip_consistency": null,
+          "n_disagree": null
+        }
+      },
+      "target": "100% flip consistency for the even/odd form"
+    }
+  },
+  "structure": {
+    "d_plus": 724,
+    "d_minus": 44,
+    "k": 12,
+    "reg_perm": [],
+    "provenance": {
+      "run": "/home/Mirror_CPAL/runs/final/a08/deit3_b16/mirror_exact/s0",
+      "loader": "mirror.final.heal.students.load_student",
+      "method": "mirror_exact",
+      "step": null,
+      "family": "mirror"
+    }
+  },
+  "flip": {},
+  "bitwise_first_difference": {
+    "float32": "patch_embed",
+    "bf16": "patch_embed"
+  },
+  "classifier_head": true,
+  "notes": [],
+  "n_images": 1000,
+  "prereg": {
+    "ok": true,
+    "reason": "unchanged since the recorded commit",
+    "sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+    "allowed_without_check": false
+  },
+  "tf32": {
+    "matmul": false,
+    "cudnn": false
+  }
+}

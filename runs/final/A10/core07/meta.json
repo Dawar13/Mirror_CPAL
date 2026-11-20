@@ -1,0 +1,90 @@
+{
+  "experiment": "CORE-07",
+  "date_utc": "2026-11-20T16:36:37Z",
+  "git": {
+    "git_hash": "547224c624c537c29843f5f72a86b28fdabd5685",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_NEXT_PHASE.md",
+    "sha256": "711b963039af575ef58964cadb98785c9f3bc4c0dc1328369231f55fe4f25c02",
+    "commit": "e76fb17c3cc06e40f2eafb93063a842d16352eca"
+  },
+  "config": {
+    "model": "dinov2_vitb14_reg",
+    "variants": "original",
+    "healed_run": [
+      "vexact_s0=runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+      "vexact_s1=runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1",
+      "vexact_s2=runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2",
+      "best_svdllm_s0=runs/final/main/dinov2_vitb14_reg/svdllm/s0",
+      "best_svdllm_s1=runs/final/main/dinov2_vitb14_reg/svdllm/s1",
+      "best_svdllm_s2=runs/final/main/dinov2_vitb14_reg/svdllm/s2"
+    ],
+    "must09_dir": null,
+    "mirror_seeds": "0,1,2",
+    "gate_b": "results/MUST-07/gate_b.json",
+    "best_seeds": "0",
+    "probe_from": "runs/final/A10/t2",
+    "no_probe_reuse": false,
+    "v2_root": "/home/hf/extracted/imagenetv2-matched-frequency-format-val",
+    "sketch_zip": "/home/hf/extracted/ImageNet-Sketch.zip",
+    "no_sketch": false,
+    "shift_cache_dir": "/home/Mirror_CPAL/cache/shift",
+    "cache_dir": "cache",
+    "out": "runs/final/A10/core07",
+    "img_size": 224,
+    "resize": 256,
+    "batch_size": 256,
+    "num_workers": 6,
+    "decode_workers": 16,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": null,
+    "max_iter": 1000,
+    "dup_thr": 0.02,
+    "bootstrap_resamples": 10000,
+    "seed": 0,
+    "gpu_frac": 0.2,
+    "device": null,
+    "tiny": false
+  },
+  "seeds": {
+    "global": 0,
+    "bootstrap": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "variants": [
+        "original",
+        "vexact_s0",
+        "vexact_s1",
+        "vexact_s2",
+        "best_svdllm_s0",
+        "best_svdllm_s1",
+        "best_svdllm_s2"
+      ],
+      "healed_runs": {
+        "vexact_s0": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+        "vexact_s1": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1",
+        "vexact_s2": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2",
+        "best_svdllm_s0": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0",
+        "best_svdllm_s1": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s1",
+        "best_svdllm_s2": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2"
+      }
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 458.58,
+  "extra": {
+    "verdict": "PASS"
+  }
+}

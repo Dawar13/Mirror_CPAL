@@ -1,0 +1,129 @@
+{
+  "format": "must09-healed-v1",
+  "family": "mirror",
+  "method": "mirror_exact",
+  "blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": true,
+    "fold": true,
+    "even_head": true
+  },
+  "modules": [],
+  "matrices": [],
+  "mirror": {
+    "d_plus": 695,
+    "structure_file": "structure.npz",
+    "n_pairs": [
+      1161,
+      1126,
+      1006,
+      956,
+      870,
+      675,
+      554,
+      407,
+      152,
+      93,
+      19,
+      17
+    ],
+    "n_head_pairs": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0
+    ],
+    "builder": "mirror.mirror_family.build_mirror_variant"
+  },
+  "trainable": "converted blocks (re-projected with A* after every step) and the embeddings (re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+  "adapter": {
+    "kind": "dinov2",
+    "hub_repo": "facebookresearch/dinov2",
+    "name": "dinov2_vitb14_reg",
+    "img_size": 224
+  },
+  "targets": "sym",
+  "model": "dinov2_vitb14_reg",
+  "hparams": null,
+  "fp_heal": {
+    "loader": {
+      "kind": "heal_structured"
+    },
+    "method": "mirror_exact",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "symmetrised",
+      "k": 12,
+      "logits": false,
+      "input_transform": null,
+      "block_map": null,
+      "reg_perm": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "A_digest": "71733d57a5cab8b7",
+      "A_dim": 768,
+      "A_d_plus": 695
+    },
+    "builder_options": {
+      "structure": {
+        "adopted": {
+          "wspace": "results/A02/wspace_coco/structure/dinov2_vitb14_reg_wspace_matched.npz",
+          "astar": "results/A02/fits/dinov2_vitb14_reg_coco.npz"
+        }
+      }
+    },
+    "variant": "coco",
+    "lr": 0.0001,
+    "job": "a02_heals",
+    "lr_selection": {
+      "given": true,
+      "best_lr": 0.0001
+    },
+    "params": {
+      "model_params": 85691904,
+      "model_params_stored": 86281728,
+      "converted_params_kept": 64223644,
+      "converted_params_dense": 84934656,
+      "model_params_structured": 65872540,
+      "model_params_original": 86583552,
+      "model_params_frac": 0.7607973856281618,
+      "params_source": "free parameters",
+      "params_total": 64223644,
+      "params_matrices": 64223644,
+      "params_basis_change": 0,
+      "budget_total": 64223644,
+      "gap": 0
+    }
+  },
+  "experiment": "A02",
+  "seed": 0,
+  "state_file": "ckpt/step780.pt"
+}

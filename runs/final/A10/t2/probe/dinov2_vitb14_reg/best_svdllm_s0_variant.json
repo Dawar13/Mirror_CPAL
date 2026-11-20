@@ -1,0 +1,948 @@
+{
+  "info": {
+    "variant": "best_svdllm_s0",
+    "label": "healed model from a run directory (mirror.heal_structured.load_healed_model)",
+    "family": "healed_run",
+    "method": "run",
+    "k": 0,
+    "blocks": [],
+    "model_params_original": 86583552,
+    "builder": "mirror.heal_structured.load_healed_model",
+    "healed_run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0",
+    "healed_info": {
+      "run_dir": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0",
+      "step": 780,
+      "ckpt": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0/ckpt/step780.pt",
+      "steps_saved": [
+        0,
+        100,
+        300,
+        780
+      ],
+      "spec": {
+        "format": "must09-healed-v1",
+        "family": "compressed",
+        "method": "svdllm",
+        "blocks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "components": [
+          "mlp",
+          "attn"
+        ],
+        "base": {
+          "materialise_pos_embed": true,
+          "fold": false,
+          "even_head": false
+        },
+        "wrappers": [],
+        "modules": [
+          {
+            "block": 0,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 368,
+              "bias": true
+            }
+          },
+          {
+            "block": 0,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 368,
+              "bias": true
+            }
+          },
+          {
+            "block": 0,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 255,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 255,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 236,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 0,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 236,
+              "bias": true
+            }
+          },
+          {
+            "block": 1,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 377,
+              "bias": true
+            }
+          },
+          {
+            "block": 1,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 377,
+              "bias": true
+            }
+          },
+          {
+            "block": 1,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 257,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 257,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 235,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 1,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 235,
+              "bias": true
+            }
+          },
+          {
+            "block": 2,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 393,
+              "bias": true
+            }
+          },
+          {
+            "block": 2,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 393,
+              "bias": true
+            }
+          },
+          {
+            "block": 2,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 274,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 274,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 255,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 2,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 255,
+              "bias": true
+            }
+          },
+          {
+            "block": 3,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 402,
+              "bias": true
+            }
+          },
+          {
+            "block": 3,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 402,
+              "bias": true
+            }
+          },
+          {
+            "block": 3,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 301,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 301,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 293,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 3,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 293,
+              "bias": true
+            }
+          },
+          {
+            "block": 4,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 416,
+              "bias": true
+            }
+          },
+          {
+            "block": 4,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 416,
+              "bias": true
+            }
+          },
+          {
+            "block": 4,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 290,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 290,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 281,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 4,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 281,
+              "bias": true
+            }
+          },
+          {
+            "block": 5,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 450,
+              "bias": true
+            }
+          },
+          {
+            "block": 5,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 450,
+              "bias": true
+            }
+          },
+          {
+            "block": 5,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 294,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 294,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 281,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 5,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 281,
+              "bias": true
+            }
+          },
+          {
+            "block": 6,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 469,
+              "bias": true
+            }
+          },
+          {
+            "block": 6,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 469,
+              "bias": true
+            }
+          },
+          {
+            "block": 6,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 296,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 296,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 289,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 6,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 289,
+              "bias": true
+            }
+          },
+          {
+            "block": 7,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 493,
+              "bias": true
+            }
+          },
+          {
+            "block": 7,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 493,
+              "bias": true
+            }
+          },
+          {
+            "block": 7,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 300,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 300,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 303,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 7,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 303,
+              "bias": true
+            }
+          },
+          {
+            "block": 8,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 535,
+              "bias": true
+            }
+          },
+          {
+            "block": 8,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 535,
+              "bias": true
+            }
+          },
+          {
+            "block": 8,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 331,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 331,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 332,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 8,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 332,
+              "bias": true
+            }
+          },
+          {
+            "block": 9,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 545,
+              "bias": true
+            }
+          },
+          {
+            "block": 9,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 545,
+              "bias": true
+            }
+          },
+          {
+            "block": 9,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 310,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 310,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 317,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 9,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 317,
+              "bias": true
+            }
+          },
+          {
+            "block": 10,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 557,
+              "bias": true
+            }
+          },
+          {
+            "block": 10,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 557,
+              "bias": true
+            }
+          },
+          {
+            "block": 10,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 341,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 341,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 348,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 10,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 348,
+              "bias": true
+            }
+          },
+          {
+            "block": 11,
+            "path": "mlp.fc1",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 3072,
+              "rank": 557,
+              "bias": true
+            }
+          },
+          {
+            "block": 11,
+            "path": "mlp.fc2",
+            "module": {
+              "type": "lowrank",
+              "in": 3072,
+              "out": 768,
+              "rank": 557,
+              "bias": true
+            }
+          },
+          {
+            "block": 11,
+            "path": "attn.qkv",
+            "module": {
+              "type": "split_qkv",
+              "parts": [
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 343,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 343,
+                  "bias": true
+                },
+                {
+                  "type": "lowrank",
+                  "in": 768,
+                  "out": 768,
+                  "rank": 347,
+                  "bias": true
+                }
+              ]
+            }
+          },
+          {
+            "block": 11,
+            "path": "attn.proj",
+            "module": {
+              "type": "lowrank",
+              "in": 768,
+              "out": 768,
+              "rank": 347,
+              "bias": true
+            }
+          }
+        ],
+        "matrices": "list of length 72",
+        "compressor": {
+          "params_total": 64555008,
+          "params_matrices": 64555008,
+          "params_basis_change": 0,
+          "budget_total": 64554464,
+          "gap": 8.426992748324887e-06,
+          "source": "mirror.baselines.compress",
+          "model_form": "absorbed weights in the unfolded model (norm affine and LayerScale folded)",
+          "hparams": {
+            "damp": 1e-06
+          },
+          "basis": []
+        },
+        "lowrank_factors": "balanced",
+        "trainable": "structured parameters of the converted blocks (and their biases) and the embeddings, free (nothing re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+        "adapter": {
+          "kind": "dinov2",
+          "hub_repo": "facebookresearch/dinov2",
+          "name": "dinov2_vitb14_reg",
+          "img_size": 224
+        },
+        "targets": "sym",
+        "model": "dinov2_vitb14_reg",
+        "hparams": {
+          "damp": 1e-06
+        },
+        "fp_heal": {
+          "loader": {
+            "kind": "heal_structured"
+          },
+          "method": "svdllm",
+          "targets": {
+            "final": "symmetrised",
+            "blocks": "raw",
+            "k": null,
+            "logits": false,
+            "input_transform": null,
+            "block_map": null,
+            "reg_perm": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "builder_options": {},
+          "variant": null,
+          "lr": 0.0001,
+          "job": "gate_s0",
+          "lr_selection": {
+            "given": true,
+            "best_lr": 0.0001
+          },
+          "params": {
+            "model_params": 65349120,
+            "model_params_stored": 65349120,
+            "converted_params_kept": 64555008,
+            "converted_params_dense": 84934656,
+            "model_params_structured": 66203904,
+            "model_params_original": 86583552,
+            "model_params_frac": 0.7646244866461473,
+            "params_source": "compressor's own per-matrix and basis-change counts",
+            "params_total": 64555008,
+            "params_matrices": 64555008,
+            "params_basis_change": 0,
+            "budget_total": 64554464,
+            "gap": 8.426992748324887e-06,
+            "gap_ok": true
+          }
+        },
+        "experiment": "A01",
+        "seed": 0,
+        "state_file": "ckpt/step780.pt"
+      },
+      "method": "svdllm",
+      "variant": null,
+      "family": "compressed",
+      "targets": {
+        "final": "symmetrised",
+        "blocks": "raw",
+        "k": null,
+        "logits": false,
+        "input_transform": null,
+        "block_map": null,
+        "reg_perm": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "meta": {
+        "job": "gate_s0",
+        "experiment": "A01",
+        "group": "main",
+        "model": "dinov2_vitb14_reg",
+        "method": "svdllm",
+        "variant": null,
+        "seed": 0,
+        "student": "svdllm",
+        "lr": 0.0001
+      },
+      "structure": null,
+      "model_params": 65349120,
+      "model_params_stored": 65349120,
+      "converted_params_kept": 64555008,
+      "converted_params_dense": 84934656,
+      "model_params_structured": 66203904,
+      "model_params_original": 86583552,
+      "model_params_frac": 0.7646244866461473,
+      "params_source": "compressor's own per-matrix and basis-change counts",
+      "loaded_by": "scripts/fp_eval_downstream.py bridge: load_student(run_dir, step=None)"
+    },
+    "healed_k": 12,
+    "exact_operator": null,
+    "even_head": false,
+    "reg_perm": null,
+    "position_grid": null,
+    "healed_run_checks": null,
+    "converted_params_dense": 84934656,
+    "converted_params_kept": 64555008,
+    "model_params": 65349120,
+    "mlp_params_kept": null,
+    "attn_params_kept": null,
+    "position_grid_note": "position embedding as loaded (257 rows; the original model has 1370), used as the model uses it at 224 px"
+  },
+  "sources": {
+    "healed_run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0",
+    "weights_sha256": {
+      "ckpt/step0.pt": "fa1671f40279df7383e390457972ce0755d078526174aa634c9cec332a62c1d3",
+      "ckpt/step100.pt": "12a1e1b4c0440de9bddcc3d01f59c13508f649bb121a63608863f4254a8644c3",
+      "ckpt/step300.pt": "2720e0652327e8595351fe0a2a40ede6d020bc829bd61e5096160a4e29c8aea5",
+      "ckpt/step780.pt": "0479d38fec1d529e02c1b1a51e6f6b1c1c54092107c853c82b493ec4ad6a804d"
+    }
+  },
+  "git": {
+    "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+    "git_dirty": true
+  }
+}

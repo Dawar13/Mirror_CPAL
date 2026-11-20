@@ -2,7 +2,48 @@
 
 ## Final phase (FINAL_PHASE_PLAN.md v2, adopted 19 November 2026)
 
-### Phase C (CPU coding, laptop): built, not yet run on a GPU
+### Phase G (Jarvis H200 581665, 20 November 2026 07:18 to 18:05 UTC): done, instance destroyed
+
+**Finished.** 10.6 VM-hours. Report `results/FINAL_PHASE_REPORT.md` (scripts/collect_final_phase.py, 17:54 UTC):
+23 scored rules, PASS 13, FAIL 5, PENDING 2, NOT RUN 3. The A09 rows show PENDING only because of a path mismatch;
+the audits ran, see `results/final/A09_addendum.md` (A09-1 PASS on both models; A09-2 FAIL by one tensor at ratio
+2.0 on both; float32 flip consistency 100%). Pulled to the laptop: 2,225 tables, metrics, figures and logs (sha256
+equal to the VM's) and the three Mirror A* step-780 checkpoints in `artifacts/final_phase/` (sha256 checked); every
+other checkpoint and array was deleted with the instance (Dawar's order).
+
+- PASS: Gate P; A02-1 to A02-6 (fit-set spread 0.022, COCO -0.002); A05-1 with superiority (Mirror - SVD-LLM +0.271,
+  95% interval [+0.081, +0.465]; best pre-registered baseline SVD-LLM); A06-1 (stacking +1.64, +2.75, +4.13 at 0.65,
+  0.50, 0.40; interval at 0.50 [+2.48, +3.01]); A06-2; A07 (+3.76 over the best flip-averaged model at equal
+  compute); A08-1 (DeiT-III: -0.19 top-1 against SVD-LLM, 100% float32 flip, parameters equal the formula); P11.2.
+- FAIL: A01 (A*_w not adopted: zero-shot 7.19, healed -1.45); A03-1 (control C3 twin fraction 0.079); A03-2 (random
+  pairing only -1.34, bar -3.0); A04-1 (FLAP +0.06 against Mirror, bar -0.5); A12b (fused kernel 0.80x and 0.83x).
+- NOT RUN: A08-2 (DINOv2-L) and A15a/b, cut in the Section 9 order for Dawar's time limit; A10 full bank (its pass ran
+  at about 70 images/s, 4 more hours). A11 Mirror was cut (rank 4); A11 SVD-LLM ran alone (reported).
+- Post hoc, outside the pre-registered scores: IO-SVD at 5e-5 reached 78.71 on two seeds (third evaluated on the VM;
+  see runs/final/posthoc), 0.36 above Mirror; at the pre-registered 1e-4 it diverged (0.54, 0.40). Full SVD-LLM as
+  pre-registered: 76.45, 76.76, plus seed 2 (its update stage made it worse; a per-stage fix diverged and was
+  abandoned).
+- Decisions and every intervention: `notes/decisions.md` (20 November rows).
+
+### Phase G progress notes (written during the run)
+
+VM clock from 07:18:52 UTC; runner on `jobs/final_phase.yaml` since 08:10 UTC (restarted 08:38 after a W0 script fix).
+W0 done (data caches, roles, models, CPU tests 348 passed on the VM, GPU smoke test, timing: one DINOv2-B heal
+alone 0.66 s/step, three at once 1.41 s/step each, throughput gain 1.41). Start-up fixes before any result: see
+`notes/decisions.md` (20 November rows; commits 68160fd to 21f6ef2).
+
+**Gate P: PASS** (`results/A01/gate_p.json`, scripts/fp_gate_p.py, 10:04 UTC, code 21f6ef2). Final-step bf16 k-NN,
+50,000 queries, healing seeds 0 to 2: Mirror (current A*) 78.352, 78.364, 78.340, mean 78.352 against 78.34 +- 0.15;
+SVD-LLM 78.078, 78.072, 78.098, mean 78.083 against 78.06 +- 0.15. Mirror seed 0 in float32: 78.36, flip
+consistency 100.000%.
+
+**A01: not adopted** (`results/A01/decision.json`, scripts/fp_a01_decide.py, 10:46 UTC). A*_w (matched mode, the
+pre-registered weight-space objective without attention terms) lowers the weight-space damage from 2.686 to 1.871
+but keeps 18% of the neuron pairs; zero-shot k-NN 7.19 against the bar 58.84 (current A* 53.84); healed mean over
+seeds 0 and 1 76.91 (76.93, 76.89) against A* 78.36 (difference -1.45, bar +0.15). Both fail: every later Mirror
+run uses the current activation-fitted A*; A*_w is reported as an ablation.
+
+### Phase C (CPU coding, laptop): built, then run in Phase G
 
 Status on 19 November 2026. Every Module A item of Section 7 is coded and tested on tiny random models; nothing has
 run on real data or a GPU. Code: `mirror/fit_weightspace.py`, `mirror/stability.py`, `mirror/controls.py` and

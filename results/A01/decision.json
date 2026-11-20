@@ -1,0 +1,116 @@
+{
+ "rule": "A01",
+ "status": "FAIL",
+ "adopted": false,
+ "decided": true,
+ "main_variant": "astar",
+ "main_arm": "mirror_exact_astar",
+ "main_arm_dir": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar",
+ "operator": "A* (activation fit, the current operator)",
+ "structure": "results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+ "structure_exists": true,
+ "structure_sha256": "13f19ba0f75bf04790adda69c036c8f404d8598cac04c1d0ba6570e9b9ae124f",
+ "structures": {
+  "wspace": "results/A01/structure/dinov2_vitb14_reg_wspace_matched.npz",
+  "astar": "results/MUST-07/structure/dinov2_vitb14_reg_s0.npz"
+ },
+ "zero_shot": {
+  "value": 7.187999784946442,
+  "bar": 58.84,
+  "verdict": "FAIL",
+  "seed": 0,
+  "step": 0,
+  "run_dir": "runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s0",
+  "reason": ""
+ },
+ "healed": {
+  "wspace": {
+   "seeds": {
+    "0": 76.93399786949158,
+    "1": 76.88599824905396
+   },
+   "mean": 76.90999805927277
+  },
+  "astar": {
+   "seeds": {
+    "0": 78.3519983291626,
+    "1": 78.36400270462036
+   },
+   "mean": 78.35800051689148
+  },
+  "per_seed_difference": {
+   "0": -1.4180004596710205,
+   "1": -1.4780044555664062
+  },
+  "difference": -1.4480024576187134,
+  "margin": 0.15,
+  "verdict": "FAIL"
+ },
+ "bars": {
+  "zero_shot_min": 58.84,
+  "healed_margin": 0.15,
+  "text": "Zero-shot k-NN \u2265 58.84 (current 53.84 + 5) **and** healed mean (2 seeds) \u2265 the current operator's mean in the same pipeline + 0.15. Otherwise keep the current A* and report A*_w as an ablation"
+ },
+ "reason": "zero-shot 7.19 (FAIL); healed A*_w minus A* -1.448 (FAIL)",
+ "sources": [
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s0/meta.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s0/eval/step0.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s0/metrics.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s0/eval/step780.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s1/metrics.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s1/eval/step780.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0/metrics.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0/eval/step780.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1/metrics.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1/eval/step780.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  }
+ ],
+ "written_by": "scripts/fp_a01_decide.py",
+ "date_utc": "2026-11-20T10:45:46Z",
+ "code_git": {
+  "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9",
+  "git_dirty": true
+ },
+ "prereg_check": {
+  "ok": true,
+  "reason": "unchanged since the recorded commit",
+  "sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+  "recorded_commit": "fd83c955d76a8e85228c7e9ed736e29727979540",
+  "allowed_without_check": null
+ },
+ "notes": [],
+ "gate_p": {
+  "file": "results/A01/gate_p.json",
+  "pass": true,
+  "status": "PASS"
+ }
+}

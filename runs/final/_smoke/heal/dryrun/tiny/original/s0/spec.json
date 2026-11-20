@@ -1,0 +1,73 @@
+{
+  "format": "must09-healed-v1",
+  "family": "compressed",
+  "method": "original",
+  "blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": false,
+    "fold": false,
+    "even_head": false
+  },
+  "wrappers": [],
+  "modules": [],
+  "matrices": [],
+  "compressor": {
+    "source": "none: the original model"
+  },
+  "lowrank_factors": null,
+  "trainable": "blocks' matrices and biases and the embeddings (MUST-09's set); norms, LayerScale, final norm affine and mask token frozen",
+  "adapter": {
+    "kind": "tiny",
+    "img_size": 56,
+    "seed": 0,
+    "dtype": "float32"
+  },
+  "model": "tiny",
+  "targets": "sym",
+  "hparams": null,
+  "fp_heal": {
+    "loader": {
+      "kind": "heal_structured"
+    },
+    "method": "original",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "raw",
+      "k": null,
+      "logits": false,
+      "input_transform": null,
+      "block_map": null,
+      "reg_perm": []
+    },
+    "builder_options": {},
+    "variant": null,
+    "lr": 0.001,
+    "job": "dryrun_2eb9c437",
+    "lr_selection": {
+      "given": true,
+      "best_lr": 0.001
+    },
+    "params": {
+      "model_params": 304424,
+      "model_params_stored": 304424,
+      "converted_params_kept": 196608,
+      "converted_params_dense": 196608,
+      "model_params_structured": 304424,
+      "model_params_original": 304424,
+      "model_params_frac": 1.0,
+      "params_source": "structured modules as executed"
+    }
+  },
+  "experiment": "dryrun",
+  "seed": 0,
+  "state_file": "ckpt/step4.pt"
+}

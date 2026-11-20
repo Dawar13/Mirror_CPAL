@@ -1,0 +1,84 @@
+{
+  "experiment": "A12",
+  "date_utc": "2026-11-20T17:49:55Z",
+  "git": {
+    "git_hash": "6299d2c838b52136abfe58453d1d1c8e2b7c500a",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_FINAL_PHASE.md",
+    "sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+    "recorded_sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+    "recorded_commit": "fd83c955d76a8e85228c7e9ed736e29727979540",
+    "ok": true,
+    "reason": "unchanged since the recorded commit"
+  },
+  "config": {
+    "manifest": "jobs/a12/deit3_b16.json",
+    "batches": "1,64,256",
+    "warmup": 20,
+    "iters": 100,
+    "no_compile": false,
+    "compile_mode": "default",
+    "img_size": 224,
+    "profile": "auto",
+    "prof_batch": 256,
+    "prof_iters": 10,
+    "no_gemm": false,
+    "gemm_batch": 256,
+    "aligns": "1,8",
+    "align_batches": "64,256",
+    "seed": 0,
+    "out": "results/A12/deit3_b16",
+    "force": false,
+    "gpu_frac": 0.3,
+    "device": null,
+    "dry_run": false,
+    "batch_list": [
+      1,
+      64,
+      256
+    ],
+    "align_list": [
+      1,
+      8
+    ],
+    "align_batch_list": [
+      64,
+      256
+    ]
+  },
+  "seeds": {
+    "seed": 0
+  },
+  "models": {
+    "original": {
+      "model": "deit3_b16"
+    },
+    "mirror_dense": {
+      "run_dir": "runs/final/a08/deit3_b16/mirror_exact/s0"
+    },
+    "mirror_even_odd": {
+      "run_dir": "runs/final/a08/deit3_b16/mirror_exact/s0",
+      "align": 8
+    },
+    "svdllm": {
+      "run_dir": "runs/final/a08/deit3_b16/svdllm/s0"
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 224.68,
+  "peak_memory_gb": 2.585,
+  "extra": {
+    "nvidia_smi": "NVIDIA H200, 89 %, 7395 MiB, 143771 MiB, 1620 MHz",
+    "n_rows": 12
+  }
+}

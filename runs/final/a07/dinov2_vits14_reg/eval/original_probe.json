@@ -1,0 +1,151 @@
+{
+  "top1": 76.342,
+  "top5": 93.73,
+  "chosen_wd": 0.001,
+  "wd_at_grid_edge": false,
+  "knn_check_top1": 74.47400093078613,
+  "n_bank": 100000,
+  "n_val": 50000,
+  "flip_average": false,
+  "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+  "amp": "bf16",
+  "wd_grid": [
+    1e-07,
+    1e-06,
+    1e-05,
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "seed": 0,
+  "seconds": 355.2,
+  "selection": {
+    "chosen_wd": 0.001,
+    "holdout_top1_at_chosen": 77.98,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 76.41,
+        "holdout_top5": 93.48,
+        "holdout_loss": 1.4095841796875,
+        "train_objective": 2.2429134845733643,
+        "grad_max": 3.8246187614277005e-05,
+        "n_iter": 63,
+        "n_eval": 71,
+        "hit_limit": false,
+        "seconds": 14.67
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 77.98,
+        "holdout_top5": 94.45,
+        "holdout_loss": 0.9069271484375,
+        "train_objective": 0.7732319235801697,
+        "grad_max": 9.141755072050728e-06,
+        "n_iter": 162,
+        "n_eval": 170,
+        "hit_limit": false,
+        "seconds": 33.38
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 76.94,
+        "holdout_top5": 93.68,
+        "holdout_loss": 0.952041796875,
+        "train_objective": 0.2064303159713745,
+        "grad_max": 4.720403921965044e-06,
+        "n_iter": 350,
+        "n_eval": 362,
+        "hit_limit": false,
+        "seconds": 66.0
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 76.14,
+        "holdout_top5": 92.96,
+        "holdout_loss": 1.16733896484375,
+        "train_objective": 0.043149031698703766,
+        "grad_max": 8.041399723879294e-07,
+        "n_iter": 308,
+        "n_eval": 325,
+        "hit_limit": false,
+        "seconds": 67.28
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 75.77,
+        "holdout_top5": 92.38,
+        "holdout_loss": 1.4812689453125,
+        "train_objective": 0.00818849727511406,
+        "grad_max": 6.079441163819865e-07,
+        "n_iter": 96,
+        "n_eval": 103,
+        "hit_limit": false,
+        "seconds": 20.63
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 75.77,
+        "holdout_top5": 92.38,
+        "holdout_loss": 1.4812689453125,
+        "train_objective": 0.0029106372967362404,
+        "grad_max": 9.692998901300598e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.06
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 77.67,
+        "holdout_top5": 94.36,
+        "holdout_loss": 1.0431478515625,
+        "train_objective": 1.3313357830047607,
+        "grad_max": 1.09106331365183e-05,
+        "n_iter": 97,
+        "n_eval": 106,
+        "hit_limit": false,
+        "seconds": 20.84
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 77.39,
+        "holdout_top5": 93.98,
+        "holdout_loss": 0.8966630859375,
+        "train_objective": 0.4163779020309448,
+        "grad_max": 2.89888157567475e-06,
+        "n_iter": 236,
+        "n_eval": 247,
+        "hit_limit": false,
+        "seconds": 52.87
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "settings": {
+    "seed": 0,
+    "flip_average": false,
+    "data": "cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)",
+    "checkpoint_sha256": null
+  },
+  "model": "dinov2_vits14_reg",
+  "run_dir": null,
+  "step": null,
+  "predictions": "knn/original_probe_pred.npz",
+  "git": {
+    "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9",
+    "git_dirty": true
+  }
+}

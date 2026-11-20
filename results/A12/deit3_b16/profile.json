@@ -1,0 +1,582 @@
+{
+  "mirror_even_odd": {
+    "groups": {
+      "ms": {
+        "GEMM": 1.4529622000000033,
+        "attention": 3.7855172000000255,
+        "butterflies and permutes": 11.6763802,
+        "rest": 11.680060300000052
+      },
+      "share": {
+        "GEMM": 0.05081189963396258,
+        "attention": 0.132384256127957,
+        "butterflies and permutes": 0.4083375732764325,
+        "rest": 0.408466270961648
+      },
+      "total_ms": 28.59491990000008
+    },
+    "categories": {
+      "gemm": {
+        "ms": 1.4529622000000033,
+        "launches": 2.0
+      },
+      "attention": {
+        "ms": 3.7855172000000255,
+        "launches": 20.0
+      },
+      "triton": {
+        "ms": 10.871036099999992,
+        "launches": 88.0
+      },
+      "elementwise": {
+        "ms": 0.0,
+        "launches": 0.0
+      },
+      "norm": {
+        "ms": 0.0,
+        "launches": 0.0
+      },
+      "memory": {
+        "ms": 0.8053441000000081,
+        "launches": 87.0
+      },
+      "other": {
+        "ms": 11.680060300000052,
+        "launches": 80.0
+      }
+    },
+    "top_kernels": [
+      {
+        "rank": 1,
+        "short_name": "nvjet_tst_192x192_64x4_2x1_v_bz_coopB_bias_TNN",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 4.4157697000000145,
+        "share": 0.15442497182864992,
+        "calls_per_forward": 24.0,
+        "mean_us": 183.99040416666728,
+        "name": "nvjet_tst_192x192_64x4_2x1_v_bz_coopB_bias_TNN"
+      },
+      {
+        "rank": 2,
+        "short_name": "nvjet_tst_128x200_64x5_2x1_v_bz_coopA_TNT",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 3.8442891000000214,
+        "share": 0.13443958274560544,
+        "calls_per_forward": 14.0,
+        "mean_us": 274.5920785714301,
+        "name": "nvjet_tst_128x200_64x5_2x1_v_bz_coopA_TNT"
+      },
+      {
+        "rank": 3,
+        "short_name": "cudnn_generated_fort_native_sdpa_sm90_flash_fprop_wgmma_f16_knob_7_64x128x64_4x1x1_cga1x1x1_kernel0_0",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 2.0384272000000085,
+        "share": 0.07128634062024432,
+        "calls_per_forward": 12.0,
+        "mean_us": 169.86893333333404,
+        "name": "cudnn_generated_fort_native_sdpa_sm90_flash_fprop_wgmma_f16_knob_7_64x128x64_4x1x1_cga1x1x1_kernel0_0"
+      },
+      {
+        "rank": 4,
+        "short_name": "nvjet_tst_128x200_64x5_1x1_v_bz_coopA_TNT",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 1.6766007000000034,
+        "share": 0.05863281680323918,
+        "calls_per_forward": 7.0,
+        "mean_us": 239.5143857142862,
+        "name": "nvjet_tst_128x200_64x5_1x1_v_bz_coopA_TNT"
+      },
+      {
+        "rank": 5,
+        "short_name": "cutlass__5x_cudnn::Kernel<cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8>",
+        "category": "gemm",
+        "triton_tag": "",
+        "ms_per_forward": 1.4412821,
+        "share": 0.05040343197464231,
+        "calls_per_forward": 1.0,
+        "mean_us": 1441.2821,
+        "name": "void cutlass__5x_cudnn::Kernel<cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8>(cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8::Params)"
+      },
+      {
+        "rank": 6,
+        "short_name": "nvjet_tst_192x208_64x4_1x1_v_bz_coopB_TNT",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 1.0493144000000074,
+        "share": 0.03669583281469532,
+        "calls_per_forward": 7.0,
+        "mean_us": 149.90205714285818,
+        "name": "nvjet_tst_192x208_64x4_1x1_v_bz_coopB_TNT"
+      },
+      {
+        "rank": 7,
+        "short_name": "triton_per_fused__fused_rms_norm__to_copy__unsafe_view_add_cat_slice_view_14",
+        "category": "triton",
+        "triton_tag": "norm + cat/gather/pad",
+        "ms_per_forward": 0.9843293,
+        "share": 0.03442322284665665,
+        "calls_per_forward": 11.0,
+        "mean_us": 89.48448181818182,
+        "name": "triton_per_fused__fused_rms_norm__to_copy__unsafe_view_add_cat_slice_view_14"
+      },
+      {
+        "rank": 8,
+        "short_name": "triton_poi_fused_add_gelu_61",
+        "category": "triton",
+        "triton_tag": "activation",
+        "ms_per_forward": 0.975861699999989,
+        "share": 0.03412710031756326,
+        "calls_per_forward": 4.0,
+        "mean_us": 243.96542499999723,
+        "name": "triton_poi_fused_add_gelu_61"
+      },
+      {
+        "rank": 9,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_54",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.6649624000000007,
+        "share": 0.023254564178723184,
+        "calls_per_forward": 1.0,
+        "mean_us": 664.9624000000007,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_54"
+      },
+      {
+        "rank": 10,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_59",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.6585626999999957,
+        "share": 0.02303075869081185,
+        "calls_per_forward": 1.0,
+        "mean_us": 658.5626999999956,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_59"
+      },
+      {
+        "rank": 11,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_46",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.6393335000000024,
+        "share": 0.022358289592551036,
+        "calls_per_forward": 1.0,
+        "mean_us": 639.3335000000025,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_46"
+      },
+      {
+        "rank": 12,
+        "short_name": "triton_red_fused__fused_rms_norm__to_copy__unsafe_view_add_cat_slice_view_8",
+        "category": "triton",
+        "triton_tag": "norm + cat/gather/pad",
+        "ms_per_forward": 0.630675300000014,
+        "share": 0.022055501543825348,
+        "calls_per_forward": 11.0,
+        "mean_us": 57.33411818181946,
+        "name": "triton_red_fused__fused_rms_norm__to_copy__unsafe_view_add_cat_slice_view_8"
+      },
+      {
+        "rank": 13,
+        "short_name": "cudnn::engines_precompiled::nchwToNhwcKernel<__nv_bfloat16, __nv_bfloat16, float, false, true, ",
+        "category": "memory",
+        "triton_tag": "",
+        "ms_per_forward": 0.5854008999999952,
+        "share": 0.020472199329363866,
+        "calls_per_forward": 2.0,
+        "mean_us": 292.70044999999766,
+        "name": "void cudnn::engines_precompiled::nchwToNhwcKernel<__nv_bfloat16, __nv_bfloat16, float, false, true, (cudnnKernelDataType_t)0>(cudnn::engines_precompiled::nchw2nhwc_params_t<float>, __nv_bfloat16 const*, __nv_bfloat16*)"
+      },
+      {
+        "rank": 14,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_38",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.5801210000000003,
+        "share": 0.02028755464357844,
+        "calls_per_forward": 1.0,
+        "mean_us": 580.1210000000003,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_38"
+      },
+      {
+        "rank": 15,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_31",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.518473100000002,
+        "share": 0.018131650720238614,
+        "calls_per_forward": 1.0,
+        "mean_us": 518.473100000002,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_31"
+      },
+      {
+        "rank": 16,
+        "short_name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_index_select_permute_unbind_view_62",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 0.4718815000000071,
+        "share": 0.016502284379541335,
+        "calls_per_forward": 3.0,
+        "mean_us": 157.29383333333573,
+        "name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_index_select_permute_unbind_view_62"
+      },
+      {
+        "rank": 17,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_24",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.4668726999999972,
+        "share": 0.01632712039875292,
+        "calls_per_forward": 1.0,
+        "mean_us": 466.87269999999717,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_24"
+      },
+      {
+        "rank": 18,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_16",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.4538331999999984,
+        "share": 0.015871112826582774,
+        "calls_per_forward": 1.0,
+        "mean_us": 453.8331999999984,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_16"
+      },
+      {
+        "rank": 19,
+        "short_name": "triton_poi_fused_add_cat_gelu_slice_sub_7",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad + activation",
+        "ms_per_forward": 0.4329055000000057,
+        "share": 0.015139245065694498,
+        "calls_per_forward": 1.0,
+        "mean_us": 432.90550000000576,
+        "name": "triton_poi_fused_add_cat_gelu_slice_sub_7"
+      },
+      {
+        "rank": 20,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_32",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.39895949999999936,
+        "share": 0.013952111123066938,
+        "calls_per_forward": 1.0,
+        "mean_us": 398.95949999999937,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_32"
+      },
+      {
+        "rank": 21,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_25",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.39791949999999543,
+        "share": 0.013915741026432959,
+        "calls_per_forward": 1.0,
+        "mean_us": 397.9194999999954,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_25"
+      },
+      {
+        "rank": 22,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_17",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.3978235999999997,
+        "share": 0.013912387283868507,
+        "calls_per_forward": 1.0,
+        "mean_us": 397.8235999999997,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_17"
+      },
+      {
+        "rank": 23,
+        "short_name": "triton_poi_fused_add_cat_index_select_slice_sub_view_39",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.3969884000000038,
+        "share": 0.013883179298571934,
+        "calls_per_forward": 1.0,
+        "mean_us": 396.9884000000038,
+        "name": "triton_poi_fused_add_cat_index_select_slice_sub_view_39"
+      },
+      {
+        "rank": 24,
+        "short_name": "triton_poi_fused_index_select_transpose_view_56",
+        "category": "triton",
+        "triton_tag": "cat/gather/pad",
+        "ms_per_forward": 0.3408507999999947,
+        "share": 0.011919977436271597,
+        "calls_per_forward": 5.0,
+        "mean_us": 68.17015999999894,
+        "name": "triton_poi_fused_index_select_transpose_view_56"
+      },
+      {
+        "rank": 25,
+        "short_name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_9",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 0.257862099999998,
+        "share": 0.00901775913000537,
+        "calls_per_forward": 1.0,
+        "mean_us": 257.862099999998,
+        "name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_9"
+      },
+      {
+        "rank": 26,
+        "short_name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_1",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 0.25711040000000207,
+        "share": 0.008991471243813531,
+        "calls_per_forward": 1.0,
+        "mean_us": 257.110400000002,
+        "name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_1"
+      },
+      {
+        "rank": 27,
+        "short_name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_47",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 0.25516480000000447,
+        "share": 0.008923431186110917,
+        "calls_per_forward": 1.0,
+        "mean_us": 255.16480000000448,
+        "name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_47"
+      },
+      {
+        "rank": 28,
+        "short_name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_55",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 0.25312919999999905,
+        "share": 0.008852243716199333,
+        "calls_per_forward": 1.0,
+        "mean_us": 253.12919999999903,
+        "name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_55"
+      },
+      {
+        "rank": 29,
+        "short_name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_60",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 0.2519420000000064,
+        "share": 0.008810725852042189,
+        "calls_per_forward": 1.0,
+        "mean_us": 251.94200000000637,
+        "name": "triton_poi_fused__scaled_dot_product_cudnn_attention_add_cat_index_select_permute_slice_unbind_view_60"
+      },
+      {
+        "rank": 30,
+        "short_name": "nvjet_tst_48x384_64x3_1x2_h_bz_TNN",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 0.1959043000000126,
+        "share": 0.006851017617294043,
+        "calls_per_forward": 12.0,
+        "mean_us": 16.325358333334385,
+        "name": "nvjet_tst_48x384_64x3_1x2_h_bz_TNN"
+      }
+    ],
+    "batch": 256,
+    "iters": 10,
+    "mode_used": "compile",
+    "compile_ok": true,
+    "compile_s": 1.5,
+    "compile_error": "",
+    "time_source": "cuda kernel time (torch.profiler)",
+    "annotations_skipped": 0,
+    "kernel_span_us": 290718.81,
+    "kernel_sum_over_span": 0.9835937310007591
+  },
+  "original": {
+    "groups": {
+      "ms": {
+        "GEMM": 1.6092587000000034,
+        "attention": 2.2726914000000202,
+        "butterflies and permutes": 5.834470199999993,
+        "rest": 12.826792199999996
+      },
+      "share": {
+        "GEMM": 0.0713855090528913,
+        "attention": 0.10081488607712938,
+        "butterflies and permutes": 0.2588127224547074,
+        "rest": 0.568986882415272
+      },
+      "total_ms": 22.543212500000013
+    },
+    "categories": {
+      "gemm": {
+        "ms": 1.6092587000000034,
+        "launches": 1.0
+      },
+      "attention": {
+        "ms": 2.2726914000000202,
+        "launches": 12.0
+      },
+      "triton": {
+        "ms": 5.003804099999994,
+        "launches": 37.0
+      },
+      "elementwise": {
+        "ms": 0.0,
+        "launches": 0.0
+      },
+      "norm": {
+        "ms": 0.0,
+        "launches": 0.0
+      },
+      "memory": {
+        "ms": 0.8306660999999993,
+        "launches": 65.0
+      },
+      "other": {
+        "ms": 12.826792199999996,
+        "launches": 48.0
+      }
+    },
+    "top_kernels": [
+      {
+        "rank": 1,
+        "short_name": "nvjet_tst_192x192_64x4_2x1_v_bz_coopB_bias_TNN",
+        "category": "other",
+        "triton_tag": "",
+        "ms_per_forward": 12.826792199999996,
+        "share": 0.5689868824152718,
+        "calls_per_forward": 48.0,
+        "mean_us": 267.2248374999999,
+        "name": "nvjet_tst_192x192_64x4_2x1_v_bz_coopB_bias_TNN"
+      },
+      {
+        "rank": 2,
+        "short_name": "triton_poi_fused_gelu_view_2",
+        "category": "triton",
+        "triton_tag": "activation",
+        "ms_per_forward": 2.9489789999999823,
+        "share": 0.13081449682470855,
+        "calls_per_forward": 12.0,
+        "mean_us": 245.74824999999854,
+        "name": "triton_poi_fused_gelu_view_2"
+      },
+      {
+        "rank": 3,
+        "short_name": "cudnn_generated_fort_native_sdpa_sm90_flash_fprop_wgmma_f16_knob_7_64x128x64_4x1x1_cga1x1x1_kernel0_0",
+        "category": "attention",
+        "triton_tag": "",
+        "ms_per_forward": 2.2726914000000202,
+        "share": 0.10081488607712936,
+        "calls_per_forward": 12.0,
+        "mean_us": 189.3909500000017,
+        "name": "cudnn_generated_fort_native_sdpa_sm90_flash_fprop_wgmma_f16_knob_7_64x128x64_4x1x1_cga1x1x1_kernel0_0"
+      },
+      {
+        "rank": 4,
+        "short_name": "cutlass__5x_cudnn::Kernel<cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8>",
+        "category": "gemm",
+        "triton_tag": "",
+        "ms_per_forward": 1.6092587000000034,
+        "share": 0.07138550905289129,
+        "calls_per_forward": 1.0,
+        "mean_us": 1609.2587000000033,
+        "name": "void cutlass__5x_cudnn::Kernel<cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8>(cutlass_tensorop_bf16_s16816fprop_optimized_bf16_128x128_32x5_nhwc_align8::Params)"
+      },
+      {
+        "rank": 5,
+        "short_name": "triton_per_fused_add_mul_native_layer_norm_view_4",
+        "category": "triton",
+        "triton_tag": "norm",
+        "ms_per_forward": 1.006940400000007,
+        "share": 0.04466712097931944,
+        "calls_per_forward": 11.0,
+        "mean_us": 91.54003636363701,
+        "name": "triton_per_fused_add_mul_native_layer_norm_view_4"
+      },
+      {
+        "rank": 6,
+        "short_name": "cudnn::engines_precompiled::nchwToNhwcKernel<__nv_bfloat16, __nv_bfloat16, float, false, true, ",
+        "category": "memory",
+        "triton_tag": "",
+        "ms_per_forward": 0.6389530000000031,
+        "share": 0.028343475891024966,
+        "calls_per_forward": 2.0,
+        "mean_us": 319.4765000000015,
+        "name": "void cudnn::engines_precompiled::nchwToNhwcKernel<__nv_bfloat16, __nv_bfloat16, float, false, true, (cudnnKernelDataType_t)0>(cudnn::engines_precompiled::nchw2nhwc_params_t<float>, __nv_bfloat16 const*, __nv_bfloat16*)"
+      },
+      {
+        "rank": 7,
+        "short_name": "triton_per_fused_add_mul_native_layer_norm_view_3",
+        "category": "triton",
+        "triton_tag": "norm",
+        "ms_per_forward": 0.5855554000000006,
+        "share": 0.02597479840107084,
+        "calls_per_forward": 11.0,
+        "mean_us": 53.23230909090914,
+        "name": "triton_per_fused_add_mul_native_layer_norm_view_3"
+      },
+      {
+        "rank": 8,
+        "short_name": "triton_red_fused_add_cat_convolution_expand_mul_native_layer_norm_transpose_view_1",
+        "category": "triton",
+        "triton_tag": "norm + cat/gather/pad",
+        "ms_per_forward": 0.21202859999999765,
+        "share": 0.00940542968310295,
+        "calls_per_forward": 1.0,
+        "mean_us": 212.02859999999765,
+        "name": "triton_red_fused_add_cat_convolution_expand_mul_native_layer_norm_transpose_view_1"
+      },
+      {
+        "rank": 9,
+        "short_name": "triton_red_fused_add_cat_convolution_expand_native_layer_norm_transpose_view_0",
+        "category": "triton",
+        "triton_tag": "norm + cat/gather/pad",
+        "ms_per_forward": 0.19737590000000413,
+        "share": 0.008755446900037161,
+        "calls_per_forward": 1.0,
+        "mean_us": 197.37590000000415,
+        "name": "triton_red_fused_add_cat_convolution_expand_native_layer_norm_transpose_view_0"
+      },
+      {
+        "rank": 10,
+        "short_name": "Memset ",
+        "category": "memory",
+        "triton_tag": "",
+        "ms_per_forward": 0.10799169999999439,
+        "share": 0.004790430822581046,
+        "calls_per_forward": 62.0,
+        "mean_us": 1.741801612903135,
+        "name": "Memset (Device)"
+      },
+      {
+        "rank": 11,
+        "short_name": "cudnn::engines_precompiled::nhwcToNchwKernel<__nv_bfloat16, __nv_bfloat16, float, true, false, ",
+        "category": "memory",
+        "triton_tag": "",
+        "ms_per_forward": 0.0837214000000018,
+        "share": 0.003713818516327331,
+        "calls_per_forward": 1.0,
+        "mean_us": 83.72140000000181,
+        "name": "void cudnn::engines_precompiled::nhwcToNchwKernel<__nv_bfloat16, __nv_bfloat16, float, true, false, (cudnnKernelDataType_t)0>(cudnn::engines_precompiled::nhwc2nchw_params_t<float>, __nv_bfloat16 const*, __nv_bfloat16*)"
+      },
+      {
+        "rank": 12,
+        "short_name": "triton_per_fused_add_mul_native_layer_norm_view_5",
+        "category": "triton",
+        "triton_tag": "norm",
+        "ms_per_forward": 0.05292480000000214,
+        "share": 0.002347704436535037,
+        "calls_per_forward": 1.0,
+        "mean_us": 52.92480000000214,
+        "name": "triton_per_fused_add_mul_native_layer_norm_view_5"
+      }
+    ],
+    "batch": 256,
+    "iters": 10,
+    "mode_used": "compile",
+    "compile_ok": true,
+    "compile_s": 1.2,
+    "compile_error": "",
+    "time_source": "cuda kernel time (torch.profiler)",
+    "annotations_skipped": 0,
+    "kernel_span_us": 228165.146,
+    "kernel_sum_over_span": 0.9880217419359928
+  }
+}

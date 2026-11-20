@@ -1,0 +1,249 @@
+{
+  "experiment": "A05",
+  "date_utc": "2026-11-20T13:23:03Z",
+  "git": {
+    "git_hash": "11e50a15265afa283852e7389930d545c48931c1",
+    "git_dirty": true
+  },
+  "prereg": {
+    "file": "PREREG_FINAL_PHASE.md",
+    "sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+    "recorded_sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+    "recorded_commit": "fd83c955d76a8e85228c7e9ed736e29727979540",
+    "ok": true,
+    "reason": "unchanged since the recorded commit"
+  },
+  "config": {
+    "job": {
+      "experiment": "A05",
+      "group": "main",
+      "adopted_structures": {
+        "wspace": "results/A01/structure/dinov2_vitb14_reg_wspace_matched.npz",
+        "astar": "results/MUST-07/structure/dinov2_vitb14_reg_s0.npz"
+      },
+      "model": "dinov2_vitb14_reg",
+      "seed": 0,
+      "steps": null,
+      "micro_batch": 128,
+      "compile": false,
+      "gpu_frac": 0.48,
+      "out_root": "runs/final",
+      "queue_dir": "runs/final/_queue",
+      "job": "main_s0",
+      "structure": "results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+      "gate_b": "results/MUST-07/gate_b.json",
+      "random_seed": 1,
+      "cache_dir": "cache",
+      "data": {
+        "images": "cache/heal256_uint8.npy",
+        "index": "cache/train_index.npz",
+        "train_key": "heal_rows",
+        "heldout_key": "healval_rows",
+        "heldout_images": null,
+        "heldout_index": null,
+        "max_train": null,
+        "mode": "stream",
+        "max_resident_gb": null
+      },
+      "hook_steps": [
+        0,
+        100,
+        300
+      ],
+      "state_every": 100,
+      "eval": {
+        "n_query_full": 50000,
+        "n_query_partial": 10000,
+        "fp32_last": false
+      },
+      "lr_selection": {
+        "budget_steps": 200
+      },
+      "heal": {},
+      "logits_fn": null,
+      "blockdrop_score_fn": "mirror.final.heal.blockdrop_score:msel_scorer",
+      "students": [
+        {
+          "method": "svdllm_full",
+          "lr_select": {
+            "lrs": [
+              0.0001,
+              0.0002
+            ]
+          }
+        },
+        {
+          "method": "iosvd",
+          "lr_select": {
+            "lrs": [
+              0.0001,
+              0.0002
+            ]
+          }
+        },
+        {
+          "method": "flap",
+          "lr_select": {
+            "lrs": [
+              0.0001,
+              0.0002
+            ]
+          }
+        },
+        {
+          "method": "blockdrop",
+          "lr_select": {
+            "lrs": [
+              0.0001,
+              0.0002
+            ]
+          }
+        },
+        {
+          "method": "original",
+          "lr_select": {
+            "lrs": [
+              0.0001,
+              0.0002
+            ]
+          }
+        },
+        {
+          "method": "slicegpt",
+          "lr": 0.0001
+        },
+        {
+          "method": "svd",
+          "lr": 0.0001
+        },
+        {
+          "method": "random_structure",
+          "lr": 0.0001
+        }
+      ]
+    },
+    "heal": {
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "seed": 0,
+      "lr": 0.0001,
+      "epochs": 2.0,
+      "max_steps": null,
+      "batch_size": 256,
+      "micro_batch": 128,
+      "weight_decay": 0.05,
+      "decay_1d": false,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08,
+      "warmup_frac": 0.05,
+      "warmup_steps": null,
+      "min_lr_ratio": 0.0,
+      "grad_clip": null,
+      "crop_size": 224,
+      "crop_scale": [
+        0.35,
+        1.0
+      ],
+      "crop_ratio": [
+        0.75,
+        1.3333333333333333
+      ],
+      "hflip_p": 0.5,
+      "w_cls": 1.0,
+      "w_patch": 1.0,
+      "w_block": 1.0,
+      "normaliser": "fixed",
+      "calib_images": 1024,
+      "train_scope": "all",
+      "grad_checkpoint": false,
+      "amp": "auto",
+      "share_prefix": true,
+      "eval_every": 200,
+      "eval_batch": null,
+      "max_heldout": null,
+      "log_every": 20,
+      "prefetch": 2,
+      "save_checkpoint": true,
+      "checkpoint_path": null
+    }
+  },
+  "seeds": {
+    "heal": 0
+  },
+  "models": {
+    "dinov2_vitb14_reg": {
+      "kind": "dinov2",
+      "hub_repo": "facebookresearch/dinov2",
+      "name": "dinov2_vitb14_reg",
+      "img_size": 224
+    }
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "wall_seconds": 7997.2,
+  "peak_memory_gb": 42.492,
+  "extra": {
+    "prereg": {
+      "file": "PREREG_FINAL_PHASE.md",
+      "sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+      "recorded_sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+      "recorded_commit": "fd83c955d76a8e85228c7e9ed736e29727979540",
+      "commit": "fd83c955d76a8e85228c7e9ed736e29727979540",
+      "ok": true,
+      "reason": "unchanged since the recorded commit"
+    },
+    "data": {
+      "images": "cache/heal256_uint8.npy",
+      "index": "cache/train_index.npz",
+      "train_key": "heal_rows",
+      "sources": null,
+      "heldout_key": "healval_rows",
+      "n_train": 100000,
+      "n_heldout": 5000,
+      "mode": "stream"
+    },
+    "students": [
+      "svdllm_full",
+      "iosvd",
+      "flap",
+      "blockdrop",
+      "original",
+      "slicegpt",
+      "svd",
+      "random_structure"
+    ],
+    "lrs": {
+      "slicegpt": 0.0001,
+      "svd": 0.0001,
+      "random_structure": 0.0001,
+      "svdllm_full": 0.0001,
+      "iosvd": 0.0001,
+      "flap": 0.0002,
+      "blockdrop": 0.0002,
+      "original": 0.0001
+    },
+    "dry_run": false
+  }
+}

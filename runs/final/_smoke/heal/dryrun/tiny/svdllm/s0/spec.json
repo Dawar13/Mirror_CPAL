@@ -1,0 +1,655 @@
+{
+  "format": "must09-healed-v1",
+  "family": "compressed",
+  "method": "svdllm",
+  "blocks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": false,
+    "fold": false,
+    "even_head": false
+  },
+  "wrappers": [],
+  "modules": [
+    {
+      "block": 0,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 64,
+        "out": 256,
+        "rank": 27,
+        "bias": true
+      }
+    },
+    {
+      "block": 0,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 256,
+        "out": 64,
+        "rank": 27,
+        "bias": true
+      }
+    },
+    {
+      "block": 0,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 15,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 15,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 16,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 0,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 64,
+        "out": 64,
+        "rank": 16,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 64,
+        "out": 256,
+        "rank": 27,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 256,
+        "out": 64,
+        "rank": 27,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 16,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 16,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 16,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 1,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 64,
+        "out": 64,
+        "rank": 16,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 64,
+        "out": 256,
+        "rank": 27,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 256,
+        "out": 64,
+        "rank": 27,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 15,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 15,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 15,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 2,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 64,
+        "out": 64,
+        "rank": 15,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 64,
+        "out": 256,
+        "rank": 27,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 256,
+        "out": 64,
+        "rank": 27,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 16,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 16,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 64,
+            "out": 64,
+            "rank": 15,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 3,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 64,
+        "out": 64,
+        "rank": 15,
+        "bias": true
+      }
+    }
+  ],
+  "matrices": [
+    {
+      "block": 0,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 27,
+      "conversion_rel_err": 3.8508517754923943e-08,
+      "params": 8640,
+      "params_compressor": 8640,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 0,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 27,
+      "conversion_rel_err": 4.0630574152350964e-08,
+      "params": 8640,
+      "params_compressor": 8640,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 0,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 15,
+      "conversion_rel_err": 4.256389852105759e-08,
+      "params": 1920,
+      "params_compressor": 1920,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 0,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 15,
+      "conversion_rel_err": 3.941528821502468e-08,
+      "params": 1920,
+      "params_compressor": 1920,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 0,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 16,
+      "conversion_rel_err": 4.145401956692745e-08,
+      "params": 2048,
+      "params_compressor": 2048,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 0,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 16,
+      "conversion_rel_err": 4.049489192381918e-08,
+      "params": 2048,
+      "params_compressor": 2048,
+      "path": "attn.proj"
+    },
+    {
+      "block": 1,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 27,
+      "conversion_rel_err": 3.769837476136954e-08,
+      "params": 8640,
+      "params_compressor": 8640,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 1,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 27,
+      "conversion_rel_err": 3.8781702019660615e-08,
+      "params": 8640,
+      "params_compressor": 8640,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 1,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 16,
+      "conversion_rel_err": 4.136090509697866e-08,
+      "params": 2048,
+      "params_compressor": 2048,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 1,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 16,
+      "conversion_rel_err": 3.896784892524054e-08,
+      "params": 2048,
+      "params_compressor": 2048,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 1,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 16,
+      "conversion_rel_err": 3.8539020876852165e-08,
+      "params": 2048,
+      "params_compressor": 2048,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 1,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 16,
+      "conversion_rel_err": 3.9502923632686064e-08,
+      "params": 2048,
+      "params_compressor": 2048,
+      "path": "attn.proj"
+    },
+    {
+      "block": 2,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 27,
+      "conversion_rel_err": 3.834039131643742e-08,
+      "params": 8640,
+      "params_compressor": 8640,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 2,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 27,
+      "conversion_rel_err": 3.969001285359608e-08,
+      "params": 8640,
+      "params_compressor": 8640,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 2,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 15,
+      "conversion_rel_err": 3.9981903800492714e-08,
+      "params": 1920,
+      "params_compressor": 1920,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 2,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 15,
+      "conversion_rel_err": 3.9755978203907216e-08,
+      "params": 1920,
+      "params_compressor": 1920,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 2,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 15,
+      "conversion_rel_err": 3.970124064795474e-08,
+      "params": 1920,
+      "params_compressor": 1920,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 2,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 15,
+      "conversion_rel_err": 3.960401686526979e-08,
+      "params": 1920,
+      "params_compressor": 1920,
+      "path": "attn.proj"
+    },
+    {
+      "block": 3,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 27,
+      "conversion_rel_err": 3.8873205154478616e-08,
+      "params": 8640,
+      "params_compressor": 8640,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 3,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 27,
+      "conversion_rel_err": 3.9293901354390624e-08,
+      "params": 8640,
+      "params_compressor": 8640,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 3,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 16,
+      "conversion_rel_err": 4.0162710489005104e-08,
+      "params": 2048,
+      "params_compressor": 2048,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 3,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 16,
+      "conversion_rel_err": 3.914277965441196e-08,
+      "params": 2048,
+      "params_compressor": 2048,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 3,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 15,
+      "conversion_rel_err": 3.82228120187868e-08,
+      "params": 1920,
+      "params_compressor": 1920,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 3,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "balanced SVD of the compressed weight",
+      "rank": 15,
+      "conversion_rel_err": 3.9601252657336914e-08,
+      "params": 1920,
+      "params_compressor": 1920,
+      "path": "attn.proj"
+    }
+  ],
+  "compressor": {
+    "params_total": 100864,
+    "params_matrices": 100864,
+    "params_basis_change": 0,
+    "budget_total": 100816,
+    "gap": 0.00047611490239644503,
+    "source": "mirror.baselines.compress",
+    "model_form": "absorbed weights in the unfolded model (norm affine and LayerScale folded)",
+    "hparams": {
+      "damp": 1e-06
+    },
+    "basis": []
+  },
+  "lowrank_factors": "balanced",
+  "trainable": "structured parameters of the converted blocks (and their biases) and the embeddings, free (nothing re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+  "adapter": {
+    "kind": "tiny",
+    "img_size": 56,
+    "seed": 0,
+    "dtype": "float32"
+  },
+  "targets": "sym",
+  "model": "tiny",
+  "hparams": {
+    "damp": 1e-06
+  },
+  "fp_heal": {
+    "loader": {
+      "kind": "heal_structured"
+    },
+    "method": "svdllm",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "raw",
+      "k": null,
+      "logits": false,
+      "input_transform": null,
+      "block_map": null,
+      "reg_perm": []
+    },
+    "builder_options": {},
+    "variant": null,
+    "lr": 0.0001,
+    "job": "dryrun_2eb9c437",
+    "lr_selection": {
+      "best_lr": 0.0001,
+      "lrs": [
+        0.0001,
+        0.001
+      ],
+      "budget_steps": 2,
+      "seed": 0,
+      "trials": [
+        {
+          "lr": 0.0001,
+          "heldout_loss": 0.883616614529001,
+          "heldout_terms": {
+            "total": 0.883616614529001,
+            "block0": 0.0007391182752908006,
+            "block1": 0.0013326057213721941,
+            "block2": 0.001984052657736079,
+            "block3": 0.0025032779638109255,
+            "cls": 0.01918672822316036,
+            "patch": 0.8578708316876306
+          },
+          "heldout_initial": 0.8921718628743429,
+          "train_loss_last": 0.8034250641940162,
+          "diverged": false,
+          "trial_dir": "/home/Mirror_CPAL/runs/final/_smoke/heal/lr/tiny/svdllm_lr1e-04/s0"
+        },
+        {
+          "lr": 0.001,
+          "heldout_loss": 1.0588727835052034,
+          "heldout_terms": {
+            "total": 1.0588727835052034,
+            "block0": 0.011977032990779535,
+            "block1": 0.01366255735353418,
+            "block2": 0.01507060092490995,
+            "block3": 0.01652583754673834,
+            "cls": 0.19161085242476994,
+            "patch": 0.8100259022644716
+          },
+          "heldout_initial": 0.8921718628743429,
+          "train_loss_last": 1.20414635585621,
+          "diverged": false,
+          "trial_dir": "/home/Mirror_CPAL/runs/final/_smoke/heal/lr/tiny/svdllm_lr1e-03/s0"
+        }
+      ],
+      "lockstep": true,
+      "rule": "lowest held-out distillation loss on the LR-selection rows (centre view) after the trial budget, each trial with its own warm-up and cosine; ties go to the smaller rate; diverged trials score +inf",
+      "heldout_images": 8,
+      "git_hash": "3a848ec7edd845dbad94dacdd053b64774f148b2",
+      "git_dirty": false
+    },
+    "params": {
+      "model_params": 208680,
+      "model_params_stored": 208680,
+      "converted_params_kept": 100864,
+      "converted_params_dense": 196608,
+      "model_params_structured": 208680,
+      "model_params_original": 304424,
+      "model_params_frac": 0.6854912884660868,
+      "params_source": "compressor's own per-matrix and basis-change counts",
+      "params_total": 100864,
+      "params_matrices": 100864,
+      "params_basis_change": 0,
+      "budget_total": 100816,
+      "gap": 0.00047611490239644503,
+      "gap_ok": true
+    }
+  },
+  "experiment": "dryrun",
+  "seed": 0,
+  "state_file": "ckpt/step4.pt"
+}

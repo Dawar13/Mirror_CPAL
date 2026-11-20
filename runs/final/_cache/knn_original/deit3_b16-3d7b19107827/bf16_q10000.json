@@ -1,0 +1,39 @@
+{
+  "settings": {
+    "protocol": "fp-knn-v1",
+    "pass": "bf16",
+    "k": 20,
+    "temperature": 0.07,
+    "n_query": 10000,
+    "n_bank": 100000,
+    "data": "cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)",
+    "checkpoint_sha256": null
+  },
+  "summary": {
+    "top1": 83.35000276565552,
+    "top1_mirrored_queries": 83.3299994468689,
+    "flip_consistency": 96.88000082969666,
+    "n_disagree": 312,
+    "max_vote_margin_rel": 1.0,
+    "max_vote_margin_rel_one_copy": 0.7641724348068237,
+    "n_disagree_not_near_tie": 312,
+    "near_tie_rel": 0.0001,
+    "feature_flip_max_abs": 0.2880549132823944,
+    "feature_identical_pct": 0.0,
+    "pass": "bf16",
+    "amp": "bf16",
+    "flip_average": false,
+    "n_bank": 100000,
+    "n_query": 10000,
+    "k": 20,
+    "temperature": 0.07,
+    "batch_size": 512,
+    "forward_passes_per_image": 1,
+    "seconds": 10.86,
+    "precision": "bf16 autocast for every forward pass, TF32 off; k-NN in fp32",
+    "bank_subset": null,
+    "query_subset": "first 10 validation images per class in dataset order (MUST-09 rule)",
+    "n_disagree_listed": 312
+  },
+  "model_key": "deit3_b16-3d7b19107827"
+}

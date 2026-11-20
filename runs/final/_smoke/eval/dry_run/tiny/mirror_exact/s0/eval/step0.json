@@ -1,0 +1,333 @@
+{
+  "passes": {
+    "bf16": {
+      "top1": 50.0,
+      "top1_mirrored_queries": 56.25,
+      "flip_consistency": 43.75,
+      "n_disagree": 9,
+      "max_vote_margin_rel": 0.1400545835494995,
+      "max_vote_margin_rel_one_copy": 0.023409944027662277,
+      "n_disagree_not_near_tie": 9,
+      "near_tie_rel": 0.0001,
+      "feature_flip_max_abs": 0.12224220484495163,
+      "feature_identical_pct": 0.0,
+      "pass": "bf16",
+      "amp": "bf16",
+      "flip_average": false,
+      "n_bank": 32,
+      "n_query": 16,
+      "k": 20,
+      "temperature": 0.07,
+      "batch_size": 512,
+      "forward_passes_per_image": 1,
+      "seconds": 0.01,
+      "precision": "bf16 autocast for every forward pass, TF32 off; k-NN in fp32",
+      "bank_subset": null,
+      "query_subset": null,
+      "n_disagree_listed": 9,
+      "settings": {
+        "protocol": "fp-knn-v1",
+        "pass": "bf16",
+        "k": 20,
+        "temperature": 0.07,
+        "n_query": 16,
+        "n_bank": 32,
+        "data": "synthetic(classes=4, bank=8/class, queries=4/class, 56 px, seed=0)",
+        "checkpoint_sha256": null
+      },
+      "predictions": "knn/step0_bf16.npz",
+      "disagreements": [
+        {
+          "query_row": 0,
+          "label": 0,
+          "pred": 0,
+          "pred_flip": 3,
+          "vote_margin_rel": 0.048541564494371414,
+          "vote_margin_rel_mirrored": 0.010378707200288773,
+          "kth_sim_gap": 0.0005939006805419922,
+          "kth_sim_gap_mirrored": 0.003175675868988037
+        },
+        {
+          "query_row": 1,
+          "label": 2,
+          "pred": 1,
+          "pred_flip": 2,
+          "vote_margin_rel": 0.00615696981549263,
+          "vote_margin_rel_mirrored": 0.014646166935563087,
+          "kth_sim_gap": 0.002336740493774414,
+          "kth_sim_gap_mirrored": 0.0009713172912597656
+        },
+        {
+          "query_row": 2,
+          "label": 0,
+          "pred": 3,
+          "pred_flip": 0,
+          "vote_margin_rel": 0.01599065400660038,
+          "vote_margin_rel_mirrored": 0.011338652111589909,
+          "kth_sim_gap": 0.0018842220306396484,
+          "kth_sim_gap_mirrored": 0.0005034208297729492
+        },
+        {
+          "query_row": 5,
+          "label": 1,
+          "pred": 1,
+          "pred_flip": 2,
+          "vote_margin_rel": 0.01876736432313919,
+          "vote_margin_rel_mirrored": 0.03301699832081795,
+          "kth_sim_gap": 0.000693202018737793,
+          "kth_sim_gap_mirrored": 0.0010929703712463379
+        },
+        {
+          "query_row": 6,
+          "label": 0,
+          "pred": 3,
+          "pred_flip": 0,
+          "vote_margin_rel": 0.008575021289288998,
+          "vote_margin_rel_mirrored": 0.020055899396538734,
+          "kth_sim_gap": 0.001415252685546875,
+          "kth_sim_gap_mirrored": 0.0023682713508605957
+        },
+        {
+          "query_row": 7,
+          "label": 3,
+          "pred": 0,
+          "pred_flip": 3,
+          "vote_margin_rel": 0.002718420699238777,
+          "vote_margin_rel_mirrored": 0.007774638012051582,
+          "kth_sim_gap": 0.0005077123641967773,
+          "kth_sim_gap_mirrored": 0.0003161430358886719
+        },
+        {
+          "query_row": 8,
+          "label": 3,
+          "pred": 0,
+          "pred_flip": 3,
+          "vote_margin_rel": 0.00723508233204484,
+          "vote_margin_rel_mirrored": 0.06763061136007309,
+          "kth_sim_gap": 0.0005667805671691895,
+          "kth_sim_gap_mirrored": 0.0003402829170227051
+        },
+        {
+          "query_row": 11,
+          "label": 2,
+          "pred": 2,
+          "pred_flip": 1,
+          "vote_margin_rel": 0.016986796632409096,
+          "vote_margin_rel_mirrored": 0.1400545835494995,
+          "kth_sim_gap": 0.0027886629104614258,
+          "kth_sim_gap_mirrored": 0.0012155771255493164
+        },
+        {
+          "query_row": 13,
+          "label": 2,
+          "pred": 2,
+          "pred_flip": 1,
+          "vote_margin_rel": 0.023409944027662277,
+          "vote_margin_rel_mirrored": 0.1205606684088707,
+          "kth_sim_gap": 0.0023645758628845215,
+          "kth_sim_gap_mirrored": 3.600120544433594e-05
+        }
+      ],
+      "git_hash": "3a848ec7edd845dbad94dacdd053b64774f148b2",
+      "date_utc": "2026-11-20T07:23:34Z"
+    },
+    "fp32": {
+      "top1": 50.0,
+      "top1_mirrored_queries": 56.25,
+      "flip_consistency": 43.75,
+      "n_disagree": 9,
+      "max_vote_margin_rel": 0.1400545835494995,
+      "max_vote_margin_rel_one_copy": 0.023409944027662277,
+      "n_disagree_not_near_tie": 9,
+      "near_tie_rel": 0.0001,
+      "feature_flip_max_abs": 0.12224220484495163,
+      "feature_identical_pct": 0.0,
+      "pass": "fp32",
+      "amp": "fp32",
+      "flip_average": false,
+      "n_bank": 32,
+      "n_query": 16,
+      "k": 20,
+      "temperature": 0.07,
+      "batch_size": 512,
+      "forward_passes_per_image": 1,
+      "seconds": 0.01,
+      "precision": "fp32 forward passes, no autocast, TF32 off; k-NN in fp32",
+      "bank_subset": null,
+      "query_subset": null,
+      "n_disagree_listed": 9,
+      "settings": {
+        "protocol": "fp-knn-v1",
+        "pass": "fp32",
+        "k": 20,
+        "temperature": 0.07,
+        "n_query": 16,
+        "n_bank": 32,
+        "data": "synthetic(classes=4, bank=8/class, queries=4/class, 56 px, seed=0)",
+        "checkpoint_sha256": null
+      },
+      "predictions": "knn/step0_fp32.npz",
+      "disagreements": [
+        {
+          "query_row": 0,
+          "label": 0,
+          "pred": 0,
+          "pred_flip": 3,
+          "vote_margin_rel": 0.048541564494371414,
+          "vote_margin_rel_mirrored": 0.010378707200288773,
+          "kth_sim_gap": 0.0005939006805419922,
+          "kth_sim_gap_mirrored": 0.003175675868988037
+        },
+        {
+          "query_row": 1,
+          "label": 2,
+          "pred": 1,
+          "pred_flip": 2,
+          "vote_margin_rel": 0.00615696981549263,
+          "vote_margin_rel_mirrored": 0.014646166935563087,
+          "kth_sim_gap": 0.002336740493774414,
+          "kth_sim_gap_mirrored": 0.0009713172912597656
+        },
+        {
+          "query_row": 2,
+          "label": 0,
+          "pred": 3,
+          "pred_flip": 0,
+          "vote_margin_rel": 0.01599065400660038,
+          "vote_margin_rel_mirrored": 0.011338652111589909,
+          "kth_sim_gap": 0.0018842220306396484,
+          "kth_sim_gap_mirrored": 0.0005034208297729492
+        },
+        {
+          "query_row": 5,
+          "label": 1,
+          "pred": 1,
+          "pred_flip": 2,
+          "vote_margin_rel": 0.01876736432313919,
+          "vote_margin_rel_mirrored": 0.03301699832081795,
+          "kth_sim_gap": 0.000693202018737793,
+          "kth_sim_gap_mirrored": 0.0010929703712463379
+        },
+        {
+          "query_row": 6,
+          "label": 0,
+          "pred": 3,
+          "pred_flip": 0,
+          "vote_margin_rel": 0.008575021289288998,
+          "vote_margin_rel_mirrored": 0.020055899396538734,
+          "kth_sim_gap": 0.001415252685546875,
+          "kth_sim_gap_mirrored": 0.0023682713508605957
+        },
+        {
+          "query_row": 7,
+          "label": 3,
+          "pred": 0,
+          "pred_flip": 3,
+          "vote_margin_rel": 0.002718420699238777,
+          "vote_margin_rel_mirrored": 0.007774638012051582,
+          "kth_sim_gap": 0.0005077123641967773,
+          "kth_sim_gap_mirrored": 0.0003161430358886719
+        },
+        {
+          "query_row": 8,
+          "label": 3,
+          "pred": 0,
+          "pred_flip": 3,
+          "vote_margin_rel": 0.00723508233204484,
+          "vote_margin_rel_mirrored": 0.06763061136007309,
+          "kth_sim_gap": 0.0005667805671691895,
+          "kth_sim_gap_mirrored": 0.0003402829170227051
+        },
+        {
+          "query_row": 11,
+          "label": 2,
+          "pred": 2,
+          "pred_flip": 1,
+          "vote_margin_rel": 0.016986796632409096,
+          "vote_margin_rel_mirrored": 0.1400545835494995,
+          "kth_sim_gap": 0.0027886629104614258,
+          "kth_sim_gap_mirrored": 0.0012155771255493164
+        },
+        {
+          "query_row": 13,
+          "label": 2,
+          "pred": 2,
+          "pred_flip": 1,
+          "vote_margin_rel": 0.023409944027662277,
+          "vote_margin_rel_mirrored": 0.1205606684088707,
+          "kth_sim_gap": 0.0023645758628845215,
+          "kth_sim_gap_mirrored": 3.600120544433594e-05
+        }
+      ],
+      "git_hash": "3a848ec7edd845dbad94dacdd053b64774f148b2",
+      "date_utc": "2026-11-20T07:23:34Z"
+    }
+  },
+  "model": "tiny",
+  "model_key": "tiny-5036e2afd9d1",
+  "loader_info": {
+    "method": "dry_run",
+    "step": 0
+  },
+  "format": "fp-knn-v1",
+  "tag": "step0",
+  "run_dir": "runs/final/_smoke/eval/dry_run/tiny/mirror_exact/s0",
+  "step": 0,
+  "original": false,
+  "checkpoint": "runs/final/_smoke/eval/dry_run/tiny/mirror_exact/s0/ckpt/step0.pt",
+  "checkpoint_sha256": null,
+  "data": "synthetic(classes=4, bank=8/class, queries=4/class, 56 px, seed=0)",
+  "original_reference": {
+    "bf16": {
+      "top1": 50.0,
+      "top1_mirrored_queries": 62.5,
+      "flip_consistency": 37.5,
+      "n_disagree": 10,
+      "max_vote_margin_rel": 0.1401231586933136,
+      "max_vote_margin_rel_one_copy": 0.033619608730077744,
+      "n_disagree_not_near_tie": 10,
+      "near_tie_rel": 0.0001,
+      "feature_flip_max_abs": 0.12087743729352951,
+      "feature_identical_pct": 0.0,
+      "pass": "bf16",
+      "amp": "bf16",
+      "flip_average": false,
+      "n_bank": 32,
+      "n_query": 16,
+      "k": 20,
+      "temperature": 0.07,
+      "batch_size": 512,
+      "forward_passes_per_image": 1,
+      "seconds": 0.01,
+      "precision": "bf16 autocast for every forward pass, TF32 off; k-NN in fp32",
+      "bank_subset": null,
+      "query_subset": null,
+      "n_disagree_listed": 10
+    }
+  },
+  "request": {
+    "run_dir": "runs/final/_smoke/eval/dry_run/tiny/mirror_exact/s0",
+    "step": 0,
+    "passes": [
+      "bf16",
+      "fp32"
+    ],
+    "n_query": null,
+    "priority": 0,
+    "out_dir": null,
+    "original": false,
+    "model": null,
+    "fp32_n_query": null,
+    "fp32_bank_per_class": null,
+    "with_original": [
+      "bf16"
+    ],
+    "flip_average": false,
+    "cost": false,
+    "experiment": null,
+    "id": null,
+    "ckpt": null,
+    "tags": null,
+    "created_utc": null
+  }
+}

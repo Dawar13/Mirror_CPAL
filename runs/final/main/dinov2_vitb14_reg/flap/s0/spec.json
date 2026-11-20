@@ -1,0 +1,1932 @@
+{
+  "format": "must09-healed-v1",
+  "family": "compressed",
+  "method": "flap",
+  "blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": true,
+    "fold": false,
+    "even_head": false
+  },
+  "wrappers": [],
+  "modules": [
+    {
+      "block": 0,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 1798,
+        "bias": true
+      }
+    },
+    {
+      "block": 0,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 1798,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 0,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 512,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 512,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 512,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 0,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 512,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 1844,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 1844,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 512,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 512,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 512,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 1,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 512,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 2002,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 2002,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 512,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 512,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 512,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 2,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 512,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 2046,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 2046,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 3,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 576,
+        "bias": true
+      }
+    },
+    {
+      "block": 4,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 2068,
+        "bias": true
+      }
+    },
+    {
+      "block": 4,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 2068,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 4,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 4,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 576,
+        "bias": true
+      }
+    },
+    {
+      "block": 5,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 2246,
+        "bias": true
+      }
+    },
+    {
+      "block": 5,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 2246,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 5,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 5,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 576,
+        "bias": true
+      }
+    },
+    {
+      "block": 6,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 2363,
+        "bias": true
+      }
+    },
+    {
+      "block": 6,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 2363,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 6,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 6,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 576,
+        "bias": true
+      }
+    },
+    {
+      "block": 7,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 2520,
+        "bias": true
+      }
+    },
+    {
+      "block": 7,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 2520,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 7,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 576,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 7,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 576,
+        "bias": true
+      }
+    },
+    {
+      "block": 8,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 2719,
+        "bias": true
+      }
+    },
+    {
+      "block": 8,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 2719,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 8,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 640,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 640,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 640,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 8,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 640,
+        "bias": true
+      }
+    },
+    {
+      "block": 9,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 2699,
+        "bias": true
+      }
+    },
+    {
+      "block": 9,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 2699,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 9,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 640,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 640,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 640,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 9,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 640,
+        "bias": true
+      }
+    },
+    {
+      "block": 10,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 2756,
+        "bias": true
+      }
+    },
+    {
+      "block": 10,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 2756,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 10,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 704,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 704,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 704,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 10,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 704,
+        "bias": true
+      }
+    },
+    {
+      "block": 11,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "linear",
+        "in": 768,
+        "out": 2759,
+        "bias": true
+      }
+    },
+    {
+      "block": 11,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "linear",
+        "in": 2759,
+        "out": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 11,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 704,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 704,
+            "bias": true
+          },
+          {
+            "type": "indexed",
+            "in": 768,
+            "out": 768,
+            "axis": "out",
+            "n": 704,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 11,
+      "path": "attn.proj",
+      "module": {
+        "type": "indexed",
+        "in": 768,
+        "out": 768,
+        "axis": "in",
+        "n": 704,
+        "bias": true
+      }
+    }
+  ],
+  "matrices": [
+    {
+      "block": 0,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        1798,
+        768
+      ],
+      "n_kept": 1798,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "2d4b29df81fd282c",
+      "params": 1380864,
+      "params_compressor": 1380864,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 0,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        1798
+      ],
+      "n_kept": 1798,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "2d4b29df81fd282c",
+      "params": 1380864,
+      "params_compressor": 1380864,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 0,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "649f7b05f9e44cdf",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 0,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "649f7b05f9e44cdf",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 0,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "649f7b05f9e44cdf",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 0,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "649f7b05f9e44cdf",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.proj"
+    },
+    {
+      "block": 1,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        1844,
+        768
+      ],
+      "n_kept": 1844,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "c786db79e239cbf3",
+      "params": 1416192,
+      "params_compressor": 1416192,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 1,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        1844
+      ],
+      "n_kept": 1844,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "c786db79e239cbf3",
+      "params": 1416192,
+      "params_compressor": 1416192,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 1,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "3e55b00eb7634c80",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 1,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "3e55b00eb7634c80",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 1,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "3e55b00eb7634c80",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 1,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "3e55b00eb7634c80",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.proj"
+    },
+    {
+      "block": 2,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        2002,
+        768
+      ],
+      "n_kept": 2002,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "a2b986e0f2014867",
+      "params": 1537536,
+      "params_compressor": 1537536,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 2,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        2002
+      ],
+      "n_kept": 2002,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "a2b986e0f2014867",
+      "params": 1537536,
+      "params_compressor": 1537536,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 2,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "8ae88aac0260495f",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 2,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "8ae88aac0260495f",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 2,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "8ae88aac0260495f",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 2,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 512,
+      "size": 768,
+      "index_sha": "8ae88aac0260495f",
+      "pruned_rel_norm": 0.0,
+      "params": 393216,
+      "params_compressor": 393216,
+      "path": "attn.proj"
+    },
+    {
+      "block": 3,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        2046,
+        768
+      ],
+      "n_kept": 2046,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "15c8763f62198d10",
+      "params": 1571328,
+      "params_compressor": 1571328,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 3,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        2046
+      ],
+      "n_kept": 2046,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "15c8763f62198d10",
+      "params": 1571328,
+      "params_compressor": 1571328,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 3,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "1c2df610a729273b",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 3,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "1c2df610a729273b",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 3,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "1c2df610a729273b",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 3,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "1c2df610a729273b",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.proj"
+    },
+    {
+      "block": 4,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        2068,
+        768
+      ],
+      "n_kept": 2068,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "7e1a08632c4b3c1c",
+      "params": 1588224,
+      "params_compressor": 1588224,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 4,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        2068
+      ],
+      "n_kept": 2068,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "7e1a08632c4b3c1c",
+      "params": 1588224,
+      "params_compressor": 1588224,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 4,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "e7654c5879f6c7f4",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 4,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "e7654c5879f6c7f4",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 4,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "e7654c5879f6c7f4",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 4,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "e7654c5879f6c7f4",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.proj"
+    },
+    {
+      "block": 5,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        2246,
+        768
+      ],
+      "n_kept": 2246,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "91c4af042b39e333",
+      "params": 1724928,
+      "params_compressor": 1724928,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 5,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        2246
+      ],
+      "n_kept": 2246,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "91c4af042b39e333",
+      "params": 1724928,
+      "params_compressor": 1724928,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 5,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "c1c7faad69713163",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 5,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "c1c7faad69713163",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 5,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "c1c7faad69713163",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 5,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "c1c7faad69713163",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.proj"
+    },
+    {
+      "block": 6,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        2363,
+        768
+      ],
+      "n_kept": 2363,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "7bbc33308768a88a",
+      "params": 1814784,
+      "params_compressor": 1814784,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 6,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        2363
+      ],
+      "n_kept": 2363,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "7bbc33308768a88a",
+      "params": 1814784,
+      "params_compressor": 1814784,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 6,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "2b686453b5e52923",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 6,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "2b686453b5e52923",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 6,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "2b686453b5e52923",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 6,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "2b686453b5e52923",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.proj"
+    },
+    {
+      "block": 7,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        2520,
+        768
+      ],
+      "n_kept": 2520,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "24fe928e3a4d85dc",
+      "params": 1935360,
+      "params_compressor": 1935360,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 7,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        2520
+      ],
+      "n_kept": 2520,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "24fe928e3a4d85dc",
+      "params": 1935360,
+      "params_compressor": 1935360,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 7,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "2b686453b5e52923",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 7,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "2b686453b5e52923",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 7,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "2b686453b5e52923",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 7,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 576,
+      "size": 768,
+      "index_sha": "2b686453b5e52923",
+      "pruned_rel_norm": 0.0,
+      "params": 442368,
+      "params_compressor": 442368,
+      "path": "attn.proj"
+    },
+    {
+      "block": 8,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        2719,
+        768
+      ],
+      "n_kept": 2719,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "738ba9df9a2a64cc",
+      "params": 2088192,
+      "params_compressor": 2088192,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 8,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        2719
+      ],
+      "n_kept": 2719,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "738ba9df9a2a64cc",
+      "params": 2088192,
+      "params_compressor": 2088192,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 8,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 640,
+      "size": 768,
+      "index_sha": "acc7c4dd695c38e9",
+      "pruned_rel_norm": 0.0,
+      "params": 491520,
+      "params_compressor": 491520,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 8,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 640,
+      "size": 768,
+      "index_sha": "acc7c4dd695c38e9",
+      "pruned_rel_norm": 0.0,
+      "params": 491520,
+      "params_compressor": 491520,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 8,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 640,
+      "size": 768,
+      "index_sha": "acc7c4dd695c38e9",
+      "pruned_rel_norm": 0.0,
+      "params": 491520,
+      "params_compressor": 491520,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 8,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 640,
+      "size": 768,
+      "index_sha": "acc7c4dd695c38e9",
+      "pruned_rel_norm": 0.0,
+      "params": 491520,
+      "params_compressor": 491520,
+      "path": "attn.proj"
+    },
+    {
+      "block": 9,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        2699,
+        768
+      ],
+      "n_kept": 2699,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "72b84d45f125436f",
+      "params": 2072832,
+      "params_compressor": 2072832,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 9,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        2699
+      ],
+      "n_kept": 2699,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "72b84d45f125436f",
+      "params": 2072832,
+      "params_compressor": 2072832,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 9,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 640,
+      "size": 768,
+      "index_sha": "d4a1c19ad13f167e",
+      "pruned_rel_norm": 0.0,
+      "params": 491520,
+      "params_compressor": 491520,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 9,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 640,
+      "size": 768,
+      "index_sha": "d4a1c19ad13f167e",
+      "pruned_rel_norm": 0.0,
+      "params": 491520,
+      "params_compressor": 491520,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 9,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 640,
+      "size": 768,
+      "index_sha": "d4a1c19ad13f167e",
+      "pruned_rel_norm": 0.0,
+      "params": 491520,
+      "params_compressor": 491520,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 9,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 640,
+      "size": 768,
+      "index_sha": "d4a1c19ad13f167e",
+      "pruned_rel_norm": 0.0,
+      "params": 491520,
+      "params_compressor": 491520,
+      "path": "attn.proj"
+    },
+    {
+      "block": 10,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        2756,
+        768
+      ],
+      "n_kept": 2756,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "a6985a5c7695ee0c",
+      "params": 2116608,
+      "params_compressor": 2116608,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 10,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        2756
+      ],
+      "n_kept": 2756,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "a6985a5c7695ee0c",
+      "params": 2116608,
+      "params_compressor": 2116608,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 10,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 704,
+      "size": 768,
+      "index_sha": "bff34d80842faef1",
+      "pruned_rel_norm": 0.0,
+      "params": 540672,
+      "params_compressor": 540672,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 10,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 704,
+      "size": 768,
+      "index_sha": "bff34d80842faef1",
+      "pruned_rel_norm": 0.0,
+      "params": 540672,
+      "params_compressor": 540672,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 10,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 704,
+      "size": 768,
+      "index_sha": "bff34d80842faef1",
+      "pruned_rel_norm": 0.0,
+      "params": 540672,
+      "params_compressor": 540672,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 10,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 704,
+      "size": 768,
+      "index_sha": "bff34d80842faef1",
+      "pruned_rel_norm": 0.0,
+      "params": 540672,
+      "params_compressor": 540672,
+      "path": "attn.proj"
+    },
+    {
+      "block": 11,
+      "name": "fc1",
+      "kind": "width",
+      "shape": [
+        2759,
+        768
+      ],
+      "n_kept": 2759,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "6040d57b0900ddf4",
+      "params": 2118912,
+      "params_compressor": 2118912,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 11,
+      "name": "fc2",
+      "kind": "width",
+      "shape": [
+        768,
+        2759
+      ],
+      "n_kept": 2759,
+      "pruned_fc2_rel_norm": 0.0,
+      "index_sha": "6040d57b0900ddf4",
+      "params": 2118912,
+      "params_compressor": 2118912,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 11,
+      "name": "wq",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 704,
+      "size": 768,
+      "index_sha": "d552bb14bd9ca14d",
+      "pruned_rel_norm": 0.0,
+      "params": 540672,
+      "params_compressor": 540672,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 11,
+      "name": "wk",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 704,
+      "size": 768,
+      "index_sha": "d552bb14bd9ca14d",
+      "pruned_rel_norm": 0.0,
+      "params": 540672,
+      "params_compressor": 540672,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 11,
+      "name": "wv",
+      "kind": "width",
+      "axis": "out",
+      "n_kept": 704,
+      "size": 768,
+      "index_sha": "d552bb14bd9ca14d",
+      "pruned_rel_norm": 0.0,
+      "params": 540672,
+      "params_compressor": 540672,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 11,
+      "name": "wo",
+      "kind": "width",
+      "axis": "in",
+      "n_kept": 704,
+      "size": 768,
+      "index_sha": "d552bb14bd9ca14d",
+      "pruned_rel_norm": 0.0,
+      "params": 540672,
+      "params_compressor": 540672,
+      "path": "attn.proj"
+    }
+  ],
+  "compressor": {
+    "params_total": 64555008,
+    "params_matrices": 64555008,
+    "params_basis_change": 0,
+    "budget_total": 64554464,
+    "gap": 8.426992748324887e-06,
+    "source": "mirror.baselines.compress",
+    "model_form": "absorbed weights in the unfolded model; MLP neurons removed (smaller nn.Linear); heads removed in dense form (zero rows and columns)",
+    "hparams": {
+      "allocation": "uniform"
+    },
+    "basis": []
+  },
+  "lowrank_factors": "balanced",
+  "trainable": "structured parameters of the converted blocks (and their biases) and the embeddings, free (nothing re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+  "adapter": {
+    "kind": "dinov2",
+    "hub_repo": "facebookresearch/dinov2",
+    "name": "dinov2_vitb14_reg",
+    "img_size": 224
+  },
+  "targets": "sym",
+  "model": "dinov2_vitb14_reg",
+  "hparams": {
+    "allocation": "uniform"
+  },
+  "fp_heal": {
+    "loader": {
+      "kind": "heal_structured"
+    },
+    "method": "flap",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "raw",
+      "k": null,
+      "logits": false,
+      "input_transform": null,
+      "block_map": null,
+      "reg_perm": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "builder_options": {},
+    "variant": null,
+    "lr": 0.0002,
+    "job": "main_s0",
+    "lr_selection": {
+      "best_lr": 0.0002,
+      "lrs": [
+        0.0001,
+        0.0002
+      ],
+      "budget_steps": 200,
+      "seed": 0,
+      "trials": [
+        {
+          "lr": 0.0001,
+          "heldout_loss": 1.6014133955829486,
+          "heldout_terms": {
+            "total": 1.6014133955829486,
+            "block0": 0.024910757938480653,
+            "block1": 0.0410305962511798,
+            "block2": 0.05743994066964367,
+            "block3": 0.06384724630462082,
+            "block4": 0.09453248555816647,
+            "block5": 0.12887214098167693,
+            "block6": 0.15515469309511273,
+            "block7": 0.10981926653645652,
+            "block8": 0.13549496775514247,
+            "block9": 0.17303081485035024,
+            "block10": 0.1727571794952428,
+            "block11": 0.1356149032876359,
+            "cls": 0.1378742148670351,
+            "patch": 0.1710341879922045
+          },
+          "heldout_initial": 6.022066860252874,
+          "train_loss_last": 1.6284145507961512,
+          "diverged": false,
+          "trial_dir": "/home/Mirror_CPAL/runs/final/lr/dinov2_vitb14_reg/flap_lr1e-04/s0"
+        },
+        {
+          "lr": 0.0002,
+          "heldout_loss": 1.5567314918106745,
+          "heldout_terms": {
+            "total": 1.5567314918106745,
+            "block0": 0.022983114813376636,
+            "block1": 0.04043403289231436,
+            "block2": 0.0583424226335421,
+            "block3": 0.06480369058848727,
+            "block4": 0.09476208873784976,
+            "block5": 0.12748085969050954,
+            "block6": 0.152533486822242,
+            "block7": 0.10700311268111092,
+            "block8": 0.13186976801565056,
+            "block9": 0.16765852862023478,
+            "block10": 0.16743095380235715,
+            "block11": 0.12976951119156124,
+            "cls": 0.1292753246689883,
+            "patch": 0.16238459665244986
+          },
+          "heldout_initial": 6.022066860252874,
+          "train_loss_last": 1.5742192333564162,
+          "diverged": false,
+          "trial_dir": "/home/Mirror_CPAL/runs/final/lr/dinov2_vitb14_reg/flap_lr2e-04/s0"
+        }
+      ],
+      "lockstep": true,
+      "rule": "lowest held-out distillation loss on the LR-selection rows (centre view) after the trial budget, each trial with its own warm-up and cosine; ties go to the smaller rate; diverged trials score +inf",
+      "heldout_images": 5000,
+      "git_hash": "87f1d9b1e6b634c250ce8aeceae73278e54dccb3",
+      "git_dirty": true
+    },
+    "params": {
+      "model_params": 65333740,
+      "model_params_stored": 65333740,
+      "converted_params_kept": 64555008,
+      "converted_params_dense": 84934656,
+      "model_params_structured": 66203904,
+      "model_params_original": 86583552,
+      "model_params_frac": 0.7646244866461473,
+      "params_source": "compressor's own per-matrix and basis-change counts",
+      "params_total": 64555008,
+      "params_matrices": 64555008,
+      "params_basis_change": 0,
+      "budget_total": 64554464,
+      "gap": 8.426992748324887e-06,
+      "gap_ok": true
+    }
+  },
+  "experiment": "A05",
+  "seed": 0,
+  "state_file": "ckpt/step780.pt"
+}

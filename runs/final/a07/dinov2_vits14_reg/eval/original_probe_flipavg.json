@@ -1,0 +1,151 @@
+{
+  "top1": 76.508,
+  "top5": 93.85,
+  "chosen_wd": 0.001,
+  "wd_at_grid_edge": false,
+  "knn_check_top1": 74.5959997177124,
+  "n_bank": 100000,
+  "n_val": 50000,
+  "flip_average": true,
+  "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]; flip-averaged: (p(x) + p(mirror x)) / 2",
+  "amp": "bf16",
+  "wd_grid": [
+    1e-07,
+    1e-06,
+    1e-05,
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "seed": 0,
+  "seconds": 447.4,
+  "selection": {
+    "chosen_wd": 0.001,
+    "holdout_top1_at_chosen": 78.07,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 76.5,
+        "holdout_top5": 93.62,
+        "holdout_loss": 1.39684765625,
+        "train_objective": 2.2258849143981934,
+        "grad_max": 3.822224243776873e-05,
+        "n_iter": 62,
+        "n_eval": 69,
+        "hit_limit": false,
+        "seconds": 12.68
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 78.07,
+        "holdout_top5": 94.42,
+        "holdout_loss": 0.897188671875,
+        "train_objective": 0.7705221176147461,
+        "grad_max": 2.8126072720624506e-05,
+        "n_iter": 155,
+        "n_eval": 163,
+        "hit_limit": false,
+        "seconds": 33.54
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 77.05,
+        "holdout_top5": 93.73,
+        "holdout_loss": 0.94159765625,
+        "train_objective": 0.20769816637039185,
+        "grad_max": 1.5527489267697092e-06,
+        "n_iter": 350,
+        "n_eval": 365,
+        "hit_limit": false,
+        "seconds": 79.47
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 76.29,
+        "holdout_top5": 93.15,
+        "holdout_loss": 1.15703359375,
+        "train_objective": 0.04370187222957611,
+        "grad_max": 9.927091468853178e-07,
+        "n_iter": 295,
+        "n_eval": 317,
+        "hit_limit": false,
+        "seconds": 47.85
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 75.59,
+        "holdout_top5": 92.67,
+        "holdout_loss": 1.470984765625,
+        "train_objective": 0.008319715037941933,
+        "grad_max": 8.542772320652148e-07,
+        "n_iter": 99,
+        "n_eval": 107,
+        "hit_limit": false,
+        "seconds": 30.13
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 75.38,
+        "holdout_top5": 92.66,
+        "holdout_loss": 1.83657109375,
+        "train_objective": 0.0018548034131526947,
+        "grad_max": 8.602253842582286e-07,
+        "n_iter": 69,
+        "n_eval": 76,
+        "hit_limit": false,
+        "seconds": 20.43
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 78.01,
+        "holdout_top5": 94.42,
+        "holdout_loss": 1.0334724609375,
+        "train_objective": 1.3226120471954346,
+        "grad_max": 4.89944068249315e-06,
+        "n_iter": 98,
+        "n_eval": 105,
+        "hit_limit": false,
+        "seconds": 29.94
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 77.51,
+        "holdout_top5": 94.03,
+        "holdout_loss": 0.886291015625,
+        "train_objective": 0.41696250438690186,
+        "grad_max": 2.6724824238044675e-06,
+        "n_iter": 239,
+        "n_eval": 252,
+        "hit_limit": false,
+        "seconds": 71.66
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "settings": {
+    "seed": 0,
+    "flip_average": true,
+    "data": "cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)",
+    "checkpoint_sha256": null
+  },
+  "model": "dinov2_vits14_reg",
+  "run_dir": null,
+  "step": null,
+  "predictions": "knn/original_probe_flipavg_pred.npz",
+  "git": {
+    "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9",
+    "git_dirty": true
+  }
+}

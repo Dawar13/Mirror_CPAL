@@ -1,0 +1,1140 @@
+{
+  "config": {
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "seed": 0,
+    "lr": 0.0002,
+    "epochs": 2.0,
+    "max_steps": null,
+    "batch_size": 256,
+    "micro_batch": 128,
+    "weight_decay": 0.05,
+    "decay_1d": false,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "warmup_frac": 0.05,
+    "warmup_steps": null,
+    "min_lr_ratio": 0.0,
+    "grad_clip": null,
+    "crop_size": 224,
+    "crop_scale": [
+      0.35,
+      1.0
+    ],
+    "crop_ratio": [
+      0.75,
+      1.3333333333333333
+    ],
+    "hflip_p": 0.5,
+    "w_cls": 1.0,
+    "w_patch": 1.0,
+    "w_block": 1.0,
+    "normaliser": "fixed",
+    "calib_images": 1024,
+    "train_scope": "all",
+    "grad_checkpoint": false,
+    "amp": "auto",
+    "share_prefix": true,
+    "eval_every": 200,
+    "eval_batch": null,
+    "max_heldout": null,
+    "log_every": 20,
+    "prefetch": 2,
+    "save_checkpoint": true,
+    "checkpoint_path": null
+  },
+  "seed": 0,
+  "git_hash": "11e50a15265afa283852e7389930d545c48931c1",
+  "git_dirty": true,
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda:0",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  },
+  "student": "flap",
+  "tags": {
+    "experiment": "A05",
+    "group": "main",
+    "model": "dinov2_vitb14_reg",
+    "method": "flap",
+    "variant": null,
+    "seed": 0
+  },
+  "target_mode": {
+    "final": "symmetrised",
+    "blocks": "raw",
+    "k": null,
+    "logits": false,
+    "input_transform": null,
+    "block_map": null,
+    "reg_perm": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "target_key": "('symmetrised', 'raw', None, 'cb25a2a36aef8ee2', None, None, False, (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))",
+  "constraints": [
+    {
+      "type": "StructuredTrainable",
+      "blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "kinds": {
+        "width": 72
+      },
+      "embeddings_train": true,
+      "frozen": "everything outside the converted blocks and the embeddings; norm affines and LayerScale inside the converted blocks"
+    }
+  ],
+  "constraint_checks": {
+    "0:StructuredTrainable": {
+      "ok": true,
+      "n_matrices": 72,
+      "kinds": {
+        "width": 72
+      },
+      "numerical_ranks": [],
+      "target_ranks": [],
+      "per_matrix": [
+        {
+          "block": 0,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            1798,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            1798
+          ],
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 0,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            1844,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            1844
+          ],
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 1,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            2002,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            2002
+          ],
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 2,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 512,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            2046,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            2046
+          ],
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 3,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            2068,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            2068
+          ],
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 4,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            2246,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            2246
+          ],
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 5,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            2363,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            2363
+          ],
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 6,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            2520,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            2520
+          ],
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 7,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 576,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            2719,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            2719
+          ],
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 640,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 640,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 640,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 8,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 640,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            2699,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            2699
+          ],
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 640,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 640,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 640,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 9,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 640,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            2756,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            2756
+          ],
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 704,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 704,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 704,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 10,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 704,
+          "axis": "in",
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "fc1",
+          "kind": "width",
+          "shape": [
+            2759,
+            768
+          ],
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "fc2",
+          "kind": "width",
+          "shape": [
+            768,
+            2759
+          ],
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wq",
+          "kind": "width",
+          "n_kept": 704,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wk",
+          "kind": "width",
+          "n_kept": 704,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wv",
+          "kind": "width",
+          "n_kept": 704,
+          "axis": "out",
+          "ok": true
+        },
+        {
+          "block": 11,
+          "name": "wo",
+          "kind": "width",
+          "n_kept": 704,
+          "axis": "in",
+          "ok": true
+        }
+      ]
+    }
+  },
+  "n_trainable": 65276140,
+  "n_trainable_tensors": 149,
+  "trainable_names": [
+    "cls_token",
+    "pos_embed",
+    "register_tokens",
+    "patch_embed.proj.weight",
+    "patch_embed.proj.bias",
+    "blocks.0.attn.qkv.q.weight",
+    "blocks.0.attn.qkv.q.bias",
+    "blocks.0.attn.qkv.k.weight",
+    "blocks.0.attn.qkv.k.bias",
+    "blocks.0.attn.qkv.v.weight",
+    "blocks.0.attn.qkv.v.bias",
+    "blocks.0.attn.proj.weight",
+    "blocks.0.attn.proj.bias",
+    "blocks.0.mlp.fc1.weight",
+    "blocks.0.mlp.fc1.bias",
+    "blocks.0.mlp.fc2.weight",
+    "blocks.0.mlp.fc2.bias",
+    "blocks.1.attn.qkv.q.weight",
+    "blocks.1.attn.qkv.q.bias",
+    "blocks.1.attn.qkv.k.weight",
+    "blocks.1.attn.qkv.k.bias",
+    "blocks.1.attn.qkv.v.weight",
+    "blocks.1.attn.qkv.v.bias",
+    "blocks.1.attn.proj.weight",
+    "blocks.1.attn.proj.bias",
+    "blocks.1.mlp.fc1.weight",
+    "blocks.1.mlp.fc1.bias",
+    "blocks.1.mlp.fc2.weight",
+    "blocks.1.mlp.fc2.bias",
+    "blocks.2.attn.qkv.q.weight",
+    "blocks.2.attn.qkv.q.bias",
+    "blocks.2.attn.qkv.k.weight",
+    "blocks.2.attn.qkv.k.bias",
+    "blocks.2.attn.qkv.v.weight",
+    "blocks.2.attn.qkv.v.bias",
+    "blocks.2.attn.proj.weight",
+    "blocks.2.attn.proj.bias",
+    "blocks.2.mlp.fc1.weight",
+    "blocks.2.mlp.fc1.bias",
+    "blocks.2.mlp.fc2.weight",
+    "blocks.2.mlp.fc2.bias",
+    "blocks.3.attn.qkv.q.weight",
+    "blocks.3.attn.qkv.q.bias",
+    "blocks.3.attn.qkv.k.weight",
+    "blocks.3.attn.qkv.k.bias",
+    "blocks.3.attn.qkv.v.weight",
+    "blocks.3.attn.qkv.v.bias",
+    "blocks.3.attn.proj.weight",
+    "blocks.3.attn.proj.bias",
+    "blocks.3.mlp.fc1.weight",
+    "blocks.3.mlp.fc1.bias",
+    "blocks.3.mlp.fc2.weight",
+    "blocks.3.mlp.fc2.bias",
+    "blocks.4.attn.qkv.q.weight",
+    "blocks.4.attn.qkv.q.bias",
+    "blocks.4.attn.qkv.k.weight",
+    "blocks.4.attn.qkv.k.bias",
+    "blocks.4.attn.qkv.v.weight",
+    "blocks.4.attn.qkv.v.bias",
+    "blocks.4.attn.proj.weight",
+    "blocks.4.attn.proj.bias",
+    "blocks.4.mlp.fc1.weight",
+    "blocks.4.mlp.fc1.bias",
+    "blocks.4.mlp.fc2.weight",
+    "blocks.4.mlp.fc2.bias",
+    "blocks.5.attn.qkv.q.weight",
+    "blocks.5.attn.qkv.q.bias",
+    "blocks.5.attn.qkv.k.weight",
+    "blocks.5.attn.qkv.k.bias",
+    "blocks.5.attn.qkv.v.weight",
+    "blocks.5.attn.qkv.v.bias",
+    "blocks.5.attn.proj.weight",
+    "blocks.5.attn.proj.bias",
+    "blocks.5.mlp.fc1.weight",
+    "blocks.5.mlp.fc1.bias",
+    "blocks.5.mlp.fc2.weight",
+    "blocks.5.mlp.fc2.bias",
+    "blocks.6.attn.qkv.q.weight",
+    "blocks.6.attn.qkv.q.bias",
+    "blocks.6.attn.qkv.k.weight",
+    "blocks.6.attn.qkv.k.bias",
+    "blocks.6.attn.qkv.v.weight",
+    "blocks.6.attn.qkv.v.bias",
+    "blocks.6.attn.proj.weight",
+    "blocks.6.attn.proj.bias",
+    "blocks.6.mlp.fc1.weight",
+    "blocks.6.mlp.fc1.bias",
+    "blocks.6.mlp.fc2.weight",
+    "blocks.6.mlp.fc2.bias",
+    "blocks.7.attn.qkv.q.weight",
+    "blocks.7.attn.qkv.q.bias",
+    "blocks.7.attn.qkv.k.weight",
+    "blocks.7.attn.qkv.k.bias",
+    "blocks.7.attn.qkv.v.weight",
+    "blocks.7.attn.qkv.v.bias",
+    "blocks.7.attn.proj.weight",
+    "blocks.7.attn.proj.bias",
+    "blocks.7.mlp.fc1.weight",
+    "blocks.7.mlp.fc1.bias",
+    "blocks.7.mlp.fc2.weight",
+    "blocks.7.mlp.fc2.bias",
+    "blocks.8.attn.qkv.q.weight",
+    "blocks.8.attn.qkv.q.bias",
+    "blocks.8.attn.qkv.k.weight",
+    "blocks.8.attn.qkv.k.bias",
+    "blocks.8.attn.qkv.v.weight",
+    "blocks.8.attn.qkv.v.bias",
+    "blocks.8.attn.proj.weight",
+    "blocks.8.attn.proj.bias",
+    "blocks.8.mlp.fc1.weight",
+    "blocks.8.mlp.fc1.bias",
+    "blocks.8.mlp.fc2.weight",
+    "blocks.8.mlp.fc2.bias",
+    "blocks.9.attn.qkv.q.weight",
+    "blocks.9.attn.qkv.q.bias",
+    "blocks.9.attn.qkv.k.weight",
+    "blocks.9.attn.qkv.k.bias",
+    "blocks.9.attn.qkv.v.weight",
+    "blocks.9.attn.qkv.v.bias",
+    "blocks.9.attn.proj.weight",
+    "blocks.9.attn.proj.bias",
+    "blocks.9.mlp.fc1.weight",
+    "blocks.9.mlp.fc1.bias",
+    "blocks.9.mlp.fc2.weight",
+    "blocks.9.mlp.fc2.bias",
+    "blocks.10.attn.qkv.q.weight",
+    "blocks.10.attn.qkv.q.bias",
+    "blocks.10.attn.qkv.k.weight",
+    "blocks.10.attn.qkv.k.bias",
+    "blocks.10.attn.qkv.v.weight",
+    "blocks.10.attn.qkv.v.bias",
+    "blocks.10.attn.proj.weight",
+    "blocks.10.attn.proj.bias",
+    "blocks.10.mlp.fc1.weight",
+    "blocks.10.mlp.fc1.bias",
+    "blocks.10.mlp.fc2.weight",
+    "blocks.10.mlp.fc2.bias",
+    "blocks.11.attn.qkv.q.weight",
+    "blocks.11.attn.qkv.q.bias",
+    "blocks.11.attn.qkv.k.weight",
+    "blocks.11.attn.qkv.k.bias",
+    "blocks.11.attn.qkv.v.weight",
+    "blocks.11.attn.qkv.v.bias",
+    "blocks.11.attn.proj.weight",
+    "blocks.11.attn.proj.bias",
+    "blocks.11.mlp.fc1.weight",
+    "blocks.11.mlp.fc1.bias",
+    "blocks.11.mlp.fc2.weight",
+    "blocks.11.mlp.fc2.bias"
+  ],
+  "amp": "bf16",
+  "share_prefix_used": false,
+  "first_grad_block": 0,
+  "normalisers": {
+    "block0": 0.02573175193955184,
+    "block1": 0.015340556449341788,
+    "block2": 0.013681368635287447,
+    "block3": 0.02002778768832987,
+    "block4": 0.027753553749956944,
+    "block5": 0.0464686532142028,
+    "block6": 0.08542141957248466,
+    "block7": 0.3577679936036128,
+    "block8": 0.7182049313241696,
+    "block9": 1.9101701133091429,
+    "block10": 5.379226072150429,
+    "block11": 25.904525383556486,
+    "cls": 0.8559266133037872,
+    "patch": 0.792014704305418
+  },
+  "weights": {
+    "cls": 1.0,
+    "patch": 1.0,
+    "block0": 1.0,
+    "block1": 1.0,
+    "block2": 1.0,
+    "block3": 1.0,
+    "block4": 1.0,
+    "block5": 1.0,
+    "block6": 1.0,
+    "block7": 1.0,
+    "block8": 1.0,
+    "block9": 1.0,
+    "block10": 1.0,
+    "block11": 1.0
+  },
+  "total_steps": 780,
+  "steps_done": 780,
+  "warmup_steps": 39,
+  "steps_per_epoch": 390,
+  "images_seen": 199680,
+  "diverged": false,
+  "heldout_images": 5000,
+  "heldout_initial": {
+    "total": 6.022066860252874,
+    "block0": 0.05878421788759838,
+    "block1": 0.1817807933267693,
+    "block2": 0.24317307649522865,
+    "block3": 0.23305199800265647,
+    "block4": 0.2986768851261238,
+    "block5": 0.40158135357574626,
+    "block6": 0.48839861328185175,
+    "block7": 0.36170893588809994,
+    "block8": 0.4796450833352067,
+    "block9": 0.6305284675329783,
+    "block10": 0.6354784053288891,
+    "block11": 0.5628057716852471,
+    "cls": 0.6980318373924708,
+    "patch": 0.7484214213940064
+  },
+  "heldout_final": {
+    "total": 1.0960305744236403,
+    "block0": 0.015295118096114746,
+    "block1": 0.02689112101283628,
+    "block2": 0.03880563175295273,
+    "block3": 0.04408191404887736,
+    "block4": 0.06573227594851361,
+    "block5": 0.08908308980724254,
+    "block6": 0.10794736886806838,
+    "block7": 0.07613685831631525,
+    "block8": 0.09367437275975789,
+    "block9": 0.11986097598178672,
+    "block10": 0.12129702960742292,
+    "block11": 0.09191504255792239,
+    "cls": 0.09042482886502849,
+    "patch": 0.11488494680080098
+  },
+  "train_loss_first": 6.0961760599166155,
+  "train_loss_last": 1.0684320689179003,
+  "train_loss_last10_mean": 1.066155819920823,
+  "seconds_total": 5242.78,
+  "seconds_train": 5192.66,
+  "peak_memory_gb": 42.49151134490967,
+  "persistent_memory_gb": 0.9731,
+  "checkpoint": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/flap/s0/ckpt/step780.pt",
+  "lockstep": {
+    "students": [
+      "svdllm_full",
+      "iosvd",
+      "flap",
+      "blockdrop",
+      "original",
+      "slicegpt",
+      "svd",
+      "random_structure"
+    ],
+    "data": {
+      "mode": "stream",
+      "n_train": 100000,
+      "n_heldout": 5000,
+      "image_size": 256,
+      "resident_gb": 0.0,
+      "prefetch": 2
+    },
+    "fused_adamw": true,
+    "divergence_check": "device flag (found_inf), at flushes",
+    "teacher_flip": true,
+    "n_target_modes": 4
+  },
+  "resumed_from_step": null,
+  "hook_steps": [
+    0,
+    100,
+    300,
+    780
+  ],
+  "hook_seconds": 10.17,
+  "state_path": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/_jobs/main_s0/s0/train_state.pt",
+  "state_every": 100,
+  "job": "main_s0",
+  "method": "flap",
+  "variant": null,
+  "lr": 0.0002,
+  "lr_selection": {
+    "best_lr": 0.0002,
+    "lrs": [
+      0.0001,
+      0.0002
+    ],
+    "budget_steps": 200,
+    "seed": 0,
+    "trials": [
+      {
+        "lr": 0.0001,
+        "heldout_loss": 1.6014133955829486,
+        "heldout_terms": {
+          "total": 1.6014133955829486,
+          "block0": 0.024910757938480653,
+          "block1": 0.0410305962511798,
+          "block2": 0.05743994066964367,
+          "block3": 0.06384724630462082,
+          "block4": 0.09453248555816647,
+          "block5": 0.12887214098167693,
+          "block6": 0.15515469309511273,
+          "block7": 0.10981926653645652,
+          "block8": 0.13549496775514247,
+          "block9": 0.17303081485035024,
+          "block10": 0.1727571794952428,
+          "block11": 0.1356149032876359,
+          "cls": 0.1378742148670351,
+          "patch": 0.1710341879922045
+        },
+        "heldout_initial": 6.022066860252874,
+        "train_loss_last": 1.6284145507961512,
+        "diverged": false,
+        "trial_dir": "/home/Mirror_CPAL/runs/final/lr/dinov2_vitb14_reg/flap_lr1e-04/s0"
+      },
+      {
+        "lr": 0.0002,
+        "heldout_loss": 1.5567314918106745,
+        "heldout_terms": {
+          "total": 1.5567314918106745,
+          "block0": 0.022983114813376636,
+          "block1": 0.04043403289231436,
+          "block2": 0.0583424226335421,
+          "block3": 0.06480369058848727,
+          "block4": 0.09476208873784976,
+          "block5": 0.12748085969050954,
+          "block6": 0.152533486822242,
+          "block7": 0.10700311268111092,
+          "block8": 0.13186976801565056,
+          "block9": 0.16765852862023478,
+          "block10": 0.16743095380235715,
+          "block11": 0.12976951119156124,
+          "cls": 0.1292753246689883,
+          "patch": 0.16238459665244986
+        },
+        "heldout_initial": 6.022066860252874,
+        "train_loss_last": 1.5742192333564162,
+        "diverged": false,
+        "trial_dir": "/home/Mirror_CPAL/runs/final/lr/dinov2_vitb14_reg/flap_lr2e-04/s0"
+      }
+    ],
+    "lockstep": true,
+    "rule": "lowest held-out distillation loss on the LR-selection rows (centre view) after the trial budget, each trial with its own warm-up and cosine; ties go to the smaller rate; diverged trials score +inf",
+    "heldout_images": 5000,
+    "git_hash": "87f1d9b1e6b634c250ce8aeceae73278e54dccb3",
+    "git_dirty": true
+  },
+  "params": {
+    "model_params": 65333740,
+    "model_params_stored": 65333740,
+    "converted_params_kept": 64555008,
+    "converted_params_dense": 84934656,
+    "model_params_structured": 66203904,
+    "model_params_original": 86583552,
+    "model_params_frac": 0.7646244866461473,
+    "params_source": "compressor's own per-matrix and basis-change counts",
+    "params_total": 64555008,
+    "params_matrices": 64555008,
+    "params_basis_change": 0,
+    "budget_total": 64554464,
+    "gap": 8.426992748324887e-06,
+    "gap_ok": true
+  },
+  "build": {
+    "method": "flap",
+    "source": "mirror.baselines.compress",
+    "params_total": 64555008,
+    "budget_total": 64554464,
+    "gap": 8.426992748324887e-06,
+    "gap_ok": true,
+    "budget": {
+      "total": 64554464
+    },
+    "fit_seed": 0,
+    "hparams": {
+      "allocation": "uniform"
+    },
+    "model_form": "absorbed weights in the unfolded model; MLP neurons removed (smaller nn.Linear); heads removed in dense form (zero rows and columns)",
+    "conversion_check": {
+      "max_abs": 0.0,
+      "max_ref": 4.574102401733398,
+      "rel_max": 0.0,
+      "n_images": 8,
+      "tol": 0.001,
+      "passed": true
+    }
+  },
+  "complete": true
+}

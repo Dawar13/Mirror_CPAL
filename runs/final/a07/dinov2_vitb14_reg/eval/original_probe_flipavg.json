@@ -1,0 +1,151 @@
+{
+  "top1": 81.126,
+  "top5": 95.99,
+  "chosen_wd": 0.00316,
+  "wd_at_grid_edge": false,
+  "knn_check_top1": 78.99999618530273,
+  "n_bank": 100000,
+  "n_val": 50000,
+  "flip_average": true,
+  "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]; flip-averaged: (p(x) + p(mirror x)) / 2",
+  "amp": "bf16",
+  "wd_grid": [
+    1e-07,
+    1e-06,
+    1e-05,
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "seed": 0,
+  "seconds": 522.9,
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 82.88,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 82.36,
+        "holdout_top5": 96.3,
+        "holdout_loss": 0.92227744140625,
+        "train_objective": 1.3907592296600342,
+        "grad_max": 4.640409315470606e-05,
+        "n_iter": 96,
+        "n_eval": 105,
+        "hit_limit": false,
+        "seconds": 30.27
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 82.68,
+        "holdout_top5": 96.17,
+        "holdout_loss": 0.6887638671875,
+        "train_objective": 0.4046446681022644,
+        "grad_max": 1.0344458132749423e-05,
+        "n_iter": 172,
+        "n_eval": 182,
+        "hit_limit": false,
+        "seconds": 52.79
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 82.23,
+        "holdout_top5": 95.83,
+        "holdout_loss": 0.73597451171875,
+        "train_objective": 0.09033426642417908,
+        "grad_max": 1.6221898704316118e-06,
+        "n_iter": 297,
+        "n_eval": 316,
+        "hit_limit": false,
+        "seconds": 96.72
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 82.02,
+        "holdout_top5": 95.47,
+        "holdout_loss": 0.87449033203125,
+        "train_objective": 0.01745639182627201,
+        "grad_max": 6.841592607997882e-07,
+        "n_iter": 116,
+        "n_eval": 126,
+        "hit_limit": false,
+        "seconds": 40.62
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 81.71,
+        "holdout_top5": 95.15,
+        "holdout_loss": 1.07328203125,
+        "train_objective": 0.0034419274888932705,
+        "grad_max": 8.170667911144847e-07,
+        "n_iter": 65,
+        "n_eval": 74,
+        "hit_limit": false,
+        "seconds": 21.82
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 81.71,
+        "holdout_top5": 95.15,
+        "holdout_loss": 1.07328203125,
+        "train_objective": 0.0014168927446007729,
+        "grad_max": 9.202415753861715e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.12
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 82.88,
+        "holdout_top5": 96.38,
+        "holdout_loss": 0.7417673828125,
+        "train_objective": 0.774687647819519,
+        "grad_max": 1.647702811169438e-05,
+        "n_iter": 99,
+        "n_eval": 108,
+        "hit_limit": false,
+        "seconds": 31.49
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 82.36,
+        "holdout_top5": 95.98,
+        "holdout_loss": 0.695975048828125,
+        "train_objective": 0.19610503315925598,
+        "grad_max": 1.129625343310181e-05,
+        "n_iter": 203,
+        "n_eval": 212,
+        "hit_limit": false,
+        "seconds": 57.48
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "settings": {
+    "seed": 0,
+    "flip_average": true,
+    "data": "cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)",
+    "checkpoint_sha256": null
+  },
+  "model": "dinov2_vitb14_reg",
+  "run_dir": null,
+  "step": null,
+  "predictions": "knn/original_probe_flipavg_pred.npz",
+  "git": {
+    "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9",
+    "git_dirty": true
+  }
+}

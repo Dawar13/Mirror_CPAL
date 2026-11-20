@@ -1,0 +1,134 @@
+{
+ "experiment": "A01",
+ "model": "dinov2_vitb14_reg",
+ "k": 12,
+ "depth": 12,
+ "source_structure": "/home/Mirror_CPAL/results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+ "source_sha256": "13f19ba0f75bf04790adda69c036c8f404d8598cac04c1d0ba6570e9b9ae124f",
+ "modes": [
+  "free"
+ ],
+ "settings": {
+  "max_rounds": 3,
+  "tol": 0.01,
+  "top_k": 10,
+  "attn_terms": false,
+  "weights": {
+   "mlp": 1.0,
+   "patch": 1.0,
+   "pos": 1.0,
+   "cls": 1.0,
+   "reg": 1.0,
+   "attn": 1.0
+  }
+ },
+ "operators": [
+  {
+   "operator": "current",
+   "d_plus": 700,
+   "d_minus": 68,
+   "n_pairs_span": 7054,
+   "J": 10.628601864572545,
+   "damage": 2.685699067713727,
+   "mlp_share_mean": 0.19243925031421857,
+   "patch_share": 0.24252996358899379,
+   "pos_share": 0.06229202825041879,
+   "cls_share": 0.03693953270098772,
+   "reg_share": 0.03466653940270475,
+   "operator_distance": 0.0,
+   "unweighted_cos2": 1.0,
+   "rho_to_current": 1.0,
+   "rho_from_current": 1.0,
+   "weighted_agreement": 1.0,
+   "pairs_kept_share": 1.0,
+   "knn_top1": NaN,
+   "flip_consistency_bf16": NaN,
+   "params_model": null,
+   "params_matrices": null
+  },
+  {
+   "operator": "wspace_free",
+   "d_plus": 765,
+   "d_minus": 3,
+   "n_pairs_span": 24,
+   "J": 15.105448251841185,
+   "damage": 0.44727587407940766,
+   "mlp_share_mean": 0.002906848675905902,
+   "patch_share": 0.3929456823753184,
+   "pos_share": 0.01941353178083483,
+   "cls_share": 2.1430995499740215e-05,
+   "reg_share": 1.3044816883904604e-05,
+   "operator_distance": 0.1710555290306098,
+   "unweighted_cos2": 0.8857794753743046,
+   "rho_to_current": 0.858924099377862,
+   "rho_from_current": null,
+   "weighted_agreement": null,
+   "pairs_kept_share": 0.001842925999432946,
+   "knn_top1": NaN,
+   "flip_consistency_bf16": NaN,
+   "params_model": null,
+   "params_matrices": null
+  }
+ ],
+ "fits": {
+  "free": {
+   "d_plus": 765,
+   "d_minus": 3,
+   "J": 15.105448251841183,
+   "J_source": 10.628601864572545,
+   "damage": 0.4472758740794083,
+   "damage_source": 2.6856990677137276,
+   "J_rounds": [
+    11.257592308057387,
+    14.546573970065731,
+    15.104872940969226,
+    15.105448251841183
+   ],
+   "stopped": "converged (fewer than 1% of neurons changed partner in round 3)",
+   "register_pairing": "re-matched under A*_w (m1.RegisterScores, layers 0..12, margin 0.0) on train role fit0",
+   "register_perm": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "n_pairs": [
+    0,
+    1,
+    2,
+    1,
+    1,
+    6,
+    5,
+    3,
+    5,
+    0,
+    0,
+    0
+   ],
+   "n_pairs_source": [
+    1168,
+    1116,
+    1013,
+    963,
+    878,
+    672,
+    554,
+    406,
+    155,
+    93,
+    19,
+    17
+   ]
+  }
+ },
+ "knn": {},
+ "zero_shot_preview": null,
+ "structures": {
+  "free": {
+   "path": "results/A01/free/structure/dinov2_vitb14_reg_wspace_free.npz",
+   "sha256": "396775d9e4ac20ba0aaeb2395f3f8a806a4825c1cf955f8ff3d54d5a79d482a6"
+  }
+ },
+ "dry_run": false
+}

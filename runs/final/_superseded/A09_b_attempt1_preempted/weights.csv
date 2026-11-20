@@ -1,0 +1,176 @@
+component,plan_component,rel_residual,condition,note,dtype
+patch_embed.weight,patch embedding,2.530688273006761e-08,"flip_w(W) = A* W on the output channels and A* b = b (W the conv kernel, flip_w reverses its width)",,float32
+patch_embed.bias,patch embedding,2.7991239562527424e-09,"flip_w(W) = A* W on the output channels and A* b = b (W the conv kernel, flip_w reverses its width)",,float32
+pos_embed.grid,position embeddings,3.2277197054766e-08,"pos(r, G-1-c) = pos(r, c) A* on the grid used at the evaluation size",,float32
+pos_embed.cls,class and register tokens,9.375980894675678e-09,c A* = c (class token and its position row); r_pi(j) = r_j A* for registers (pairs swap),,float32
+cls_token,class and register tokens,9.375980894675678e-09,c A* = c (class token and its position row); r_pi(j) = r_j A* for registers (pairs swap),,float32
+registers,class and register tokens,6.909443550690304e-09,c A* = c (class token and its position row); r_pi(j) = r_j A* for registers (pairs swap),"pairing [0, 1, 2, 3]",float32
+block 1 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 1 fc1.weight,"MLP fc1, GELU, fc2 and biases",2.5869812769567204e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 1 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 1 fc2.weight,"MLP fc1, GELU, fc2 and biases",2.3806864642774078e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 1 fc2.bias,"MLP fc1, GELU, fc2 and biases",1.8141750043541488e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 1 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","0 twin pairs, 12 self-heads",float32
+block 1 Wq,attention Q and K,1.3447775338827736e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 1 bq,attention Q and K,7.750952559356321e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 1 Wk,attention Q and K,1.3702036427722987e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 1 bk,attention Q and K,1.1524006942447997e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 1 Wv,attention V and O,1.7280974590784678e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 1 bv,attention V and O,7.233463280920689e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 1 Wo,attention V and O,1.3826759343225165e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 1 bo,attention V and O,1.103785005426574e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 2 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 2 fc1.weight,"MLP fc1, GELU, fc2 and biases",2.379991459021116e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 2 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 2 fc2.weight,"MLP fc1, GELU, fc2 and biases",2.3310250352749057e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 2 fc2.bias,"MLP fc1, GELU, fc2 and biases",2.166182357540087e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 2 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","1 twin pairs, 10 self-heads",float32
+block 2 Wq,attention Q and K,2.314458518331977e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 2 bq,attention Q and K,1.0059235548594889e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 2 Wk,attention Q and K,2.5420058635952744e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 2 bk,attention Q and K,1.4104406794041992e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 2 Wv,attention V and O,1.9936640644855536e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 2 bv,attention V and O,1.4458124446475822e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 2 Wo,attention V and O,2.0641135062336565e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 2 bo,attention V and O,1.1761980597354562e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 3 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 3 fc1.weight,"MLP fc1, GELU, fc2 and biases",2.3043591140900384e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 3 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 3 fc2.weight,"MLP fc1, GELU, fc2 and biases",2.3067814344216146e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 3 fc2.bias,"MLP fc1, GELU, fc2 and biases",2.3889121910472568e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 3 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","1 twin pairs, 10 self-heads",float32
+block 3 Wq,attention Q and K,1.9080495831068535e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 3 bq,attention Q and K,8.795039470200716e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 3 Wk,attention Q and K,1.854214181160936e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 3 bk,attention Q and K,1.625266200160549e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 3 Wv,attention V and O,1.946283301037121e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 3 bv,attention V and O,1.2324010825842764e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 3 Wo,attention V and O,1.7677059551625958e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 3 bo,attention V and O,8.855861073860101e-10,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 4 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 4 fc1.weight,"MLP fc1, GELU, fc2 and biases",2.1686284665630883e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 4 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 4 fc2.weight,"MLP fc1, GELU, fc2 and biases",2.2093727520335716e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 4 fc2.bias,"MLP fc1, GELU, fc2 and biases",2.296291320109051e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 4 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","0 twin pairs, 12 self-heads",float32
+block 4 Wq,attention Q and K,1.724477542578731e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 4 bq,attention Q and K,5.391418555124405e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 4 Wk,attention Q and K,1.678512567273762e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 4 bk,attention Q and K,1.1485354434239008e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 4 Wv,attention V and O,1.533937931640311e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 4 bv,attention V and O,1.0485774562499444e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 4 Wo,attention V and O,1.5240283364246134e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 4 bo,attention V and O,8.519037308243222e-10,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 5 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 5 fc1.weight,"MLP fc1, GELU, fc2 and biases",2.0608897593727536e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 5 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 5 fc2.weight,"MLP fc1, GELU, fc2 and biases",2.1384067385904604e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 5 fc2.bias,"MLP fc1, GELU, fc2 and biases",2.245248582385586e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 5 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","1 twin pairs, 10 self-heads",float32
+block 5 Wq,attention Q and K,2.0906395270638788e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 5 bq,attention Q and K,6.0751291327862346e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 5 Wk,attention Q and K,2.152236523468237e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 5 bk,attention Q and K,9.922668284628206e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 5 Wv,attention V and O,1.7061027541707836e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 5 bv,attention V and O,1.2158938507043483e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 5 Wo,attention V and O,1.8171244205417457e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 5 bo,attention V and O,1.2140105268392024e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 6 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 6 fc1.weight,"MLP fc1, GELU, fc2 and biases",1.8796845902174223e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 6 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 6 fc2.weight,"MLP fc1, GELU, fc2 and biases",1.9148032160420547e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 6 fc2.bias,"MLP fc1, GELU, fc2 and biases",1.727144118237696e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 6 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","1 twin pairs, 10 self-heads",float32
+block 6 Wq,attention Q and K,2.1850662438269693e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 6 bq,attention Q and K,5.613763950053531e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 6 Wk,attention Q and K,2.372335553572498e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 6 bk,attention Q and K,6.712788239285372e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 6 Wv,attention V and O,1.7398243454032886e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 6 bv,attention V and O,9.270571133893973e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 6 Wo,attention V and O,1.740680827507463e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 6 bo,attention V and O,2.385809104983604e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 7 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 7 fc1.weight,"MLP fc1, GELU, fc2 and biases",1.7856709152059592e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 7 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 7 fc2.weight,"MLP fc1, GELU, fc2 and biases",1.7792429524114288e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 7 fc2.bias,"MLP fc1, GELU, fc2 and biases",1.7566492830985752e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 7 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","1 twin pairs, 10 self-heads",float32
+block 7 Wq,attention Q and K,1.7686773117886262e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 7 bq,attention Q and K,4.70726850554939e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 7 Wk,attention Q and K,1.769210228657531e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 7 bk,attention Q and K,9.491314826122941e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 7 Wv,attention V and O,1.78573453637717e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 7 bv,attention V and O,9.734208657379216e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 7 Wo,attention V and O,1.7197685253205824e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 7 bo,attention V and O,1.7551874035873676e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 8 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 8 fc1.weight,"MLP fc1, GELU, fc2 and biases",1.6856504428709365e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 8 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 8 fc2.weight,"MLP fc1, GELU, fc2 and biases",1.668274504000445e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 8 fc2.bias,"MLP fc1, GELU, fc2 and biases",1.941757306174482e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 8 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","1 twin pairs, 10 self-heads",float32
+block 8 Wq,attention Q and K,1.919921242146643e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 8 bq,attention Q and K,3.578750275305036e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 8 Wk,attention Q and K,1.9205069756713326e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 8 bk,attention Q and K,8.335751054456846e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 8 Wv,attention V and O,1.6393317469635027e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 8 bv,attention V and O,1.0432203539771879e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 8 Wo,attention V and O,1.6096513776891177e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 8 bo,attention V and O,2.8081848847868127e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 9 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 9 fc1.weight,"MLP fc1, GELU, fc2 and biases",1.4672728083119205e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 9 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 9 fc2.weight,"MLP fc1, GELU, fc2 and biases",1.2614382110974495e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 9 fc2.bias,"MLP fc1, GELU, fc2 and biases",2.9434524095488664e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 9 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","0 twin pairs, 12 self-heads",float32
+block 9 Wq,attention Q and K,1.3149396671796615e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 9 bq,attention Q and K,5.0837001660263164e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 9 Wk,attention Q and K,1.3415473550189096e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 9 bk,attention Q and K,8.911768495170979e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 9 Wv,attention V and O,1.3813571270523701e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 9 bv,attention V and O,6.683004601431775e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 9 Wo,attention V and O,1.2077937372012618e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 9 bo,attention V and O,3.2258740776541494e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 10 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 10 fc1.weight,"MLP fc1, GELU, fc2 and biases",1.3135846975018275e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 10 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 10 fc2.weight,"MLP fc1, GELU, fc2 and biases",1.1371467376943889e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 10 fc2.bias,"MLP fc1, GELU, fc2 and biases",3.854365195633444e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 10 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","1 twin pairs, 10 self-heads",float32
+block 10 Wq,attention Q and K,1.8612888951362958e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 10 bq,attention Q and K,6.6602424539949235e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 10 Wk,attention Q and K,1.7285970229416912e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 10 bk,attention Q and K,6.106071310747254e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 10 Wv,attention V and O,1.6109362454333033e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 10 bv,attention V and O,4.637072731186352e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 10 Wo,attention V and O,1.5498809691462592e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 10 bo,attention V and O,3.50819513683864e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 11 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 11 fc1.weight,"MLP fc1, GELU, fc2 and biases",1.1771278927031704e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 11 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 11 fc2.weight,"MLP fc1, GELU, fc2 and biases",9.650907354933387e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 11 fc2.bias,"MLP fc1, GELU, fc2 and biases",3.58805721098541e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 11 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","0 twin pairs, 12 self-heads",float32
+block 11 Wq,attention Q and K,1.3369842038391645e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 11 bq,attention Q and K,3.1587277806635336e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 11 Wk,attention Q and K,1.3179967671997643e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 11 bk,attention Q and K,5.572356151779926e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 11 Wv,attention V and O,1.183779421694221e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 11 bv,attention V and O,2.8318072943871833e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 11 Wo,attention V and O,9.035912041649534e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 11 bo,attention V and O,4.938135508056012e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 12 norms,folded LayerNorm,0.0,"every LayerNorm is an RMSNorm without affine (gamma, beta folded into the next linear layer)",RMSNorm without affine,float32
+block 12 fc1.weight,"MLP fc1, GELU, fc2 and biases",1.2238157757336108e-08,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 12 fc1.bias,"MLP fc1, GELU, fc2 and biases",0.0,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 12 fc2.weight,"MLP fc1, GELU, fc2 and biases",8.474178922286842e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 12 fc2.bias,"MLP fc1, GELU, fc2 and biases",6.181069710651228e-09,"P W1 = W1 A*, P b1 = b1, A* W2 = W2 P, A* b2 = b2",,float32
+block 12 head maps,head maps,0.0,"sigma is an involution; B_h, C_h orthogonal, B_g = B_h^T on twin pairs (B = C = I after the gauge), symmetric involutions on self-heads","0 twin pairs, 12 self-heads",float32
+block 12 Wq,attention Q and K,1.2669402677929078e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 12 bq,attention Q and K,2.6719615894549924e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 12 Wk,attention Q and K,1.3120754586908244e-08,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 12 bk,attention Q and K,9.810508598200214e-09,"Wq^g A* = B_h Wq^h, Wk^g A* = B_h Wk^h, bq^g = B_h bq^h, bk^g = B_h bk^h for g = sigma(h)",,float32
+block 12 Wv,attention V and O,1.1429338562457918e-08,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 12 bv,attention V and O,2.9748716299637034e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 12 Wo,attention V and O,9.106242828480725e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+block 12 bo,attention V and O,4.6838295107877556e-09,"Wv^g A* = C_h Wv^h, bv^g = C_h bv^h, A* Wo^h = Wo^g C_h, A* bo = bo",,float32
+even_head.P,even projection,1.9377045324213725e-08,E = (I + A*)/2 between the final RMSNorm and the final affine,,float32

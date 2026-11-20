@@ -1,0 +1,151 @@
+{
+  "top1": 70.746,
+  "top5": 90.854,
+  "chosen_wd": 0.001,
+  "wd_at_grid_edge": false,
+  "knn_check_top1": 67.49599575996399,
+  "n_bank": 100000,
+  "n_val": 50000,
+  "flip_average": false,
+  "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+  "amp": "bf16",
+  "wd_grid": [
+    1e-07,
+    1e-06,
+    1e-05,
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "seed": 0,
+  "seconds": 542.0,
+  "selection": {
+    "chosen_wd": 0.001,
+    "holdout_top1_at_chosen": 72.06,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 70.41,
+        "holdout_top5": 90.95,
+        "holdout_loss": 1.41233994140625,
+        "train_objective": 1.8569893836975098,
+        "grad_max": 5.1436763897072524e-05,
+        "n_iter": 132,
+        "n_eval": 140,
+        "hit_limit": false,
+        "seconds": 30.69
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 72.06,
+        "holdout_top5": 91.74,
+        "holdout_loss": 1.1217609375,
+        "train_objective": 0.757366418838501,
+        "grad_max": 2.686904917936772e-05,
+        "n_iter": 254,
+        "n_eval": 263,
+        "hit_limit": false,
+        "seconds": 38.07
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 71.02,
+        "holdout_top5": 90.96,
+        "holdout_loss": 1.258130078125,
+        "train_objective": 0.21334421634674072,
+        "grad_max": 1.9576932572817896e-06,
+        "n_iter": 490,
+        "n_eval": 515,
+        "hit_limit": false,
+        "seconds": 83.69
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 70.55,
+        "holdout_top5": 90.23,
+        "holdout_loss": 1.5590490234375,
+        "train_objective": 0.045047953724861145,
+        "grad_max": 7.561044412796036e-07,
+        "n_iter": 261,
+        "n_eval": 277,
+        "hit_limit": false,
+        "seconds": 66.4
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 70.23,
+        "holdout_top5": 89.69,
+        "holdout_loss": 1.98256875,
+        "train_objective": 0.008533393032848835,
+        "grad_max": 6.852962428638421e-07,
+        "n_iter": 127,
+        "n_eval": 134,
+        "hit_limit": false,
+        "seconds": 31.49
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 70.23,
+        "holdout_top5": 89.69,
+        "holdout_loss": 1.98256875,
+        "train_objective": 0.0030182856135070324,
+        "grad_max": 8.04785827313026e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.1
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 71.81,
+        "holdout_top5": 91.74,
+        "holdout_loss": 1.18750625,
+        "train_objective": 1.2142316102981567,
+        "grad_max": 2.698100797715597e-05,
+        "n_iter": 139,
+        "n_eval": 150,
+        "hit_limit": false,
+        "seconds": 34.23
+      },
+      {
+        "wd": 0.000316,
+        "stage": "refine",
+        "holdout_top1": 71.51,
+        "holdout_top5": 91.22,
+        "holdout_loss": 1.160165625,
+        "train_objective": 0.4231916069984436,
+        "grad_max": 2.9048715077806264e-06,
+        "n_iter": 327,
+        "n_eval": 345,
+        "hit_limit": false,
+        "seconds": 78.74
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "settings": {
+    "seed": 0,
+    "flip_average": false,
+    "data": "cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)",
+    "checkpoint_sha256": "9cd6239a243ecff706c580f542687c4f0db9994509daef0eb253119da9ff8107"
+  },
+  "model": "dinov2_vitb14_reg",
+  "run_dir": "runs/final/a06/dinov2_vitb14_reg/svdllm_f040/s0",
+  "step": 780,
+  "predictions": "knn/step780_probe_pred.npz",
+  "git": {
+    "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+    "git_dirty": true
+  }
+}

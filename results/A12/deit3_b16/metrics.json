@@ -1,0 +1,133 @@
+{
+  "experiment": "A12",
+  "table": [
+    {
+      "name": "original",
+      "kind": "original",
+      "passes": 1,
+      "params_analytic": 86585320,
+      "entries_stored": 86585320,
+      "param_mb_bf16": 173.17064,
+      "gflops_analytic": 35.126120448,
+      "peak_memory_gb_max": 0.7385496646165848,
+      "throughput_b1": 497.2591082279392,
+      "latency_ms_b1": 2.011023998260498,
+      "speed_vs_original_b1": 1.0,
+      "throughput_b64": 10627.162281502395,
+      "latency_ms_b64": 6.022303819656372,
+      "speed_vs_original_b64": 1.0,
+      "throughput_b256": 11000.6767555175,
+      "latency_ms_b256": 23.27129554748535,
+      "speed_vs_original_b256": 1.0
+    },
+    {
+      "name": "mirror_dense",
+      "kind": "mirror_exact",
+      "passes": 1,
+      "params_analytic": 72212872,
+      "entries_stored": 87138280,
+      "param_mb_bf16": 174.27656,
+      "gflops_analytic": 29.463375936,
+      "peak_memory_gb_max": 0.7395796328783035,
+      "throughput_b1": 456.92477922622334,
+      "latency_ms_b1": 2.1885440349578857,
+      "speed_vs_original_b1": 0.918886696423815,
+      "throughput_b64": 10627.952876085015,
+      "latency_ms_b64": 6.02185583114624,
+      "speed_vs_original_b64": 1.0000743937621048,
+      "throughput_b256": 10992.355588985083,
+      "latency_ms_b256": 23.288911819458008,
+      "speed_vs_original_b256": 0.9992435768528293
+    },
+    {
+      "name": "mirror_even_odd",
+      "kind": "mirror_even_odd",
+      "passes": 1,
+      "params_analytic": 72212872,
+      "entries_stored": 72491184,
+      "param_mb_bf16": 144.982368,
+      "gflops_analytic": 29.463375936,
+      "peak_memory_gb_max": 0.9252003133296967,
+      "throughput_b1": 263.05045542875405,
+      "latency_ms_b1": 3.8015520572662354,
+      "speed_vs_original_b1": 0.5290007786205779,
+      "throughput_b64": 7973.480214509377,
+      "latency_ms_b64": 8.026607990264893,
+      "speed_vs_original_b64": 0.7502925054967865,
+      "throughput_b256": 8689.550486514945,
+      "latency_ms_b256": 29.46067237854004,
+      "speed_vs_original_b256": 0.7899105372909547
+    },
+    {
+      "name": "svdllm",
+      "kind": "svdllm",
+      "passes": 1,
+      "params_analytic": 72212968,
+      "entries_stored": 72212968,
+      "param_mb_bf16": 144.425936,
+      "gflops_analytic": 29.46341376,
+      "peak_memory_gb_max": 0.8243684321641922,
+      "throughput_b1": 220.64144140276963,
+      "latency_ms_b1": 4.532240152359009,
+      "speed_vs_original_b1": 0.4437152336717572,
+      "throughput_b64": 5794.4730963870925,
+      "latency_ms_b64": 11.045007705688477,
+      "speed_vs_original_b64": 0.5452512103323136,
+      "throughput_b256": 9881.227650310377,
+      "latency_ms_b256": 25.90771198272705,
+      "speed_vs_original_b256": 0.8982381602435822
+    }
+  ],
+  "profile_groups": {
+    "mirror_even_odd": {
+      "ms": {
+        "GEMM": 1.4529622000000033,
+        "attention": 3.7855172000000255,
+        "butterflies and permutes": 11.6763802,
+        "rest": 11.680060300000052
+      },
+      "share": {
+        "GEMM": 0.05081189963396258,
+        "attention": 0.132384256127957,
+        "butterflies and permutes": 0.4083375732764325,
+        "rest": 0.408466270961648
+      },
+      "total_ms": 28.59491990000008
+    },
+    "original": {
+      "ms": {
+        "GEMM": 1.6092587000000034,
+        "attention": 2.2726914000000202,
+        "butterflies and permutes": 5.834470199999993,
+        "rest": 12.826792199999996
+      },
+      "share": {
+        "GEMM": 0.0713855090528913,
+        "attention": 0.10081488607712938,
+        "butterflies and permutes": 0.2588127224547074,
+        "rest": 0.568986882415272
+      },
+      "total_ms": 22.543212500000013
+    }
+  },
+  "failed_entries": {},
+  "device": "cuda",
+  "protocol": {
+    "dtype": "bf16 weights and inputs",
+    "compile": true,
+    "compile_mode": "default",
+    "warmup": 20,
+    "iters": 100,
+    "batches": [
+      1,
+      64,
+      256
+    ],
+    "timer": "CUDA events"
+  },
+  "prereg": {
+    "ok": true,
+    "reason": "unchanged since the recorded commit",
+    "sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4"
+  }
+}

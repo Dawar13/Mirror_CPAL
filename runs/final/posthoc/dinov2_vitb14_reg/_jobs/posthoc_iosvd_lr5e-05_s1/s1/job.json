@@ -1,0 +1,114 @@
+{
+  "experiment": "A05-posthoc",
+  "group": "posthoc",
+  "adopted_structures": {
+    "wspace": "results/A01/structure/dinov2_vitb14_reg_wspace_matched.npz",
+    "astar": "results/MUST-07/structure/dinov2_vitb14_reg_s0.npz"
+  },
+  "model": "dinov2_vitb14_reg",
+  "seed": 1,
+  "steps": null,
+  "micro_batch": 128,
+  "compile": false,
+  "gpu_frac": 0.23,
+  "out_root": "runs/final",
+  "queue_dir": "runs/final/_queue",
+  "job": "posthoc_iosvd_lr5e-05_s1",
+  "structure": "results/MUST-07/structure/dinov2_vitb14_reg_s0.npz",
+  "gate_b": "results/MUST-07/gate_b.json",
+  "random_seed": 1,
+  "cache_dir": "cache",
+  "data": {
+    "images": "cache/heal256_uint8.npy",
+    "index": "cache/train_index.npz",
+    "train_key": "heal_rows",
+    "heldout_key": "healval_rows",
+    "heldout_images": null,
+    "heldout_index": null,
+    "max_train": null,
+    "mode": "stream",
+    "max_resident_gb": null
+  },
+  "hook_steps": [],
+  "state_every": 100,
+  "eval": {
+    "n_query_full": 50000,
+    "n_query_partial": 10000,
+    "fp32_last": false
+  },
+  "lr_selection": {
+    "budget_steps": 200
+  },
+  "heal": {
+    "blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "seed": 1,
+    "lr": 0.0001,
+    "epochs": 2.0,
+    "max_steps": null,
+    "batch_size": 256,
+    "micro_batch": 128,
+    "weight_decay": 0.05,
+    "decay_1d": false,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "warmup_frac": 0.05,
+    "warmup_steps": null,
+    "min_lr_ratio": 0.0,
+    "grad_clip": null,
+    "crop_size": 224,
+    "crop_scale": [
+      0.35,
+      1.0
+    ],
+    "crop_ratio": [
+      0.75,
+      1.3333333333333333
+    ],
+    "hflip_p": 0.5,
+    "w_cls": 1.0,
+    "w_patch": 1.0,
+    "w_block": 1.0,
+    "normaliser": "fixed",
+    "calib_images": 1024,
+    "train_scope": "all",
+    "grad_checkpoint": false,
+    "amp": "auto",
+    "share_prefix": true,
+    "eval_every": 200,
+    "eval_batch": null,
+    "max_heldout": null,
+    "log_every": 20,
+    "prefetch": 2,
+    "save_checkpoint": true,
+    "checkpoint_path": null
+  },
+  "logits_fn": null,
+  "blockdrop_score_fn": null,
+  "students": [
+    {
+      "method": "iosvd",
+      "variant": "lr5e-05",
+      "lr": 5e-05
+    }
+  ],
+  "total_steps": 780,
+  "lrs": {
+    "iosvd_lr5e-05": 5e-05
+  }
+}

@@ -1,0 +1,175 @@
+{
+ "gate": "Gate P",
+ "rule": "The new pipeline reproduces MUST-09",
+ "bar_text": "Mirror (current A*) and SVD-LLM means within \u00b10.15 of 78.34 and 78.06. Otherwise stop and report",
+ "definition": "final-step bf16 k-NN on all 50,000 validation queries; means over healing seeds 0, 1 and 2 within +-0.15 of 78.34 (Mirror, current A*) and 78.06 (SVD-LLM); both must hold",
+ "arms": {
+  "mirror_exact_astar": {
+   "run_dirs": [
+    "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+    "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1",
+    "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2"
+   ],
+   "seeds": {
+    "0": 78.3519983291626,
+    "1": 78.36400270462036,
+    "2": 78.33999991416931
+   },
+   "missing": {},
+   "mean": 78.35200031598409,
+   "n": 3,
+   "difference_from_target": 0.012000315984082022,
+   "verdict": "PASS",
+   "sources": [
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0/metrics.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    },
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0/eval/step780.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    },
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1/metrics.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    },
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1/eval/step780.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    },
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2/metrics.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    },
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2/eval/step780.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    }
+   ]
+  },
+  "svdllm": {
+   "run_dirs": [
+    "runs/final/main/dinov2_vitb14_reg/svdllm/s0",
+    "runs/final/main/dinov2_vitb14_reg/svdllm/s1",
+    "runs/final/main/dinov2_vitb14_reg/svdllm/s2"
+   ],
+   "seeds": {
+    "0": 78.0780017375946,
+    "1": 78.07199954986572,
+    "2": 78.09799909591675
+   },
+   "missing": {},
+   "mean": 78.08266679445903,
+   "n": 3,
+   "difference_from_target": 0.02266679445902753,
+   "verdict": "PASS",
+   "sources": [
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s0/metrics.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    },
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s0/eval/step780.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    },
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s1/metrics.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    },
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s1/eval/step780.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    },
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s2/metrics.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    },
+    {
+     "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s2/eval/step780.json",
+     "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+    }
+   ]
+  }
+ },
+ "bars": {
+  "mirror_exact_astar": {
+   "target": 78.34,
+   "tolerance": 0.15,
+   "low": 78.19,
+   "high": 78.49
+  },
+  "svdllm": {
+   "target": 78.06,
+   "tolerance": 0.15,
+   "low": 77.91,
+   "high": 78.21
+  }
+ },
+ "sources": [
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0/metrics.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0/eval/step780.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1/metrics.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1/eval/step780.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2/metrics.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2/eval/step780.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s0/metrics.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s0/eval/step780.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s1/metrics.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s1/eval/step780.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s2/metrics.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  },
+  {
+   "file": "runs/final/main/dinov2_vitb14_reg/svdllm/s2/eval/step780.json",
+   "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9"
+  }
+ ],
+ "status": "PASS",
+ "pass": true,
+ "reason": "mirror_exact_astar: mean 78.352 against 78.34 +- 0.15 (PASS); svdllm: mean 78.083 against 78.06 +- 0.15 (PASS)",
+ "written_by": "scripts/fp_gate_p.py",
+ "date_utc": "2026-11-20T10:04:35Z",
+ "code_git": {
+  "git_hash": "21f6ef2682003f1bbb2ba2bb750b711c76d6dda9",
+  "git_dirty": true
+ },
+ "prereg_check": {
+  "ok": true,
+  "reason": "unchanged since the recorded commit",
+  "sha256": "e3dfa5b50aa3fc7fcec6562934c8380f062d33db1e86691cb07f725218d9e6c4",
+  "recorded_commit": "fd83c955d76a8e85228c7e9ed736e29727979540",
+  "allowed_without_check": null
+ },
+ "notes": []
+}

@@ -1,0 +1,122 @@
+{
+  "format": "must09-healed-v1",
+  "family": "mirror",
+  "method": "random_structure",
+  "blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": true,
+    "fold": true,
+    "even_head": true
+  },
+  "modules": [],
+  "matrices": [],
+  "mirror": {
+    "d_plus": 700,
+    "structure_file": "structure.npz",
+    "n_pairs": [
+      1168,
+      1116,
+      1013,
+      963,
+      878,
+      672,
+      554,
+      406,
+      155,
+      93,
+      19,
+      17
+    ],
+    "n_head_pairs": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0
+    ],
+    "builder": "mirror.mirror_family.build_mirror_variant"
+  },
+  "trainable": "converted blocks (re-projected with A* after every step) and the embeddings (re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+  "adapter": {
+    "kind": "dinov2",
+    "hub_repo": "facebookresearch/dinov2",
+    "name": "dinov2_vitb14_reg",
+    "img_size": 224
+  },
+  "targets": "sym",
+  "model": "dinov2_vitb14_reg",
+  "hparams": null,
+  "fp_heal": {
+    "loader": {
+      "kind": "heal_structured"
+    },
+    "method": "random_structure",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "symmetrised",
+      "k": 12,
+      "logits": false,
+      "input_transform": null,
+      "block_map": null,
+      "reg_perm": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "A_digest": "734806d661834bee",
+      "A_dim": 768,
+      "A_d_plus": 700
+    },
+    "builder_options": {},
+    "variant": null,
+    "lr": 0.0001,
+    "job": "main_s0",
+    "lr_selection": {
+      "given": true,
+      "best_lr": 0.0001
+    },
+    "params": {
+      "model_params": 85691904,
+      "model_params_stored": 86281728,
+      "converted_params_kept": 64554464,
+      "converted_params_dense": 84934656,
+      "model_params_structured": 66203360,
+      "model_params_original": 86583552,
+      "model_params_frac": 0.7646182036976261,
+      "params_source": "free parameters",
+      "params_total": 64554464,
+      "params_matrices": 64554464,
+      "params_basis_change": 0,
+      "budget_total": 64554464,
+      "gap": 0
+    }
+  },
+  "experiment": "A05",
+  "seed": 0,
+  "state_file": "ckpt/step780.pt"
+}

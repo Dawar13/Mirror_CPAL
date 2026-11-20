@@ -1,0 +1,1656 @@
+{
+  "format": "must09-healed-v1",
+  "family": "compressed",
+  "method": "iosvd",
+  "blocks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "components": [
+    "mlp",
+    "attn"
+  ],
+  "base": {
+    "materialise_pos_embed": true,
+    "fold": false,
+    "even_head": false
+  },
+  "wrappers": [],
+  "modules": [
+    {
+      "block": 0,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 232,
+        "bias": true
+      }
+    },
+    {
+      "block": 0,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 457,
+        "bias": true
+      }
+    },
+    {
+      "block": 0,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 39,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 39,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 50,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 0,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 43,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 370,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 461,
+        "bias": true
+      }
+    },
+    {
+      "block": 1,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 63,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 74,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 201,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 1,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 309,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 484,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 498,
+        "bias": true
+      }
+    },
+    {
+      "block": 2,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 72,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 70,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 286,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 2,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 249,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 508,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 472,
+        "bias": true
+      }
+    },
+    {
+      "block": 3,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 115,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 110,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 221,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 3,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 261,
+        "bias": true
+      }
+    },
+    {
+      "block": 4,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 511,
+        "bias": true
+      }
+    },
+    {
+      "block": 4,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 487,
+        "bias": true
+      }
+    },
+    {
+      "block": 4,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 125,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 132,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 286,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 4,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 314,
+        "bias": true
+      }
+    },
+    {
+      "block": 5,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 492,
+        "bias": true
+      }
+    },
+    {
+      "block": 5,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 492,
+        "bias": true
+      }
+    },
+    {
+      "block": 5,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 148,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 161,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 259,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 5,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 303,
+        "bias": true
+      }
+    },
+    {
+      "block": 6,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 524,
+        "bias": true
+      }
+    },
+    {
+      "block": 6,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 520,
+        "bias": true
+      }
+    },
+    {
+      "block": 6,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 133,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 161,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 302,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 6,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 310,
+        "bias": true
+      }
+    },
+    {
+      "block": 7,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 533,
+        "bias": true
+      }
+    },
+    {
+      "block": 7,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 7,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 144,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 166,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 315,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 7,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 338,
+        "bias": true
+      }
+    },
+    {
+      "block": 8,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 614,
+        "bias": true
+      }
+    },
+    {
+      "block": 8,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 8,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 157,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 186,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 306,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 8,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 342,
+        "bias": true
+      }
+    },
+    {
+      "block": 9,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 9,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 9,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 166,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 196,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 9,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 10,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 10,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 10,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 248,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 284,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 10,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 11,
+      "path": "mlp.fc1",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 3072,
+        "rank": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 11,
+      "path": "mlp.fc2",
+      "module": {
+        "type": "lowrank",
+        "in": 3072,
+        "out": 768,
+        "rank": 768,
+        "bias": true
+      }
+    },
+    {
+      "block": 11,
+      "path": "attn.qkv",
+      "module": {
+        "type": "split_qkv",
+        "parts": [
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 345,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 270,
+            "bias": true
+          },
+          {
+            "type": "lowrank",
+            "in": 768,
+            "out": 768,
+            "rank": 768,
+            "bias": true
+          }
+        ]
+      }
+    },
+    {
+      "block": 11,
+      "path": "attn.proj",
+      "module": {
+        "type": "lowrank",
+        "in": 768,
+        "out": 768,
+        "rank": 768,
+        "bias": true
+      }
+    }
+  ],
+  "matrices": [
+    {
+      "block": 0,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 232,
+      "conversion_rel_err": 4.7040487601602315e-08,
+      "params": 890880,
+      "params_compressor": 890880,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 0,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 457,
+      "conversion_rel_err": 5.047756623562334e-08,
+      "params": 1754880,
+      "params_compressor": 1754880,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 0,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 39,
+      "conversion_rel_err": 6.228734808023756e-08,
+      "params": 59904,
+      "params_compressor": 59904,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 0,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 39,
+      "conversion_rel_err": 4.718796066677585e-08,
+      "params": 59904,
+      "params_compressor": 59904,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 0,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 50,
+      "conversion_rel_err": 4.5795325086138574e-08,
+      "params": 76800,
+      "params_compressor": 76800,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 0,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 43,
+      "conversion_rel_err": 5.650636806355214e-08,
+      "params": 66048,
+      "params_compressor": 66048,
+      "path": "attn.proj"
+    },
+    {
+      "block": 1,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 370,
+      "conversion_rel_err": 4.703999212175562e-08,
+      "params": 1420800,
+      "params_compressor": 1420800,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 1,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 461,
+      "conversion_rel_err": 4.7595124341739906e-08,
+      "params": 1770240,
+      "params_compressor": 1770240,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 1,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 63,
+      "conversion_rel_err": 4.735410807101701e-08,
+      "params": 96768,
+      "params_compressor": 96768,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 1,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 74,
+      "conversion_rel_err": 4.3741430193377515e-08,
+      "params": 113664,
+      "params_compressor": 113664,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 1,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 201,
+      "conversion_rel_err": 4.6652946631883935e-08,
+      "params": 308736,
+      "params_compressor": 308736,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 1,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 309,
+      "conversion_rel_err": 4.7805279269728057e-08,
+      "params": 474624,
+      "params_compressor": 474624,
+      "path": "attn.proj"
+    },
+    {
+      "block": 2,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 484,
+      "conversion_rel_err": 4.595994640900096e-08,
+      "params": 1858560,
+      "params_compressor": 1858560,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 2,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 498,
+      "conversion_rel_err": 4.9481747486422455e-08,
+      "params": 1912320,
+      "params_compressor": 1912320,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 2,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 72,
+      "conversion_rel_err": 4.5970180684244324e-08,
+      "params": 110592,
+      "params_compressor": 110592,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 2,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 70,
+      "conversion_rel_err": 4.388733327478127e-08,
+      "params": 107520,
+      "params_compressor": 107520,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 2,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 286,
+      "conversion_rel_err": 4.517896680037472e-08,
+      "params": 439296,
+      "params_compressor": 439296,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 2,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 249,
+      "conversion_rel_err": 4.6989886293754443e-08,
+      "params": 382464,
+      "params_compressor": 382464,
+      "path": "attn.proj"
+    },
+    {
+      "block": 3,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 508,
+      "conversion_rel_err": 4.626132931398111e-08,
+      "params": 1950720,
+      "params_compressor": 1950720,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 3,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 472,
+      "conversion_rel_err": 4.7202628280639714e-08,
+      "params": 1812480,
+      "params_compressor": 1812480,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 3,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 115,
+      "conversion_rel_err": 4.72476324587189e-08,
+      "params": 176640,
+      "params_compressor": 176640,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 3,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 110,
+      "conversion_rel_err": 4.3767348746923674e-08,
+      "params": 168960,
+      "params_compressor": 168960,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 3,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 221,
+      "conversion_rel_err": 4.663293404490058e-08,
+      "params": 339456,
+      "params_compressor": 339456,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 3,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 261,
+      "conversion_rel_err": 4.6335090389209747e-08,
+      "params": 400896,
+      "params_compressor": 400896,
+      "path": "attn.proj"
+    },
+    {
+      "block": 4,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 511,
+      "conversion_rel_err": 4.6111234068505064e-08,
+      "params": 1962240,
+      "params_compressor": 1962240,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 4,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 487,
+      "conversion_rel_err": 4.6880221819926286e-08,
+      "params": 1870080,
+      "params_compressor": 1870080,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 4,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 125,
+      "conversion_rel_err": 4.6278696863192744e-08,
+      "params": 192000,
+      "params_compressor": 192000,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 4,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 132,
+      "conversion_rel_err": 4.4886835242200754e-08,
+      "params": 202752,
+      "params_compressor": 202752,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 4,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 286,
+      "conversion_rel_err": 4.789830914475041e-08,
+      "params": 439296,
+      "params_compressor": 439296,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 4,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 314,
+      "conversion_rel_err": 4.7531042338188853e-08,
+      "params": 482304,
+      "params_compressor": 482304,
+      "path": "attn.proj"
+    },
+    {
+      "block": 5,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 492,
+      "conversion_rel_err": 4.677199058544725e-08,
+      "params": 1889280,
+      "params_compressor": 1889280,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 5,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 492,
+      "conversion_rel_err": 4.6564682462200235e-08,
+      "params": 1889280,
+      "params_compressor": 1889280,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 5,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 148,
+      "conversion_rel_err": 4.6635337352186114e-08,
+      "params": 227328,
+      "params_compressor": 227328,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 5,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 161,
+      "conversion_rel_err": 4.6103724769122816e-08,
+      "params": 247296,
+      "params_compressor": 247296,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 5,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 259,
+      "conversion_rel_err": 4.687966991963843e-08,
+      "params": 397824,
+      "params_compressor": 397824,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 5,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 303,
+      "conversion_rel_err": 4.6864803432681274e-08,
+      "params": 465408,
+      "params_compressor": 465408,
+      "path": "attn.proj"
+    },
+    {
+      "block": 6,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 524,
+      "conversion_rel_err": 4.755758824226469e-08,
+      "params": 2012160,
+      "params_compressor": 2012160,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 6,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 520,
+      "conversion_rel_err": 4.564859864770039e-08,
+      "params": 1996800,
+      "params_compressor": 1996800,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 6,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 133,
+      "conversion_rel_err": 4.560217020026737e-08,
+      "params": 204288,
+      "params_compressor": 204288,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 6,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 161,
+      "conversion_rel_err": 4.549788150679188e-08,
+      "params": 247296,
+      "params_compressor": 247296,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 6,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 302,
+      "conversion_rel_err": 4.574267685602774e-08,
+      "params": 463872,
+      "params_compressor": 463872,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 6,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 310,
+      "conversion_rel_err": 4.737551383326694e-08,
+      "params": 476160,
+      "params_compressor": 476160,
+      "path": "attn.proj"
+    },
+    {
+      "block": 7,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 533,
+      "conversion_rel_err": 4.854438548628553e-08,
+      "params": 2046720,
+      "params_compressor": 2046720,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 7,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.3551111339693375e-08,
+      "params": 2949120,
+      "params_compressor": 2359296,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 7,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 144,
+      "conversion_rel_err": 4.595165488335926e-08,
+      "params": 221184,
+      "params_compressor": 221184,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 7,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 166,
+      "conversion_rel_err": 4.4258361376408496e-08,
+      "params": 254976,
+      "params_compressor": 254976,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 7,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 315,
+      "conversion_rel_err": 4.585623349559505e-08,
+      "params": 483840,
+      "params_compressor": 483840,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 7,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 338,
+      "conversion_rel_err": 4.561175800396096e-08,
+      "params": 519168,
+      "params_compressor": 519168,
+      "path": "attn.proj"
+    },
+    {
+      "block": 8,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 614,
+      "conversion_rel_err": 4.9231402175396974e-08,
+      "params": 2357760,
+      "params_compressor": 2357760,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 8,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.382698079578756e-08,
+      "params": 2949120,
+      "params_compressor": 2359296,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 8,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 157,
+      "conversion_rel_err": 4.4331735009072425e-08,
+      "params": 241152,
+      "params_compressor": 241152,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 8,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 186,
+      "conversion_rel_err": 4.501438017475108e-08,
+      "params": 285696,
+      "params_compressor": 285696,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 8,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 306,
+      "conversion_rel_err": 4.647640754648088e-08,
+      "params": 470016,
+      "params_compressor": 470016,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 8,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 342,
+      "conversion_rel_err": 4.492808949634158e-08,
+      "params": 525312,
+      "params_compressor": 525312,
+      "path": "attn.proj"
+    },
+    {
+      "block": 9,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.377751144934467e-08,
+      "params": 2949120,
+      "params_compressor": 2359296,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 9,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.399861863615989e-08,
+      "params": 2949120,
+      "params_compressor": 2359296,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 9,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 166,
+      "conversion_rel_err": 4.701838854744708e-08,
+      "params": 254976,
+      "params_compressor": 254976,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 9,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 196,
+      "conversion_rel_err": 4.375241238217073e-08,
+      "params": 301056,
+      "params_compressor": 301056,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 9,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.361940742896723e-08,
+      "params": 1179648,
+      "params_compressor": 589824,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 9,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.3787385846804567e-08,
+      "params": 1179648,
+      "params_compressor": 589824,
+      "path": "attn.proj"
+    },
+    {
+      "block": 10,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.360094134531189e-08,
+      "params": 2949120,
+      "params_compressor": 2359296,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 10,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.410331083402863e-08,
+      "params": 2949120,
+      "params_compressor": 2359296,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 10,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 248,
+      "conversion_rel_err": 4.7331081685325184e-08,
+      "params": 380928,
+      "params_compressor": 380928,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 10,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 284,
+      "conversion_rel_err": 4.761170752502023e-08,
+      "params": 436224,
+      "params_compressor": 436224,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 10,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.390600135927012e-08,
+      "params": 1179648,
+      "params_compressor": 589824,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 10,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.3868584760115065e-08,
+      "params": 1179648,
+      "params_compressor": 589824,
+      "path": "attn.proj"
+    },
+    {
+      "block": 11,
+      "name": "fc1",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.3820355086184235e-08,
+      "params": 2949120,
+      "params_compressor": 2359296,
+      "path": "mlp.fc1"
+    },
+    {
+      "block": 11,
+      "name": "fc2",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.387600462003156e-08,
+      "params": 2949120,
+      "params_compressor": 2359296,
+      "path": "mlp.fc2"
+    },
+    {
+      "block": 11,
+      "name": "wq",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 345,
+      "conversion_rel_err": 4.430623642033514e-08,
+      "params": 529920,
+      "params_compressor": 529920,
+      "path": "attn.qkv.q"
+    },
+    {
+      "block": 11,
+      "name": "wk",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 270,
+      "conversion_rel_err": 4.702578353373391e-08,
+      "params": 414720,
+      "params_compressor": 414720,
+      "path": "attn.qkv.k"
+    },
+    {
+      "block": 11,
+      "name": "wv",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.359536346466259e-08,
+      "params": 1179648,
+      "params_compressor": 589824,
+      "path": "attn.qkv.v"
+    },
+    {
+      "block": 11,
+      "name": "wo",
+      "kind": "lowrank",
+      "factors": "given",
+      "rank": 768,
+      "conversion_rel_err": 4.392466994292194e-08,
+      "params": 1179648,
+      "params_compressor": 589824,
+      "path": "attn.proj"
+    }
+  ],
+  "compressor": {
+    "params_total": 64555776,
+    "params_matrices": 64555776,
+    "params_basis_change": 0,
+    "budget_total": 64554464,
+    "gap": 2.0323923687136495e-05,
+    "source": "mirror.final.baselines.iosvd",
+    "model_form": "absorbed weights in the unfolded model (norm affine and LayerScale folded); factors A = C^-1/2 U_r S_r^1/2 and V = S_r^1/2 V_r^T R^-1/2",
+    "hparams": {
+      "damp_in": 1e-06,
+      "damp_out": 1e-06,
+      "eta": 0.1,
+      "score": "second_order",
+      "allocation": "adaptive"
+    },
+    "basis": []
+  },
+  "lowrank_factors": "given",
+  "trainable": "structured parameters of the converted blocks (and their biases) and the embeddings, free (nothing re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+  "adapter": {
+    "kind": "dinov2",
+    "hub_repo": "facebookresearch/dinov2",
+    "name": "dinov2_vitb14_reg",
+    "img_size": 224
+  },
+  "targets": "sym",
+  "model": "dinov2_vitb14_reg",
+  "hparams": null,
+  "fp_heal": {
+    "loader": {
+      "kind": "heal_structured"
+    },
+    "method": "iosvd",
+    "targets": {
+      "final": "symmetrised",
+      "blocks": "raw",
+      "k": null,
+      "logits": false,
+      "input_transform": null,
+      "block_map": null,
+      "reg_perm": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "builder_options": {},
+    "variant": "lr5e-05",
+    "lr": 5e-05,
+    "job": "posthoc_iosvd_lr5e-05",
+    "lr_selection": {
+      "given": true,
+      "best_lr": 5e-05
+    },
+    "params": {
+      "model_params": 73607424,
+      "model_params_stored": 73607424,
+      "converted_params_kept": 64555776,
+      "converted_params_dense": 84934656,
+      "model_params_structured": 66204672,
+      "model_params_original": 86583552,
+      "model_params_frac": 0.7646333566911184,
+      "params_source": "compressor's own per-matrix and basis-change counts",
+      "params_total": 64555776,
+      "params_matrices": 64555776,
+      "params_basis_change": 0,
+      "budget_total": 64554464,
+      "gap": 2.0323923687136495e-05,
+      "gap_ok": true
+    }
+  },
+  "experiment": "A05-posthoc",
+  "seed": 0,
+  "state_file": "ckpt/step780.pt"
+}

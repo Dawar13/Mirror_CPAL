@@ -1,0 +1,524 @@
+{
+  "row": {
+    "model": "dinov2_vitb14_reg",
+    "variant": "vexact_s0",
+    "label": "healed model from a run directory (mirror.heal_structured.load_healed_model)",
+    "family": "healed_run",
+    "method": "run",
+    "k": 0,
+    "top1": 80.12,
+    "top5": 95.552,
+    "mean_per_class_top1": 80.12,
+    "knn_check_top1": 78.3519983291626,
+    "chosen_wd": 0.00316,
+    "wd_at_grid_edge": false,
+    "holdout_top1_at_chosen": 82.06,
+    "final_hit_iter_limit": false,
+    "final_lbfgs_iters": 97,
+    "feature_dim": 1536,
+    "feature_kind": "cls",
+    "n_bank": 100000,
+    "n_val": 50000,
+    "n_wd_train": 90000,
+    "n_wd_holdout": 10000,
+    "converted_params_kept": 64554464,
+    "converted_params_dense": 84934656,
+    "model_params": 85691904,
+    "t_build_s": 2.3,
+    "t_extract_s": 91.1,
+    "t_probe_s": 194.8,
+    "amp": "bf16",
+    "feature_dtype": "float16",
+    "wd_grid": "1e-7,1e-6,1e-5,1e-4,1e-3,1e-2",
+    "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+    "git_dirty": true,
+    "seed": 0,
+    "date": "2026-11-20 16:03:18",
+    "notes": "healed run /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0 (mirror.heal_structured.load_healed_model); method mirror_exact; exact operator: loader info['A_star']; position embedding as loaded (257 rows; the original model has 1370), used as the model uses it at 224 px"
+  },
+  "selection": {
+    "chosen_wd": 0.00316,
+    "holdout_top1_at_chosen": 82.06,
+    "wd_at_grid_edge": false,
+    "trials": [
+      {
+        "wd": 0.01,
+        "stage": "grid",
+        "holdout_top1": 81.73,
+        "holdout_top5": 95.72,
+        "holdout_loss": 0.960319140625,
+        "train_objective": 1.4202613830566406,
+        "grad_max": 8.516202797181904e-06,
+        "n_iter": 125,
+        "n_eval": 136,
+        "hit_limit": false,
+        "seconds": 20.35
+      },
+      {
+        "wd": 0.001,
+        "stage": "grid",
+        "holdout_top1": 81.57,
+        "holdout_top5": 95.8,
+        "holdout_loss": 0.729333154296875,
+        "train_objective": 0.4310929775238037,
+        "grad_max": 1.9384766346774995e-05,
+        "n_iter": 167,
+        "n_eval": 177,
+        "hit_limit": false,
+        "seconds": 23.48
+      },
+      {
+        "wd": 0.0001,
+        "stage": "grid",
+        "holdout_top1": 81.15,
+        "holdout_top5": 95.34,
+        "holdout_loss": 0.78939755859375,
+        "train_objective": 0.09858949482440948,
+        "grad_max": 2.0085158212168608e-06,
+        "n_iter": 314,
+        "n_eval": 333,
+        "hit_limit": false,
+        "seconds": 52.25
+      },
+      {
+        "wd": 1e-05,
+        "stage": "grid",
+        "holdout_top1": 80.69,
+        "holdout_top5": 94.98,
+        "holdout_loss": 0.94743818359375,
+        "train_objective": 0.01924261823296547,
+        "grad_max": 8.449782171737752e-07,
+        "n_iter": 115,
+        "n_eval": 127,
+        "hit_limit": false,
+        "seconds": 17.64
+      },
+      {
+        "wd": 1e-06,
+        "stage": "grid",
+        "holdout_top1": 80.5,
+        "holdout_top5": 94.69,
+        "holdout_loss": 1.17004169921875,
+        "train_objective": 0.0037653562612831593,
+        "grad_max": 8.399582611673395e-07,
+        "n_iter": 72,
+        "n_eval": 78,
+        "hit_limit": false,
+        "seconds": 16.17
+      },
+      {
+        "wd": 1e-07,
+        "stage": "grid",
+        "holdout_top1": 80.5,
+        "holdout_top5": 94.69,
+        "holdout_loss": 1.17004169921875,
+        "train_objective": 0.0015157910529524088,
+        "grad_max": 9.792372566153063e-07,
+        "n_iter": 0,
+        "n_eval": 1,
+        "hit_limit": false,
+        "seconds": 0.07
+      },
+      {
+        "wd": 0.0316,
+        "stage": "refine",
+        "holdout_top1": 80.68,
+        "holdout_top5": 95.3,
+        "holdout_loss": 1.410111328125,
+        "train_objective": 2.468383550643921,
+        "grad_max": 2.2698281100019813e-05,
+        "n_iter": 55,
+        "n_eval": 62,
+        "hit_limit": false,
+        "seconds": 12.33
+      },
+      {
+        "wd": 0.00316,
+        "stage": "refine",
+        "holdout_top1": 82.06,
+        "holdout_top5": 95.98,
+        "holdout_loss": 0.78015634765625,
+        "train_objective": 0.808022141456604,
+        "grad_max": 1.2416974641382694e-05,
+        "n_iter": 106,
+        "n_eval": 118,
+        "hit_limit": false,
+        "seconds": 26.51
+      }
+    ],
+    "n_train": 90000,
+    "n_holdout": 10000,
+    "holdout_frac": 0.1,
+    "seed": 0
+  },
+  "final": {
+    "wd": 0.00316,
+    "train_objective": 0.8248103857040405,
+    "grad_max": 8.388851711060852e-06,
+    "n_iter": 97,
+    "n_eval": 105,
+    "hit_limit": false,
+    "seconds": 24.5,
+    "train_top1": 92.537
+  },
+  "test": {
+    "top1": 80.12,
+    "top5": 95.552,
+    "mean_per_class_top1": 80.12,
+    "loss": 0.8443499243164062,
+    "n": 50000
+  },
+  "variant_info": {
+    "variant": "vexact_s0",
+    "label": "healed model from a run directory (mirror.heal_structured.load_healed_model)",
+    "family": "healed_run",
+    "method": "run",
+    "k": 0,
+    "blocks": [],
+    "model_params_original": 86583552,
+    "builder": "mirror.heal_structured.load_healed_model",
+    "healed_run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+    "healed_info": {
+      "run_dir": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+      "step": 780,
+      "ckpt": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0/ckpt/step780.pt",
+      "steps_saved": [
+        0,
+        100,
+        300,
+        780
+      ],
+      "spec": {
+        "format": "must09-healed-v1",
+        "family": "mirror",
+        "method": "mirror_exact",
+        "blocks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "components": [
+          "mlp",
+          "attn"
+        ],
+        "base": {
+          "materialise_pos_embed": true,
+          "fold": true,
+          "even_head": true
+        },
+        "modules": [],
+        "matrices": [],
+        "mirror": {
+          "d_plus": 700,
+          "structure_file": "structure.npz",
+          "n_pairs": [
+            1168,
+            1116,
+            1013,
+            963,
+            878,
+            672,
+            554,
+            406,
+            155,
+            93,
+            19,
+            17
+          ],
+          "n_head_pairs": [
+            0,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          "builder": "mirror.mirror_family.build_mirror_variant"
+        },
+        "trainable": "converted blocks (re-projected with A* after every step) and the embeddings (re-projected); absorbed norms, LayerScale, final norm affine and mask token frozen",
+        "adapter": {
+          "kind": "dinov2",
+          "hub_repo": "facebookresearch/dinov2",
+          "name": "dinov2_vitb14_reg",
+          "img_size": 224
+        },
+        "targets": "sym",
+        "model": "dinov2_vitb14_reg",
+        "hparams": null,
+        "fp_heal": {
+          "loader": {
+            "kind": "heal_structured"
+          },
+          "method": "mirror_exact",
+          "targets": {
+            "final": "symmetrised",
+            "blocks": "symmetrised",
+            "k": 12,
+            "logits": false,
+            "input_transform": null,
+            "block_map": null,
+            "reg_perm": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "A_digest": "1bf5b511b30b751e",
+            "A_dim": 768,
+            "A_d_plus": 700
+          },
+          "builder_options": {},
+          "variant": "astar",
+          "lr": 0.0001,
+          "job": "gate_s0",
+          "lr_selection": {
+            "given": true,
+            "best_lr": 0.0001
+          },
+          "params": {
+            "model_params": 85691904,
+            "model_params_stored": 86281728,
+            "converted_params_kept": 64554464,
+            "converted_params_dense": 84934656,
+            "model_params_structured": 66203360,
+            "model_params_original": 86583552,
+            "model_params_frac": 0.7646182036976261,
+            "params_source": "free parameters",
+            "params_total": 64554464,
+            "params_matrices": 64554464,
+            "params_basis_change": 0,
+            "budget_total": 64554464,
+            "gap": 0
+          }
+        },
+        "experiment": "A01",
+        "seed": 0,
+        "state_file": "ckpt/step780.pt"
+      },
+      "method": "mirror_exact",
+      "variant": "astar",
+      "family": "mirror",
+      "targets": {
+        "final": "symmetrised",
+        "blocks": "symmetrised",
+        "k": 12,
+        "logits": false,
+        "input_transform": null,
+        "block_map": null,
+        "reg_perm": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "A_digest": "1bf5b511b30b751e",
+        "A_dim": 768,
+        "A_d_plus": 700
+      },
+      "meta": {
+        "job": "gate_s0",
+        "experiment": "A01",
+        "group": "main",
+        "model": "dinov2_vitb14_reg",
+        "method": "mirror_exact",
+        "variant": "astar",
+        "seed": 0,
+        "fp32": true,
+        "student": "mirror_exact_astar",
+        "lr": 0.0001
+      },
+      "structure": {
+        "A_star": "array of shape [768, 768]",
+        "perms": [
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]",
+          "array of shape [3072]"
+        ],
+        "maps_after": [
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps",
+          "HeadMaps"
+        ],
+        "reg_perm": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "blocks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "A": "array of shape [768, 768]"
+      },
+      "model_params": 85691904,
+      "model_params_stored": 86281728,
+      "converted_params_kept": 64554464,
+      "converted_params_dense": 84934656,
+      "model_params_structured": 66203360,
+      "model_params_original": 86583552,
+      "model_params_frac": 0.7646182036976261,
+      "params_source": "free parameters",
+      "loaded_by": "scripts/fp_eval_downstream.py bridge: load_student(run_dir, step=None)"
+    },
+    "healed_k": 12,
+    "exact_operator": "loader info['A_star']",
+    "even_head": true,
+    "reg_perm": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "position_grid": null,
+    "healed_run_checks": null,
+    "converted_params_dense": 84934656,
+    "converted_params_kept": 64554464,
+    "model_params": 85691904,
+    "mlp_params_kept": null,
+    "attn_params_kept": null,
+    "position_grid_note": "position embedding as loaded (257 rows; the original model has 1370), used as the model uses it at 224 px"
+  },
+  "sources": {
+    "healed_run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+    "weights_sha256": {
+      "ckpt/step0.pt": "9af31bab06bf244cc15b4aefc5d505b1d8e09b5add128a920730a3436a13aa1f",
+      "ckpt/step100.pt": "a16d88bcc4d1ff6a452a4ad4d68518c6d327b271ea88c2047b9e0cfbe15aadd7",
+      "ckpt/step300.pt": "178557e709970e4ec3cf0bd9aae5259c486d0e9b06ae80b7c479e6f603970525",
+      "ckpt/step780.pt": "7551f6f294c4032b2467b53c850276b43c94a2b417d241fb57b86f463d39f7e4"
+    }
+  },
+  "feature_meta": {
+    "bank": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_s0",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "healed_run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+        "weights_sha256": {
+          "ckpt/step0.pt": "9af31bab06bf244cc15b4aefc5d505b1d8e09b5add128a920730a3436a13aa1f",
+          "ckpt/step100.pt": "a16d88bcc4d1ff6a452a4ad4d68518c6d327b271ea88c2047b9e0cfbe15aadd7",
+          "ckpt/step300.pt": "178557e709970e4ec3cf0bd9aae5259c486d0e9b06ae80b7c479e6f603970525",
+          "ckpt/step780.pt": "7551f6f294c4032b2467b53c850276b43c94a2b417d241fb57b86f463d39f7e4"
+        }
+      },
+      "img_size": 224,
+      "split": "bank",
+      "n": 100000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+      "seed": 0,
+      "seconds": 65.42,
+      "batch_size": 256
+    },
+    "val": {
+      "model": "dinov2_vitb14_reg",
+      "variant": "vexact_s0",
+      "recipe": "t2v1: [CLS (or pooled) after final norm, mean of patch tokens after final norm]",
+      "amp": "bf16",
+      "dtype": "float16",
+      "sources": {
+        "healed_run": "/home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0",
+        "weights_sha256": {
+          "ckpt/step0.pt": "9af31bab06bf244cc15b4aefc5d505b1d8e09b5add128a920730a3436a13aa1f",
+          "ckpt/step100.pt": "a16d88bcc4d1ff6a452a4ad4d68518c6d327b271ea88c2047b9e0cfbe15aadd7",
+          "ckpt/step300.pt": "178557e709970e4ec3cf0bd9aae5259c486d0e9b06ae80b7c479e6f603970525",
+          "ckpt/step780.pt": "7551f6f294c4032b2467b53c850276b43c94a2b417d241fb57b86f463d39f7e4"
+        }
+      },
+      "img_size": 224,
+      "split": "val",
+      "n": 50000,
+      "dim": 1536,
+      "feature_kind": "cls",
+      "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+      "seed": 0,
+      "seconds": 25.63,
+      "batch_size": 256
+    }
+  },
+  "probe_settings": {
+    "grid": [
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "refine": true,
+    "holdout_frac": 0.1,
+    "seed": 0,
+    "solver": {
+      "max_iter": 1000,
+      "history_size": 20,
+      "tol_grad": 1e-06
+    },
+    "tf32": false
+  },
+  "timing": {
+    "build vexact_s0": 2.31,
+    "extract vexact_s0 bank": 65.42,
+    "extract vexact_s0 val": 25.63,
+    "probe vexact_s0": 194.75
+  },
+  "git": {
+    "git_hash": "7d05b6439cdae616f2f51441d1f078bb08a6c28d",
+    "git_dirty": true
+  },
+  "env": {
+    "python": "3.10.12",
+    "platform": "Linux-5.15.0-202-generic-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "device": "cuda",
+    "gpu": "NVIDIA H200",
+    "cuda": "12.8"
+  }
+}
