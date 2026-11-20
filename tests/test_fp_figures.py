@@ -229,7 +229,13 @@ def test_fourier_dry_run_and_redraw(tmp_path):
     again = FOU.main(["--from-maps", str(maps), "--out", str(tmp_path / "redraw"),
                       "--results", str(tmp_path / "redraw_results")])
     assert_figure(again)
-    assert again["numbers"] == pytest.approx(s)
+    # older pytest (the VM's) refuses approx on a dict holding a list, so compare list values on their own
+    lists = {k for k, v in s.items() if isinstance(v, (list, tuple))}
+    assert set(again["numbers"]) == set(s)
+    assert {k: v for k, v in again["numbers"].items() if k not in lists} == pytest.approx(
+        {k: v for k, v in s.items() if k not in lists})
+    for k in lists:
+        assert list(again["numbers"][k]) == pytest.approx(list(s[k]))
 
 
 # ---------------------------------------------------------------------------------------------- teaser
