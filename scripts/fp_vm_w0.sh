@@ -48,7 +48,8 @@ DELETE_SHARDS="${DELETE_SHARDS:-1}"
 MODELS="${MODELS:-dinov2_vitb14_reg,dinov2_vitl14_reg,dinov2_vits14_reg,deit3_b16,siglip2_b16}"
 SMOKE_HEAL_CMD="${SMOKE_HEAL_CMD:-python scripts/fp_heal.py --dry-run --device cuda --out runs/final/_smoke/heal}"
 SMOKE_EVAL_CMD="${SMOKE_EVAL_CMD:-python scripts/fp_eval.py --dry-run --device cuda --out runs/final/_smoke/eval}"
-TIMING_CMD="${TIMING_CMD:-python scripts/fp_heal.py --model {model} --methods mirror_exact --seed {seed} --max-steps {steps} --out {out}}"
+# not ${TIMING_CMD:-default}: the default's first } (in {model}) would end the expansion and append the rest
+[ -n "${TIMING_CMD:-}" ] || TIMING_CMD='python scripts/fp_heal.py --model {model} --methods mirror_exact --seed {seed} --max-steps {steps} --out {out}'
 TIMING_MODELS="${TIMING_MODELS:-dinov2_vitb14_reg deit3_b16 dinov2_vitl14_reg}"
 TIMING_STEPS="${TIMING_STEPS:-780}"; FULL_STEPS="${FULL_STEPS:-780}"
 TIMING_UNITS="${TIMING_UNITS:-dinov2_vitb14_reg=1,deit3_b16=1,dinov2_vitl14_reg=3}"
