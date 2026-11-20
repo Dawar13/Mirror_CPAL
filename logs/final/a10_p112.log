@@ -1,0 +1,248 @@
+== start 2026-11-20 08:49:12 job a10_p112 pid 39702 host jl-vm-581628
+== cmd python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants original --mask-eq --out runs/final/A10/p112 && python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants "" --healed-run vexact_s0=runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0 --mask-eq --out runs/final/A10/p112 && touch runs/final/A10/p112/DONE
+[08:49:13] Tier 2 ADE20K: model dinov2_vitb14_reg, variants ['original'], out runs/final/A10/p112, device cuda, commit 21f6ef2682 (dirty)
+[08:49:13] start: data
+[08:49:13] done:  data (0.0 s)
+[08:49:13] data: {'train': 20210, 'val': 2000} images in /home/Mirror_CPAL/cache/ade20k
+[08:49:13] start: load
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[08:49:16] done:  load (2.7 s)
+[08:49:16] adapter: 448 px, grid (32, 32), depth 12, d 768, prefix tokens 5
+[08:49:16] === original: original
+[08:49:16] start: build original
+[08:49:16] done:  build original (0.0 s)
+[08:49:16] start: train original
+[08:50:11]   iter 100/8000: loss 4.4353, lr 0.000333, 30 img/s
+[08:50:58]   iter 200/8000: loss 2.0646, lr 0.000667, 34 img/s
+[08:51:41]   iter 300/8000: loss 1.0961, lr 0.001, 38 img/s
+[08:52:24]   iter 400/8000: loss 0.9205, lr 0.001, 37 img/s
+[08:53:02]   iter 500/8000: loss 0.8278, lr 0.000998, 42 img/s
+[08:53:44]   iter 600/8000: loss 0.8123, lr 0.000996, 38 img/s
+[08:54:24]   iter 700/8000: loss 0.7613, lr 0.000993, 40 img/s
+[08:55:05]   iter 800/8000: loss 0.7564, lr 0.00099, 38 img/s
+[08:55:45]   iter 900/8000: loss 0.7874, lr 0.000985, 40 img/s
+[08:56:25]   iter 1000/8000: loss 0.7631, lr 0.00098, 40 img/s
+[08:57:04]   iter 1100/8000: loss 0.7642, lr 0.000974, 41 img/s
+[08:57:45]   iter 1200/8000: loss 0.7323, lr 0.000967, 38 img/s
+[08:58:32]   iter 1300/8000: loss 0.7313, lr 0.000959, 34 img/s
+[08:59:15]   iter 1400/8000: loss 0.6905, lr 0.000951, 37 img/s
+[08:59:59]   iter 1500/8000: loss 0.7016, lr 0.000941, 37 img/s
+[09:00:40]   iter 1600/8000: loss 0.6931, lr 0.000931, 39 img/s
+[09:01:23]   iter 1700/8000: loss 0.6878, lr 0.000921, 37 img/s
+[09:02:02]   iter 1800/8000: loss 0.7082, lr 0.000909, 41 img/s
+[09:02:46]   iter 1900/8000: loss 0.6790, lr 0.000897, 36 img/s
+[09:03:24]   iter 2000/8000: loss 0.6983, lr 0.000885, 43 img/s
+[09:04:04]   iter 2100/8000: loss 0.6963, lr 0.000871, 40 img/s
+[09:04:43]   iter 2200/8000: loss 0.7153, lr 0.000857, 40 img/s
+[09:05:27]   iter 2300/8000: loss 0.6788, lr 0.000843, 37 img/s
+[09:05:58]   iter 2400/8000: loss 0.6697, lr 0.000828, 52 img/s
+[09:06:30]   iter 2500/8000: loss 0.6882, lr 0.000812, 50 img/s
+[09:06:57]   iter 2600/8000: loss 0.6519, lr 0.000796, 58 img/s
+[09:07:27]   iter 2700/8000: loss 0.6383, lr 0.000779, 55 img/s
+[09:07:54]   iter 2800/8000: loss 0.6327, lr 0.000762, 58 img/s
+[09:08:26]   iter 2900/8000: loss 0.6489, lr 0.000744, 51 img/s
+[09:08:55]   iter 3000/8000: loss 0.6541, lr 0.000726, 56 img/s
+[09:09:23]   iter 3100/8000: loss 0.6392, lr 0.000708, 55 img/s
+[09:09:52]   iter 3200/8000: loss 0.6473, lr 0.000689, 55 img/s
+[09:10:21]   iter 3300/8000: loss 0.6515, lr 0.00067, 56 img/s
+[09:10:47]   iter 3400/8000: loss 0.6426, lr 0.000651, 61 img/s
+[09:11:24]   iter 3500/8000: loss 0.6575, lr 0.000631, 43 img/s
+[09:12:00]   iter 3600/8000: loss 0.6576, lr 0.000611, 44 img/s
+[09:12:38]   iter 3700/8000: loss 0.6468, lr 0.000591, 42 img/s
+[09:13:17]   iter 3800/8000: loss 0.6413, lr 0.000571, 42 img/s
+[09:13:54]   iter 3900/8000: loss 0.6066, lr 0.000551, 43 img/s
+[09:14:33]   iter 4000/8000: loss 0.6048, lr 0.000531, 42 img/s
+[09:15:11]   iter 4100/8000: loss 0.6196, lr 0.00051, 42 img/s
+[09:15:48]   iter 4200/8000: loss 0.6248, lr 0.00049, 43 img/s
+[09:16:26]   iter 4300/8000: loss 0.6129, lr 0.00047, 43 img/s
+[09:17:03]   iter 4400/8000: loss 0.6175, lr 0.000449, 42 img/s
+[09:17:42]   iter 4500/8000: loss 0.6121, lr 0.000429, 42 img/s
+[09:18:20]   iter 4600/8000: loss 0.6105, lr 0.000409, 42 img/s
+[09:18:59]   iter 4700/8000: loss 0.6186, lr 0.000389, 42 img/s
+[09:19:37]   iter 4800/8000: loss 0.6173, lr 0.000369, 42 img/s
+[09:20:16]   iter 4900/8000: loss 0.6279, lr 0.00035, 41 img/s
+[09:21:01]   iter 5000/8000: loss 0.6225, lr 0.00033, 36 img/s
+[09:21:47]   iter 5100/8000: loss 0.6013, lr 0.000311, 34 img/s
+[09:22:34]   iter 5200/8000: loss 0.5961, lr 0.000292, 34 img/s
+[09:23:16]   iter 5300/8000: loss 0.5894, lr 0.000274, 38 img/s
+[09:24:03]   iter 5400/8000: loss 0.5877, lr 0.000256, 34 img/s
+[09:24:50]   iter 5500/8000: loss 0.6031, lr 0.000238, 34 img/s
+[09:25:36]   iter 5600/8000: loss 0.6031, lr 0.000221, 35 img/s
+[09:26:22]   iter 5700/8000: loss 0.5996, lr 0.000205, 34 img/s
+[09:27:12]   iter 5800/8000: loss 0.5871, lr 0.000188, 33 img/s
+[09:28:00]   iter 5900/8000: loss 0.6040, lr 0.000173, 33 img/s
+[09:28:49]   iter 6000/8000: loss 0.5839, lr 0.000158, 33 img/s
+[09:29:37]   iter 6100/8000: loss 0.6149, lr 0.000143, 33 img/s
+[09:30:26]   iter 6200/8000: loss 0.5968, lr 0.000129, 33 img/s
+[09:31:06]   iter 6300/8000: loss 0.5937, lr 0.000116, 40 img/s
+[09:31:43]   iter 6400/8000: loss 0.5797, lr 0.000103, 44 img/s
+[09:32:21]   iter 6500/8000: loss 0.5892, lr 9.09e-05, 42 img/s
+[09:32:59]   iter 6600/8000: loss 0.5721, lr 7.95e-05, 42 img/s
+[09:33:36]   iter 6700/8000: loss 0.5714, lr 6.88e-05, 44 img/s
+[09:34:16]   iter 6800/8000: loss 0.5836, lr 5.88e-05, 39 img/s
+[09:34:57]   iter 6900/8000: loss 0.5867, lr 4.96e-05, 40 img/s
+[09:35:37]   iter 7000/8000: loss 0.5846, lr 4.11e-05, 40 img/s
+[09:36:16]   iter 7100/8000: loss 0.5786, lr 3.34e-05, 41 img/s
+[09:36:54]   iter 7200/8000: loss 0.5742, lr 2.65e-05, 43 img/s
+[09:37:34]   iter 7300/8000: loss 0.5835, lr 2.03e-05, 39 img/s
+[09:38:15]   iter 7400/8000: loss 0.5778, lr 1.5e-05, 39 img/s
+[09:38:54]   iter 7500/8000: loss 0.5852, lr 1.04e-05, 41 img/s
+[09:39:34]   iter 7600/8000: loss 0.5728, lr 6.68e-06, 39 img/s
+[09:40:15]   iter 7700/8000: loss 0.5766, lr 3.77e-06, 40 img/s
+[09:40:55]   iter 7800/8000: loss 0.5772, lr 1.68e-06, 40 img/s
+[09:41:34]   iter 7900/8000: loss 0.5783, lr 4.24e-07, 41 img/s
+[09:42:14]   iter 8000/8000: loss 0.5774, lr 4.16e-11, 40 img/s
+[09:42:16] done:  train original (3180.0 s)
+[09:42:16] start: evaluate original
+[09:42:35]   eval 250/2000 images, 13.4 img/s
+[09:42:52]   eval 500/2000 images, 13.8 img/s
+[09:43:10]   eval 750/2000 images, 14.0 img/s
+[09:43:27]   eval 1000/2000 images, 14.1 img/s
+[09:43:43]   eval 1250/2000 images, 14.3 img/s
+[09:44:00]   eval 1500/2000 images, 14.4 img/s
+[09:44:17]   eval 1750/2000 images, 14.5 img/s
+[09:44:34]   eval 2000/2000 images, 14.5 img/s
+[09:44:34] done:  evaluate original (138.3 s)
+[09:44:34]   original: mIoU 47.59, aAcc 80.98, mAcc 59.47 (2000 images, 3704 windows)
+[09:44:34] start: mask equivariance original
+[09:44:36] structure from /home/Mirror_CPAL/runs/x2/perlayer_reg_s0/results/e1_operators.npz: depth 12, d 768, h 3072
+[09:46:07]   mask equivariance 250/2000 images, 2.7 img/s
+[09:47:44]   mask equivariance 500/2000 images, 2.7 img/s
+[09:49:25]   mask equivariance 750/2000 images, 2.6 img/s
+[09:51:04]   mask equivariance 1000/2000 images, 2.6 img/s
+[09:52:10]   mask equivariance 1250/2000 images, 2.8 img/s
+[09:52:56]   mask equivariance 1500/2000 images, 3.0 img/s
+[09:53:33]   mask equivariance 1750/2000 images, 3.3 img/s
+[09:54:18]   mask equivariance 2000/2000 images, 3.4 img/s
+[09:54:20]   original: mask equivariance (fp32, 2000 images): raw head 95.0309% (24232697 pixels differ), symmetrised head 94.7413% (25644750 differ)
+[09:54:20] done:  mask equivariance original (585.3 s)
+[09:54:20] done in 65.1 min; 1 rows in runs/final/A10/p112/t2_ade20k.csv
+[09:54:22] Tier 2 ADE20K: model dinov2_vitb14_reg, variants ['vexact_s0'], out runs/final/A10/p112, device cuda, commit 21f6ef2682 (dirty)
+[09:54:22] start: data
+[09:54:22] done:  data (0.0 s)
+[09:54:22] data: {'train': 20210, 'val': 2000} images in /home/Mirror_CPAL/cache/ade20k
+[09:54:22] start: load
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[09:54:23] done:  load (1.6 s)
+[09:54:23] adapter: 448 px, grid (32, 32), depth 12, d 768, prefix tokens 5
+[09:54:23] === vexact_s0: healed model from a run directory (mirror.heal_structured.load_healed_model)
+[09:54:24] start: build vexact_s0
+[09:54:28]   vexact_s0: span exactness at 448 px on 8 check images 4.20e-06 (bar 1e-4): PASS
+[09:54:28]   vexact_s0: loaded /home/Mirror_CPAL/runs/MUST-09/dinov2_vitb14_reg/mirror_exact/s0 (load_healed_model); exact operator: loader info['A_star']; position grid: position grid 16 x 16 interpolated to 32 x 32 and re-projected with A*; every other tensor as loaded
+[09:54:28] done:  build vexact_s0 (4.1 s)
+[09:54:28] start: train vexact_s0
+[09:54:51]   iter 100/8000: loss 4.3890, lr 0.000333, 71 img/s
+[09:55:12]   iter 200/8000: loss 1.9528, lr 0.000667, 75 img/s
+[09:55:32]   iter 300/8000: loss 1.0658, lr 0.001, 83 img/s
+[09:55:56]   iter 400/8000: loss 0.9058, lr 0.001, 64 img/s
+[09:56:26]   iter 500/8000: loss 0.8172, lr 0.000998, 54 img/s
+[09:56:55]   iter 600/8000: loss 0.7996, lr 0.000996, 54 img/s
+[09:57:25]   iter 700/8000: loss 0.7523, lr 0.000993, 54 img/s
+[09:57:54]   iter 800/8000: loss 0.7509, lr 0.00099, 54 img/s
+[09:58:29]   iter 900/8000: loss 0.7855, lr 0.000985, 47 img/s
+[09:59:01]   iter 1000/8000: loss 0.7599, lr 0.00098, 50 img/s
+[09:59:31]   iter 1100/8000: loss 0.7604, lr 0.000974, 53 img/s
+[09:59:59]   iter 1200/8000: loss 0.7338, lr 0.000967, 56 img/s
+[10:00:22]   iter 1300/8000: loss 0.7229, lr 0.000959, 71 img/s
+[10:00:54]   iter 1400/8000: loss 0.6900, lr 0.000951, 50 img/s
+[10:01:27]   iter 1500/8000: loss 0.6981, lr 0.000941, 49 img/s
+[10:02:00]   iter 1600/8000: loss 0.6884, lr 0.000931, 48 img/s
+[10:02:33]   iter 1700/8000: loss 0.6846, lr 0.000921, 48 img/s
+[10:03:04]   iter 1800/8000: loss 0.7061, lr 0.000909, 51 img/s
+[10:03:35]   iter 1900/8000: loss 0.6764, lr 0.000897, 52 img/s
+[10:03:59]   iter 2000/8000: loss 0.6981, lr 0.000885, 66 img/s
+[10:04:20]   iter 2100/8000: loss 0.6925, lr 0.000871, 76 img/s
+[10:04:33]   iter 2200/8000: loss 0.7122, lr 0.000857, 124 img/s
+[10:04:49]   iter 2300/8000: loss 0.6774, lr 0.000843, 99 img/s
+[10:05:11]   iter 2400/8000: loss 0.6667, lr 0.000828, 75 img/s
+[10:05:31]   iter 2500/8000: loss 0.6888, lr 0.000812, 78 img/s
+[10:05:52]   iter 2600/8000: loss 0.6479, lr 0.000796, 78 img/s
+[10:06:12]   iter 2700/8000: loss 0.6326, lr 0.000779, 79 img/s
+[10:06:34]   iter 2800/8000: loss 0.6285, lr 0.000762, 74 img/s
+[10:06:55]   iter 2900/8000: loss 0.6509, lr 0.000744, 74 img/s
+[10:07:17]   iter 3000/8000: loss 0.6537, lr 0.000726, 74 img/s
+[10:07:38]   iter 3100/8000: loss 0.6323, lr 0.000708, 74 img/s
+[10:08:00]   iter 3200/8000: loss 0.6445, lr 0.000689, 74 img/s
+[10:08:21]   iter 3300/8000: loss 0.6513, lr 0.00067, 77 img/s
+[10:08:44]   iter 3400/8000: loss 0.6433, lr 0.000651, 68 img/s
+[10:09:14]   iter 3500/8000: loss 0.6607, lr 0.000631, 55 img/s
+[10:09:42]   iter 3600/8000: loss 0.6560, lr 0.000611, 55 img/s
+[10:10:10]   iter 3700/8000: loss 0.6420, lr 0.000591, 59 img/s
+[10:10:31]   iter 3800/8000: loss 0.6408, lr 0.000571, 74 img/s
+[10:10:52]   iter 3900/8000: loss 0.6113, lr 0.000551, 76 img/s
+[10:11:14]   iter 4000/8000: loss 0.6075, lr 0.000531, 74 img/s
+[10:11:36]   iter 4100/8000: loss 0.6202, lr 0.00051, 74 img/s
+[10:11:57]   iter 4200/8000: loss 0.6209, lr 0.00049, 74 img/s
+[10:12:19]   iter 4300/8000: loss 0.6095, lr 0.00047, 74 img/s
+[10:12:32]   iter 4400/8000: loss 0.6153, lr 0.000449, 117 img/s
+[10:12:46]   iter 4500/8000: loss 0.6087, lr 0.000429, 115 img/s
+[10:13:08]   iter 4600/8000: loss 0.6060, lr 0.000409, 75 img/s
+[10:13:38]   iter 4700/8000: loss 0.6228, lr 0.000389, 52 img/s
+[10:14:09]   iter 4800/8000: loss 0.6171, lr 0.000369, 52 img/s
+[10:14:40]   iter 4900/8000: loss 0.6256, lr 0.00035, 52 img/s
+[10:15:06]   iter 5000/8000: loss 0.6200, lr 0.00033, 62 img/s
+[10:15:37]   iter 5100/8000: loss 0.5980, lr 0.000311, 52 img/s
+[10:16:07]   iter 5200/8000: loss 0.5976, lr 0.000292, 52 img/s
+[10:16:32]   iter 5300/8000: loss 0.5887, lr 0.000274, 66 img/s
+[10:16:57]   iter 5400/8000: loss 0.5838, lr 0.000256, 62 img/s
+[10:17:23]   iter 5500/8000: loss 0.5996, lr 0.000238, 61 img/s
+[10:17:50]   iter 5600/8000: loss 0.5991, lr 0.000221, 59 img/s
+[10:18:17]   iter 5700/8000: loss 0.5968, lr 0.000205, 60 img/s
+[10:18:44]   iter 5800/8000: loss 0.5864, lr 0.000188, 61 img/s
+[10:19:11]   iter 5900/8000: loss 0.5997, lr 0.000173, 58 img/s
+[10:19:49]   iter 6000/8000: loss 0.5822, lr 0.000158, 42 img/s
+[10:20:27]   iter 6100/8000: loss 0.6133, lr 0.000143, 42 img/s
+[10:20:56]   iter 6200/8000: loss 0.5939, lr 0.000129, 56 img/s
+[10:21:21]   iter 6300/8000: loss 0.5936, lr 0.000116, 63 img/s
+[10:21:47]   iter 6400/8000: loss 0.5771, lr 0.000103, 61 img/s
+[10:22:14]   iter 6500/8000: loss 0.5863, lr 9.09e-05, 59 img/s
+[10:22:41]   iter 6600/8000: loss 0.5677, lr 7.95e-05, 59 img/s
+[10:23:08]   iter 6700/8000: loss 0.5694, lr 6.88e-05, 61 img/s
+[10:23:34]   iter 6800/8000: loss 0.5846, lr 5.88e-05, 60 img/s
+[10:24:01]   iter 6900/8000: loss 0.5867, lr 4.96e-05, 60 img/s
+[10:24:28]   iter 7000/8000: loss 0.5834, lr 4.11e-05, 59 img/s
+[10:24:54]   iter 7100/8000: loss 0.5761, lr 3.34e-05, 61 img/s
+[10:25:20]   iter 7200/8000: loss 0.5714, lr 2.65e-05, 63 img/s
+[10:25:46]   iter 7300/8000: loss 0.5806, lr 2.03e-05, 62 img/s
+[10:26:13]   iter 7400/8000: loss 0.5769, lr 1.5e-05, 59 img/s
+[10:26:40]   iter 7500/8000: loss 0.5803, lr 1.04e-05, 59 img/s
+[10:27:06]   iter 7600/8000: loss 0.5680, lr 6.68e-06, 61 img/s
+[10:27:33]   iter 7700/8000: loss 0.5754, lr 3.77e-06, 60 img/s
+[10:28:00]   iter 7800/8000: loss 0.5761, lr 1.68e-06, 58 img/s
+[10:28:27]   iter 7900/8000: loss 0.5735, lr 4.24e-07, 58 img/s
+[10:28:54]   iter 8000/8000: loss 0.5745, lr 4.16e-11, 60 img/s
+[10:28:54] done:  train vexact_s0 (2066.5 s)
+[10:28:54] start: evaluate vexact_s0
+[10:29:09]   eval 250/2000 images, 17.6 img/s
+[10:29:22]   eval 500/2000 images, 18.2 img/s
+[10:29:38]   eval 750/2000 images, 17.2 img/s
+[10:29:53]   eval 1000/2000 images, 17.0 img/s
+[10:30:09]   eval 1250/2000 images, 16.8 img/s
+[10:30:24]   eval 1500/2000 images, 16.7 img/s
+[10:30:39]   eval 1750/2000 images, 16.7 img/s
+[10:30:54]   eval 2000/2000 images, 16.8 img/s
+[10:30:54] done:  evaluate vexact_s0 (119.4 s)
+[10:30:54]   vexact_s0: mIoU 47.16, aAcc 81.02, mAcc 58.89 (2000 images, 3704 windows)
+[10:30:54] start: mask equivariance vexact_s0
+[10:32:20]   mask equivariance 250/2000 images, 2.9 img/s
+[10:33:39]   mask equivariance 500/2000 images, 3.0 img/s
+[10:35:06]   mask equivariance 750/2000 images, 3.0 img/s
+[10:36:41]   mask equivariance 1000/2000 images, 2.9 img/s
+[10:38:16]   mask equivariance 1250/2000 images, 2.8 img/s
+[10:39:51]   mask equivariance 1500/2000 images, 2.8 img/s
+[10:41:24]   mask equivariance 1750/2000 images, 2.8 img/s
+[10:43:00]   mask equivariance 2000/2000 images, 2.8 img/s
+[10:43:01]   vexact_s0: mask equivariance (fp32, 2000 images): raw head 98.9771% (4988583 pixels differ), symmetrised head 99.9999% (415 differ)
+[10:43:01] done:  mask equivariance vexact_s0 (727.0 s)
+[10:43:01] done in 48.7 min; 2 rows in runs/final/A10/p112/t2_ade20k.csv
+== end rc=0 2026-11-20 10:43:02

@@ -1,0 +1,139 @@
+== timing 2026-11-20 08:38:12
+== alone: python scripts/fp_heal.py --spec jobs/heal/w0_timing_dinov2_vitb14_reg.yaml --max-steps 60 --out-root runs/final/_timing/dinov2_vitb14_reg_alone --queue-dir runs/final/_timing_queue
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[08:38:14] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[08:38:14] fp_heal: building mirror_exact (mirror_exact)
+[08:38:23] heal W0 s0: 1 students x 60 steps x 256 images (micro 128), warm-up 3, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[08:38:23] heal W0 s0:   mirror_exact: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.31711
+[08:38:31] heal W0 s0: step 20/60 (0.41 s/step, ETA 0.3 min): mirror_exact 3.56974
+[08:38:38] heal W0 s0: step 40/60 (0.38 s/step, ETA 0.1 min): mirror_exact 2.65666
+[08:38:51] heal W0 s0: step 60/60 (0.48 s/step, ETA 0.0 min): mirror_exact 2.55542
+[08:39:03] heal W0 s0: done 60 steps in 39.8 s; mirror_exact: held-out 7.31711 -> 2.65495
+[08:39:03] fp_heal: job w0_timing_dinov2_vitb14_reg s0 done in 0.8 min; outputs under /home/Mirror_CPAL/runs/final/_timing/dinov2_vitb14_reg_alone/w0/dinov2_vitb14_reg
+== alone: python scripts/fp_heal.py --spec jobs/heal/w0_timing_deit3_b16.yaml --max-steps 60 --out-root runs/final/_timing/deit3_b16_alone --queue-dir runs/final/_timing_queue
+[08:39:08] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[08:39:08] fp_heal: building mirror_exact (mirror_exact)
+[08:39:21] heal W0 s0: 1 students x 60 steps x 256 images (micro 128), warm-up 3, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[08:39:21] heal W0 s0:   mirror_exact: lr 0.0001, 85,759,488 trainable, 14 terms, targets symmetrised/symmetrised, held-out 5.99103
+[08:39:31] heal W0 s0: step 20/60 (0.54 s/step, ETA 0.4 min): mirror_exact 2.67972
+[08:39:39] heal W0 s0: step 40/60 (0.46 s/step, ETA 0.2 min): mirror_exact 2.34395
+[08:39:49] heal W0 s0: step 60/60 (0.48 s/step, ETA 0.0 min): mirror_exact 2.28174
+[08:39:55] heal W0 s0: done 60 steps in 34.2 s; mirror_exact: held-out 5.99103 -> 2.38647
+[08:39:55] fp_heal: job w0_timing_deit3_b16 s0 done in 0.8 min; outputs under /home/Mirror_CPAL/runs/final/_timing/deit3_b16_alone/w0/deit3_b16
+== alone: python scripts/fp_heal.py --spec jobs/heal/w0_timing_dinov2_vitl14_reg.yaml --max-steps 60 --out-root runs/final/_timing/dinov2_vitl14_reg_alone --queue-dir runs/final/_timing_queue
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[08:40:02] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[08:40:02] fp_heal: building mirror_exact (mirror_exact)
+[08:40:21] heal W0 s0: 1 students x 60 steps x 256 images (micro 64), warm-up 3, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[08:40:21] heal W0 s0:   mirror_exact: lr 0.0001, 303,082,496 trainable, 26 terms, targets symmetrised/symmetrised, held-out 14.63244
+[08:40:45] heal W0 s0: step 20/60 (1.19 s/step, ETA 0.8 min): mirror_exact 7.14918
+[08:41:06] heal W0 s0: step 40/60 (1.13 s/step, ETA 0.4 min): mirror_exact 4.94164
+[08:41:33] heal W0 s0: step 60/60 (1.20 s/step, ETA 0.0 min): mirror_exact 4.57795
+[08:41:59] heal W0 s0: done 60 steps in 95.8 s; mirror_exact: held-out 14.63244 -> 4.71939
+[08:41:59] fp_heal: job w0_timing_dinov2_vitl14_reg s0 done in 2.0 min; outputs under /home/Mirror_CPAL/runs/final/_timing/dinov2_vitl14_reg_alone/w0/dinov2_vitl14_reg
+== concurrent 1: python scripts/fp_heal.py --spec jobs/heal/w0_timing_dinov2_vitb14_reg.yaml --max-steps 60 --out-root runs/final/_timing/dinov2_vitb14_reg_concurrent1 --queue-dir runs/final/_timing_queue
+== concurrent 2: python scripts/fp_heal.py --spec jobs/heal/w0_timing_dinov2_vitb14_reg.yaml --max-steps 60 --out-root runs/final/_timing/dinov2_vitb14_reg_concurrent2 --queue-dir runs/final/_timing_queue
+== concurrent 3: python scripts/fp_heal.py --spec jobs/heal/w0_timing_dinov2_vitb14_reg.yaml --max-steps 60 --out-root runs/final/_timing/dinov2_vitb14_reg_concurrent3 --queue-dir runs/final/_timing_queue
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[08:42:02] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[08:42:02] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[08:42:02] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[08:42:02] fp_heal: building mirror_exact (mirror_exact)
+[08:42:02] fp_heal: building mirror_exact (mirror_exact)
+[08:42:02] fp_heal: building mirror_exact (mirror_exact)
+[08:42:20] heal W0 s0: 1 students x 60 steps x 256 images (micro 128), warm-up 3, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[08:42:20] heal W0 s0:   mirror_exact: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.31711
+[08:42:20] heal W0 s0: 1 students x 60 steps x 256 images (micro 128), warm-up 3, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[08:42:20] heal W0 s0:   mirror_exact: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.31711
+[08:42:20] heal W0 s0: 1 students x 60 steps x 256 images (micro 128), warm-up 3, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[08:42:20] heal W0 s0:   mirror_exact: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.31711
+[08:42:46] heal W0 s0: step 20/60 (1.29 s/step, ETA 0.9 min): mirror_exact 3.57196
+[08:42:46] heal W0 s0: step 20/60 (1.30 s/step, ETA 0.9 min): mirror_exact 3.57076
+[08:42:46] heal W0 s0: step 20/60 (1.30 s/step, ETA 0.9 min): mirror_exact 3.57350
+[08:43:09] heal W0 s0: step 40/60 (1.23 s/step, ETA 0.4 min): mirror_exact 2.65727
+[08:43:10] heal W0 s0: step 40/60 (1.24 s/step, ETA 0.4 min): mirror_exact 2.65754
+[08:43:10] heal W0 s0: step 40/60 (1.23 s/step, ETA 0.4 min): mirror_exact 2.65771
+[08:43:30] heal W0 s0: step 60/60 (1.16 s/step, ETA 0.0 min): mirror_exact 2.55574
+[08:43:31] heal W0 s0: step 60/60 (1.17 s/step, ETA 0.0 min): mirror_exact 2.55597
+[08:43:31] heal W0 s0: step 60/60 (1.17 s/step, ETA 0.0 min): mirror_exact 2.55578
+[08:43:45] heal W0 s0: done 60 steps in 84.2 s; mirror_exact: held-out 7.31711 -> 2.65522
+[08:43:45] fp_heal: job w0_timing_dinov2_vitb14_reg s0 done in 1.7 min; outputs under /home/Mirror_CPAL/runs/final/_timing/dinov2_vitb14_reg_concurrent1/w0/dinov2_vitb14_reg
+[08:43:46] heal W0 s0: done 60 steps in 84.6 s; mirror_exact: held-out 7.31711 -> 2.65569
+[08:43:46] heal W0 s0: done 60 steps in 84.7 s; mirror_exact: held-out 7.31711 -> 2.65541
+[08:43:46] fp_heal: job w0_timing_dinov2_vitb14_reg s0 done in 1.7 min; outputs under /home/Mirror_CPAL/runs/final/_timing/dinov2_vitb14_reg_concurrent3/w0/dinov2_vitb14_reg
+[08:43:46] fp_heal: job w0_timing_dinov2_vitb14_reg s0 done in 1.7 min; outputs under /home/Mirror_CPAL/runs/final/_timing/dinov2_vitb14_reg_concurrent2/w0/dinov2_vitb14_reg
+run	model	seconds	rc
+alone	dinov2_vitb14_reg	51.847	0
+alone	deit3_b16	52.557	0
+alone	dinov2_vitl14_reg	123.303	0
+concurrent1	dinov2_vitb14_reg	106.380	0
+concurrent3	dinov2_vitb14_reg	106.783	0
+concurrent2	dinov2_vitb14_reg	106.861	0
+concurrent_all	dinov2_vitb14_reg	106.867	0
+{
+  "hours_per_unit": 0.3112540740740741,
+  "concurrency": 3.0,
+  "hours_per_unit_alone": 0.14696861111111112,
+  "throughput_gain": 1.4133774165714623,
+  "alone_hours_per_full_heal": {
+    "dinov2_vitb14_reg": 0.14696861111111112,
+    "deit3_b16": 0.12859916666666668,
+    "dinov2_vitl14_reg": 0.35368416666666663
+  },
+  "concurrent_hours_per_full_heal": [
+    0.31028333333333336,
+    0.31192861111111114,
+    0.31155027777777783
+  ],
+  "batch_hours": 0.3119519444444445,
+  "units": {
+    "dinov2_vitb14_reg": 1.0,
+    "deit3_b16": 1.0,
+    "dinov2_vitl14_reg": 3.0
+  },
+  "measured_unit_ratio": {
+    "dinov2_vitb14_reg": 1.0,
+    "deit3_b16": 0.8750111040339302,
+    "dinov2_vitl14_reg": 2.406528604936428
+  },
+  "timing_steps": 60,
+  "full_steps": 780,
+  "estimate": {
+    "runs/final/_timing/dinov2_vitb14_reg_alone": "wall 51.8 s + 720 steps x 0.663 s",
+    "runs/final/_timing/deit3_b16_alone": "wall 52.6 s + 720 steps x 0.570 s",
+    "runs/final/_timing/dinov2_vitl14_reg_alone": "wall 123.3 s + 720 steps x 1.597 s",
+    "runs/final/_timing/dinov2_vitb14_reg_concurrent1": "wall 106.4 s + 720 steps x 1.404 s",
+    "runs/final/_timing/dinov2_vitb14_reg_concurrent3": "wall 106.8 s + 720 steps x 1.411 s",
+    "runs/final/_timing/dinov2_vitb14_reg_concurrent2": "wall 106.9 s + 720 steps x 1.409 s"
+  },
+  "failed_runs": [],
+  "note": "wall time of a full heal = the timing run's wall time (start-up counted once) + (full_steps - timing_steps) x the measured seconds per training step; the runner uses hours_per_unit / concurrency as the wall time of one heal-unit when 3 heals run at once",
+  "date_utc": "2026-11-20T08:43:46Z"
+}

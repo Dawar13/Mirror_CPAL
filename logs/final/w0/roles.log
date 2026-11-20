@@ -1,0 +1,36 @@
+== roles 2026-11-20 08:32:33
+role                                images   px decoded GB shards download GB  note
+fit3                                  2000  224       0.30      3         1.5  about 2 to 4 shards (estimate)
+heal_ext                            200000  256      39.32     86        43.0  estimate: the smallest class has about 2.5 images per shard (average 4.4)
+coco                                  2000  224       0.30      2         1.0  first 2 COCO train shards (about 2,930 rows each)
+stream_train                       1281167  224       0.00    294       147.0  streamed, nothing decoded is stored; with delete_after about 2 shards (1 GB) on disk at a time beyond those already cached; materialised it would take 192.9 GB
+stream_train_index                 1281167    0       0.03      0         0.0  labels and IDs only (label columns read remotely)
+fit0..fit2 + bank (existing)        106000  224      15.96      -           -  existing cache, reused
+healval + heal (existing)           105000  256      20.64      -           -  existing cache, reused
+msel (existing)                      10000  224       1.51      -           -  existing cache, reused
+val (existing)                       50000  224       7.53      -           -  existing cache, reused
+new decoded caches: 39.9 GB; their shard downloads: about 46 GB (freed with --delete-shards once each role is complete)
+[08:32:57] fit3: 2000 images from 3 shards (data/train-00092-of-00294.parquet .. data/train-00094-of-00294.parquet), 224 px, about 0.30 GB decoded
+[08:33:10] fit3_224_uint8.npy: shard 1/3 data/train-00092-of-00294.parquet (667 images; 51 images/s)
+[08:33:15] fit3_224_uint8.npy: shard 2/3 data/train-00093-of-00294.parquet (684 images; 75 images/s)
+[08:33:21] fit3_224_uint8.npy: shard 3/3 data/train-00094-of-00294.parquet (649 images; 83 images/s)
+[08:33:21] fit3: complete, selection sha256 368e1b391ae5a375
+[08:33:23] coco: 2000 images from 2 shards (data/train-00000-of-00040-67e35002d152155c.parquet .. data/train-00001-of-00040-2c2b33b9504aa843.parquet), 224 px, about 0.30 GB decoded
+[08:33:31] coco224_uint8.npy: shard 1/2 data/train-00000-of-00040-67e35002d152155c.parquet (1020 images; 128 images/s)
+[08:33:37] coco224_uint8.npy: shard 2/2 data/train-00001-of-00040-2c2b33b9504aa843.parquet (980 images; 146 images/s)
+[08:33:37] coco: complete, selection sha256 401493be3ec4465f
+fit3: n=2000 shards=3 sha256=368e1b391ae5a375 parity={'checked': 32, 'identical': True}
+coco: n=2000 shards=2 sha256=401493be3ec4465f parity={'checked': 32, 'identical': True}
+[08:37:22] stream_train index: 1281167 images in 294 shards
+fit0         n=    2000 unique=    2000 per class 2..2
+fit1         n=    2000 unique=    2000 per class 2..2
+fit2         n=    2000 unique=    2000 per class 2..2
+bank         n=  100000 unique=  100000 per class 100..100
+healval      n=    5000 unique=    5000 per class 5..5
+heal         n=  100000 unique=  100000 per class 100..100
+msel         n=   10000 unique=   10000 per class 10..10
+val          n=   50000 unique=   50000 per class 50..50
+fit3         n=    2000 unique=    2000 per class 2..2
+coco         n=    2000 unique=    2000 per class 0..0
+stream_train n= 1281167 unique= 1281167 per class 732..1300
+PASS -> /home/Mirror_CPAL/results/data_check/final_roles.json

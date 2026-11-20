@@ -1,0 +1,151 @@
+{
+ "figure": "fig_stability",
+ "git": "c792f4d631044d3e9c5cf4f418c18a36cde2f912",
+ "argv": [],
+ "dry_run": false,
+ "inputs": {
+  "results/A02/spectra.npz": "d3df8ab4498fc2ead60daf8977388e8160aa53059b78731ae14c72e398e2fc93",
+  "results/A02/pairs.csv": "8a8644bc8b0ea7cee4c02ee608cde4686c6277e0cf38bc8664c44f42e65decb9",
+  "results/A02/stability.csv": "bf430eb86c2182cb735429b064f50f9891c24d7b8c898b7a54164141444372e1",
+  "results/A02/metrics.json": "1103f659de7fb9bf3c1cc27132ac7384b12c129b73fd0901394250f345bf7623"
+ },
+ "bars": {
+  "A02-2": 0.8,
+  "A02-3": 0.7
+ },
+ "verdicts": {
+  "A02-2": "PASS",
+  "A02-3": "PASS"
+ },
+ "values": {
+  "spectra": {
+   "fit0": {
+    "d_minus": 68,
+    "n_pos": 699,
+    "n_neg": 69,
+    "max_abs": 2.0008277484266657
+   },
+   "fit1": {
+    "d_minus": 69,
+    "n_pos": 698,
+    "n_neg": 70,
+    "max_abs": 1.9876366313125686
+   },
+   "fit2": {
+    "d_minus": 68,
+    "n_pos": 699,
+    "n_neg": 69,
+    "max_abs": 1.9959080320400977
+   },
+   "fit3": {
+    "d_minus": 68,
+    "n_pos": 699,
+    "n_neg": 69,
+    "max_abs": 1.9984255939963713
+   },
+   "coco": {
+    "d_minus": 73,
+    "n_pos": 695,
+    "n_neg": 73,
+    "max_abs": 1.9352759442649203
+   }
+  },
+  "order": [
+   "fit0",
+   "fit1",
+   "fit2",
+   "fit3",
+   "coco"
+  ],
+  "group": {
+   "fit0": "imagenet",
+   "fit1": "imagenet",
+   "fit2": "imagenet",
+   "fit3": "imagenet",
+   "coco": "coco"
+  },
+  "weighted_agreement": [
+   [
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   [
+    0.998958135407624,
+    null,
+    null,
+    null,
+    null
+   ],
+   [
+    0.9989827539081182,
+    0.9989653075586632,
+    null,
+    null,
+    null
+   ],
+   [
+    0.9989783105239668,
+    0.9989894845238264,
+    0.999002887262986,
+    null,
+    null
+   ],
+   [
+    0.9910222961180856,
+    0.9911670284821332,
+    0.9913899625943832,
+    0.9913680258142448,
+    null
+   ]
+  ],
+  "twin_mean": [
+   [
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   [
+    0.9561957647067052,
+    null,
+    null,
+    null,
+    null
+   ],
+   [
+    0.953277331877316,
+    0.9551539240698848,
+    null,
+    null,
+    null
+   ],
+   [
+    0.9697144747334016,
+    0.9607872428203814,
+    0.964944147789835,
+    null,
+    null
+   ],
+   [
+    0.8909279450877321,
+    0.8875332297769756,
+    0.8958458985143829,
+    0.8900000203097007,
+    null
+   ]
+  ]
+ },
+ "floor_rel": 1e-05,
+ "notes": [
+  "fit0: 1 odd eigenvalues below 1e-05 of the largest are not drawn",
+  "fit1: 2 odd eigenvalues below 1e-05 of the largest are not drawn",
+  "fit2: 2 odd eigenvalues below 1e-05 of the largest are not drawn",
+  "fit3: 2 odd eigenvalues below 1e-05 of the largest are not drawn",
+  "coco: 1 even eigenvalues below 1e-05 of the largest are not drawn"
+ ],
+ "caption": "Stability of the operator and the twins across 5 independent fits of dinov2_vitb14_reg (disjoint ImageNet-train fit sets and a COCO fit). (a) Eigenvalues of the span matrix S, whose signs give the stream operator, sorted by magnitude: positive eigenvalues are even directions, negative ones odd directions ($d_-$: fit set 0 68, fit set 1 69, fit set 2 68, fit set 3 68, COCO 73). (b) Energy-weighted agreement of the odd subspaces and (c) share of the strong twin pairs in blocks 1 to 6 that the other fit also pairs, each the mean of both directions. Outlined cells fall below the pre-registered bar (0.8 and 0.7; the rules cover pairs of ImageNet fits only). Rule A02-2: PASS; rule A02-3: PASS."
+}

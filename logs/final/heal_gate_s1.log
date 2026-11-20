@@ -1,0 +1,65 @@
+== start 2026-11-20 08:48:42 job heal_gate_s1 pid 39322 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/gate_s1.yaml --resume
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[08:48:45] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[08:48:46] fp_heal: building mirror_exact_astar (mirror_exact)
+[08:48:50] fp_heal: building svdllm (svdllm)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[08:50:01] svdllm {'damp': 1e-06}: matrices 64,555,008 + basis 0 = 64,555,008 against budget 64,554,464 (gap +0.001%; within the rule (0 <= gap <= 1%))
+[08:51:38] heal A01 s1: 2 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 2 target modes, teacher on x and mirror(x)
+[08:51:38] heal A01 s1:   mirror_exact_astar: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.31711
+[08:51:38] heal A01 s1:   svdllm: lr 0.0001, 65,291,520 trainable, 14 terms, targets symmetrised/raw, held-out 2.82682
+[08:52:38] heal A01 s1: step 20/780 (2.99 s/step, ETA 37.9 min): mirror_exact_astar 3.16243; svdllm 2.33866
+[08:53:36] heal A01 s1: step 40/780 (2.95 s/step, ETA 36.3 min): mirror_exact_astar 2.37300; svdllm 2.35269
+[08:54:33] heal A01 s1: step 60/780 (2.90 s/step, ETA 34.8 min): mirror_exact_astar 2.10860; svdllm 2.03741
+[08:55:31] heal A01 s1: step 80/780 (2.91 s/step, ETA 33.9 min): mirror_exact_astar 1.95086; svdllm 1.93211
+[08:56:27] heal A01 s1: step 100/780 (2.89 s/step, ETA 32.7 min): mirror_exact_astar 1.82658; svdllm 1.84050
+[08:57:25] heal A01 s1: step 120/780 (2.89 s/step, ETA 31.8 min): mirror_exact_astar 1.75057; svdllm 1.79990
+[08:58:30] heal A01 s1: step 140/780 (2.94 s/step, ETA 31.3 min): mirror_exact_astar 1.72367; svdllm 1.84876
+[08:59:32] heal A01 s1: step 160/780 (2.96 s/step, ETA 30.6 min): mirror_exact_astar 1.69771; svdllm 1.76986
+[09:00:30] heal A01 s1: step 180/780 (2.95 s/step, ETA 29.5 min): mirror_exact_astar 1.67928; svdllm 1.67721
+[09:02:13] heal A01 s1: step 200/780 (3.17 s/step, ETA 30.7 min): mirror_exact_astar 1.69201; svdllm 1.70554
+[09:03:15] heal A01 s1: step 220/780 (3.17 s/step, ETA 29.5 min): mirror_exact_astar 1.59774; svdllm 1.65741
+[09:04:10] heal A01 s1: step 240/780 (3.13 s/step, ETA 28.2 min): mirror_exact_astar 1.56430; svdllm 1.64326
+[09:05:09] heal A01 s1: step 260/780 (3.12 s/step, ETA 27.0 min): mirror_exact_astar 1.50671; svdllm 1.60207
+[09:05:58] heal A01 s1: step 280/780 (3.07 s/step, ETA 25.6 min): mirror_exact_astar 1.46452; svdllm 1.57279
+[09:06:43] heal A01 s1: step 300/780 (3.01 s/step, ETA 24.1 min): mirror_exact_astar 1.47029; svdllm 1.54605
+[09:07:27] heal A01 s1: step 320/780 (2.96 s/step, ETA 22.7 min): mirror_exact_astar 1.44788; svdllm 1.56526
+[09:08:07] heal A01 s1: step 340/780 (2.91 s/step, ETA 21.3 min): mirror_exact_astar 1.39848; svdllm 1.50043
+[09:08:51] heal A01 s1: step 360/780 (2.87 s/step, ETA 20.1 min): mirror_exact_astar 1.41927; svdllm 1.52335
+[09:09:33] heal A01 s1: step 380/780 (2.83 s/step, ETA 18.9 min): mirror_exact_astar 1.36414; svdllm 1.45481
+[09:10:43] heal A01 s1: step 400/780 (2.86 s/step, ETA 18.1 min): mirror_exact_astar 1.36174; svdllm 1.45698
+[09:11:38] heal A01 s1: step 420/780 (2.86 s/step, ETA 17.1 min): mirror_exact_astar 1.34744; svdllm 1.44528
+[09:12:31] heal A01 s1: step 440/780 (2.85 s/step, ETA 16.1 min): mirror_exact_astar 1.33771; svdllm 1.44881
+[09:13:25] heal A01 s1: step 460/780 (2.84 s/step, ETA 15.1 min): mirror_exact_astar 1.32705; svdllm 1.42916
+[09:14:19] heal A01 s1: step 480/780 (2.83 s/step, ETA 14.2 min): mirror_exact_astar 1.30709; svdllm 1.40940
+[09:15:13] heal A01 s1: step 500/780 (2.83 s/step, ETA 13.2 min): mirror_exact_astar 1.30240; svdllm 1.40350
+[09:16:10] heal A01 s1: step 520/780 (2.83 s/step, ETA 12.3 min): mirror_exact_astar 1.27534; svdllm 1.37978
+[09:17:03] heal A01 s1: step 540/780 (2.82 s/step, ETA 11.3 min): mirror_exact_astar 1.29158; svdllm 1.39158
+[09:17:58] heal A01 s1: step 560/780 (2.82 s/step, ETA 10.3 min): mirror_exact_astar 1.27113; svdllm 1.37842
+[09:18:52] heal A01 s1: step 580/780 (2.82 s/step, ETA 9.4 min): mirror_exact_astar 1.28874; svdllm 1.38402
+[09:20:29] heal A01 s1: step 600/780 (2.88 s/step, ETA 8.7 min): mirror_exact_astar 1.25219; svdllm 1.36074
+[09:21:37] heal A01 s1: step 620/780 (2.90 s/step, ETA 7.7 min): mirror_exact_astar 1.25800; svdllm 1.36504
+[09:22:44] heal A01 s1: step 640/780 (2.91 s/step, ETA 6.8 min): mirror_exact_astar 1.25042; svdllm 1.34975
+[09:23:46] heal A01 s1: step 660/780 (2.92 s/step, ETA 5.8 min): mirror_exact_astar 1.25183; svdllm 1.35779
+[09:24:52] heal A01 s1: step 680/780 (2.93 s/step, ETA 4.9 min): mirror_exact_astar 1.23793; svdllm 1.34283
+[09:25:57] heal A01 s1: step 700/780 (2.94 s/step, ETA 3.9 min): mirror_exact_astar 1.26770; svdllm 1.37834
+[09:27:09] heal A01 s1: step 720/780 (2.96 s/step, ETA 3.0 min): mirror_exact_astar 1.24335; svdllm 1.34790
+[09:28:18] heal A01 s1: step 740/780 (2.97 s/step, ETA 2.0 min): mirror_exact_astar 1.28080; svdllm 1.38073
+[09:29:27] heal A01 s1: step 760/780 (2.98 s/step, ETA 1.0 min): mirror_exact_astar 1.27698; svdllm 1.38156
+[09:30:36] heal A01 s1: step 780/780 (3.00 s/step, ETA 0.0 min): mirror_exact_astar 1.27425; svdllm 1.37354
+[09:33:00] heal A01 s1: done 780 steps in 2480.9 s; mirror_exact_astar: held-out 7.31711 -> 1.34867; svdllm: held-out 2.82682 -> 1.40084
+[09:33:00] fp_heal: job gate_s1 s1 done in 44.3 min; outputs under /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg
+== end rc=0 2026-11-20 09:33:01

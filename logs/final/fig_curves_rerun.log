@@ -1,0 +1,64 @@
+git: 6299d2c838b52136abfe58453d1d1c8e2b7c500a (uncommitted changes)
+runs: runs/final; model dinov2_vitb14_reg; pass bf16; query counts per step {0: [50000], 100: [10000], 300: [10000], 780: [50000]}
+  Mirror Surgery (mirror_exact_astar):
+    step    0: mean 53.842 (range 53.842 to 53.842; s0 53.84; bf16, [50000] queries)
+    step  100: mean 77.990 (range 77.990 to 77.990; s0 77.99; bf16_q10000, [10000] queries)
+    step  300: mean 78.240 (range 78.240 to 78.240; s0 78.24; bf16_q10000, [10000] queries)
+    step  780: mean 78.352 (range 78.340 to 78.364; s0 78.35, s1 78.36, s2 78.34; bf16, [50000] queries)
+  SVD-LLM (svdllm):
+    step    0: mean 75.774 (range 75.774 to 75.774; s0 75.77; bf16, [50000] queries)
+    step  100: mean 77.640 (range 77.640 to 77.640; s0 77.64; bf16_q10000, [10000] queries)
+    step  300: mean 78.030 (range 78.030 to 78.030; s0 78.03; bf16_q10000, [10000] queries)
+    step  780: mean 78.083 (range 78.072 to 78.098; s0 78.08, s1 78.07, s2 78.10; bf16, [50000] queries)
+  full SVD-LLM (svdllm_full):
+    step    0: mean 75.828 (range 75.828 to 75.828; s0 75.83; bf16, [50000] queries)
+    step  100: mean 76.880 (range 76.880 to 76.880; s0 76.88; bf16_q10000, [10000] queries)
+    step  300: mean 77.120 (range 77.120 to 77.120; s0 77.12; bf16_q10000, [10000] queries)
+    step  780: mean 76.424 (range 76.064 to 76.758; s0 76.45, s1 76.76, s2 76.06; bf16, [50000] queries)
+  IO-SVD (iosvd):
+    step    0: mean 78.032 (range 78.032 to 78.032; s0 78.03; bf16, [50000] queries)
+    step  100: mean 0.280 (range 0.280 to 0.280; s0 0.28; bf16_q10000, [10000] queries)
+    step  300: mean 0.510 (range 0.510 to 0.510; s0 0.51; bf16_q10000, [10000] queries)
+    step  780: mean 0.534 (range 0.400 to 0.658; s0 0.54, s1 0.40, s2 0.66; bf16, [50000] queries)
+  SliceGPT-style (slicegpt):
+    step    0: mean 68.350 (range 68.350 to 68.350; s0 68.35; bf16, [50000] queries)
+    step  100: mean 77.320 (range 77.320 to 77.320; s0 77.32; bf16_q10000, [10000] queries)
+    step  300: mean 77.900 (range 77.900 to 77.900; s0 77.90; bf16_q10000, [10000] queries)
+    step  780: mean 77.854 (range 77.852 to 77.856; s0 77.86, s1 77.85; bf16, [50000] queries)
+  plain SVD (svd):
+    step    0: mean 5.264 (range 5.264 to 5.264; s0 5.26; bf16, [50000] queries)
+    step  100: mean 74.290 (range 74.290 to 74.290; s0 74.29; bf16_q10000, [10000] queries)
+    step  300: mean 76.640 (range 76.640 to 76.640; s0 76.64; bf16_q10000, [10000] queries)
+    step  780: mean 77.000 (range 77.000 to 77.000; s0 77.00; bf16, [50000] queries)
+  width-pruned student (flap):
+    step    0: mean 65.116 (range 65.116 to 65.116; s0 65.12; bf16, [50000] queries)
+    step  100: mean 77.860 (range 77.860 to 77.860; s0 77.86; bf16_q10000, [10000] queries)
+    step  300: mean 78.480 (range 78.480 to 78.480; s0 78.48; bf16_q10000, [10000] queries)
+    step  780: mean 78.408 (range 78.408 to 78.408; s0 78.41; bf16, [50000] queries)
+  block-dropped student (blockdrop):
+    step    0: mean 40.180 (range 40.180 to 40.180; s0 40.18; bf16, [50000] queries)
+    step  100: mean 69.960 (range 69.960 to 69.960; s0 69.96; bf16_q10000, [10000] queries)
+    step  300: mean 74.010 (range 74.010 to 74.010; s0 74.01; bf16_q10000, [10000] queries)
+    step  780: mean 75.252 (range 75.252 to 75.252; s0 75.25; bf16, [50000] queries)
+  original, distilled (original):
+    step    0: mean 78.938 (range 78.938 to 78.938; s0 78.94; bf16, [50000] queries)
+    step  100: mean 79.100 (range 79.100 to 79.100; s0 79.10; bf16_q10000, [10000] queries)
+    step  300: mean 78.990 (range 78.990 to 78.990; s0 78.99; bf16_q10000, [10000] queries)
+    step  780: mean 78.948 (range 78.948 to 78.948; s0 78.95; bf16, [50000] queries)
+  random structure (random_structure):
+    step    0: mean 4.750 (range 4.750 to 4.750; s0 4.75; bf16, [50000] queries)
+    step  100: mean 18.210 (range 18.210 to 18.210; s0 18.21; bf16_q10000, [10000] queries)
+    step  300: mean 54.980 (range 54.980 to 54.980; s0 54.98; bf16_q10000, [10000] queries)
+    step  780: mean 70.098 (range 70.098 to 70.098; s0 70.10; bf16, [50000] queries)
+  true operator, random pairing (pair_random_h1):
+    step    0: mean 9.972 (range 9.972 to 9.972; s0 9.97; bf16, [50000] queries)
+    step  780: mean 77.014 (range 77.014 to 77.014; s0 77.01; bf16, [50000] queries)
+note: Mirror Surgery: the number of seeds differs between steps ([1, 3])
+note: SVD-LLM: the number of seeds differs between steps ([1, 3])
+note: full SVD-LLM: the number of seeds differs between steps ([1, 3])
+note: IO-SVD: the number of seeds differs between steps ([1, 3])
+note: SliceGPT-style: the number of seeds differs between steps ([1, 2])
+
+Caption: Healing curves of dinov2_vitb14_reg: validation k-NN top-1 against the healing step for every method of the main comparison, all healed with the identical recipe on the same batches. Step 0 is the converted model before healing. Lines are means over healing seeds (1, 2, 3 seeds), bands the range over seeds. Steps marked * are evaluated on 10,000 validation images, the others on all 50,000. Filled markers: exactly mirror-invariant in one forward pass. (b) enlarges the steps from 100 on for the methods that end within 3 points of the best.
+
+wrote paper/figures/fig_curves.pdf, paper/figures/fig_curves.png and paper/figures/fig_curves.json

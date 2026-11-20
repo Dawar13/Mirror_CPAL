@@ -1,0 +1,71 @@
+== start 2026-11-20 14:23:58 job heal_posthoc_iosvd_s2 pid 56063 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/posthoc_iosvd_lr5e-05_s2.yaml --resume
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[14:24:02] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[14:24:02] fp_heal: building iosvd_lr5e-05 (iosvd)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[14:29:12] iosvd {'damp_in': 1e-06, 'damp_out': 1e-06, 'eta': 0.1, 'score': 'second_order', 'allocation': 'adaptive'}: matrices 64,555,776 against budget 64,554,464 (gap +0.0020%; within the rule (0 <= gap <= 1%)); model 66,204,672 against target 66,203,360 (gap +0.0020%); 14 dense matrices
+[14:29:37] heal A05-posthoc s2: 1 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[14:29:37] heal A05-posthoc s2:   iosvd_lr5e-05: lr 5e-05, 73,549,824 trainable, 14 terms, targets symmetrised/raw, held-out 1.79274
+[14:30:02] heal A05-posthoc s2: step 20/780 (1.24 s/step, ETA 15.7 min): iosvd_lr5e-05 1.19453
+[14:30:33] heal A05-posthoc s2: step 40/780 (1.38 s/step, ETA 17.1 min): iosvd_lr5e-05 1.73448
+[14:31:04] heal A05-posthoc s2: step 60/780 (1.44 s/step, ETA 17.3 min): iosvd_lr5e-05 1.52180
+[14:31:38] heal A05-posthoc s2: step 80/780 (1.51 s/step, ETA 17.6 min): iosvd_lr5e-05 1.28926
+[14:32:12] heal A05-posthoc s2: step 100/780 (1.55 s/step, ETA 17.5 min): iosvd_lr5e-05 1.17674
+[14:32:47] heal A05-posthoc s2: step 120/780 (1.58 s/step, ETA 17.4 min): iosvd_lr5e-05 1.21939
+[14:33:21] heal A05-posthoc s2: step 140/780 (1.60 s/step, ETA 17.0 min): iosvd_lr5e-05 1.14639
+[14:33:55] heal A05-posthoc s2: step 160/780 (1.61 s/step, ETA 16.6 min): iosvd_lr5e-05 1.10001
+[14:34:29] heal A05-posthoc s2: step 180/780 (1.62 s/step, ETA 16.2 min): iosvd_lr5e-05 1.08885
+[14:35:32] heal A05-posthoc s2: step 200/780 (1.77 s/step, ETA 17.1 min): iosvd_lr5e-05 1.05629
+[14:36:05] heal A05-posthoc s2: step 220/780 (1.76 s/step, ETA 16.5 min): iosvd_lr5e-05 1.04317
+[14:36:40] heal A05-posthoc s2: step 240/780 (1.76 s/step, ETA 15.8 min): iosvd_lr5e-05 1.03603
+[14:37:14] heal A05-posthoc s2: step 260/780 (1.76 s/step, ETA 15.2 min): iosvd_lr5e-05 0.99431
+[14:37:46] heal A05-posthoc s2: step 280/780 (1.75 s/step, ETA 14.5 min): iosvd_lr5e-05 0.99759
+[14:38:19] heal A05-posthoc s2: step 300/780 (1.74 s/step, ETA 13.9 min): iosvd_lr5e-05 0.95910
+[14:38:52] heal A05-posthoc s2: step 320/780 (1.73 s/step, ETA 13.3 min): iosvd_lr5e-05 0.92795
+[14:39:24] heal A05-posthoc s2: step 340/780 (1.73 s/step, ETA 12.7 min): iosvd_lr5e-05 0.92158
+[14:39:58] heal A05-posthoc s2: step 360/780 (1.72 s/step, ETA 12.1 min): iosvd_lr5e-05 0.90217
+[14:40:32] heal A05-posthoc s2: step 380/780 (1.72 s/step, ETA 11.5 min): iosvd_lr5e-05 0.89233
+[14:41:34] heal A05-posthoc s2: step 400/780 (1.79 s/step, ETA 11.3 min): iosvd_lr5e-05 0.84269
+[14:42:07] heal A05-posthoc s2: step 420/780 (1.78 s/step, ETA 10.7 min): iosvd_lr5e-05 0.82641
+[14:42:34] heal A05-posthoc s2: step 440/780 (1.77 s/step, ETA 10.0 min): iosvd_lr5e-05 0.78772
+[14:43:01] heal A05-posthoc s2: step 460/780 (1.75 s/step, ETA 9.3 min): iosvd_lr5e-05 0.79349
+[14:43:29] heal A05-posthoc s2: step 480/780 (1.73 s/step, ETA 8.7 min): iosvd_lr5e-05 0.77427
+[14:43:56] heal A05-posthoc s2: step 500/780 (1.72 s/step, ETA 8.0 min): iosvd_lr5e-05 0.75972
+[14:44:22] heal A05-posthoc s2: step 520/780 (1.70 s/step, ETA 7.4 min): iosvd_lr5e-05 0.75556
+[14:44:49] heal A05-posthoc s2: step 540/780 (1.69 s/step, ETA 6.8 min): iosvd_lr5e-05 0.74970
+[14:45:16] heal A05-posthoc s2: step 560/780 (1.68 s/step, ETA 6.1 min): iosvd_lr5e-05 0.74157
+[14:45:43] heal A05-posthoc s2: step 580/780 (1.67 s/step, ETA 5.6 min): iosvd_lr5e-05 0.72768
+[14:46:31] heal A05-posthoc s2: step 600/780 (1.69 s/step, ETA 5.1 min): iosvd_lr5e-05 0.71325
+[14:46:57] heal A05-posthoc s2: step 620/780 (1.68 s/step, ETA 4.5 min): iosvd_lr5e-05 0.71628
+[14:47:22] heal A05-posthoc s2: step 640/780 (1.66 s/step, ETA 3.9 min): iosvd_lr5e-05 0.70829
+[14:47:47] heal A05-posthoc s2: step 660/780 (1.65 s/step, ETA 3.3 min): iosvd_lr5e-05 0.69897
+[14:48:10] heal A05-posthoc s2: step 680/780 (1.64 s/step, ETA 2.7 min): iosvd_lr5e-05 0.69341
+[14:48:36] heal A05-posthoc s2: step 700/780 (1.63 s/step, ETA 2.2 min): iosvd_lr5e-05 0.68697
+[14:49:02] heal A05-posthoc s2: step 720/780 (1.62 s/step, ETA 1.6 min): iosvd_lr5e-05 0.68592
+[14:49:26] heal A05-posthoc s2: step 740/780 (1.61 s/step, ETA 1.1 min): iosvd_lr5e-05 0.68881
+[14:49:49] heal A05-posthoc s2: step 760/780 (1.59 s/step, ETA 0.5 min): iosvd_lr5e-05 0.68191
+[14:50:13] heal A05-posthoc s2: step 780/780 (1.58 s/step, ETA 0.0 min): iosvd_lr5e-05 0.70202
+[14:52:01] heal A05-posthoc s2: done 780 steps in 1343.7 s; iosvd_lr5e-05: held-out 1.79274 -> 0.73802
+[14:52:02] fp_heal: job posthoc_iosvd_lr5e-05_s2 s2 done in 28.0 min; outputs under /home/Mirror_CPAL/runs/final/posthoc/dinov2_vitb14_reg
+== end rc=0 2026-11-20 14:52:03

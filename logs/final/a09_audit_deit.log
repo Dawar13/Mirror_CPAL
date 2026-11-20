@@ -1,0 +1,17 @@
+== start 2026-11-20 16:27:55 job a09_audit_deit pid 62475 host jl-vm-581628
+== cmd python scripts/fp_a09_audit.py --run runs/final/a08/deit3_b16/mirror_exact/s0 --model deit3_b16 --out results/A09/deit3_b16 --no-flip
+[16:28:00] A09: deit3_base_patch16_224.fb_in1k mirror_exact_s0 on cuda; forms ['dense', 'even_odd']; A* d+ 724, converted blocks 1..12; classifier head: True; out results/A09/deit3_b16
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[16:28:03] A09 dense: float64, float64_exact, float32, bf16_autocast in lockstep on 1000 images
+[16:51:40] A09 even_odd: float64, float64_exact, float32, bf16_autocast in lockstep on 1000 images
+[16:54:19] A09 original: float64 and float32 in lockstep (rounding floor)
+[16:54:34] A09 bitwise (float32): first stage that differs: patch_embed
+[16:54:34] A09 bitwise (float32): embedding parameters are symmetric only to rounding in the stored even/odd basis (patch_embed.weight: 54.51% of entries identical, patch_embed.bias(odd part zero): 0.00% of entries identical, pos_embed.grid: 52.82% of entries identical, cls_token(odd part zero): 0.00% of entries identical): the projection is rounded in the standard basis before the rotation into the even/odd basis
+[16:54:34] A09 bitwise (float32): inside a block given an exactly mirrored input (lowest share over blocks): norm 100.00%, queries 100.00%, MLP 100.00% of entries identical; attention output 10.86% with keys in the mirrored order and 100.00% with keys reordered to the original order
+[16:54:34] A09 bitwise (float32): the sign flip alone (same token positions) is exact in the MLP and the attention: 100% identical
+[16:54:34] A09 bitwise (float32): reordering the keys to the original order raises the attention share: the order in which attention sums over keys (softmax normaliser and value sum) is a source of difference
+[16:54:34] A09 bitwise (float32): with exactly symmetric embedding parameters the first difference is patch_embed (patch embedding 13.17% identical: the convolution sums the flipped kernel window in another order)
+[16:54:34] A09 bitwise (float32): predictions identical for 100.00% of images; features identical for 0.00%
+[16:54:34] A09: A09-1 PASS, A09-2 FAIL; wrote results/A09/deit3_b16
+== end rc=0 2026-11-20 16:54:35

@@ -1,0 +1,36 @@
+[17:49:59] A12b: mode full, device cuda, backend triton, out results/A12b
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[17:50:01] A12b: shapes from results/MUST-07/structure/dinov2_vitb14_reg_s0.npz (dinov2_vitb14_reg, fit seed 0), zero-shot Mirror-exact: d 768, h 3072, d+ 700, pairs [1168, 1116, 1013, 963, 878, 672, 554, 406, 155, 93, 19, 17], 261 tokens per image
+[17:50:04] A12b block 0: pass (fp32 1.75e-06 <= 1.40e-05, bf16 4.46e-03 <= 1.02e-02, layout 4.29e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:05] A12b block 1: pass (fp32 1.79e-06 <= 1.43e-05, bf16 4.41e-03 <= 1.01e-02, layout 4.47e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:06] A12b block 2: pass (fp32 1.78e-06 <= 1.44e-05, bf16 5.33e-03 <= 1.08e-02, layout 4.19e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:07] A12b block 3: pass (fp32 1.79e-06 <= 1.43e-05, bf16 4.30e-03 <= 9.12e-03, layout 4.06e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:07] A12b block 4: pass (fp32 1.98e-06 <= 1.58e-05, bf16 3.94e-03 <= 9.67e-03, layout 4.00e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:08] A12b block 5: pass (fp32 1.90e-06 <= 1.52e-05, bf16 3.89e-03 <= 9.02e-03, layout 4.13e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:09] A12b block 6: pass (fp32 2.10e-06 <= 1.65e-05, bf16 4.01e-03 <= 1.08e-02, layout 4.26e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:10] A12b block 7: pass (fp32 2.40e-06 <= 1.92e-05, bf16 4.00e-03 <= 9.99e-03, layout 6.44e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:11] A12b block 8: pass (fp32 2.16e-06 <= 1.73e-05, bf16 3.52e-03 <= 7.60e-03, layout 4.19e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:12] A12b block 9: pass (fp32 2.16e-06 <= 1.70e-05, bf16 4.37e-03 <= 9.03e-03, layout 5.27e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:13] A12b block 10: pass (fp32 2.23e-06 <= 1.78e-05, bf16 4.89e-03 <= 8.77e-03, layout 4.81e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:13] A12b block 11: pass (fp32 1.79e-06 <= 1.44e-05, bf16 3.65e-03 <= 8.32e-03, layout 4.17e-15, exact equivariance fused fp32/bf16 True/True)
+[17:50:26] A12b whole model: pass {"even_odd_fused": [1.930599482926357e-05, 0.0340645073041405], "hybrid_fused": [2.289244813957444e-05, 0.0437018914682199]}
+[17:50:30] A12b MLP half-blocks dense batch 64 (compile): 4.353 ms
+[17:50:34] A12b MLP half-blocks dense batch 256 (compile): 17.183 ms
+[17:50:43] A12b MLP half-blocks even_odd batch 64 (compile): 5.566 ms
+[17:50:53] A12b MLP half-blocks even_odd batch 256 (compile): 21.260 ms
+[17:51:39] A12b MLP half-blocks fused batch 64 (compile): 4.870 ms
+[17:51:55] A12b MLP half-blocks fused batch 256 (compile): 18.598 ms
+[17:52:02] A12 original batch 64 (compile): 8.046 ms, 7953.9 img/s
+[17:52:11] A12 original batch 256 (compile): 31.695 ms, 8077.0 img/s
+[17:52:27] A12 even_odd batch 64 (compile): 10.959 ms, 5839.8 img/s
+[17:52:46] A12 even_odd batch 256 (compile): 41.068 ms, 6233.6 img/s
+[17:52:59] A12 even_odd_fused batch 64 (compile): 10.003 ms, 6398.0 img/s
+[17:53:15] A12 even_odd_fused batch 256 (compile): 38.048 ms, 6728.3 img/s
+[17:53:21] A12 hybrid_fused batch 64 (compile): 8.404 ms, 7615.7 img/s
+[17:53:30] A12 hybrid_fused batch 256 (compile): 32.346 ms, 7914.5 img/s
+[17:53:30] A12b: correctness PASS; bar not met ({"64": 0.8043883696040365, "256": 0.8330148597287445}); wrote results/A12b

@@ -1,0 +1,60 @@
+== start 2026-11-20 11:19:47 job heal_a02 pid 48465 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/a02_heals.yaml --resume
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[11:19:50] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[11:19:50] fp_heal: building mirror_exact_fit1 (mirror_exact)
+[11:19:53] fp_heal: building mirror_exact_fit2 (mirror_exact)
+[11:19:56] fp_heal: building mirror_exact_coco (mirror_exact)
+[11:19:58] fp_heal: building pair_random_h1 (pair_random)
+[11:21:00] heal A02 s0: 4 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 4 target modes, teacher on x and mirror(x)
+[11:21:00] heal A02 s0:   mirror_exact_fit1: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.31169
+[11:21:00] heal A02 s0:   mirror_exact_fit2: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.27826
+[11:21:00] heal A02 s0:   mirror_exact_coco: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.02967
+[11:21:00] heal A02 s0:   pair_random_h1: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/symmetrised, held-out 16.25326
+[11:22:20] heal A02 s0: step 20/780 (3.89 s/step, ETA 49.3 min): mirror_exact_fit1 3.14457; mirror_exact_fit2 3.13324; mirror_exact_coco 3.16567; pair_random_h1 7.18451
+[11:23:37] heal A02 s0: step 40/780 (3.88 s/step, ETA 47.8 min): mirror_exact_fit1 2.35541; mirror_exact_fit2 2.36934; mirror_exact_coco 2.37569; pair_random_h1 5.40150
+[11:24:54] heal A02 s0: step 60/780 (3.86 s/step, ETA 46.4 min): mirror_exact_fit1 2.08352; mirror_exact_fit2 2.09986; mirror_exact_coco 2.11970; pair_random_h1 4.65365
+[11:26:11] heal A02 s0: step 80/780 (3.86 s/step, ETA 45.0 min): mirror_exact_fit1 1.93887; mirror_exact_fit2 1.94298; mirror_exact_coco 1.96056; pair_random_h1 4.22041
+[11:27:28] heal A02 s0: step 100/780 (3.86 s/step, ETA 43.7 min): mirror_exact_fit1 1.79094; mirror_exact_fit2 1.79105; mirror_exact_coco 1.80379; pair_random_h1 3.87048
+[11:28:48] heal A02 s0: step 120/780 (3.89 s/step, ETA 42.8 min): mirror_exact_fit1 1.78258; mirror_exact_fit2 1.78314; mirror_exact_coco 2.30080; pair_random_h1 3.77574
+[11:29:56] heal A02 s0: step 140/780 (3.82 s/step, ETA 40.7 min): mirror_exact_fit1 2.02617; mirror_exact_fit2 2.04533; mirror_exact_coco 1.82564; pair_random_h1 3.58619
+[11:30:47] heal A02 s0: step 160/780 (3.66 s/step, ETA 37.8 min): mirror_exact_fit1 1.78949; mirror_exact_fit2 1.72573; mirror_exact_coco 1.70181; pair_random_h1 3.42699
+[11:31:38] heal A02 s0: step 180/780 (3.54 s/step, ETA 35.4 min): mirror_exact_fit1 1.68351; mirror_exact_fit2 1.67194; mirror_exact_coco 1.67817; pair_random_h1 3.40844
+[11:33:00] heal A02 s0: step 200/780 (3.59 s/step, ETA 34.7 min): mirror_exact_fit1 1.63666; mirror_exact_fit2 1.63881; mirror_exact_coco 1.64403; pair_random_h1 3.31141
+[11:33:58] heal A02 s0: step 220/780 (3.53 s/step, ETA 32.9 min): mirror_exact_fit1 1.56142; mirror_exact_fit2 1.56181; mirror_exact_coco 1.56982; pair_random_h1 3.19284
+[11:34:49] heal A02 s0: step 240/780 (3.45 s/step, ETA 31.0 min): mirror_exact_fit1 1.51889; mirror_exact_fit2 1.51639; mirror_exact_coco 1.53012; pair_random_h1 3.08621
+[11:35:40] heal A02 s0: step 260/780 (3.38 s/step, ETA 29.3 min): mirror_exact_fit1 1.50961; mirror_exact_fit2 1.51208; mirror_exact_coco 1.52666; pair_random_h1 3.03421
+[11:36:31] heal A02 s0: step 280/780 (3.32 s/step, ETA 27.7 min): mirror_exact_fit1 1.48204; mirror_exact_fit2 1.48486; mirror_exact_coco 1.49613; pair_random_h1 2.99376
+[11:37:20] heal A02 s0: step 300/780 (3.26 s/step, ETA 26.1 min): mirror_exact_fit1 1.46842; mirror_exact_fit2 1.47258; mirror_exact_coco 1.47955; pair_random_h1 2.94415
+[11:38:03] heal A02 s0: step 320/780 (3.19 s/step, ETA 24.5 min): mirror_exact_fit1 1.45413; mirror_exact_fit2 1.46172; mirror_exact_coco 1.47362; pair_random_h1 2.90938
+[11:38:42] heal A02 s0: step 340/780 (3.12 s/step, ETA 22.9 min): mirror_exact_fit1 1.45043; mirror_exact_fit2 1.45610; mirror_exact_coco 1.46463; pair_random_h1 2.87796
+[11:39:29] heal A02 s0: step 360/780 (3.07 s/step, ETA 21.5 min): mirror_exact_fit1 1.40606; mirror_exact_fit2 1.40691; mirror_exact_coco 1.41607; pair_random_h1 2.77534
+[11:40:21] heal A02 s0: step 380/780 (3.05 s/step, ETA 20.3 min): mirror_exact_fit1 1.38040; mirror_exact_fit2 1.38244; mirror_exact_coco 1.39360; pair_random_h1 2.71905
+[11:41:43] heal A02 s0: step 400/780 (3.10 s/step, ETA 19.7 min): mirror_exact_fit1 1.36250; mirror_exact_fit2 1.36690; mirror_exact_coco 1.37876; pair_random_h1 2.69218
+[11:42:41] heal A02 s0: step 420/780 (3.09 s/step, ETA 18.6 min): mirror_exact_fit1 1.34452; mirror_exact_fit2 1.34805; mirror_exact_coco 1.35790; pair_random_h1 2.64167
+[11:43:33] heal A02 s0: step 440/780 (3.07 s/step, ETA 17.4 min): mirror_exact_fit1 1.32532; mirror_exact_fit2 1.32580; mirror_exact_coco 1.33609; pair_random_h1 2.60357
+[11:44:25] heal A02 s0: step 460/780 (3.05 s/step, ETA 16.3 min): mirror_exact_fit1 1.31774; mirror_exact_fit2 1.32086; mirror_exact_coco 1.32944; pair_random_h1 2.59424
+[11:45:08] heal A02 s0: step 480/780 (3.01 s/step, ETA 15.1 min): mirror_exact_fit1 1.30085; mirror_exact_fit2 1.30224; mirror_exact_coco 1.31384; pair_random_h1 2.54372
+[11:46:00] heal A02 s0: step 500/780 (3.00 s/step, ETA 14.0 min): mirror_exact_fit1 1.31844; mirror_exact_fit2 1.32107; mirror_exact_coco 1.33295; pair_random_h1 2.59138
+[11:46:58] heal A02 s0: step 520/780 (2.99 s/step, ETA 13.0 min): mirror_exact_fit1 1.30107; mirror_exact_fit2 1.30345; mirror_exact_coco 1.31102; pair_random_h1 2.53338
+[11:47:50] heal A02 s0: step 540/780 (2.98 s/step, ETA 11.9 min): mirror_exact_fit1 1.29381; mirror_exact_fit2 1.29597; mirror_exact_coco 1.30461; pair_random_h1 2.53092
+[11:48:42] heal A02 s0: step 560/780 (2.96 s/step, ETA 10.9 min): mirror_exact_fit1 1.28255; mirror_exact_fit2 1.28397; mirror_exact_coco 1.29424; pair_random_h1 2.51135
+[11:49:34] heal A02 s0: step 580/780 (2.95 s/step, ETA 9.8 min): mirror_exact_fit1 1.27590; mirror_exact_fit2 1.27931; mirror_exact_coco 1.29205; pair_random_h1 2.49294
+[11:50:57] heal A02 s0: step 600/780 (2.99 s/step, ETA 9.0 min): mirror_exact_fit1 1.27079; mirror_exact_fit2 1.27340; mirror_exact_coco 1.28352; pair_random_h1 2.46799
+[11:51:45] heal A02 s0: step 620/780 (2.97 s/step, ETA 7.9 min): mirror_exact_fit1 1.25857; mirror_exact_fit2 1.26182; mirror_exact_coco 1.27072; pair_random_h1 2.45384
+[11:52:27] heal A02 s0: step 640/780 (2.95 s/step, ETA 6.9 min): mirror_exact_fit1 1.25183; mirror_exact_fit2 1.25307; mirror_exact_coco 1.26625; pair_random_h1 2.43149
+[11:53:11] heal A02 s0: step 660/780 (2.92 s/step, ETA 5.8 min): mirror_exact_fit1 1.27306; mirror_exact_fit2 1.27580; mirror_exact_coco 1.28309; pair_random_h1 2.47650
+[11:53:55] heal A02 s0: step 680/780 (2.90 s/step, ETA 4.8 min): mirror_exact_fit1 1.25810; mirror_exact_fit2 1.26009; mirror_exact_coco 1.26822; pair_random_h1 2.44899
+[11:54:37] heal A02 s0: step 700/780 (2.88 s/step, ETA 3.8 min): mirror_exact_fit1 1.25024; mirror_exact_fit2 1.25348; mirror_exact_coco 1.25965; pair_random_h1 2.43074
+[11:55:31] heal A02 s0: step 720/780 (2.87 s/step, ETA 2.9 min): mirror_exact_fit1 1.24432; mirror_exact_fit2 1.24639; mirror_exact_coco 1.25764; pair_random_h1 2.42332
+[11:56:49] heal A02 s0: step 740/780 (2.90 s/step, ETA 1.9 min): mirror_exact_fit1 1.25373; mirror_exact_fit2 1.25625; mirror_exact_coco 1.26642; pair_random_h1 2.44200
+[11:58:06] heal A02 s0: step 760/780 (2.93 s/step, ETA 1.0 min): mirror_exact_fit1 1.25851; mirror_exact_fit2 1.25990; mirror_exact_coco 1.27064; pair_random_h1 2.44698
+[11:59:23] heal A02 s0: step 780/780 (2.95 s/step, ETA 0.0 min): mirror_exact_fit1 1.24067; mirror_exact_fit2 1.24404; mirror_exact_coco 1.25552; pair_random_h1 2.41953
+[12:00:19] heal A02 s0: done 780 steps in 2355.0 s; mirror_exact_fit1: held-out 7.31169 -> 1.35071; mirror_exact_fit2: held-out 7.27826 -> 1.35195; mirror_exact_coco: held-out 7.02967 -> 1.36121; pair_random_h1: held-out 16.25326 -> 2.58781
+[12:00:19] fp_heal: job a02_heals s0 done in 40.5 min; outputs under /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg
+== end rc=0 2026-11-20 12:00:20

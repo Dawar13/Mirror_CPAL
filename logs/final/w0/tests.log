@@ -1,0 +1,111 @@
+== tests 2026-11-20 07:23:24
+........................................................................ [ 20%]
+........................................................................ [ 41%]
+..................F..................................................... [ 61%]
+......................................s................................. [ 82%]
+.............................................................            [100%]
+=================================== FAILURES ===================================
+_______________________ test_fourier_dry_run_and_redraw ________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0')
+
+    def test_fourier_dry_run_and_redraw(tmp_path):
+        res = FOU.main(["--dry-run", "--work", str(tmp_path)])
+        assert_figure(res)
+        s = res["numbers"]
+        assert s["n_images"] == 6 and s["per_image_mirror_max"] < 1e-12 and s["lr_ud_max_abs_log10_ratio"] < 1e-12
+        assert s["per_image_rot_median"] > 0.01
+        maps = res["data_dir"] / "fourier_maps.npz"
+        assert maps.exists() and (res["data_dir"] / "metrics.json").exists()
+        again = FOU.main(["--from-maps", str(maps), "--out", str(tmp_path / "redraw"),
+                          "--results", str(tmp_path / "redraw_results")])
+        assert_figure(again)
+>       assert again["numbers"] == pytest.approx(s)
+E       TypeError: pytest.approx() does not support nested dictionaries: key='axis_band_cycles_per_pixel' value=[0.05, 0.45]
+E         full mapping={'axis_band_cycles_per_pixel': [0.05, 0.45],
+E        'kx_over_ky': 0.34929217127050766,
+E        'lr_ud_max_abs_log10_ratio': 1.0125438398809526e-15,
+E        'lr_ud_max_rel_diff_mean_spectra': 1.7871230107004927e-16,
+E        'mean_mag_on_kx_axis': 287.02705657954743,
+E        'mean_mag_on_ky_axis': 821.7391633357299,
+E        'n_images': 6,
+E        'per_image_mirror_exact_zero': 0,
+E        'per_image_mirror_max': 3.11048350784493e-16,
+E        'per_image_mirror_median': 1.5813413631923062e-16,
+E        'per_image_rot_max': 0.9981992637715689,
+E        'per_image_rot_median': 0.8730524085912217,
+E        'per_image_rot_min': 0.6105376264699147,
+E        'rot_max_abs_log10_ratio': 1.3760496666490585,
+E        'rot_p995_abs_log10_ratio': 1.2650585469003381,
+E        'size': 32}
+
+tests/test_fp_figures.py:232: TypeError
+----------------------------- Captured stdout call -----------------------------
+dry run: synthetic inputs in /tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0
+git: 3a848ec7edd845dbad94dacdd053b64774f148b2
+images: /tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0/cache/train224_uint8.npy; rows: 1 per class of role bank (6 classes), default_rng(0); sha256 8c5b55ff0b81d7ee; window hann
+  n_images: 6
+  size: 32
+  lr_ud_max_abs_log10_ratio: 1.0125438398809526e-15
+  lr_ud_max_rel_diff_mean_spectra: 1.7871230107004927e-16
+  rot_max_abs_log10_ratio: 1.3760496666490585
+  rot_p995_abs_log10_ratio: 1.2650585469003381
+  per_image_mirror_max: 3.11048350784493e-16
+  per_image_mirror_median: 1.5813413631923062e-16
+  per_image_mirror_exact_zero: 0
+  per_image_rot_min: 0.6105376264699147
+  per_image_rot_median: 0.8730524085912217
+  per_image_rot_max: 0.9981992637715689
+  axis_band_cycles_per_pixel: [0.05, 0.45]
+  mean_mag_on_kx_axis: 287.02705657954743
+  mean_mag_on_ky_axis: 821.7391633357299
+  kx_over_ky: 0.34929217127050766
+
+Caption: Lemma 2 on 6 ImageNet training images (1 per class of role bank (6 classes), default_rng(0); luminance, mean removed, Hann window, 32 x 32 pixels). (a) Mean magnitude spectrum of the images, log scale, zero frequency at the centre. (b) Ratio of the mean magnitude spectra of the left-right and the up-down mirror images, log scale: it is 0 at every frequency (largest |log10 ratio| 1.0e-15), and so is the difference for every single image (largest 3.1e-16 of the image's peak magnitude). (c) The same ratio for the image rotated by 90 degrees against the original, on the same colour scale (from -1.3 to 1.3 decades): rotation swaps the two frequency axes, and the mean magnitude along the vertical frequency axis is 2.86 times that along the other (0.05 to 0.45 cycles per pixel), so the rotated spectrum differs. (d) Per image, the largest difference between the two magnitude spectra relative to the image's peak magnitude: rounding error for the two mirrors (at most 3.1e-16), a real difference for the rotation (median 0.87).
+
+wrote /tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0/figures/fig_fourier.pdf, /tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0/figures/fig_fourier.png and /tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0/figures/fig_fourier.json; data in /tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0/results/A14/fourier
+git: 3a848ec7edd845dbad94dacdd053b64774f148b2
+images: cache/train224_uint8.npy; rows: 1 per class of role bank (6 classes), default_rng(0); sha256 8c5b55ff0b81d7ee; window hann
+  n_images: 6
+  size: 32
+  lr_ud_max_abs_log10_ratio: 1.0125438398809526e-15
+  lr_ud_max_rel_diff_mean_spectra: 1.7871230107004927e-16
+  rot_max_abs_log10_ratio: 1.3760496666490585
+  rot_p995_abs_log10_ratio: 1.2650585469003381
+  per_image_mirror_max: 3.11048350784493e-16
+  per_image_mirror_median: 1.5813413631923062e-16
+  per_image_mirror_exact_zero: 0
+  per_image_rot_min: 0.6105376264699147
+  per_image_rot_median: 0.8730524085912217
+  per_image_rot_max: 0.9981992637715689
+  axis_band_cycles_per_pixel: [0.05, 0.45]
+  mean_mag_on_kx_axis: 287.02705657954743
+  mean_mag_on_ky_axis: 821.7391633357299
+  kx_over_ky: 0.34929217127050766
+note: re-drawn from /tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0/results/A14/fourier/fourier_maps.npz
+
+Caption: Lemma 2 on 6 ImageNet training images (1 per class of role bank (6 classes), default_rng(0); luminance, mean removed, Hann window, 32 x 32 pixels). (a) Mean magnitude spectrum of the images, log scale, zero frequency at the centre. (b) Ratio of the mean magnitude spectra of the left-right and the up-down mirror images, log scale: it is 0 at every frequency (largest |log10 ratio| 1.0e-15), and so is the difference for every single image (largest 3.1e-16 of the image's peak magnitude). (c) The same ratio for the image rotated by 90 degrees against the original, on the same colour scale (from -1.3 to 1.3 decades): rotation swaps the two frequency axes, and the mean magnitude along the vertical frequency axis is 2.86 times that along the other (0.05 to 0.45 cycles per pixel), so the rotated spectrum differs. (d) Per image, the largest difference between the two magnitude spectra relative to the image's peak magnitude: rounding error for the two mirrors (at most 3.1e-16), a real difference for the rotation (median 0.87).
+
+wrote /tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0/redraw/fig_fourier.pdf, /tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0/redraw/fig_fourier.png and /tmp/pytest-of-ubuntu/pytest-0/test_fourier_dry_run_and_redra0/redraw/fig_fourier.json
+=============================== warnings summary ===============================
+tests/test_fp_figures.py::test_teaser_dry_run_and_redraw
+  /home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+    img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_fp_figures.py::test_fourier_dry_run_and_redraw - TypeError:...
+1 failed, 347 passed, 1 skipped, 1 warning in 74.61s (0:01:14)
+== tests 2026-11-20 07:27:41
+........................................................................ [ 20%]
+........................................................................ [ 41%]
+........................................................................ [ 61%]
+......................................s................................. [ 82%]
+.............................................................            [100%]
+=============================== warnings summary ===============================
+tests/test_fp_figures.py::test_teaser_dry_run_and_redraw
+  /home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+    img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+348 passed, 1 skipped, 1 warning in 72.89s (0:01:12)

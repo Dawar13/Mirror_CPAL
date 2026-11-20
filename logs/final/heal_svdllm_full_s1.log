@@ -1,0 +1,26 @@
+== start 2026-11-20 14:16:35 job heal_svdllm_full_s1 pid 55305 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/svdllm_full_s1.yaml --resume
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[14:16:39] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[14:16:39] fp_heal: building svdllm_full (svdllm_full)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[14:17:31] svdllm_full {'damp': 1e-06, 'order': 'u_first', 'split': 0.5, 'closed_form_update': False, 'stage_schedule': 'own'}: matrices 64,555,008 against budget 64,554,464 (gap +0.0008%); model 66,203,904 against target 66,203,360 (gap +0.0008%, eligible True)
+[14:18:02] heal A05 s1: 1 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[14:18:02] heal A05 s1:   svdllm_full: lr 0.0001, 65,291,520 trainable, 14 terms, targets symmetrised/raw, held-out 2.82902
+[14:18:34] heal A05 s1: step 20/780 (1.57 s/step, ETA 19.9 min): svdllm_full 2.81987
+[14:19:04] heal A05 s1: step 40/780 (1.55 s/step, ETA 19.1 min): svdllm_full 2.50692
+[14:19:35] heal A05 s1: step 60/780 (1.54 s/step, ETA 18.5 min): svdllm_full 2.36884
+== signal received 2026-11-20 14:19:48
+== end rc=143 2026-11-20 14:19:48

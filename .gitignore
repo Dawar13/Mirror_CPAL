@@ -46,14 +46,25 @@ results/*
 results/**/*.npy
 results/**/*.npz
 results/**/*.pt
+# final phase: the arrays behind the paper's statistics and figures are kept (k-NN predictions, spectra, fit
+# sidecars, figure data; under 20 MB each); structure files and checkpoints stay local
+!results/A0*/**/*.npz
+!results/A1*/**/*.npz
+!results/A0*/**/*.npy
+!results/A1*/**/*.npy
+!results/final/**/*.npz
 tiny_out/
 runs/**/*_log.txt
 
 # large artefacts copied from the VM (operators, statistics, checkpoints)
 artifacts/
 
-# local copies of VM logs
-logs/
+# local copies of VM logs; the final phase's run logs are kept (runner timeline, GPU log, job logs), except the
+# environment log, which names the Hugging Face account
+logs/*
+!logs/final/
+logs/final/w0/env.log
+logs/final/w0_env.out
 
 # local smoke-test outputs
 runs/t2_seg_smoke/

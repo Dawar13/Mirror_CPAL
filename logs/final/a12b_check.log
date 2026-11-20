@@ -1,0 +1,18 @@
+== start 2026-11-20 08:17:22 job a12b_check pid 22923 host jl-vm-581628
+== cmd python scripts/fp_a12b_kernel.py --correctness-only --out results/A12b/correctness_only; [ -f results/A12b/correctness_only/metrics.json ] || { mkdir -p results/A12b/correctness_only; echo '{"correctness": {"pass": false, "error": "no output"}}' > results/A12b/correctness_only/metrics.json; }; mkdir -p logs/final && touch logs/final/a12b_check.done
+[08:17:24] A12b: mode correctness_only, device cuda, backend triton, out results/A12b/correctness_only
+[08:17:24] A12b: shapes from notes/paper/method_spec.md Sections 0 to 2 (DINOv2-B reg, fit seed 0): d 768, h 3072, d+ 700, pairs [1168, 1116, 1013, 963, 878, 672, 554, 406, 155, 93, 19, 17], 261 tokens per image
+[08:18:00] A12b block 0: pass (fp32 1.75e-06 <= 1.40e-05, bf16 4.46e-03 <= 1.02e-02, layout 4.29e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:00] A12b block 1: pass (fp32 1.79e-06 <= 1.43e-05, bf16 4.41e-03 <= 1.01e-02, layout 4.47e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:01] A12b block 2: pass (fp32 1.78e-06 <= 1.44e-05, bf16 5.33e-03 <= 1.08e-02, layout 4.19e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:02] A12b block 3: pass (fp32 1.79e-06 <= 1.43e-05, bf16 4.30e-03 <= 9.12e-03, layout 4.06e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:03] A12b block 4: pass (fp32 1.98e-06 <= 1.58e-05, bf16 3.94e-03 <= 9.67e-03, layout 4.00e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:04] A12b block 5: pass (fp32 1.90e-06 <= 1.52e-05, bf16 3.89e-03 <= 9.02e-03, layout 4.13e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:05] A12b block 6: pass (fp32 2.10e-06 <= 1.65e-05, bf16 4.01e-03 <= 1.08e-02, layout 4.26e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:06] A12b block 7: pass (fp32 2.40e-06 <= 1.92e-05, bf16 4.00e-03 <= 9.99e-03, layout 6.44e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:07] A12b block 8: pass (fp32 2.16e-06 <= 1.73e-05, bf16 3.52e-03 <= 7.60e-03, layout 4.19e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:08] A12b block 9: pass (fp32 2.16e-06 <= 1.70e-05, bf16 4.37e-03 <= 9.03e-03, layout 5.27e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:09] A12b block 10: pass (fp32 2.23e-06 <= 1.78e-05, bf16 4.89e-03 <= 8.77e-03, layout 4.81e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:09] A12b block 11: pass (fp32 1.79e-06 <= 1.44e-05, bf16 3.65e-03 <= 8.32e-03, layout 4.17e-15, exact equivariance fused fp32/bf16 True/True)
+[08:18:10] A12b: correctness PASS; bar not scored: correctness test only (no timing); wrote results/A12b/correctness_only
+== end rc=0 2026-11-20 08:18:10

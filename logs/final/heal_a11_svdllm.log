@@ -1,0 +1,141 @@
+== start 2026-11-20 10:33:04 job heal_a11_svdllm pid 45204 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/a11_svdllm.yaml --resume
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[10:33:07] data: (305000, 256, 256, 3) uint8; 300000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[10:33:07] fp_heal: building svdllm_ext (svdllm)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[10:33:55] svdllm {'damp': 1e-06}: matrices 64,555,008 + basis 0 = 64,555,008 against budget 64,554,464 (gap +0.001%; within the rule (0 <= gap <= 1%))
+[10:34:51] heal A11 s0: 1 students x 2340 steps x 256 images (micro 128), warm-up 117, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[10:34:51] heal A11 s0:   svdllm_ext: lr 0.0001, 65,291,520 trainable, 14 terms, targets symmetrised/raw, held-out 2.82755
+[10:35:21] heal A11 s0: step 20/2340 (1.49 s/step, ETA 57.7 min): svdllm_ext 2.37611
+[10:35:50] heal A11 s0: step 40/2340 (1.47 s/step, ETA 56.4 min): svdllm_ext 2.17228
+[10:36:19] heal A11 s0: step 60/2340 (1.46 s/step, ETA 55.6 min): svdllm_ext 2.04521
+[10:36:48] heal A11 s0: step 80/2340 (1.46 s/step, ETA 55.0 min): svdllm_ext 1.98426
+[10:37:17] heal A11 s0: step 100/2340 (1.46 s/step, ETA 54.4 min): svdllm_ext 1.99307
+[10:37:46] heal A11 s0: step 120/2340 (1.46 s/step, ETA 53.9 min): svdllm_ext 1.94922
+[10:38:15] heal A11 s0: step 140/2340 (1.46 s/step, ETA 53.4 min): svdllm_ext 1.84611
+[10:38:44] heal A11 s0: step 160/2340 (1.46 s/step, ETA 52.9 min): svdllm_ext 1.80626
+[10:39:13] heal A11 s0: step 180/2340 (1.45 s/step, ETA 52.3 min): svdllm_ext 1.73570
+[10:40:03] heal A11 s0: step 200/2340 (1.56 s/step, ETA 55.6 min): svdllm_ext 1.74011
+[10:40:34] heal A11 s0: step 220/2340 (1.56 s/step, ETA 55.0 min): svdllm_ext 1.70462
+[10:41:03] heal A11 s0: step 240/2340 (1.55 s/step, ETA 54.1 min): svdllm_ext 1.66644
+[10:41:32] heal A11 s0: step 260/2340 (1.54 s/step, ETA 53.4 min): svdllm_ext 1.70004
+[10:42:01] heal A11 s0: step 280/2340 (1.53 s/step, ETA 52.6 min): svdllm_ext 1.66006
+[10:42:30] heal A11 s0: step 300/2340 (1.53 s/step, ETA 51.9 min): svdllm_ext 1.70957
+[10:42:59] heal A11 s0: step 320/2340 (1.52 s/step, ETA 51.3 min): svdllm_ext 1.60489
+[10:43:24] heal A11 s0: step 340/2340 (1.51 s/step, ETA 50.2 min): svdllm_ext 1.59736
+[10:43:51] heal A11 s0: step 360/2340 (1.50 s/step, ETA 49.4 min): svdllm_ext 1.58164
+[10:44:20] heal A11 s0: step 380/2340 (1.49 s/step, ETA 48.8 min): svdllm_ext 1.56209
+[10:45:03] heal A11 s0: step 400/2340 (1.53 s/step, ETA 49.5 min): svdllm_ext 1.52256
+[10:45:26] heal A11 s0: step 420/2340 (1.51 s/step, ETA 48.3 min): svdllm_ext 1.53808
+[10:45:43] heal A11 s0: step 440/2340 (1.48 s/step, ETA 46.9 min): svdllm_ext 1.51709
+[10:46:00] heal A11 s0: step 460/2340 (1.45 s/step, ETA 45.6 min): svdllm_ext 1.48478
+[10:46:18] heal A11 s0: step 480/2340 (1.43 s/step, ETA 44.3 min): svdllm_ext 1.48348
+[10:46:36] heal A11 s0: step 500/2340 (1.41 s/step, ETA 43.2 min): svdllm_ext 1.45560
+[10:46:55] heal A11 s0: step 520/2340 (1.39 s/step, ETA 42.2 min): svdllm_ext 1.48617
+[10:47:13] heal A11 s0: step 540/2340 (1.37 s/step, ETA 41.2 min): svdllm_ext 1.47426
+[10:47:29] heal A11 s0: step 560/2340 (1.35 s/step, ETA 40.1 min): svdllm_ext 1.48884
+[10:47:47] heal A11 s0: step 580/2340 (1.34 s/step, ETA 39.2 min): svdllm_ext 1.55801
+[10:48:18] heal A11 s0: step 600/2340 (1.34 s/step, ETA 39.0 min): svdllm_ext 1.47071
+[10:48:37] heal A11 s0: step 620/2340 (1.33 s/step, ETA 38.2 min): svdllm_ext 1.43619
+[10:48:55] heal A11 s0: step 640/2340 (1.32 s/step, ETA 37.4 min): svdllm_ext 1.42214
+[10:49:14] heal A11 s0: step 660/2340 (1.31 s/step, ETA 36.6 min): svdllm_ext 1.41626
+[10:49:32] heal A11 s0: step 680/2340 (1.29 s/step, ETA 35.8 min): svdllm_ext 1.42945
+[10:49:50] heal A11 s0: step 700/2340 (1.28 s/step, ETA 35.1 min): svdllm_ext 1.44409
+[10:50:09] heal A11 s0: step 720/2340 (1.27 s/step, ETA 34.4 min): svdllm_ext 1.41013
+[10:50:27] heal A11 s0: step 740/2340 (1.26 s/step, ETA 33.7 min): svdllm_ext 1.41520
+[10:50:43] heal A11 s0: step 760/2340 (1.25 s/step, ETA 33.0 min): svdllm_ext 1.40649
+[10:50:58] heal A11 s0: step 780/2340 (1.24 s/step, ETA 32.2 min): svdllm_ext 1.38854
+[10:51:25] heal A11 s0: step 800/2340 (1.24 s/step, ETA 31.9 min): svdllm_ext 1.35270
+[10:51:45] heal A11 s0: step 820/2340 (1.24 s/step, ETA 31.3 min): svdllm_ext 1.37677
+[10:52:03] heal A11 s0: step 840/2340 (1.23 s/step, ETA 30.7 min): svdllm_ext 1.36441
+[10:52:21] heal A11 s0: step 860/2340 (1.22 s/step, ETA 30.1 min): svdllm_ext 1.34453
+[10:52:39] heal A11 s0: step 880/2340 (1.21 s/step, ETA 29.5 min): svdllm_ext 1.35262
+[10:52:57] heal A11 s0: step 900/2340 (1.21 s/step, ETA 29.0 min): svdllm_ext 1.33797
+[10:53:17] heal A11 s0: step 920/2340 (1.20 s/step, ETA 28.4 min): svdllm_ext 1.35544
+[10:53:35] heal A11 s0: step 940/2340 (1.20 s/step, ETA 27.9 min): svdllm_ext 1.32143
+[10:53:53] heal A11 s0: step 960/2340 (1.19 s/step, ETA 27.3 min): svdllm_ext 1.32025
+[10:54:11] heal A11 s0: step 980/2340 (1.18 s/step, ETA 26.8 min): svdllm_ext 1.34025
+[10:54:39] heal A11 s0: step 1000/2340 (1.19 s/step, ETA 26.5 min): svdllm_ext 1.29119
+[10:54:58] heal A11 s0: step 1020/2340 (1.18 s/step, ETA 26.0 min): svdllm_ext 1.29540
+[10:55:16] heal A11 s0: step 1040/2340 (1.18 s/step, ETA 25.5 min): svdllm_ext 1.31675
+[10:55:34] heal A11 s0: step 1060/2340 (1.17 s/step, ETA 25.0 min): svdllm_ext 1.29274
+[10:55:52] heal A11 s0: step 1080/2340 (1.17 s/step, ETA 24.5 min): svdllm_ext 1.28888
+[10:56:10] heal A11 s0: step 1100/2340 (1.16 s/step, ETA 24.0 min): svdllm_ext 1.29654
+[10:56:30] heal A11 s0: step 1120/2340 (1.16 s/step, ETA 23.6 min): svdllm_ext 1.27999
+[10:56:48] heal A11 s0: step 1140/2340 (1.15 s/step, ETA 23.1 min): svdllm_ext 1.27961
+[10:57:06] heal A11 s0: step 1160/2340 (1.15 s/step, ETA 22.6 min): svdllm_ext 1.25420
+[10:57:24] heal A11 s0: step 1180/2340 (1.15 s/step, ETA 22.2 min): svdllm_ext 1.27916
+[10:57:49] heal A11 s0: step 1200/2340 (1.15 s/step, ETA 21.8 min): svdllm_ext 1.24856
+[10:58:08] heal A11 s0: step 1220/2340 (1.14 s/step, ETA 21.4 min): svdllm_ext 1.25427
+[10:58:26] heal A11 s0: step 1240/2340 (1.14 s/step, ETA 20.9 min): svdllm_ext 1.24502
+[10:58:44] heal A11 s0: step 1260/2340 (1.14 s/step, ETA 20.5 min): svdllm_ext 1.23100
+[10:59:02] heal A11 s0: step 1280/2340 (1.13 s/step, ETA 20.0 min): svdllm_ext 1.25739
+[10:59:20] heal A11 s0: step 1300/2340 (1.13 s/step, ETA 19.6 min): svdllm_ext 1.23734
+[10:59:41] heal A11 s0: step 1320/2340 (1.13 s/step, ETA 19.2 min): svdllm_ext 1.21416
+[10:59:59] heal A11 s0: step 1340/2340 (1.12 s/step, ETA 18.7 min): svdllm_ext 1.23441
+[11:00:17] heal A11 s0: step 1360/2340 (1.12 s/step, ETA 18.3 min): svdllm_ext 1.22884
+[11:00:35] heal A11 s0: step 1380/2340 (1.12 s/step, ETA 17.9 min): svdllm_ext 1.22076
+[11:01:04] heal A11 s0: step 1400/2340 (1.12 s/step, ETA 17.6 min): svdllm_ext 1.21573
+[11:01:24] heal A11 s0: step 1420/2340 (1.12 s/step, ETA 17.2 min): svdllm_ext 1.21624
+[11:01:42] heal A11 s0: step 1440/2340 (1.12 s/step, ETA 16.8 min): svdllm_ext 1.20026
+[11:02:00] heal A11 s0: step 1460/2340 (1.12 s/step, ETA 16.4 min): svdllm_ext 1.21567
+[11:02:18] heal A11 s0: step 1480/2340 (1.11 s/step, ETA 15.9 min): svdllm_ext 1.21692
+[11:02:36] heal A11 s0: step 1500/2340 (1.11 s/step, ETA 15.5 min): svdllm_ext 1.19843
+[11:02:56] heal A11 s0: step 1520/2340 (1.11 s/step, ETA 15.1 min): svdllm_ext 1.20127
+[11:03:14] heal A11 s0: step 1540/2340 (1.11 s/step, ETA 14.7 min): svdllm_ext 1.20734
+[11:03:32] heal A11 s0: step 1560/2340 (1.10 s/step, ETA 14.3 min): svdllm_ext 1.19453
+[11:03:50] heal A11 s0: step 1580/2340 (1.10 s/step, ETA 13.9 min): svdllm_ext 1.21407
+[11:04:30] heal A11 s0: step 1600/2340 (1.11 s/step, ETA 13.7 min): svdllm_ext 1.19456
+[11:04:56] heal A11 s0: step 1620/2340 (1.11 s/step, ETA 13.4 min): svdllm_ext 1.18785
+[11:05:20] heal A11 s0: step 1640/2340 (1.11 s/step, ETA 13.0 min): svdllm_ext 1.19144
+[11:05:44] heal A11 s0: step 1660/2340 (1.12 s/step, ETA 12.6 min): svdllm_ext 1.17464
+[11:06:08] heal A11 s0: step 1680/2340 (1.12 s/step, ETA 12.3 min): svdllm_ext 1.20295
+[11:06:32] heal A11 s0: step 1700/2340 (1.12 s/step, ETA 11.9 min): svdllm_ext 1.18427
+[11:06:58] heal A11 s0: step 1720/2340 (1.12 s/step, ETA 11.6 min): svdllm_ext 1.18958
+[11:07:22] heal A11 s0: step 1740/2340 (1.12 s/step, ETA 11.2 min): svdllm_ext 1.17316
+[11:07:47] heal A11 s0: step 1760/2340 (1.12 s/step, ETA 10.8 min): svdllm_ext 1.16340
+[11:08:10] heal A11 s0: step 1780/2340 (1.12 s/step, ETA 10.5 min): svdllm_ext 1.17370
+[11:08:45] heal A11 s0: step 1800/2340 (1.13 s/step, ETA 10.2 min): svdllm_ext 1.15265
+[11:09:07] heal A11 s0: step 1820/2340 (1.13 s/step, ETA 9.8 min): svdllm_ext 1.17401
+[11:09:27] heal A11 s0: step 1840/2340 (1.13 s/step, ETA 9.4 min): svdllm_ext 1.17813
+[11:09:47] heal A11 s0: step 1860/2340 (1.13 s/step, ETA 9.0 min): svdllm_ext 1.18167
+[11:10:08] heal A11 s0: step 1880/2340 (1.13 s/step, ETA 8.6 min): svdllm_ext 1.16916
+[11:10:30] heal A11 s0: step 1900/2340 (1.13 s/step, ETA 8.3 min): svdllm_ext 1.16230
+[11:10:54] heal A11 s0: step 1920/2340 (1.13 s/step, ETA 7.9 min): svdllm_ext 1.16181
+[11:11:19] heal A11 s0: step 1940/2340 (1.13 s/step, ETA 7.5 min): svdllm_ext 1.16247
+[11:11:43] heal A11 s0: step 1960/2340 (1.13 s/step, ETA 7.1 min): svdllm_ext 1.16662
+[11:12:08] heal A11 s0: step 1980/2340 (1.13 s/step, ETA 6.8 min): svdllm_ext 1.13653
+[11:12:50] heal A11 s0: step 2000/2340 (1.14 s/step, ETA 6.5 min): svdllm_ext 1.14849
+[11:13:15] heal A11 s0: step 2020/2340 (1.14 s/step, ETA 6.1 min): svdllm_ext 1.14824
+[11:13:39] heal A11 s0: step 2040/2340 (1.14 s/step, ETA 5.7 min): svdllm_ext 1.14961
+[11:13:59] heal A11 s0: step 2060/2340 (1.14 s/step, ETA 5.3 min): svdllm_ext 1.15436
+[11:14:13] heal A11 s0: step 2080/2340 (1.14 s/step, ETA 4.9 min): svdllm_ext 1.14797
+[11:14:27] heal A11 s0: step 2100/2340 (1.13 s/step, ETA 4.5 min): svdllm_ext 1.14557
+[11:14:45] heal A11 s0: step 2120/2340 (1.13 s/step, ETA 4.1 min): svdllm_ext 1.15277
+[11:15:02] heal A11 s0: step 2140/2340 (1.13 s/step, ETA 3.8 min): svdllm_ext 1.14330
+[11:15:18] heal A11 s0: step 2160/2340 (1.12 s/step, ETA 3.4 min): svdllm_ext 1.18115
+[11:15:35] heal A11 s0: step 2180/2340 (1.12 s/step, ETA 3.0 min): svdllm_ext 1.16087
+[11:16:04] heal A11 s0: step 2200/2340 (1.12 s/step, ETA 2.6 min): svdllm_ext 1.16365
+[11:16:22] heal A11 s0: step 2220/2340 (1.12 s/step, ETA 2.2 min): svdllm_ext 1.16539
+[11:16:39] heal A11 s0: step 2240/2340 (1.12 s/step, ETA 1.9 min): svdllm_ext 1.15508
+[11:16:56] heal A11 s0: step 2260/2340 (1.12 s/step, ETA 1.5 min): svdllm_ext 1.15301
+[11:17:13] heal A11 s0: step 2280/2340 (1.11 s/step, ETA 1.1 min): svdllm_ext 1.16139
+[11:17:30] heal A11 s0: step 2300/2340 (1.11 s/step, ETA 0.7 min): svdllm_ext 1.14651
+[11:17:48] heal A11 s0: step 2320/2340 (1.11 s/step, ETA 0.4 min): svdllm_ext 1.13853
+[11:18:05] heal A11 s0: step 2340/2340 (1.11 s/step, ETA 0.0 min): svdllm_ext 1.15029
+[11:19:39] heal A11 s0: done 2340 steps in 2686.9 s; svdllm_ext: held-out 2.82755 -> 1.18767
+[11:19:39] fp_heal: job a11_svdllm s0 done in 46.6 min; outputs under /home/Mirror_CPAL/runs/final/a11/dinov2_vitb14_reg
+== end rc=0 2026-11-20 11:19:42

@@ -1,0 +1,65 @@
+== start 2026-11-20 15:25:52 job heal_a06_s1 pid 59043 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/a06_s1.yaml --resume
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[15:25:56] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[15:25:56] fp_heal: building svdllm_f050 (svdllm)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[15:26:50] svdllm {'damp': 1e-06}: matrices 41,643,264 + basis 0 = 41,643,264 against budget 41,642,880 (gap +0.001%; within the rule (0 <= gap <= 1%))
+[15:27:26] fp_heal: building mirror_svdllm_f050 (mirror_svdllm)
+[15:30:18] heal A06 s1: 2 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 2 target modes, teacher on x and mirror(x)
+[15:30:18] heal A06 s1:   svdllm_f050: lr 0.0001, 42,379,776 trainable, 14 terms, targets symmetrised/raw, held-out 7.19054
+[15:30:18] heal A06 s1:   mirror_svdllm_f050: lr 0.0002, 42,366,294 trainable, 14 terms, targets symmetrised/symmetrised, held-out 9.19062
+[15:31:26] heal A06 s1: step 20/780 (3.40 s/step, ETA 43.0 min): svdllm_f050 5.27947; mirror_svdllm_f050 5.50601
+[15:32:34] heal A06 s1: step 40/780 (3.41 s/step, ETA 42.0 min): svdllm_f050 4.64872; mirror_svdllm_f050 4.64758
+[15:33:41] heal A06 s1: step 60/780 (3.37 s/step, ETA 40.5 min): svdllm_f050 4.35273; mirror_svdllm_f050 4.42225
+[15:34:49] heal A06 s1: step 80/780 (3.39 s/step, ETA 39.6 min): svdllm_f050 4.17795; mirror_svdllm_f050 4.07214
+[15:35:57] heal A06 s1: step 100/780 (3.39 s/step, ETA 38.4 min): svdllm_f050 4.01138; mirror_svdllm_f050 3.97895
+[15:37:10] heal A06 s1: step 120/780 (3.43 s/step, ETA 37.7 min): svdllm_f050 3.96260; mirror_svdllm_f050 3.85514
+[15:38:33] heal A06 s1: step 140/780 (3.54 s/step, ETA 37.7 min): svdllm_f050 3.87795; mirror_svdllm_f050 3.76802
+[15:39:50] heal A06 s1: step 160/780 (3.58 s/step, ETA 37.0 min): svdllm_f050 3.86922; mirror_svdllm_f050 3.71398
+[15:41:02] heal A06 s1: step 180/780 (3.58 s/step, ETA 35.8 min): svdllm_f050 3.74285; mirror_svdllm_f050 3.64005
+[15:42:49] heal A06 s1: step 200/780 (3.76 s/step, ETA 36.3 min): svdllm_f050 3.75853; mirror_svdllm_f050 3.62508
+[15:43:47] heal A06 s1: step 220/780 (3.68 s/step, ETA 34.3 min): svdllm_f050 3.71422; mirror_svdllm_f050 3.60593
+[15:44:38] heal A06 s1: step 240/780 (3.58 s/step, ETA 32.3 min): svdllm_f050 3.66705; mirror_svdllm_f050 3.56235
+[15:45:20] heal A06 s1: step 260/780 (3.47 s/step, ETA 30.1 min): svdllm_f050 3.61507; mirror_svdllm_f050 3.44348
+[15:46:02] heal A06 s1: step 280/780 (3.37 s/step, ETA 28.1 min): svdllm_f050 3.55397; mirror_svdllm_f050 3.36520
+[15:46:43] heal A06 s1: step 300/780 (3.28 s/step, ETA 26.3 min): svdllm_f050 3.52435; mirror_svdllm_f050 3.32920
+[15:47:25] heal A06 s1: step 320/780 (3.21 s/step, ETA 24.6 min): svdllm_f050 3.54645; mirror_svdllm_f050 3.34663
+[15:48:13] heal A06 s1: step 340/780 (3.16 s/step, ETA 23.2 min): svdllm_f050 3.43739; mirror_svdllm_f050 3.23411
+[15:49:05] heal A06 s1: step 360/780 (3.13 s/step, ETA 21.9 min): svdllm_f050 3.45565; mirror_svdllm_f050 3.25656
+[15:49:47] heal A06 s1: step 380/780 (3.08 s/step, ETA 20.5 min): svdllm_f050 3.35462; mirror_svdllm_f050 3.16105
+[15:50:54] heal A06 s1: step 400/780 (3.09 s/step, ETA 19.6 min): svdllm_f050 3.36702; mirror_svdllm_f050 3.14731
+[15:51:34] heal A06 s1: step 420/780 (3.04 s/step, ETA 18.2 min): svdllm_f050 3.38794; mirror_svdllm_f050 3.15806
+[15:52:13] heal A06 s1: step 440/780 (2.99 s/step, ETA 16.9 min): svdllm_f050 3.38583; mirror_svdllm_f050 3.13768
+[15:52:55] heal A06 s1: step 460/780 (2.95 s/step, ETA 15.7 min): svdllm_f050 3.32798; mirror_svdllm_f050 3.09198
+[15:53:40] heal A06 s1: step 480/780 (2.92 s/step, ETA 14.6 min): svdllm_f050 3.30285; mirror_svdllm_f050 3.06115
+[15:54:29] heal A06 s1: step 500/780 (2.90 s/step, ETA 13.5 min): svdllm_f050 3.31735; mirror_svdllm_f050 3.07232
+[15:55:18] heal A06 s1: step 520/780 (2.88 s/step, ETA 12.5 min): svdllm_f050 3.26146; mirror_svdllm_f050 3.02802
+[15:55:53] heal A06 s1: step 540/780 (2.84 s/step, ETA 11.4 min): svdllm_f050 3.29216; mirror_svdllm_f050 3.03362
+[15:56:26] heal A06 s1: step 560/780 (2.80 s/step, ETA 10.3 min): svdllm_f050 3.26565; mirror_svdllm_f050 3.00597
+[15:56:59] heal A06 s1: step 580/780 (2.76 s/step, ETA 9.2 min): svdllm_f050 3.26880; mirror_svdllm_f050 3.01093
+[15:57:52] heal A06 s1: step 600/780 (2.76 s/step, ETA 8.3 min): svdllm_f050 3.21265; mirror_svdllm_f050 2.95117
+[15:58:25] heal A06 s1: step 620/780 (2.72 s/step, ETA 7.3 min): svdllm_f050 3.22665; mirror_svdllm_f050 2.97548
+[15:59:05] heal A06 s1: step 640/780 (2.70 s/step, ETA 6.3 min): svdllm_f050 3.22524; mirror_svdllm_f050 2.96454
+[15:59:43] heal A06 s1: step 660/780 (2.67 s/step, ETA 5.3 min): svdllm_f050 3.23381; mirror_svdllm_f050 2.96231
+[16:00:10] heal A06 s1: step 680/780 (2.64 s/step, ETA 4.4 min): svdllm_f050 3.21266; mirror_svdllm_f050 2.95961
+[16:00:31] heal A06 s1: step 700/780 (2.59 s/step, ETA 3.5 min): svdllm_f050 3.27038; mirror_svdllm_f050 2.99789
+[16:00:54] heal A06 s1: step 720/780 (2.55 s/step, ETA 2.6 min): svdllm_f050 3.19973; mirror_svdllm_f050 2.93183
+[16:01:15] heal A06 s1: step 740/780 (2.51 s/step, ETA 1.7 min): svdllm_f050 3.28068; mirror_svdllm_f050 3.00057
+[16:01:36] heal A06 s1: step 760/780 (2.47 s/step, ETA 0.8 min): svdllm_f050 3.29210; mirror_svdllm_f050 3.01092
+[16:01:57] heal A06 s1: step 780/780 (2.43 s/step, ETA 0.0 min): svdllm_f050 3.25373; mirror_svdllm_f050 2.98416
+[16:03:24] heal A06 s1: done 780 steps in 1985.0 s; svdllm_f050: held-out 7.19054 -> 3.32102; mirror_svdllm_f050: held-out 9.19062 -> 3.11029
+[16:03:24] fp_heal: job a06_s1 s1 done in 37.5 min; outputs under /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg
+== end rc=0 2026-11-20 16:03:25

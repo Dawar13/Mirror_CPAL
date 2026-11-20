@@ -1,0 +1,90 @@
+{
+ "figure": "fig_controls",
+ "git": "c792f4d631044d3e9c5cf4f418c18a36cde2f912",
+ "argv": [],
+ "dry_run": false,
+ "inputs": {
+  "results/A03/controls.csv": "9d2ec41eb63ad626da7b51708399e0bb982195aa77e76b3ee81d906522d1bc6f",
+  "results/A03/metrics.json": "e419486370efae9d9f87c917115a5cc712c61586fdac32e8724bd8028aa03bc3"
+ },
+ "range": "1-6",
+ "bars": {
+  "twin_max": 0.05,
+  "ratio_min": 0.9
+ },
+ "rows": [
+  {
+   "control": "mirror",
+   "label": "real mirror",
+   "twin": 0.5677083333333334,
+   "split": 0.4795170817291853,
+   "same": 0.4791147225794392,
+   "same_lo": null,
+   "same_hi": null,
+   "twin_lo": null,
+   "twin_hi": null,
+   "split_a": 0.4793190046688272,
+   "split_b": 0.4797151587895434,
+   "status": null
+  },
+  {
+   "control": "C1",
+   "label": "C1 shuffled correspondence",
+   "twin": 0.0035807291666666,
+   "split": 0.9765333384754872,
+   "same": 0.9700312276177584,
+   "same_lo": null,
+   "same_hi": null,
+   "twin_lo": null,
+   "twin_hi": null,
+   "split_a": 0.9761547680163136,
+   "split_b": 0.9769119089346604,
+   "status": "PASS"
+  },
+  {
+   "control": "C2",
+   "label": "C2 no re-alignment",
+   "twin": 0.0002170138888888,
+   "split": 1.027166992929936,
+   "same": 1.043620990151658,
+   "same_lo": null,
+   "same_hi": null,
+   "twin_lo": null,
+   "twin_hi": null,
+   "split_a": 1.022924715408463,
+   "split_b": 1.031409270451409,
+   "status": "PASS"
+  },
+  {
+   "control": "C3",
+   "label": "C3 pixel permutation",
+   "twin": 0.0794270833333333,
+   "split": 0.9217913782559196,
+   "same": 0.9208885892548352,
+   "same_lo": null,
+   "same_hi": null,
+   "twin_lo": null,
+   "twin_hi": null,
+   "split_a": 0.9217886348317219,
+   "split_b": 0.9217941216801173,
+   "status": "FAIL"
+  },
+  {
+   "control": "C4",
+   "label": "C4 random-operator null",
+   "twin": 0.0040581597222222,
+   "split": null,
+   "same": 1.0000000539368148,
+   "same_lo": 0.9986863154173916,
+   "same_hi": 1.002259883409072,
+   "twin_lo": 0.002975802951388889,
+   "twin_hi": 0.005270724826388887,
+   "split_a": null,
+   "split_b": null,
+   "status": null
+  }
+ ],
+ "verdict": "FAIL",
+ "notes": [],
+ "caption": "Discovery null controls (A03), blocks 1 to 6 of dinov2_vitb14_reg. (a) Twin fraction: the share of MLP hidden units in a matched pair whose symmetrised mirror correlation is at least 0.5. (b) Ratio to null of the share of weight energy the structure's projection removes: filled markers are the split-half ratio (operators fitted on one half of the fit images, pairings on the other), the statistic rule A03-1 scores, with a thin line across its two split directions; light open markers are the same-sample ratio, a diagnostic that sits below 1 for any fitted structure. C4 is the null itself (mean and 2.5 to 97.5 percentiles over its 20 draws). Dashed lines: the pre-registered bars (each control passes with a twin fraction of at most 0.05 and a ratio of at least 0.9). Rule A03-1: FAIL."
+}

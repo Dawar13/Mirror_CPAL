@@ -1,0 +1,190 @@
+[2026-11-20 08:10:02] pre-registration: unchanged since the recorded commit
+[2026-11-20 08:10:02] projection after W0 not available: no measured heal time yet (no W0 timing file and no finished heal job)
+[2026-11-20 08:10:02] start w0_data (wave W0, cpu, attempt 1, 0 GB): bash scripts/fp_vm_w0.sh data
+[2026-11-20 08:10:22] start a12b_check (wave W1, light, attempt 1, 12 GB): python scripts/fp_a12b_kernel.py --correctness-only --out results/A12b/correctness_only; [ -f results/A12b/correctness_only/metrics.json ] || { mkdir -p results
+[2026-11-20 08:10:32] end a12b_check attempt 1: finished (rc 0, 10 s)
+[2026-11-20 08:16:52] end w0_data attempt 1: failed (rc 143, 410 s)
+[2026-11-20 08:16:52] start w0_data (wave W0, cpu, attempt 2, 0 GB): bash scripts/fp_vm_w0.sh data
+[2026-11-20 08:17:22] start a12b_check (wave W1, light, attempt 2, 12 GB): python scripts/fp_a12b_kernel.py --correctness-only --out results/A12b/correctness_only; [ -f results/A12b/correctness_only/metrics.json ] || { mkdir -p results
+[2026-11-20 08:18:22] end a12b_check attempt 2: finished (rc 0, 60 s)
+[2026-11-20 08:32:23] end w0_data attempt 2: finished (rc 0, 930 s)
+[2026-11-20 08:32:23] projection before W3 not available: no measured heal time yet (no W0 timing file and no finished heal job)
+[2026-11-20 08:32:23] start a01_fit (wave W1, cpu, attempt 1, 0 GB): python scripts/fp_a01_weightspace.py --mode matched --skip-knn --workers 10
+[2026-11-20 08:32:33] projection before W4 not available: no measured heal time yet (no W0 timing file and no finished heal job)
+[2026-11-20 08:32:33] start w0_roles (wave W0, cpu, attempt 1, 0 GB): bash scripts/fp_vm_w0.sh roles
+[2026-11-20 08:32:53] projection before W5 not available: no measured heal time yet (no W0 timing file and no finished heal job)
+[2026-11-20 08:32:53] start w0_timing (wave W0, light, attempt 1, 60 GB): bash scripts/fp_vm_w0.sh timing
+[2026-11-20 08:33:03] end w0_timing attempt 1: failed (rc 1, 10 s)
+[2026-11-20 08:33:03] start a02_fit_fit0 (wave W1, cpu, attempt 1, 0 GB): python scripts/fp_structure_fit.py --role fit0 --fit-seed 0 --workers 6 --operators runs/x2/perlayer_reg_s0/results/e1_operators.npz --reference results/MUST-07
+[2026-11-20 08:33:23] end a02_fit_fit0 attempt 1: finished (rc 0, 20 s)
+[2026-11-20 08:33:23] start w0_timing (wave W0, light, attempt 2, 90 GB): bash scripts/fp_vm_w0.sh timing
+[2026-11-20 08:33:33] end w0_timing attempt 2: failed (rc 1, 10 s)
+[2026-11-20 08:33:33] STOP: job w0_timing failed 2 times; see logs/final/w0_timing.log; no new jobs start (running jobs continue)
+[2026-11-20 08:33:53] end a01_fit attempt 1: finished (rc 0, 90 s)
+[2026-11-20 08:37:23] end w0_roles attempt 1: finished (rc 0, 290 s)
+[2026-11-20 08:37:23] runner finished (exit code 2)
+[2026-11-20 08:38:12] pre-registration: unchanged since the recorded commit
+[2026-11-20 08:38:12] projection before W2 not available: no measured heal time yet (no W0 timing file and no finished heal job)
+[2026-11-20 08:38:12] start w0_timing (wave W0, light, attempt 3, 60 GB): bash scripts/fp_vm_w0.sh timing
+[2026-11-20 08:38:32] start a02_fit_fit1 (wave W1, cpu, attempt 1, 0 GB): python scripts/fp_structure_fit.py --role fit1 --fit-seed 1 --workers 6 --operators runs/x2/perlayer_reg_s1/results/e1_operators.npz --reference results/MUST-07
+[2026-11-20 08:38:42] start a02_fit_fit2 (wave W1, cpu, attempt 1, 0 GB): python scripts/fp_structure_fit.py --role fit2 --fit-seed 2 --workers 6 --operators runs/x2/perlayer_reg_s2/results/e1_operators.npz --reference results/MUST-07
+[2026-11-20 08:39:02] end a02_fit_fit1 attempt 1: finished (rc 0, 30 s)
+[2026-11-20 08:39:02] start a02_fit_fit3 (wave W1, cpu, attempt 1, 0 GB): python scripts/fp_structure_fit.py --role fit3 --fit-seed 3 --workers 6 --images cache/fit3_224_uint8.npy --index cache/fit3_index.npz --rows-key rows
+[2026-11-20 08:39:12] end a02_fit_fit2 attempt 1: finished (rc 0, 30 s)
+[2026-11-20 08:39:12] start a02_fit_coco (wave W1, cpu, attempt 1, 0 GB): python scripts/fp_structure_fit.py --role coco --fit-seed 100 --workers 6 --images cache/coco224_uint8.npy --index cache/coco_index.npz --rows-key rows
+[2026-11-20 08:39:32] start a03_controls (wave W1, cpu, attempt 1, 0 GB): python scripts/fp_a03_controls.py --workers 8 --reference-structure results/MUST-07/structure/dinov2_vitb14_reg_s0.npz
+[2026-11-20 08:39:42] start w0_roles_ext (wave W1, cpu, attempt 1, 0 GB): bash scripts/fp_vm_w0.sh roles_ext
+[2026-11-20 08:40:02] start w0_extra (wave W1, cpu, attempt 1, 0 GB): bash scripts/fp_vm_w0.sh extra
+[2026-11-20 08:40:12] start fig_fourier (wave W4, cpu, attempt 1, 0 GB): python scripts/fp_fig_fourier.py && touch logs/final/fig_fourier.done
+[2026-11-20 08:40:32] end fig_fourier attempt 1: finished (rc 0, 20 s)
+[2026-11-20 08:40:32] start a01_fit_free (wave W2, cpu, attempt 1, 0 GB): python scripts/fp_a01_weightspace.py --mode free --skip-knn --workers 6 --out results/A01/free
+[2026-11-20 08:41:32] end a01_fit_free attempt 1: finished (rc 0, 60 s)
+[2026-11-20 08:42:02] end a02_fit_fit3 attempt 1: finished (rc 0, 180 s)
+[2026-11-20 08:42:02] end a02_fit_coco attempt 1: finished (rc 0, 170 s)
+[2026-11-20 08:44:02] end w0_timing attempt 3: finished (rc 0, 350 s)
+[2026-11-20 08:44:02] end w0_extra attempt 1: finished (rc 0, 240 s)
+[2026-11-20 08:44:02] start heal_gate_s0 (wave W1, heal, attempt 1, 28 GB): python scripts/fp_heal.py --spec jobs/heal/gate_s0.yaml --resume
+[2026-11-20 08:44:42] start eval_server (wave W1, eval, attempt 1, 35 GB): python scripts/fp_eval_server.py --gpu-frac 0.25
+[2026-11-20 08:45:12] start a08_top1_original (wave W4, eval, attempt 1, 12 GB): python scripts/fp_a08_top1.py --original deit3_b16 --passes bf16,fp32
+[2026-11-20 08:48:02] start fig_teaser (wave W4, light, attempt 1, 10 GB): python scripts/fp_fig_teaser.py && touch logs/final/fig_teaser.done
+[2026-11-20 08:48:32] end fig_teaser attempt 1: finished (rc 0, 30 s)
+[2026-11-20 08:48:42] start heal_gate_s1 (wave W1, heal, attempt 1, 28 GB): python scripts/fp_heal.py --spec jobs/heal/gate_s1.yaml --resume
+[2026-11-20 08:49:12] start a10_p112 (wave W5, eval, attempt 1, 25 GB): python scripts/tier2_ade20k.py --model dinov2_vitb14_reg --variants original --mask-eq --out runs/final/A10/p112 && python scripts/tier2_ade20k.py --model dinov
+[2026-11-20 08:49:32] end w0_roles_ext attempt 1: finished (rc 0, 590 s)
+[2026-11-20 08:51:32] end a08_top1_original attempt 1: finished (rc 0, 380 s)
+[2026-11-20 09:23:03] end heal_gate_s0 attempt 1: finished (rc 0, 2341 s)
+[2026-11-20 09:23:03] start heal_gate_s2 (wave W1, heal, attempt 1, 28 GB): python scripts/fp_heal.py --spec jobs/heal/gate_s2.yaml --resume
+[2026-11-20 09:30:43] end a03_controls attempt 1: finished (rc 0, 3071 s)
+[2026-11-20 09:33:03] end heal_gate_s1 attempt 1: finished (rc 0, 2661 s)
+[2026-11-20 09:33:03] start a02_stability (wave W2, light, attempt 1, 30 GB): python scripts/fp_a02_stability.py --out results/A02
+[2026-11-20 09:46:03] end a02_stability attempt 1: finished (rc 0, 780 s)
+[2026-11-20 09:46:03] start a07_flipavg_dinov2_vitb14_reg (wave W3, eval, attempt 1, 30 GB): python scripts/fp_eval.py --original dinov2_vitb14_reg --flip-average --passes bf16 --probe --probe-flipavg --cost --experiment A07 --out runs/final/a07/dinov2_
+[2026-11-20 10:00:03] end heal_gate_s2 attempt 1: finished (rc 0, 2221 s)
+[2026-11-20 10:00:03] start gate_p (wave W1, decision, attempt 1, 0 GB): python scripts/fp_wait_eval.py --run-dir runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0 --run-dir runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/
+[2026-11-20 10:00:13] start a07_flipavg_dinov2_vits14_reg (wave W3, eval, attempt 1, 30 GB): python scripts/fp_eval.py --original dinov2_vits14_reg --flip-average --passes bf16 --probe --probe-flipavg --cost --experiment A07 --out runs/final/a07/dinov2_
+[2026-11-20 10:04:33] end a07_flipavg_dinov2_vitb14_reg attempt 1: finished (rc 0, 1110 s)
+[2026-11-20 10:04:33] start a15a_siglip (wave W5, light, attempt 1, 30 GB): python scripts/fp_a15a_siglip.py --out results/A15a
+[2026-11-20 10:04:43] end gate_p attempt 1: finished (rc 0, 280 s)
+[2026-11-20 10:12:33] end a15a_siglip attempt 1: failed (rc 143, 480 s)
+[2026-11-20 10:12:33] start heal_a01_wspace_s0 (wave W1, heal, attempt 1, 25 GB): python scripts/fp_heal.py --spec jobs/heal/a01_wspace_s0.yaml --resume
+[2026-11-20 10:16:13] end a07_flipavg_dinov2_vits14_reg attempt 1: finished (rc 0, 960 s)
+[2026-11-20 10:16:13] start heal_a01_wspace_s1 (wave W1, heal, attempt 1, 25 GB): python scripts/fp_heal.py --spec jobs/heal/a01_wspace_s1.yaml --resume
+[2026-11-20 10:29:14] end heal_a01_wspace_s0 attempt 1: finished (rc 0, 1000 s)
+[2026-11-20 10:29:14] start heal_a06_svd_s0 (wave W2, heal, attempt 1, 33 GB): python scripts/fp_heal.py --spec jobs/heal/a06_svd_s0.yaml --resume
+[2026-11-20 10:33:04] end heal_a01_wspace_s1 attempt 1: finished (rc 0, 1010 s)
+[2026-11-20 10:33:04] start heal_a11_svdllm (wave W5, heal, attempt 1, 27 GB): python scripts/fp_heal.py --spec jobs/heal/a11_svdllm.yaml --resume
+[2026-11-20 10:33:14] start a01_decide (wave W1, decision, attempt 1, 0 GB): python scripts/fp_wait_eval.py --run-dir runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s0 --run-dir runs/final/main/dinov2_vitb14_reg/mirror_exact_wspac
+[2026-11-20 10:43:04] end a10_p112 attempt 1: finished (rc 0, 6832 s)
+[2026-11-20 10:43:04] start heal_main_s1_slicegpt (wave W2, heal, attempt 1, 25 GB): python scripts/fp_heal.py --spec jobs/heal/main_s1_slicegpt.yaml --resume
+[2026-11-20 10:44:14] end heal_main_s1_slicegpt attempt 1: failed (rc 143, 70 s)
+[2026-11-20 10:46:04] end a01_decide attempt 1: finished (rc 0, 770 s)
+[2026-11-20 10:46:04] start a09_audit_b (wave W2, light, attempt 1, 30 GB): python scripts/fp_a09_audit.py --run runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s0 --out results/A09/dinov2_vitb14_reg --knn-impl knn_fa
+[2026-11-20 11:08:34] end heal_a06_svd_s0 attempt 1: finished (rc 0, 2361 s)
+[2026-11-20 11:08:34] start a07_flipavg_svdllm (wave W3, eval, attempt 1, 30 GB): python scripts/fp_eval.py --run-dir runs/final/a06/dinov2_vitb14_reg/svdllm_f040/s0 --run-dir runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s0 --run-dir runs/fin
+[2026-11-20 11:09:04] end a07_flipavg_svdllm attempt 1: failed (rc 143, 30 s)
+[2026-11-20 11:09:04] start a07_probe_mirror (wave W3, eval, attempt 1, 30 GB): python scripts/fp_eval.py --run-dir runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s0 --run-dir runs/final/main/dinov2_vitb14_reg/$(python s
+[2026-11-20 11:09:44] end a09_audit_b attempt 1: failed (rc 143, 1420 s)
+[2026-11-20 11:09:44] end a07_probe_mirror attempt 1: failed (rc 143, 40 s)
+[2026-11-20 11:09:44] start heal_main_s0 (wave W2, heal, attempt 1, 61 GB): python scripts/fp_heal.py --spec jobs/heal/main_s0.yaml --resume
+[2026-11-20 11:13:14] runner stopped; its jobs keep running (start it again to resume)
+[2026-11-20 11:13:17] pre-registration: unchanged since the recorded commit
+[2026-11-20 11:14:24] cut rank 1: heal_a15b, a15a_siglip, a15b_measure (1.5 heal-units); projection 12.60 -> 12.30 h
+[2026-11-20 11:14:24] cut rank 2: heal_l_s0 (6 heal-units); projection 12.30 -> 11.10 h
+[2026-11-20 11:14:24] cut rank 4: heal_a11_mirror_exact (3 heal-units); projection 11.10 -> 10.50 h
+[2026-11-20 11:19:47] end heal_a11_svdllm attempt 1: finished (rc 0, 2803 s)
+[2026-11-20 11:19:47] start heal_a02 (wave W2, heal, attempt 1, 30 GB): python scripts/fp_heal.py --spec jobs/heal/a02_heals.yaml --resume
+[2026-11-20 12:00:38] end heal_a02 attempt 1: finished (rc 0, 2451 s)
+[2026-11-20 12:00:38] start heal_main_s1 (wave W2, heal, attempt 1, 30 GB): python scripts/fp_heal.py --spec jobs/heal/main_s1.yaml --resume
+[2026-11-20 12:25:08] runner stopped; its jobs keep running (start it again to resume)
+[2026-11-20 12:25:10] pre-registration: unchanged since the recorded commit
+[2026-11-20 12:34:30] end heal_main_s1 attempt 1: finished (rc 0, 2033 s)
+[2026-11-20 12:34:30] start heal_a06_mirror_s0 (wave W3, heal, attempt 1, 34 GB): python scripts/fp_heal.py --spec jobs/heal/a06_mirror_s0.yaml --resume
+[2026-11-20 13:23:11] end heal_main_s0 attempt 1: finished (rc 0, 8007 s)
+[2026-11-20 13:23:11] start heal_posthoc_iosvd (wave W2, heal, attempt 1, 27 GB): python scripts/fp_heal.py --spec jobs/heal/posthoc_iosvd_lr5e-05.yaml --resume
+[2026-11-20 13:23:41] start heal_main_s2 (wave W2, heal, attempt 1, 27 GB): python scripts/fp_heal.py --spec jobs/heal/main_s2.yaml --resume
+[2026-11-20 13:33:31] end heal_main_s2 attempt 1: failed (rc 143, 590 s)
+[2026-11-20 13:33:31] start heal_deit_s0 (wave W4, heal, attempt 1, 23 GB): python scripts/fp_heal.py --spec jobs/heal/deit_s0.yaml --resume
+[2026-11-20 13:40:41] runner stopped; its jobs keep running (start it again to resume)
+[2026-11-20 13:40:45] pre-registration: unchanged since the recorded commit
+[2026-11-20 13:48:15] end heal_posthoc_iosvd attempt 1: finished (rc 0, 1504 s)
+[2026-11-20 13:48:15] start heal_svdllm_full_s0 (wave W2, heal, attempt 1, 27 GB): python scripts/fp_heal.py --spec jobs/heal/svdllm_full_s0.yaml --resume
+[2026-11-20 14:16:35] end heal_a06_mirror_s0 attempt 1: finished (rc 0, 6125 s)
+[2026-11-20 14:16:35] start heal_svdllm_full_s1 (wave W2, heal, attempt 1, 27 GB): python scripts/fp_heal.py --spec jobs/heal/svdllm_full_s1.yaml --resume
+[2026-11-20 14:18:35] runner stopped; its jobs keep running (start it again to resume)
+[2026-11-20 14:18:38] pre-registration: unchanged since the recorded commit
+[2026-11-20 14:19:58] end heal_svdllm_full_s1 attempt 1: failed (rc 143, 203 s)
+[2026-11-20 14:19:58] start heal_posthoc_iosvd_s1 (wave W2, heal, attempt 1, 27 GB): python scripts/fp_heal.py --spec jobs/heal/posthoc_iosvd_lr5e-05_s1.yaml --resume
+[2026-11-20 14:23:58] end heal_svdllm_full_s0 attempt 1: finished (rc 0, 2144 s)
+[2026-11-20 14:23:58] start heal_posthoc_iosvd_s2 (wave W2, heal, attempt 1, 27 GB): python scripts/fp_heal.py --spec jobs/heal/posthoc_iosvd_lr5e-05_s2.yaml --resume
+[2026-11-20 14:25:58] runner stopped; its jobs keep running (start it again to resume)
+[2026-11-20 14:26:01] pre-registration: unchanged since the recorded commit
+[2026-11-20 14:29:21] end heal_deit_s0 attempt 1: finished (rc 0, 3350 s)
+[2026-11-20 14:29:21] start heal_main_s2 (wave W2, heal, attempt 2, 27 GB): python scripts/fp_heal.py --spec jobs/heal/main_s2.yaml --resume
+[2026-11-20 14:29:31] start a08_params (wave W4, cpu, attempt 1, 0 GB): python scripts/fp_a08_params.py --run-dir runs/final/a08/deit3_b16/mirror_exact/s0
+[2026-11-20 14:29:51] end a08_params attempt 1: finished (rc 0, 20 s)
+[2026-11-20 14:29:51] start a08_top1_mirror_exact_s0 (wave W4, eval, attempt 1, 12 GB): python scripts/fp_a08_top1.py --run-dir runs/final/a08/deit3_b16/mirror_exact/s0 --passes bf16,fp32
+[2026-11-20 14:38:51] end a08_top1_mirror_exact_s0 attempt 1: finished (rc 0, 540 s)
+[2026-11-20 14:38:51] start a08_top1_svdllm_s0 (wave W4, eval, attempt 1, 12 GB): python scripts/fp_a08_top1.py --run-dir runs/final/a08/deit3_b16/svdllm/s0 --passes bf16
+[2026-11-20 14:42:21] end a08_top1_svdllm_s0 attempt 1: finished (rc 0, 210 s)
+[2026-11-20 14:48:01] end heal_posthoc_iosvd_s1 attempt 1: finished (rc 0, 1683 s)
+[2026-11-20 14:48:01] start heal_deit_s1 (wave W4, heal, attempt 1, 23 GB): python scripts/fp_heal.py --spec jobs/heal/deit_s1.yaml --resume
+[2026-11-20 14:52:21] end heal_posthoc_iosvd_s2 attempt 1: finished (rc 0, 1703 s)
+[2026-11-20 14:52:21] start heal_deit_s2 (wave W4, heal, attempt 1, 23 GB): python scripts/fp_heal.py --spec jobs/heal/deit_s2.yaml --resume
+[2026-11-20 14:55:51] end heal_main_s2 attempt 2: finished (rc 0, 1590 s)
+[2026-11-20 14:55:51] start heal_main_s1_slicegpt (wave W2, heal, attempt 2, 25 GB): python scripts/fp_heal.py --spec jobs/heal/main_s1_slicegpt.yaml --resume
+[2026-11-20 15:20:52] end heal_deit_s1 attempt 1: finished (rc 0, 1971 s)
+[2026-11-20 15:20:52] start heal_main_s2_iosvd (wave W2, heal, attempt 1, 27 GB): python scripts/fp_heal.py --spec jobs/heal/main_s2_iosvd.yaml --resume
+[2026-11-20 15:21:22] start a08_top1_mirror_exact_s1 (wave W4, eval, attempt 1, 12 GB): python scripts/fp_a08_top1.py --run-dir runs/final/a08/deit3_b16/mirror_exact/s1 --passes bf16,fp32
+[2026-11-20 15:25:52] end heal_main_s1_slicegpt attempt 2: finished (rc 0, 1800 s)
+[2026-11-20 15:25:52] start heal_a06_s1 (wave W3, heal, attempt 1, 30 GB): python scripts/fp_heal.py --spec jobs/heal/a06_s1.yaml --resume
+[2026-11-20 15:26:02] end heal_deit_s2 attempt 1: finished (rc 0, 2021 s)
+[2026-11-20 15:26:22] start heal_deit_random (wave W4, heal, attempt 1, 20 GB): python scripts/fp_heal.py --spec jobs/heal/deit_random.yaml --resume
+[2026-11-20 15:29:22] end a08_top1_mirror_exact_s1 attempt 1: finished (rc 0, 480 s)
+[2026-11-20 15:29:52] start a08_top1_mirror_exact_s2 (wave W4, eval, attempt 1, 12 GB): python scripts/fp_a08_top1.py --run-dir runs/final/a08/deit3_b16/mirror_exact/s2 --passes bf16,fp32
+[2026-11-20 15:30:22] runner stopped; its jobs keep running (start it again to resume)
+[2026-11-20 15:30:24] pre-registration: unchanged since the recorded commit
+[2026-11-20 15:36:24] start a08_top1_svdllm_s1 (wave W4, eval, attempt 1, 12 GB): python scripts/fp_a08_top1.py --run-dir runs/final/a08/deit3_b16/svdllm/s1 --passes bf16
+[2026-11-20 15:38:44] end a08_top1_mirror_exact_s2 attempt 1: finished (rc 0, 532 s)
+[2026-11-20 15:38:44] start a08_top1_svdllm_s2 (wave W4, eval, attempt 1, 12 GB): python scripts/fp_a08_top1.py --run-dir runs/final/a08/deit3_b16/svdllm/s2 --passes bf16
+[2026-11-20 15:40:14] end a08_top1_svdllm_s1 attempt 1: finished (rc 0, 230 s)
+[2026-11-20 15:42:14] end a08_top1_svdllm_s2 attempt 1: finished (rc 0, 210 s)
+[2026-11-20 15:42:14] start a09_audit_b (wave W2, light, attempt 2, 30 GB): python scripts/fp_a09_audit.py --run runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s0 --out results/A09/dinov2_vitb14_reg --knn-impl knn_fa
+[2026-11-20 15:49:14] end heal_main_s2_iosvd attempt 1: finished (rc 0, 1702 s)
+[2026-11-20 15:50:54] start a10_downstream (wave W5, eval, attempt 1, 25 GB): python scripts/fp_eval_downstream.py --script tier2_linear -- --model dinov2_vitb14_reg --variants original --healed-run vexact_s0=runs/final/main/dinov2_vitb14
+[2026-11-20 15:52:14] start a07_flipavg_svdllm (wave W3, eval, attempt 2, 30 GB): python scripts/fp_eval.py --run-dir runs/final/a06/dinov2_vitb14_reg/svdllm_f040/s0 --run-dir runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s0 --run-dir runs/fin
+[2026-11-20 15:54:14] end heal_deit_random attempt 1: finished (rc 0, 1672 s)
+[2026-11-20 16:03:44] end heal_a06_s1 attempt 1: finished (rc 0, 2272 s)
+[2026-11-20 16:03:44] start a10_fullbank (wave W5, eval, attempt 1, 45 GB): X=(); for m in mirror_exact_ext svdllm_ext; do d=runs/final/a11/dinov2_vitb14_reg/$m/s0; [ -f $d/DONE ] && X+=(--model a11_$m=$d); done; python scripts/fp_fullb
+[2026-11-20 16:13:45] start a08_top1_random_structure_s0 (wave W4, eval, attempt 1, 12 GB): python scripts/fp_a08_top1.py --run-dir runs/final/a08/deit3_b16/random_structure/s0 --passes bf16
+[2026-11-20 16:14:15] start a07_probe_mirror (wave W3, eval, attempt 2, 30 GB): python scripts/fp_eval.py --run-dir runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s0 --run-dir runs/final/main/dinov2_vitb14_reg/$(python s
+[2026-11-20 16:14:45] end a08_top1_random_structure_s0 attempt 1: finished (rc 0, 60 s)
+[2026-11-20 16:27:55] end a07_probe_mirror attempt 2: finished (rc 0, 820 s)
+[2026-11-20 16:27:55] start a09_audit_deit (wave W4, light, attempt 1, 30 GB): python scripts/fp_a09_audit.py --run runs/final/a08/deit3_b16/mirror_exact/s0 --model deit3_b16 --out results/A09/deit3_b16 --no-flip
+[2026-11-20 16:31:55] end a10_fullbank attempt 1: failed (rc 143, 1690 s)
+[2026-11-20 16:32:15] runner stopped; its jobs keep running (start it again to resume)
+[2026-11-20 16:32:17] pre-registration: unchanged since the recorded commit
+[2026-11-20 16:36:48] end a10_downstream attempt 1: finished (rc 0, 2754 s)
+[2026-11-20 16:38:08] start a10_fullbank (wave W5, eval, attempt 2, 45 GB): python scripts/fp_fullbank.py --model original=original:dinov2_vitb14_reg --model mirror_s0=runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s
+[2026-11-20 16:48:38] end a07_flipavg_svdllm attempt 2: finished (rc 0, 3384 s)
+[2026-11-20 16:53:38] end a09_audit_b attempt 2: finished (rc 0, 4284 s)
+[2026-11-20 16:54:38] end a09_audit_deit attempt 1: finished (rc 0, 1603 s)
+[2026-11-20 17:29:48] runner stopped; its jobs keep running (start it again to resume)
+[2026-11-20 17:29:51] pre-registration: unchanged since the recorded commit
+[2026-11-20 17:30:42] end a10_fullbank attempt 2: failed (rc 143, 3154 s)
+[2026-11-20 17:30:42] projection before End: 10.70 VM-hours (target 10.75); no cuts
+[2026-11-20 17:30:42] start report (wave End, report, attempt 1, 0 GB): python scripts/collect_final_phase.py
+[2026-11-20 17:30:51] start fig_frontier (wave End, report, attempt 1, 0 GB): python scripts/fp_fig_frontier.py && touch logs/final/fig_frontier.done
+[2026-11-20 17:31:12] end fig_frontier attempt 1: finished (rc 0, 20 s)
+[2026-11-20 17:31:12] start fig_stability (wave End, report, attempt 1, 0 GB): python scripts/fp_fig_stability.py && touch logs/final/fig_stability.done
+[2026-11-20 17:31:21] end report attempt 1: finished (rc 0, 40 s)
+[2026-11-20 17:31:21] end fig_stability attempt 1: finished (rc 0, 10 s)
+[2026-11-20 17:31:21] start fig_controls (wave End, report, attempt 1, 0 GB): python scripts/fp_fig_controls.py && touch logs/final/fig_controls.done
+[2026-11-20 17:31:42] end fig_controls attempt 1: finished (rc 0, 20 s)
+[2026-11-20 17:31:42] start fig_curves (wave End, report, attempt 1, 0 GB): python scripts/fp_fig_curves.py && touch logs/final/fig_curves.done
+[2026-11-20 17:31:52] end fig_curves attempt 1: finished (rc 0, 10 s)
+[2026-11-20 17:31:52] start a12_bench_b (wave W3, light, attempt 1, 40 GB): python scripts/fp_a12_bench.py --manifest jobs/a12/dinov2_vitb14_reg_$(python scripts/fp_main_arm.py --variant).json --out results/A12/dinov2_vitb14_reg
+[2026-11-20 17:33:52] GOVERNOR: 10.25 VM-hours; no new heals (stop event: report to Dawar)
+[2026-11-20 17:45:12] end a12_bench_b attempt 1: finished (rc 0, 800 s)
+[2026-11-20 17:45:12] SIGTERM to job eval_server (process group 36523; service_stop)
+[2026-11-20 17:45:22] end eval_server attempt 1: stopped (rc 143, 32440 s)
+[2026-11-20 17:45:22] runner finished (exit code 0)

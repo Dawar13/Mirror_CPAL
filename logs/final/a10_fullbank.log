@@ -1,0 +1,60 @@
+== start 2026-11-20 16:03:44 job a10_fullbank pid 61406 host jl-vm-581628
+== cmd X=(); for m in mirror_exact_ext svdllm_ext; do d=runs/final/a11/dinov2_vitb14_reg/$m/s0; [ -f $d/DONE ] && X+=(--model a11_$m=$d); done; python scripts/fp_fullbank.py --model original=original:dinov2_vitb14_reg --model mirror_s0=runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s0 --model mirror_s1=runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s1 --model mirror_s2=runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s2 --model svdllm_s0=runs/final/main/dinov2_vitb14_reg/svdllm/s0 --model svdllm_s1=runs/final/main/dinov2_vitb14_reg/svdllm/s1 --model svdllm_s2=runs/final/main/dinov2_vitb14_reg/svdllm/s2 --model svdllm_full_s0=runs/final/main/dinov2_vitb14_reg/svdllm_full/s0 --model iosvd_s0=runs/final/main/dinov2_vitb14_reg/iosvd/s0 "${X[@]}" --knn-only svdllm_full_s0,iosvd_s0 --linear-tf32 --out runs/final/A10/fullbank
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[16:04:10] fp_fullbank: 10 model(s) ['original', 'mirror_s0', 'mirror_s1', 'mirror_s2', 'svdllm_s0', 'svdllm_s1', 'svdllm_s2', 'svdllm_full_s0', 'iosvd_s0', 'a11_svdllm_ext'], stages ['features', 'knn', 'linear'], device cuda
+[16:04:13] validation: 50,000 images (7.01 GiB) on cuda in 3 s
+[16:04:13] train features: 10 model(s), resuming at image 0 of 1,281,167
+[16:07:25]   train features: 10,240/1,281,167 images, 53 img/s per pass over 10 model(s)
+[16:10:31]   train features: 20,480/1,281,167 images, 54 img/s per pass over 10 model(s)
+[16:14:23]   train features: 30,720/1,281,167 images, 50 img/s per pass over 10 model(s)
+[16:21:04]   train features: 40,960/1,281,167 images, 41 img/s per pass over 10 model(s)
+[16:25:14]   train features: 51,200/1,281,167 images, 41 img/s per pass over 10 model(s)
+[16:27:33]   train features: 61,440/1,281,167 images, 44 img/s per pass over 10 model(s)
+[16:29:42]   train features: 71,680/1,281,167 images, 47 img/s per pass over 10 model(s)
+== signal received 2026-11-20 16:31:46
+== end rc=143 2026-11-20 16:31:46
+/usr/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+== start 2026-11-20 16:38:08 job a10_fullbank pid 63815 host jl-vm-581628
+== cmd python scripts/fp_fullbank.py --model original=original:dinov2_vitb14_reg --model mirror_s0=runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s0 --model mirror_s1=runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s1 --model mirror_s2=runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s2 --model svdllm_s0=runs/final/main/dinov2_vitb14_reg/svdllm/s0 --linear-tf32 --out runs/final/A10/fullbank
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[16:38:18] fp_fullbank: 5 model(s) ['original', 'mirror_s0', 'mirror_s1', 'mirror_s2', 'svdllm_s0'], stages ['features', 'knn', 'linear'], device cuda
+[16:38:22] validation: 50,000 images (7.01 GiB) on cuda in 3 s
+[16:38:22] train features: 5 model(s), resuming at image 0 of 1,281,167
+[16:39:55]   train features: 10,240/1,281,167 images, 110 img/s per pass over 5 model(s)
+[16:41:40]   train features: 20,480/1,281,167 images, 103 img/s per pass over 5 model(s)
+[16:42:57]   train features: 30,720/1,281,167 images, 112 img/s per pass over 5 model(s)
+[16:43:58]   train features: 40,960/1,281,167 images, 122 img/s per pass over 5 model(s)
+[16:44:59]   train features: 51,200/1,281,167 images, 129 img/s per pass over 5 model(s)
+[16:46:23]   train features: 61,440/1,281,167 images, 128 img/s per pass over 5 model(s)
+[16:48:05]   train features: 71,680/1,281,167 images, 123 img/s per pass over 5 model(s)
+[16:51:51]   train features: 81,920/1,281,167 images, 101 img/s per pass over 5 model(s)
+[16:53:04]   train features: 92,160/1,281,167 images, 104 img/s per pass over 5 model(s)
+[16:54:28]   train features: 102,400/1,281,167 images, 106 img/s per pass over 5 model(s)
+[16:57:29]   train features: 112,640/1,281,167 images, 98 img/s per pass over 5 model(s)
+[17:04:28]   train features: 122,880/1,281,167 images, 78 img/s per pass over 5 model(s)
+[17:07:11]   train features: 133,120/1,281,167 images, 77 img/s per pass over 5 model(s)
+[17:09:06]   train features: 143,360/1,281,167 images, 78 img/s per pass over 5 model(s)
+[17:13:50]   train features: 153,600/1,281,167 images, 72 img/s per pass over 5 model(s)
+[17:15:05]   train features: 163,840/1,281,167 images, 74 img/s per pass over 5 model(s)
+[17:22:26]   train features: 174,080/1,281,167 images, 66 img/s per pass over 5 model(s)
+[17:24:47]   train features: 184,320/1,281,167 images, 66 img/s per pass over 5 model(s)
+[17:25:44]   train features: 194,560/1,281,167 images, 68 img/s per pass over 5 model(s)
+[17:26:50]   train features: 204,800/1,281,167 images, 70 img/s per pass over 5 model(s)
+[17:27:50]   train features: 215,040/1,281,167 images, 72 img/s per pass over 5 model(s)
+[17:28:54]   train features: 225,280/1,281,167 images, 74 img/s per pass over 5 model(s)
+[17:30:11]   train features: 235,520/1,281,167 images, 76 img/s per pass over 5 model(s)
+== signal received 2026-11-20 17:30:30
+== end rc=143 2026-11-20 17:30:30
+/usr/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

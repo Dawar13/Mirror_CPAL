@@ -1,0 +1,14 @@
+git: 6299d2c838b52136abfe58453d1d1c8e2b7c500a (uncommitted changes)
+source: results/A03/controls.csv (sha256 9d2ec41eb63a)
+source: results/A03/metrics.json (sha256 e419486370ef)
+bars: twin fraction <= 0.05, ratio to null >= 0.9; range 1-6
+  control     twin           (lo, hi)   split       (A0P1, A1P0)    same           (lo, hi)  A03-1
+  mirror    0.5677         (n/a, n/a)  0.4795   (0.4793, 0.4797)  0.4791         (n/a, n/a)  
+  C1        0.0036         (n/a, n/a)  0.9765   (0.9762, 0.9769)  0.9700         (n/a, n/a)  PASS
+  C2        0.0002         (n/a, n/a)  1.0272   (1.0229, 1.0314)  1.0436         (n/a, n/a)  PASS
+  C3        0.0794         (n/a, n/a)  0.9218   (0.9218, 0.9218)  0.9209         (n/a, n/a)  FAIL
+  C4        0.0041   (0.0030, 0.0053)     n/a         (n/a, n/a)  1.0000   (0.9987, 1.0023)  
+
+Caption: Discovery null controls (A03), blocks 1 to 6 of dinov2_vitb14_reg. (a) Twin fraction: the share of MLP hidden units in a matched pair whose symmetrised mirror correlation is at least 0.5. (b) Ratio to null of the share of weight energy the structure's projection removes: filled markers are the split-half ratio (operators fitted on one half of the fit images, pairings on the other), the statistic rule A03-1 scores, with a thin line across its two split directions; light open markers are the same-sample ratio, a diagnostic that sits below 1 for any fitted structure. C4 is the null itself (mean and 2.5 to 97.5 percentiles over its 20 draws). Dashed lines: the pre-registered bars (each control passes with a twin fraction of at most 0.05 and a ratio of at least 0.9). Rule A03-1: FAIL.
+
+wrote paper/figures/fig_controls.pdf, paper/figures/fig_controls.png and paper/figures/fig_controls.json

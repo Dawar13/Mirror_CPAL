@@ -1,0 +1,63 @@
+== start 2026-11-20 15:26:22 job heal_deit_random pid 59182 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/deit_random.yaml --resume
+[15:26:27] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[15:26:27] fp_heal: building random_structure (random_structure)
+[15:27:11] lr-selection: 2 students x 200 steps x 256 images (micro 128), warm-up 10, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[15:27:11] lr-selection:   random_structure@lr1e-04: lr 0.0001, 85,759,488 trainable, 15 terms, targets symmetrised/symmetrised, held-out 14.57281
+[15:27:11] lr-selection:   random_structure@lr2e-04: lr 0.0002, 85,759,488 trainable, 15 terms, targets symmetrised/symmetrised, held-out 14.57281
+[15:27:58] lr-selection: step 20/200 (2.36 s/step, ETA 7.1 min): random_structure@lr1e-04 7.56709; random_structure@lr2e-04 7.03070
+[15:28:49] lr-selection: step 40/200 (2.45 s/step, ETA 6.5 min): random_structure@lr1e-04 6.36568; random_structure@lr2e-04 5.89702
+[15:29:32] lr-selection: step 60/200 (2.34 s/step, ETA 5.5 min): random_structure@lr1e-04 5.90381; random_structure@lr2e-04 5.43874
+[15:30:14] lr-selection: step 80/200 (2.29 s/step, ETA 4.6 min): random_structure@lr1e-04 5.51918; random_structure@lr2e-04 5.06313
+[15:31:08] lr-selection: step 100/200 (2.36 s/step, ETA 3.9 min): random_structure@lr1e-04 5.31676; random_structure@lr2e-04 4.85588
+[15:32:05] lr-selection: step 120/200 (2.45 s/step, ETA 3.3 min): random_structure@lr1e-04 5.23834; random_structure@lr2e-04 4.76649
+[15:32:57] lr-selection: step 140/200 (2.47 s/step, ETA 2.5 min): random_structure@lr1e-04 5.12073; random_structure@lr2e-04 4.65274
+[15:33:52] lr-selection: step 160/200 (2.50 s/step, ETA 1.7 min): random_structure@lr1e-04 5.08874; random_structure@lr2e-04 4.61768
+[15:34:47] lr-selection: step 180/200 (2.53 s/step, ETA 0.8 min): random_structure@lr1e-04 5.07730; random_structure@lr2e-04 4.59037
+[15:35:42] lr-selection: step 200/200 (2.55 s/step, ETA 0.0 min): random_structure@lr1e-04 5.06937; random_structure@lr2e-04 4.57976
+[15:36:26] lr-selection: done 200 steps in 555.1 s; random_structure@lr1e-04: held-out 14.57281 -> 5.14904; random_structure@lr2e-04: held-out 14.57281 -> 4.65175
+[15:36:26] lr selection random_structure: 1e-04 -> 5.14904, 2e-04 -> 4.65175; best 2e-04
+[15:37:01] heal A08 s0: 1 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[15:37:01] heal A08 s0:   random_structure: lr 0.0002, 85,759,488 trainable, 15 terms, targets symmetrised/symmetrised, held-out 14.57281
+[15:37:40] heal A08 s0: step 20/780 (1.96 s/step, ETA 24.8 min): random_structure 7.98777
+[15:38:19] heal A08 s0: step 40/780 (1.96 s/step, ETA 24.2 min): random_structure 6.31601
+[15:38:54] heal A08 s0: step 60/780 (1.89 s/step, ETA 22.6 min): random_structure 5.62833
+[15:39:32] heal A08 s0: step 80/780 (1.88 s/step, ETA 22.0 min): random_structure 5.17589
+[15:40:10] heal A08 s0: step 100/780 (1.89 s/step, ETA 21.4 min): random_structure 4.90552
+[15:40:43] heal A08 s0: step 120/780 (1.85 s/step, ETA 20.4 min): random_structure 4.77389
+[15:41:16] heal A08 s0: step 140/780 (1.82 s/step, ETA 19.4 min): random_structure 4.59325
+[15:41:48] heal A08 s0: step 160/780 (1.80 s/step, ETA 18.6 min): random_structure 4.45945
+[15:42:17] heal A08 s0: step 180/780 (1.75 s/step, ETA 17.5 min): random_structure 4.31223
+[15:43:00] heal A08 s0: step 200/780 (1.80 s/step, ETA 17.4 min): random_structure 4.18552
+[15:43:28] heal A08 s0: step 220/780 (1.76 s/step, ETA 16.4 min): random_structure 4.16104
+[15:43:55] heal A08 s0: step 240/780 (1.72 s/step, ETA 15.5 min): random_structure 3.95709
+[15:44:20] heal A08 s0: step 260/780 (1.69 s/step, ETA 14.7 min): random_structure 3.93279
+[15:44:42] heal A08 s0: step 280/780 (1.65 s/step, ETA 13.7 min): random_structure 3.84711
+[15:45:02] heal A08 s0: step 300/780 (1.60 s/step, ETA 12.8 min): random_structure 3.82717
+[15:45:23] heal A08 s0: step 320/780 (1.57 s/step, ETA 12.0 min): random_structure 3.75926
+[15:45:43] heal A08 s0: step 340/780 (1.54 s/step, ETA 11.3 min): random_structure 3.72091
+[15:46:03] heal A08 s0: step 360/780 (1.51 s/step, ETA 10.5 min): random_structure 3.58667
+[15:46:22] heal A08 s0: step 380/780 (1.48 s/step, ETA 9.8 min): random_structure 3.50909
+[15:46:56] heal A08 s0: step 400/780 (1.49 s/step, ETA 9.4 min): random_structure 3.54844
+[15:47:17] heal A08 s0: step 420/780 (1.47 s/step, ETA 8.8 min): random_structure 3.49681
+[15:47:37] heal A08 s0: step 440/780 (1.45 s/step, ETA 8.2 min): random_structure 3.42352
+[15:48:01] heal A08 s0: step 460/780 (1.44 s/step, ETA 7.7 min): random_structure 3.41533
+[15:48:26] heal A08 s0: step 480/780 (1.43 s/step, ETA 7.1 min): random_structure 3.39864
+[15:48:50] heal A08 s0: step 500/780 (1.42 s/step, ETA 6.6 min): random_structure 3.39915
+[15:49:15] heal A08 s0: step 520/780 (1.41 s/step, ETA 6.1 min): random_structure 3.34358
+[15:49:35] heal A08 s0: step 540/780 (1.40 s/step, ETA 5.6 min): random_structure 3.38678
+[15:49:54] heal A08 s0: step 560/780 (1.38 s/step, ETA 5.1 min): random_structure 3.33767
+[15:50:14] heal A08 s0: step 580/780 (1.37 s/step, ETA 4.6 min): random_structure 3.35959
+[15:50:47] heal A08 s0: step 600/780 (1.38 s/step, ETA 4.1 min): random_structure 3.35254
+[15:51:01] heal A08 s0: step 620/780 (1.35 s/step, ETA 3.6 min): random_structure 3.22047
+[15:51:20] heal A08 s0: step 640/780 (1.34 s/step, ETA 3.1 min): random_structure 3.27418
+[15:51:39] heal A08 s0: step 660/780 (1.33 s/step, ETA 2.7 min): random_structure 3.30621
+[15:51:58] heal A08 s0: step 680/780 (1.32 s/step, ETA 2.2 min): random_structure 3.25427
+[15:52:17] heal A08 s0: step 700/780 (1.31 s/step, ETA 1.7 min): random_structure 3.22526
+[15:52:38] heal A08 s0: step 720/780 (1.30 s/step, ETA 1.3 min): random_structure 3.22262
+[15:52:59] heal A08 s0: step 740/780 (1.30 s/step, ETA 0.9 min): random_structure 3.27189
+[15:53:20] heal A08 s0: step 760/780 (1.29 s/step, ETA 0.4 min): random_structure 3.24687
+[15:53:41] heal A08 s0: step 780/780 (1.28 s/step, ETA 0.0 min): random_structure 3.24602
+[15:54:04] heal A08 s0: done 780 steps in 1022.8 s; random_structure: held-out 14.57281 -> 3.33635
+[15:54:04] fp_heal: job deit_random s0 done in 27.7 min; outputs under /home/Mirror_CPAL/runs/final/a08/deit3_b16
+== end rc=0 2026-11-20 15:54:05

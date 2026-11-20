@@ -1,0 +1,41 @@
+== start 2026-11-20 10:46:04 job a09_audit_b pid 46164 host jl-vm-581628
+== cmd python scripts/fp_a09_audit.py --run runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s0 --out results/A09/dinov2_vitb14_reg --knn-impl knn_fast
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[10:46:08] A09: dinov2_vitb14_reg mirror_exact_astar_s0 on cuda; forms ['dense', 'even_odd']; A* d+ 700, converted blocks 1..12; classifier head: False; out results/A09/dinov2_vitb14_reg
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[10:46:11] A09 dense: float64, float64_exact, float32, bf16_autocast in lockstep on 1000 images
+== signal received 2026-11-20 11:09:36
+== end rc=143 2026-11-20 11:09:36
+== start 2026-11-20 15:42:14 job a09_audit_b pid 60215 host jl-vm-581628
+== cmd python scripts/fp_a09_audit.py --run runs/final/main/dinov2_vitb14_reg/$(python scripts/fp_main_arm.py)/s0 --out results/A09/dinov2_vitb14_reg --knn-impl knn_fast
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[15:42:19] A09: dinov2_vitb14_reg mirror_exact_astar_s0 on cuda; forms ['dense', 'even_odd']; A* d+ 700, converted blocks 1..12; classifier head: False; out results/A09/dinov2_vitb14_reg
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[15:42:23] A09 dense: float64, float64_exact, float32, bf16_autocast in lockstep on 1000 images
+[16:14:47] A09 even_odd: float64, float64_exact, float32, bf16_autocast in lockstep on 1000 images
+[16:36:53] A09 original: float64 and float32 in lockstep (rounding floor)
+[16:45:50] A09 flip dense/float32: 100.0% (0 differ), features identical bit for bit for 0.00% of images
+[16:47:04] A09 flip dense/bf16_autocast: 99.758% (121 differ), features identical bit for bit for 0.00% of images
+[16:51:54] A09 flip even_odd/float32: 100.0% (0 differ), features identical bit for bit for 0.00% of images
+[16:53:21] A09 flip even_odd/bf16_autocast: 99.738% (131 differ), features identical bit for bit for 0.00% of images
+[16:53:25] A09 bitwise (float32): first stage that differs: patch_embed
+[16:53:25] A09 bitwise (float32): embedding parameters are symmetric only to rounding in the stored even/odd basis (patch_embed.weight: 56.17% of entries identical, patch_embed.bias(odd part zero): 0.00% of entries identical, pos_embed.grid: 52.11% of entries identical, cls_token(odd part zero): 0.00% of entries identical): the projection is rounded in the standard basis before the rotation into the even/odd basis
+[16:53:25] A09 bitwise (float32): inside a block given an exactly mirrored input (lowest share over blocks): norm 100.00%, queries 100.00%, MLP 100.00% of entries identical; attention output 15.81% with keys in the mirrored order and 100.00% with keys reordered to the original order
+[16:53:25] A09 bitwise (float32): the sign flip alone (same token positions) is exact in the MLP and the attention: 100% identical
+[16:53:25] A09 bitwise (float32): reordering the keys to the original order raises the attention share: the order in which attention sums over keys (softmax normaliser and value sum) is a source of difference
+[16:53:25] A09 bitwise (float32): with exactly symmetric embedding parameters the first difference is patch_embed (patch embedding 10.49% identical: the convolution sums the flipped kernel window in another order)
+[16:53:25] A09 bitwise (float32): features identical bit for bit for 0.00% of images
+[16:53:25] A09: A09-1 PASS, A09-2 FAIL; wrote results/A09/dinov2_vitb14_reg
+== end rc=0 2026-11-20 16:53:26

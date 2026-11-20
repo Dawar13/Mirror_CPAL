@@ -1,0 +1,92 @@
+== start 2026-11-20 12:34:30 job heal_a06_mirror_s0 pid 51251 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/a06_mirror_s0.yaml --resume
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[12:34:34] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[12:34:34] fp_heal: building mirror_svdllm_f065 (mirror_svdllm)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[12:35:52] fp_heal: building mirror_svdllm_f050 (mirror_svdllm)
+[12:37:08] fp_heal: building mirror_svdllm_f040 (mirror_svdllm)
+[12:38:38] fp_heal: building mirror_partial_k9 (mirror_partial)
+[12:47:28] lr-selection: 8 students x 200 steps x 256 images (micro 128), warm-up 10, amp bf16, data stream, fused AdamW True, device-side divergence flag, 2 target modes, teacher on x and mirror(x)
+[12:47:28] lr-selection:   mirror_svdllm_f065@lr1e-04: lr 0.0001, 55,356,654 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.77367
+[12:47:28] lr-selection:   mirror_svdllm_f065@lr2e-04: lr 0.0002, 55,356,654 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.77367
+[12:47:28] lr-selection:   mirror_svdllm_f050@lr1e-04: lr 0.0001, 42,366,294 trainable, 14 terms, targets symmetrised/symmetrised, held-out 9.19062
+[12:47:28] lr-selection:   mirror_svdllm_f050@lr2e-04: lr 0.0002, 42,366,294 trainable, 14 terms, targets symmetrised/symmetrised, held-out 9.19062
+[12:47:28] lr-selection:   mirror_svdllm_f040@lr1e-04: lr 0.0001, 33,709,241 trainable, 14 terms, targets symmetrised/symmetrised, held-out 11.07458
+[12:47:28] lr-selection:   mirror_svdllm_f040@lr2e-04: lr 0.0002, 33,709,241 trainable, 14 terms, targets symmetrised/symmetrised, held-out 11.07458
+[12:47:28] lr-selection:   mirror_partial_k9@lr1e-04: lr 0.0001, 85,675,776 trainable, 14 terms, targets symmetrised/symmetrised, held-out 4.27213
+[12:47:28] lr-selection:   mirror_partial_k9@lr2e-04: lr 0.0002, 85,675,776 trainable, 14 terms, targets symmetrised/symmetrised, held-out 4.27213
+[12:50:03] lr-selection: step 20/200 (7.76 s/step, ETA 23.3 min): mirror_svdllm_f065@lr1e-04 3.70941; mirror_svdllm_f065@lr2e-04 5.63061; mirror_svdllm_f050@lr1e-04 5.22797; mirror_svdllm_f050@lr2e-04 5.66601; mirror_svdllm_f040@lr1e-04 6.56324; mirror_svdllm_f040@lr2e-04 6.85604; mirror_partial_k9@lr1e-04 2.13095; mirror_partial_k9@lr2e-04 4.87373
+[12:52:31] lr-selection: step 40/200 (7.58 s/step, ETA 20.2 min): mirror_svdllm_f065@lr1e-04 2.97191; mirror_svdllm_f065@lr2e-04 3.46174; mirror_svdllm_f050@lr1e-04 4.46017; mirror_svdllm_f050@lr2e-04 4.55375; mirror_svdllm_f040@lr1e-04 5.71529; mirror_svdllm_f040@lr2e-04 5.73662; mirror_partial_k9@lr1e-04 1.57338; mirror_partial_k9@lr2e-04 2.28348
+[12:55:05] lr-selection: step 60/200 (7.62 s/step, ETA 17.8 min): mirror_svdllm_f065@lr1e-04 2.75281; mirror_svdllm_f065@lr2e-04 2.91814; mirror_svdllm_f050@lr1e-04 4.26264; mirror_svdllm_f050@lr2e-04 4.24818; mirror_svdllm_f040@lr1e-04 5.49881; mirror_svdllm_f040@lr2e-04 5.40283; mirror_partial_k9@lr1e-04 1.43216; mirror_partial_k9@lr2e-04 1.74936
+[12:57:39] lr-selection: step 80/200 (7.64 s/step, ETA 15.3 min): mirror_svdllm_f065@lr1e-04 2.59280; mirror_svdllm_f065@lr2e-04 2.67857; mirror_svdllm_f050@lr1e-04 4.05674; mirror_svdllm_f050@lr2e-04 4.00649; mirror_svdllm_f040@lr1e-04 5.27322; mirror_svdllm_f040@lr2e-04 5.14127; mirror_partial_k9@lr1e-04 1.31228; mirror_partial_k9@lr2e-04 1.51275
+[13:00:12] lr-selection: step 100/200 (7.64 s/step, ETA 12.7 min): mirror_svdllm_f065@lr1e-04 2.44549; mirror_svdllm_f065@lr2e-04 2.48051; mirror_svdllm_f050@lr1e-04 3.88214; mirror_svdllm_f050@lr2e-04 3.79932; mirror_svdllm_f040@lr1e-04 5.07486; mirror_svdllm_f040@lr2e-04 4.92376; mirror_partial_k9@lr1e-04 1.21560; mirror_partial_k9@lr2e-04 1.35807
+[13:02:51] lr-selection: step 120/200 (7.69 s/step, ETA 10.3 min): mirror_svdllm_f065@lr1e-04 2.45059; mirror_svdllm_f065@lr2e-04 2.46067; mirror_svdllm_f050@lr1e-04 3.93893; mirror_svdllm_f050@lr2e-04 3.81931; mirror_svdllm_f040@lr1e-04 5.16267; mirror_svdllm_f040@lr2e-04 5.00551; mirror_partial_k9@lr1e-04 1.21581; mirror_partial_k9@lr2e-04 1.33653
+[13:05:07] lr-selection: step 140/200 (7.56 s/step, ETA 7.6 min): mirror_svdllm_f065@lr1e-04 2.38760; mirror_svdllm_f065@lr2e-04 2.37765; mirror_svdllm_f050@lr1e-04 3.83258; mirror_svdllm_f050@lr2e-04 3.69962; mirror_svdllm_f040@lr1e-04 5.05091; mirror_svdllm_f040@lr2e-04 4.87812; mirror_partial_k9@lr1e-04 1.17099; mirror_partial_k9@lr2e-04 1.27795
+[13:07:33] lr-selection: step 160/200 (7.53 s/step, ETA 5.0 min): mirror_svdllm_f065@lr1e-04 2.34406; mirror_svdllm_f065@lr2e-04 2.32437; mirror_svdllm_f050@lr1e-04 3.75024; mirror_svdllm_f050@lr2e-04 3.60894; mirror_svdllm_f040@lr1e-04 4.93901; mirror_svdllm_f040@lr2e-04 4.75596; mirror_partial_k9@lr1e-04 1.14948; mirror_partial_k9@lr2e-04 1.23801
+[13:09:14] lr-selection: step 180/200 (7.25 s/step, ETA 2.4 min): mirror_svdllm_f065@lr1e-04 2.37318; mirror_svdllm_f065@lr2e-04 2.34682; mirror_svdllm_f050@lr1e-04 3.80909; mirror_svdllm_f050@lr2e-04 3.66361; mirror_svdllm_f040@lr1e-04 5.02599; mirror_svdllm_f040@lr2e-04 4.83255; mirror_partial_k9@lr1e-04 1.16630; mirror_partial_k9@lr2e-04 1.25842
+[13:10:54] lr-selection: step 200/200 (7.03 s/step, ETA 0.0 min): mirror_svdllm_f065@lr1e-04 2.37142; mirror_svdllm_f065@lr2e-04 2.34124; mirror_svdllm_f050@lr1e-04 3.80908; mirror_svdllm_f050@lr2e-04 3.65798; mirror_svdllm_f040@lr1e-04 5.03210; mirror_svdllm_f040@lr2e-04 4.84071; mirror_partial_k9@lr1e-04 1.17153; mirror_partial_k9@lr2e-04 1.26047
+[13:11:56] lr-selection: done 200 steps in 1467.8 s; mirror_svdllm_f065@lr1e-04: held-out 7.77367 -> 2.47248; mirror_svdllm_f065@lr2e-04: held-out 7.77367 -> 2.45210; mirror_svdllm_f050@lr1e-04: held-out 9.19062 -> 3.96196; mirror_svdllm_f050@lr2e-04: held-out 9.19062 -> 3.80715; mirror_svdllm_f040@lr1e-04: held-out 11.07458 -> 5.26768; mirror_svdllm_f040@lr2e-04: held-out 11.07458 -> 5.05964; mirror_partial_k9@lr1e-04: held-out 4.27213 -> 1.22298; mirror_partial_k9@lr2e-04: held-out 4.27213 -> 1.32756
+[13:11:56] lr selection mirror_svdllm_f065: 1e-04 -> 2.47248, 2e-04 -> 2.45210; best 2e-04
+[13:11:56] lr selection mirror_svdllm_f050: 1e-04 -> 3.96196, 2e-04 -> 3.80715; best 2e-04
+[13:11:56] lr selection mirror_svdllm_f040: 1e-04 -> 5.26768, 2e-04 -> 5.05964; best 2e-04
+[13:11:56] lr selection mirror_partial_k9: 1e-04 -> 1.22298, 2e-04 -> 1.32756; best 1e-04
+[13:12:19] heal A06 s0: 4 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 2 target modes, teacher on x and mirror(x)
+[13:12:19] heal A06 s0:   mirror_svdllm_f065: lr 0.0002, 55,356,654 trainable, 14 terms, targets symmetrised/symmetrised, held-out 7.77367
+[13:12:19] heal A06 s0:   mirror_svdllm_f050: lr 0.0002, 42,366,294 trainable, 14 terms, targets symmetrised/symmetrised, held-out 9.19062
+[13:12:19] heal A06 s0:   mirror_svdllm_f040: lr 0.0002, 33,709,241 trainable, 14 terms, targets symmetrised/symmetrised, held-out 11.07458
+[13:12:19] heal A06 s0:   mirror_partial_k9: lr 0.0001, 85,675,776 trainable, 14 terms, targets symmetrised/symmetrised, held-out 4.27213
+[13:13:08] heal A06 s0: step 20/780 (2.44 s/step, ETA 30.9 min): mirror_svdllm_f065 4.63449; mirror_svdllm_f050 5.48843; mirror_svdllm_f040 6.74759; mirror_partial_k9 2.11390
+[13:14:01] heal A06 s0: step 40/780 (2.56 s/step, ETA 31.6 min): mirror_svdllm_f065 3.54156; mirror_svdllm_f050 4.83973; mirror_svdllm_f040 5.87814; mirror_partial_k9 1.63004
+[13:14:55] heal A06 s0: step 60/780 (2.60 s/step, ETA 31.2 min): mirror_svdllm_f065 2.89691; mirror_svdllm_f050 4.32246; mirror_svdllm_f040 5.57566; mirror_partial_k9 1.46634
+[13:15:49] heal A06 s0: step 80/780 (2.62 s/step, ETA 30.6 min): mirror_svdllm_f065 2.65112; mirror_svdllm_f050 4.04126; mirror_svdllm_f040 5.21113; mirror_partial_k9 1.34341
+[13:16:42] heal A06 s0: step 100/780 (2.64 s/step, ETA 29.9 min): mirror_svdllm_f065 2.42999; mirror_svdllm_f050 3.95956; mirror_svdllm_f040 5.03631; mirror_partial_k9 1.34429
+[13:17:39] heal A06 s0: step 120/780 (2.67 s/step, ETA 29.3 min): mirror_svdllm_f065 2.52802; mirror_svdllm_f050 3.87748; mirror_svdllm_f040 5.04359; mirror_partial_k9 1.26399
+[13:18:40] heal A06 s0: step 140/780 (2.72 s/step, ETA 29.0 min): mirror_svdllm_f065 2.36421; mirror_svdllm_f050 3.74496; mirror_svdllm_f040 4.90803; mirror_partial_k9 1.19375
+[13:19:51] heal A06 s0: step 160/780 (2.83 s/step, ETA 29.2 min): mirror_svdllm_f065 2.27814; mirror_svdllm_f050 3.63406; mirror_svdllm_f040 4.73275; mirror_partial_k9 1.15066
+[13:21:06] heal A06 s0: step 180/780 (2.93 s/step, ETA 29.3 min): mirror_svdllm_f065 2.29376; mirror_svdllm_f050 3.63378; mirror_svdllm_f040 4.77180; mirror_partial_k9 1.14688
+[13:23:06] heal A06 s0: step 200/780 (3.23 s/step, ETA 31.3 min): mirror_svdllm_f065 2.23875; mirror_svdllm_f050 3.70811; mirror_svdllm_f040 4.78700; mirror_partial_k9 1.13019
+[13:24:39] heal A06 s0: step 220/780 (3.37 s/step, ETA 31.4 min): mirror_svdllm_f065 2.30961; mirror_svdllm_f050 3.52879; mirror_svdllm_f040 4.63604; mirror_partial_k9 1.07277
+[13:26:24] heal A06 s0: step 240/780 (3.52 s/step, ETA 31.7 min): mirror_svdllm_f065 2.11002; mirror_svdllm_f050 3.43349; mirror_svdllm_f040 4.68532; mirror_partial_k9 1.03784
+[13:28:09] heal A06 s0: step 260/780 (3.66 s/step, ETA 31.7 min): mirror_svdllm_f065 2.08527; mirror_svdllm_f050 3.40613; mirror_svdllm_f040 4.51852; mirror_partial_k9 1.03978
+[13:29:55] heal A06 s0: step 280/780 (3.77 s/step, ETA 31.4 min): mirror_svdllm_f065 2.07545; mirror_svdllm_f050 3.37156; mirror_svdllm_f040 4.47090; mirror_partial_k9 1.02427
+[13:31:44] heal A06 s0: step 300/780 (3.88 s/step, ETA 31.1 min): mirror_svdllm_f065 2.04686; mirror_svdllm_f050 3.35414; mirror_svdllm_f040 4.48124; mirror_partial_k9 1.00042
+[13:33:34] heal A06 s0: step 320/780 (3.98 s/step, ETA 30.5 min): mirror_svdllm_f065 2.02982; mirror_svdllm_f050 3.33284; mirror_svdllm_f040 4.45367; mirror_partial_k9 0.99270
+[13:35:15] heal A06 s0: step 340/780 (4.05 s/step, ETA 29.7 min): mirror_svdllm_f065 2.01915; mirror_svdllm_f050 3.30639; mirror_svdllm_f040 4.39374; mirror_partial_k9 1.00024
+[13:36:56] heal A06 s0: step 360/780 (4.10 s/step, ETA 28.7 min): mirror_svdllm_f065 1.94518; mirror_svdllm_f050 3.21612; mirror_svdllm_f040 4.30731; mirror_partial_k9 0.96065
+[13:38:38] heal A06 s0: step 380/780 (4.16 s/step, ETA 27.7 min): mirror_svdllm_f065 1.92681; mirror_svdllm_f050 3.22146; mirror_svdllm_f040 4.34837; mirror_partial_k9 0.93462
+[13:41:37] heal A06 s0: step 400/780 (4.39 s/step, ETA 27.8 min): mirror_svdllm_f065 1.89671; mirror_svdllm_f050 3.16354; mirror_svdllm_f040 4.28746; mirror_partial_k9 0.93466
+[13:43:27] heal A06 s0: step 420/780 (4.45 s/step, ETA 26.7 min): mirror_svdllm_f065 1.84963; mirror_svdllm_f050 3.10091; mirror_svdllm_f040 4.20237; mirror_partial_k9 0.91063
+[13:45:14] heal A06 s0: step 440/780 (4.49 s/step, ETA 25.4 min): mirror_svdllm_f065 1.83348; mirror_svdllm_f050 3.07738; mirror_svdllm_f040 4.16945; mirror_partial_k9 0.89618
+[13:47:00] heal A06 s0: step 460/780 (4.52 s/step, ETA 24.1 min): mirror_svdllm_f065 1.83193; mirror_svdllm_f050 3.11265; mirror_svdllm_f040 4.25209; mirror_partial_k9 0.88863
+[13:48:37] heal A06 s0: step 480/780 (4.54 s/step, ETA 22.7 min): mirror_svdllm_f065 1.79437; mirror_svdllm_f050 3.02421; mirror_svdllm_f040 4.13724; mirror_partial_k9 0.87805
+[13:50:15] heal A06 s0: step 500/780 (4.55 s/step, ETA 21.2 min): mirror_svdllm_f065 1.81528; mirror_svdllm_f050 3.07126; mirror_svdllm_f040 4.19892; mirror_partial_k9 0.88774
+[13:52:03] heal A06 s0: step 520/780 (4.59 s/step, ETA 19.9 min): mirror_svdllm_f065 1.79128; mirror_svdllm_f050 3.03484; mirror_svdllm_f040 4.17234; mirror_partial_k9 0.87533
+[13:53:46] heal A06 s0: step 540/780 (4.61 s/step, ETA 18.4 min): mirror_svdllm_f065 1.78993; mirror_svdllm_f050 3.02877; mirror_svdllm_f040 4.12561; mirror_partial_k9 0.87304
+[13:55:01] heal A06 s0: step 560/780 (4.57 s/step, ETA 16.8 min): mirror_svdllm_f065 1.76890; mirror_svdllm_f050 3.01144; mirror_svdllm_f040 4.13084; mirror_partial_k9 0.86436
+[13:56:28] heal A06 s0: step 580/780 (4.57 s/step, ETA 15.2 min): mirror_svdllm_f065 1.76178; mirror_svdllm_f050 2.99619; mirror_svdllm_f040 4.10540; mirror_partial_k9 0.86710
+[13:59:15] heal A06 s0: step 600/780 (4.69 s/step, ETA 14.1 min): mirror_svdllm_f065 1.74787; mirror_svdllm_f050 2.96649; mirror_svdllm_f040 4.04259; mirror_partial_k9 0.84630
+[14:01:00] heal A06 s0: step 620/780 (4.71 s/step, ETA 12.6 min): mirror_svdllm_f065 1.73270; mirror_svdllm_f050 2.96515; mirror_svdllm_f040 4.07494; mirror_partial_k9 0.84115
+[14:02:45] heal A06 s0: step 640/780 (4.73 s/step, ETA 11.0 min): mirror_svdllm_f065 1.71726; mirror_svdllm_f050 2.92754; mirror_svdllm_f040 4.00944; mirror_partial_k9 0.83898
+[14:04:29] heal A06 s0: step 660/780 (4.74 s/step, ETA 9.5 min): mirror_svdllm_f065 1.74487; mirror_svdllm_f050 2.97858; mirror_svdllm_f040 4.08550; mirror_partial_k9 0.85095
+[14:06:18] heal A06 s0: step 680/780 (4.76 s/step, ETA 7.9 min): mirror_svdllm_f065 1.73950; mirror_svdllm_f050 2.98431; mirror_svdllm_f040 4.08514; mirror_partial_k9 0.84184
+[14:08:04] heal A06 s0: step 700/780 (4.78 s/step, ETA 6.4 min): mirror_svdllm_f065 1.71760; mirror_svdllm_f050 2.94084; mirror_svdllm_f040 4.03628; mirror_partial_k9 0.83670
+[14:09:57] heal A06 s0: step 720/780 (4.80 s/step, ETA 4.8 min): mirror_svdllm_f065 1.72104; mirror_svdllm_f050 2.95670; mirror_svdllm_f040 4.05912; mirror_partial_k9 0.83108
+[14:11:43] heal A06 s0: step 740/780 (4.82 s/step, ETA 3.2 min): mirror_svdllm_f065 1.73041; mirror_svdllm_f050 2.96853; mirror_svdllm_f040 4.08113; mirror_partial_k9 0.83945
+[14:13:26] heal A06 s0: step 760/780 (4.83 s/step, ETA 1.6 min): mirror_svdllm_f065 1.73097; mirror_svdllm_f050 2.96302; mirror_svdllm_f040 4.05417; mirror_partial_k9 0.83844
+[14:15:15] heal A06 s0: step 780/780 (4.84 s/step, ETA 0.0 min): mirror_svdllm_f065 1.71002; mirror_svdllm_f050 2.93139; mirror_svdllm_f040 4.02590; mirror_partial_k9 0.83198
+[14:16:34] heal A06 s0: done 780 steps in 3853.8 s; mirror_svdllm_f065: held-out 7.77367 -> 1.83957; mirror_svdllm_f050: held-out 9.19062 -> 3.10295; mirror_svdllm_f040: held-out 11.07458 -> 4.25874; mirror_partial_k9: held-out 4.27213 -> 0.90879
+[14:16:34] fp_heal: job a06_mirror_s0 s0 done in 102.0 min; outputs under /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg
+== end rc=0 2026-11-20 14:16:35

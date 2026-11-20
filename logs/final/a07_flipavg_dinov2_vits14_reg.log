@@ -1,0 +1,33 @@
+== start 2026-11-20 10:00:13 job a07_flipavg_dinov2_vits14_reg pid 43202 host jl-vm-581628
+== cmd python scripts/fp_eval.py --original dinov2_vits14_reg --flip-average --passes bf16 --probe --probe-flipavg --cost --experiment A07 --out runs/final/a07/dinov2_vits14_reg
+[10:00:20] k-NN bank: 100,000 images (14.02 GiB) on cuda in 5 s
+[10:00:22] validation: 50,000 images (7.01 GiB) on cuda in 2 s
+[10:00:23] fp_eval: 1 evaluation(s) on cuda, data cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images)
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[10:01:21] dinov2_vits14_reg original [bf16]: k-NN top-1 74.47, flip consistency 93.282% (50000 queries, 100000 bank images, 57 s)
+[10:02:42] dinov2_vits14_reg original [bf16_flipavg]: k-NN top-1 74.59, flip consistency 100.000% (50000 queries, 100000 bank images, 81 s)
+[10:03:52]     wd 0.01: hold-out top-1 76.41, 63 iterations, 14.7 s
+[10:04:25]     wd 0.001: hold-out top-1 77.98, 162 iterations, 33.4 s
+[10:05:31]     wd 0.0001: hold-out top-1 76.94, 350 iterations, 66.0 s
+[10:06:39]     wd 1e-05: hold-out top-1 76.14, 308 iterations, 67.3 s
+[10:06:59]     wd 1e-06: hold-out top-1 75.77, 96 iterations, 20.6 s
+[10:06:59]     wd 1e-07: hold-out top-1 75.77, 0 iterations, 0.1 s
+[10:07:20]     wd 0.00316: hold-out top-1 77.67, 97 iterations, 20.8 s
+[10:08:13]     wd 0.000316: hold-out top-1 77.39, 236 iterations, 52.9 s
+[10:08:37]   Tier-2 probe: top-1 76.34 (wd 0.001), k-NN check 74.47
+[10:10:17]     wd 0.01: hold-out top-1 76.50, 62 iterations, 12.7 s
+[10:10:51]     wd 0.001: hold-out top-1 78.07, 155 iterations, 33.5 s
+[10:12:10]     wd 0.0001: hold-out top-1 77.05, 350 iterations, 79.5 s
+[10:12:58]     wd 1e-05: hold-out top-1 76.29, 295 iterations, 47.8 s
+[10:13:28]     wd 1e-06: hold-out top-1 75.59, 99 iterations, 30.1 s
+[10:13:49]     wd 1e-07: hold-out top-1 75.38, 69 iterations, 20.4 s
+[10:14:19]     wd 0.00316: hold-out top-1 78.01, 98 iterations, 29.9 s
+[10:15:30]     wd 0.000316: hold-out top-1 77.51, 239 iterations, 71.7 s
+[10:16:05]   Tier-2 probe (flip-averaged): top-1 76.51 (wd 0.001), k-NN check 74.60
+[10:16:05] fp_eval: done in 951 s
+== end rc=0 2026-11-20 10:16:06

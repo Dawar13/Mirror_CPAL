@@ -1,0 +1,102 @@
+== start 2026-11-20 13:23:41 job heal_main_s2 pid 53056 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/main_s2.yaml --resume
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[13:23:44] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[13:23:45] fp_heal: building svdllm_full (svdllm_full)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[13:24:38] svdllm_full {'damp': 1e-06, 'order': 'u_first', 'split': 0.5, 'closed_form_update': False}: matrices 64,555,008 against budget 64,554,464 (gap +0.0008%); model 66,203,904 against target 66,203,360 (gap +0.0008%, eligible True)
+[13:25:08] heal A05 s2: 1 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[13:25:08] heal A05 s2:   svdllm_full: lr 0.0001, 65,291,520 trainable, 14 terms, targets symmetrised/raw, held-out 2.82902
+[13:25:39] heal A05 s2: step 20/780 (1.54 s/step, ETA 19.5 min): svdllm_full 2.65608
+[13:26:08] heal A05 s2: step 40/780 (1.51 s/step, ETA 18.6 min): svdllm_full 2.71930
+[13:26:38] heal A05 s2: step 60/780 (1.50 s/step, ETA 18.0 min): svdllm_full 2.45992
+[13:27:07] heal A05 s2: step 80/780 (1.49 s/step, ETA 17.4 min): svdllm_full 2.35373
+[13:27:35] heal A05 s2: step 100/780 (1.47 s/step, ETA 16.7 min): svdllm_full 2.30542
+[13:28:03] heal A05 s2: step 120/780 (1.46 s/step, ETA 16.1 min): svdllm_full 2.29734
+[13:28:30] heal A05 s2: step 140/780 (1.45 s/step, ETA 15.4 min): svdllm_full 2.21586
+[13:28:57] heal A05 s2: step 160/780 (1.43 s/step, ETA 14.8 min): svdllm_full 2.22047
+[13:29:27] heal A05 s2: step 180/780 (1.44 s/step, ETA 14.4 min): svdllm_full 2.20469
+[13:30:22] heal A05 s2: step 200/780 (1.57 s/step, ETA 15.2 min): svdllm_full 2.17838
+[13:30:53] heal A05 s2: step 220/780 (1.57 s/step, ETA 14.6 min): svdllm_full 2.17331
+[13:31:23] heal A05 s2: step 240/780 (1.56 s/step, ETA 14.1 min): svdllm_full 2.15759
+[13:31:52] heal A05 s2: step 260/780 (1.55 s/step, ETA 13.5 min): svdllm_full 2.09351
+[13:32:22] heal A05 s2: step 280/780 (1.55 s/step, ETA 12.9 min): svdllm_full 2.10785
+[13:32:52] heal A05 s2: step 300/780 (1.55 s/step, ETA 12.4 min): svdllm_full 2.10175
+[13:33:23] heal A05 s2: step 320/780 (1.55 s/step, ETA 11.8 min): svdllm_full 2.07491
+== signal received 2026-11-20 13:33:24
+== end rc=143 2026-11-20 13:33:24
+== start 2026-11-20 14:29:21 job heal_main_s2 pid 56681 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/main_s2.yaml --resume
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[14:29:24] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[14:29:24] fp_heal: building svdllm_full (svdllm_full)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[14:30:22] svdllm_full {'damp': 1e-06, 'order': 'u_first', 'split': 0.5, 'closed_form_update': False, 'stage_schedule': 'shared'}: matrices 64,555,008 against budget 64,554,464 (gap +0.0008%); model 66,203,904 against target 66,203,360 (gap +0.0008%, eligible True)
+[14:31:01] heal A05 s2: 1 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 1 target modes, teacher on x and mirror(x)
+[14:31:01] heal A05 s2:   svdllm_full: lr 0.0001, 65,291,520 trainable, 14 terms, targets symmetrised/raw, held-out 2.82902
+[14:31:40] heal A05 s2: step 20/780 (1.99 s/step, ETA 25.1 min): svdllm_full 2.65426
+[14:32:19] heal A05 s2: step 40/780 (1.97 s/step, ETA 24.2 min): svdllm_full 2.76130
+[14:32:58] heal A05 s2: step 60/780 (1.96 s/step, ETA 23.5 min): svdllm_full 2.53045
+[14:33:37] heal A05 s2: step 80/780 (1.96 s/step, ETA 22.8 min): svdllm_full 2.37346
+[14:34:16] heal A05 s2: step 100/780 (1.96 s/step, ETA 22.2 min): svdllm_full 2.29169
+[14:34:56] heal A05 s2: step 120/780 (1.96 s/step, ETA 21.6 min): svdllm_full 2.28804
+[14:35:33] heal A05 s2: step 140/780 (1.94 s/step, ETA 20.7 min): svdllm_full 2.25223
+[14:36:09] heal A05 s2: step 160/780 (1.93 s/step, ETA 19.9 min): svdllm_full 2.19870
+[14:36:48] heal A05 s2: step 180/780 (1.93 s/step, ETA 19.3 min): svdllm_full 2.21291
+[14:37:59] heal A05 s2: step 200/780 (2.09 s/step, ETA 20.2 min): svdllm_full 2.16770
+[14:38:38] heal A05 s2: step 220/780 (2.08 s/step, ETA 19.4 min): svdllm_full 2.13891
+[14:39:13] heal A05 s2: step 240/780 (2.05 s/step, ETA 18.5 min): svdllm_full 2.15031
+[14:39:52] heal A05 s2: step 260/780 (2.04 s/step, ETA 17.7 min): svdllm_full 2.10900
+[14:40:30] heal A05 s2: step 280/780 (2.03 s/step, ETA 17.0 min): svdllm_full 2.11183
+[14:41:09] heal A05 s2: step 300/780 (2.03 s/step, ETA 16.2 min): svdllm_full 2.10691
+[14:41:46] heal A05 s2: step 320/780 (2.02 s/step, ETA 15.5 min): svdllm_full 2.07744
+[14:42:20] heal A05 s2: step 340/780 (2.00 s/step, ETA 14.6 min): svdllm_full 2.06350
+[14:42:51] heal A05 s2: step 360/780 (1.97 s/step, ETA 13.8 min): svdllm_full 2.08347
+[14:43:22] heal A05 s2: step 380/780 (1.95 s/step, ETA 13.0 min): svdllm_full 2.09042
+[14:44:18] heal A05 s2: step 400/780 (1.99 s/step, ETA 12.6 min): svdllm_full 117.86724
+[14:44:50] heal A05 s2: step 420/780 (1.98 s/step, ETA 11.9 min): svdllm_full 21.40955
+[14:45:21] heal A05 s2: step 440/780 (1.96 s/step, ETA 11.1 min): svdllm_full 12.99775
+[14:45:53] heal A05 s2: step 460/780 (1.94 s/step, ETA 10.3 min): svdllm_full 10.05313
+[14:46:21] heal A05 s2: step 480/780 (1.92 s/step, ETA 9.6 min): svdllm_full 8.99123
+[14:46:49] heal A05 s2: step 500/780 (1.90 s/step, ETA 8.8 min): svdllm_full 8.10460
+[14:47:18] heal A05 s2: step 520/780 (1.88 s/step, ETA 8.1 min): svdllm_full 7.27635
+[14:47:47] heal A05 s2: step 540/780 (1.86 s/step, ETA 7.5 min): svdllm_full 5.86634
+[14:48:14] heal A05 s2: step 560/780 (1.84 s/step, ETA 6.8 min): svdllm_full 4.84300
+[14:48:42] heal A05 s2: step 580/780 (1.83 s/step, ETA 6.1 min): svdllm_full 4.40557
+[14:49:34] heal A05 s2: step 600/780 (1.86 s/step, ETA 5.6 min): svdllm_full 4.05064
+[14:50:03] heal A05 s2: step 620/780 (1.84 s/step, ETA 4.9 min): svdllm_full 3.88658
+[14:50:30] heal A05 s2: step 640/780 (1.83 s/step, ETA 4.3 min): svdllm_full 3.73401
+[14:50:58] heal A05 s2: step 660/780 (1.81 s/step, ETA 3.6 min): svdllm_full 3.63033
+[14:51:26] heal A05 s2: step 680/780 (1.80 s/step, ETA 3.0 min): svdllm_full 3.58349
+[14:51:54] heal A05 s2: step 700/780 (1.79 s/step, ETA 2.4 min): svdllm_full 3.52425
+[14:52:19] heal A05 s2: step 720/780 (1.78 s/step, ETA 1.8 min): svdllm_full 3.54075
+[14:52:46] heal A05 s2: step 740/780 (1.76 s/step, ETA 1.2 min): svdllm_full 3.47356
+[14:53:13] heal A05 s2: step 760/780 (1.75 s/step, ETA 0.6 min): svdllm_full 3.46442
+[14:53:41] heal A05 s2: step 780/780 (1.74 s/step, ETA 0.0 min): svdllm_full 3.53468
+[14:55:32] heal A05 s2: done 780 steps in 1471.2 s; svdllm_full: held-out 2.82902 -> 3.78107
+[14:55:32] fp_heal: job main_s2 s2 done in 26.2 min; outputs under /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg
+== end rc=0 2026-11-20 14:55:33

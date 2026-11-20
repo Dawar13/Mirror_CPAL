@@ -1,0 +1,53 @@
+== start 2026-11-20 17:31:12 job fig_stability pid 65561 host jl-vm-581628
+== cmd python scripts/fp_fig_stability.py && touch logs/final/fig_stability.done
+findfont: Font family ['cursive'] not found. Falling back to DejaVu Sans.
+findfont: Generic family 'cursive' not found because none of the following families were found: Apple Chancery, Textile, Zapf Chancery, Sand, Script MT, Felipa, Comic Neue, Comic Sans MS, cursive
+findfont: Font family ['Palatino Linotype'] not found. Falling back to DejaVu Sans.
+findfont: Font family ['Palatino Linotype'] not found. Falling back to DejaVu Sans.
+findfont: Font family ['Palatino Linotype'] not found. Falling back to DejaVu Sans.
+git: 6299d2c838b52136abfe58453d1d1c8e2b7c500a (uncommitted changes)
+source: results/A02/spectra.npz (sha256 d3df8ab4498f)
+source: results/A02/pairs.csv (sha256 8a8644bc8b0e)
+source: results/A02/stability.csv (sha256 bf430eb86c21)
+source: results/A02/metrics.json (sha256 1103f659de7f)
+
+panel (a): span-matrix spectrum per fit
+  fit0   d+  699  d-   68 (negative eigenvalues 69)  largest |eigenvalue| 2.001  top even [2.00083, 0.73155, 0.63129]  top odd [0.08809, 0.05884, 0.04104]
+  fit1   d+  698  d-   69 (negative eigenvalues 70)  largest |eigenvalue| 1.988  top even [1.98764, 0.72682, 0.62987]  top odd [0.08878, 0.05806, 0.04124]
+  fit2   d+  699  d-   68 (negative eigenvalues 69)  largest |eigenvalue| 1.996  top even [1.99591, 0.73078, 0.6313]  top odd [0.08685, 0.05727, 0.04104]
+  fit3   d+  699  d-   68 (negative eigenvalues 69)  largest |eigenvalue| 1.998  top even [1.99843, 0.73151, 0.63171]  top odd [0.08659, 0.05863, 0.0411]
+  coco   d+  695  d-   73 (negative eigenvalues 73)  largest |eigenvalue| 1.935  top even [1.93528, 0.69698, 0.62669]  top odd [0.0801, 0.05458, 0.04271]
+
+panel (b): odd-subspace agreement (A02-2)
+  fit0   - fit1  : 0.9990
+  fit0   - fit2  : 0.9990
+  fit1   - fit2  : 0.9990
+  fit0   - fit3  : 0.9990
+  fit1   - fit3  : 0.9990
+  fit2   - fit3  : 0.9990
+  fit0   - coco  : 0.9910
+  fit1   - coco  : 0.9912
+  fit2   - coco  : 0.9914
+  fit3   - coco  : 0.9914
+
+panel (c): twin agreement (A02-3)
+  fit0   - fit1  : 0.9562
+  fit0   - fit2  : 0.9533
+  fit1   - fit2  : 0.9552
+  fit0   - fit3  : 0.9697
+  fit1   - fit3  : 0.9608
+  fit2   - fit3  : 0.9649
+  fit0   - coco  : 0.8909
+  fit1   - coco  : 0.8875
+  fit2   - coco  : 0.8958
+  fit3   - coco  : 0.8900
+note: fit0: 1 odd eigenvalues below 1e-05 of the largest are not drawn
+note: fit1: 2 odd eigenvalues below 1e-05 of the largest are not drawn
+note: fit2: 2 odd eigenvalues below 1e-05 of the largest are not drawn
+note: fit3: 2 odd eigenvalues below 1e-05 of the largest are not drawn
+note: coco: 1 even eigenvalues below 1e-05 of the largest are not drawn
+
+Caption: Stability of the operator and the twins across 5 independent fits of dinov2_vitb14_reg (disjoint ImageNet-train fit sets and a COCO fit). (a) Eigenvalues of the span matrix S, whose signs give the stream operator, sorted by magnitude: positive eigenvalues are even directions, negative ones odd directions ($d_-$: fit set 0 68, fit set 1 69, fit set 2 68, fit set 3 68, COCO 73). (b) Energy-weighted agreement of the odd subspaces and (c) share of the strong twin pairs in blocks 1 to 6 that the other fit also pairs, each the mean of both directions. Outlined cells fall below the pre-registered bar (0.8 and 0.7; the rules cover pairs of ImageNet fits only). Rule A02-2: PASS; rule A02-3: PASS.
+
+wrote paper/figures/fig_stability.pdf, paper/figures/fig_stability.png and paper/figures/fig_stability.json
+== end rc=0 2026-11-20 17:31:13

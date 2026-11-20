@@ -1,0 +1,331 @@
+{
+ "figure": "fig_frontier",
+ "git": "c792f4d631044d3e9c5cf4f418c18a36cde2f912",
+ "argv": [],
+ "dry_run": false,
+ "model": "dinov2_vitb14_reg",
+ "pass": "bf16",
+ "inputs": {
+  "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0/eval/step780.json": "1afbc3bc7bfc148fb6f58daba2a3e06f7917a8df259f5b896b0162f39342b014",
+  "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1/eval/step780.json": "555e32c9cfe4e63ecc0a38f0df591dfe36ff8da51ec3ae16a7e1af3d5ab66d0c",
+  "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2/eval/step780.json": "d87acec6c61f64f9ea8eaaf779cdb230ec2c5954e8d9adcea7da40f20eb801d8",
+  "runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f065/s0/eval/step780.json": "6092f86624ee76b3bfb89082591462a4fbad48b4a452f0d37fe885d290cd2276",
+  "runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f050/s0/eval/step780.json": "32de9682700ef341ec41921f738de1dff3f3df3a3fdd9bebc0e259b59cdc89e3",
+  "runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f050/s1/eval/step780.json": "3399806420fab7be0e29e1fb20833f99bdb75e999c09c0ff69668c891b92ebf2",
+  "runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f040/s0/eval/step780.json": "a3d6c49a6bc52a00d3f15a5b828c75edb33f6ba6e1147899ea7971ce5a90ad24",
+  "runs/final/main/dinov2_vitb14_reg/svdllm/s0/eval/step780.json": "2498e4c29779facbec2797add806aecc01596c11151b3d2d1fe907c253f92984",
+  "runs/final/main/dinov2_vitb14_reg/svdllm/s1/eval/step780.json": "bb2f6017bf047a555c0890d4fc091c6b8c96bf04d416e33adc19994eaa21c168",
+  "runs/final/main/dinov2_vitb14_reg/svdllm/s2/eval/step780.json": "51b05c07524ed791de0d1326e6aa34940004e768add34a2beae8d727708046ba",
+  "runs/final/a06/dinov2_vitb14_reg/svdllm_f065/s0/eval/step780.json": "a03c7ac25190d079a8902f876ad687e525fee86aa4e5c1492614e0a7b2ce3c71",
+  "runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s0/eval/step780.json": "73cfd61cc34e9276b4607ea51918921ad33da6f73d957b91c7788398044e7b40",
+  "runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s1/eval/step780.json": "9393d1fcbb17aac5ae98ea224f345e49590df9ad06e27e8e5ad49ea2cfe18b43",
+  "runs/final/a06/dinov2_vitb14_reg/svdllm_f040/s0/eval/step780.json": "d8b452e39e17f9974b9e5e93e8052484289b2c6a29cd3e3028dfbb0b74d15b6d",
+  "runs/final/a06/dinov2_vitb14_reg/mirror_partial_k9/s0/eval/step780.json": "0ec321b2be1c2228ea040bb65661eb58851702b569295869eff5b4bf27f39149",
+  "runs/final/main/dinov2_vitb14_reg/original/s0/eval/step780.json": "d942f6a41692b30919043c2b3f615be35fd1249b5b0f41697c5d41330afa231c",
+  "runs/final/a07/dinov2_vitb14_reg/eval/original.json": "5949bf916b2f892353ccfe3c0041cc7458afa3a8ca5b3cb1abe335466c3290e2",
+  "runs/final/a07/dinov2_vits14_reg/eval/original.json": "523e2b084533d9d567590f2d734b462cecb9f8d15e53556b9a30e64758f62d57"
+ },
+ "ref_gflops": 47.078313984,
+ "ref_source": "runs/final/a07/dinov2_vitb14_reg/eval/original.json cost.gflops_per_forward",
+ "points": [
+  {
+   "key": "main/mirror_exact_astar",
+   "series": "mirror",
+   "label": "Mirror Surgery",
+   "x": 0.764618203697626,
+   "x_kind": "metrics.json params.model_params_frac",
+   "y": 78.35200031598409,
+   "sd": 0.012001395348868673,
+   "n": 3,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "values": [
+    78.3519983291626,
+    78.36400270462036,
+    78.33999991416931
+   ],
+   "sources": [
+    "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0/eval/step780.json passes.bf16.top1",
+    "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1/eval/step780.json passes.bf16.top1",
+    "runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2/eval/step780.json passes.bf16.top1"
+   ]
+  },
+  {
+   "key": "a06/mirror_svdllm_f065",
+   "series": "mirror",
+   "label": "Mirror + SVD-LLM 0.65",
+   "x": 0.6500347086707646,
+   "x_kind": "metrics.json params.params_frac",
+   "y": 78.2039999961853,
+   "sd": null,
+   "n": 1,
+   "seeds": [
+    0
+   ],
+   "values": [
+    78.2039999961853
+   ],
+   "sources": [
+    "runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f065/s0/eval/step780.json passes.bf16.top1"
+   ]
+  },
+  {
+   "key": "a06/mirror_svdllm_f050",
+   "series": "mirror",
+   "label": "Mirror + SVD-LLM 0.50",
+   "x": 0.5000020558177146,
+   "x_kind": "metrics.json params.params_frac",
+   "y": 76.2580007314682,
+   "sd": 0.048085339466079,
+   "n": 2,
+   "seeds": [
+    0,
+    1
+   ],
+   "values": [
+    76.29200220108032,
+    76.22399926185608
+   ],
+   "sources": [
+    "runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f050/s0/eval/step780.json passes.bf16.top1",
+    "runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f050/s1/eval/step780.json passes.bf16.top1"
+   ]
+  },
+  {
+   "key": "a06/mirror_svdllm_f040",
+   "series": "mirror",
+   "label": "Mirror + SVD-LLM 0.40",
+   "x": 0.40001709562573734,
+   "x_kind": "metrics.json params.params_frac",
+   "y": 71.60199880599976,
+   "sd": null,
+   "n": 1,
+   "seeds": [
+    0
+   ],
+   "values": [
+    71.60199880599976
+   ],
+   "sources": [
+    "runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f040/s0/eval/step780.json passes.bf16.top1"
+   ]
+  },
+  {
+   "key": "main/svdllm",
+   "series": "svdllm",
+   "label": "SVD-LLM 0.765",
+   "x": 0.7646244866461473,
+   "x_kind": "metrics.json params.model_params_frac",
+   "y": 78.08266679445903,
+   "sd": 0.013613088017641538,
+   "n": 3,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "values": [
+    78.0780017375946,
+    78.07199954986572,
+    78.09799909591675
+   ],
+   "sources": [
+    "runs/final/main/dinov2_vitb14_reg/svdllm/s0/eval/step780.json passes.bf16.top1",
+    "runs/final/main/dinov2_vitb14_reg/svdllm/s1/eval/step780.json passes.bf16.top1",
+    "runs/final/main/dinov2_vitb14_reg/svdllm/s2/eval/step780.json passes.bf16.top1"
+   ]
+  },
+  {
+   "key": "a06/svdllm_f065",
+   "series": "svdllm",
+   "label": "SVD-LLM 0.65",
+   "x": 0.6500323756641446,
+   "x_kind": "metrics.json params.model_params_frac",
+   "y": 76.56800150871277,
+   "sd": null,
+   "n": 1,
+   "seeds": [
+    0
+   ],
+   "values": [
+    76.56800150871277
+   ],
+   "sources": [
+    "runs/final/a06/dinov2_vitb14_reg/svdllm_f065/s0/eval/step780.json passes.bf16.top1"
+   ]
+  },
+  {
+   "key": "a06/svdllm_f050",
+   "series": "svdllm",
+   "label": "SVD-LLM 0.50",
+   "x": 0.5000044350224856,
+   "x_kind": "metrics.json params.model_params_frac",
+   "y": 73.51299822330475,
+   "sd": 0.009900294715209009,
+   "n": 2,
+   "seeds": [
+    0,
+    1
+   ],
+   "values": [
+    73.50599765777588,
+    73.51999878883362
+   ],
+   "sources": [
+    "runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s0/eval/step780.json passes.bf16.top1",
+    "runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s1/eval/step780.json passes.bf16.top1"
+   ]
+  },
+  {
+   "key": "a06/svdllm_f040",
+   "series": "svdllm",
+   "label": "SVD-LLM 0.40",
+   "x": 0.40000354801798843,
+   "x_kind": "metrics.json params.model_params_frac",
+   "y": 67.47400164604187,
+   "sd": null,
+   "n": 1,
+   "seeds": [
+    0
+   ],
+   "values": [
+    67.47400164604187
+   ],
+   "sources": [
+    "runs/final/a06/dinov2_vitb14_reg/svdllm_f040/s0/eval/step780.json passes.bf16.top1"
+   ]
+  },
+  {
+   "key": "a06/mirror_partial_k9",
+   "series": "partial",
+   "label": "Mirror, first 9 blocks",
+   "x": 0.7660253993737748,
+   "x_kind": "metrics.json params.params_frac",
+   "y": 78.78000140190125,
+   "sd": null,
+   "n": 1,
+   "seeds": [
+    0
+   ],
+   "values": [
+    78.78000140190125
+   ],
+   "sources": [
+    "runs/final/a06/dinov2_vitb14_reg/mirror_partial_k9/s0/eval/step780.json passes.bf16.top1"
+   ]
+  },
+  {
+   "key": "main/original",
+   "series": "original",
+   "label": "original, distilled",
+   "x": 1.0,
+   "x_kind": "metrics.json params.model_params_frac",
+   "y": 78.94799709320068,
+   "sd": null,
+   "n": 1,
+   "seeds": [
+    0
+   ],
+   "values": [
+    78.94799709320068
+   ],
+   "sources": [
+    "runs/final/main/dinov2_vitb14_reg/original/s0/eval/step780.json passes.bf16.top1"
+   ]
+  },
+  {
+   "key": "SVD-LLM 0.65 flipavg",
+   "series": "flipavg",
+   "base": "svdllm",
+   "label": "SVD-LLM 0.65",
+   "x": 1.3280408603682932,
+   "x_kind": "analytic GFLOPs per image / the original's single pass",
+   "y": 76.6759991645813,
+   "sd": null,
+   "n": 1,
+   "values": [
+    76.6759991645813
+   ],
+   "sources": [
+    "runs/final/a06/dinov2_vitb14_reg/svdllm_f065/s0/eval/step780.json passes.bf16_flipavg"
+   ]
+  },
+  {
+   "key": "SVD-LLM 0.50 flipavg",
+   "series": "flipavg",
+   "base": "svdllm",
+   "label": "SVD-LLM 0.50",
+   "x": 1.0399780828310814,
+   "x_kind": "analytic GFLOPs per image / the original's single pass",
+   "y": 73.69199991226196,
+   "sd": null,
+   "n": 1,
+   "values": [
+    73.69199991226196
+   ],
+   "sources": [
+    "runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s0/eval/step780.json passes.bf16_flipavg"
+   ]
+  },
+  {
+   "key": "SVD-LLM 0.40 flipavg",
+   "series": "flipavg",
+   "base": "svdllm",
+   "label": "SVD-LLM 0.40",
+   "x": 0.8479702931920529,
+   "x_kind": "analytic GFLOPs per image / the original's single pass",
+   "y": 67.91200041770935,
+   "sd": null,
+   "n": 1,
+   "values": [
+    67.91200041770935
+   ],
+   "sources": [
+    "runs/final/a06/dinov2_vitb14_reg/svdllm_f040/s0/eval/step780.json passes.bf16_flipavg"
+   ]
+  },
+  {
+   "key": "A07/dinov2_vitb14_reg flipavg",
+   "series": "flipavg",
+   "base": "original",
+   "label": "original",
+   "x": 2.0,
+   "x_kind": "analytic GFLOPs per image / the original's single pass",
+   "y": 78.99799942970276,
+   "sd": null,
+   "n": 1,
+   "values": [
+    78.99799942970276
+   ],
+   "sources": [
+    "runs/final/a07/dinov2_vitb14_reg/eval/original.json passes.bf16_flipavg"
+   ],
+   "params": 86583552.0
+  },
+  {
+   "key": "A07/dinov2_vits14_reg flipavg",
+   "series": "flipavg",
+   "base": "released",
+   "label": "DINOv2-S/14 reg",
+   "x": 0.5291261869842242,
+   "x_kind": "analytic GFLOPs per image / the original's single pass",
+   "y": 74.59400296211243,
+   "sd": null,
+   "n": 1,
+   "values": [
+    74.59400296211243
+   ],
+   "sources": [
+    "runs/final/a07/dinov2_vits14_reg/eval/original.json passes.bf16_flipavg"
+   ],
+   "params": 22058112.0
+  }
+ ],
+ "notes": [
+  "the 9-block point is drawn 1.8% to the right of its size so it does not hide the full conversion (its size is printed)"
+ ],
+ "caption": "Accuracy against size for dinov2_vitb14_reg: validation k-NN top-1 (all 50,000 images) against the fraction of the original's parameters. SVD-LLM alone (open squares) against Mirror Surgery, extended below its own size by SVD-LLM inside the even and odd blocks (filled circles: exactly mirror-invariant in one forward pass); Mirror Surgery on the first 9 blocks only shows the price of exactness; the original distilled with the same recipe anchors the top. Stars are flip-averaged models (two forward passes), placed at their analytic compute relative to the original's single pass. Error bars: one standard deviation over healing seeds (n = 2, 3)."
+}

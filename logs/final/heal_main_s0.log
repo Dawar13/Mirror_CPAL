@@ -1,0 +1,177 @@
+== start 2026-11-20 11:09:44 job heal_main_s0 pid 47321 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/main_s0.yaml --resume
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[11:09:47] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[11:09:53] k-NN bank: 100,000 images (14.02 GiB) on cuda in 6 s
+[11:09:54] method-selection queries: 10,000 images (1.40 GiB) on cuda in 1 s
+[11:09:54] fp_heal: building svdllm_full (svdllm_full)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[11:10:36] svdllm_full {'damp': 1e-06, 'order': 'u_first', 'split': 0.5, 'closed_form_update': False}: matrices 64,555,008 against budget 64,554,464 (gap +0.0008%); model 66,203,904 against target 66,203,360 (gap +0.0008%, eligible True)
+[11:10:37] fp_heal: building iosvd (iosvd)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[11:14:18] iosvd {'damp_in': 1e-06, 'damp_out': 1e-06, 'eta': 0.1, 'score': 'second_order', 'allocation': 'adaptive'}: matrices 64,555,776 against budget 64,554,464 (gap +0.0020%; within the rule (0 <= gap <= 1%)); model 66,204,672 against target 66,203,360 (gap +0.0020%); 14 dense matrices
+[11:14:19] fp_heal: building flap (flap)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[11:14:27] flap {'allocation': 'uniform'}: matrices 64,555,008 + basis 0 = 64,555,008 against budget 64,554,464 (gap +0.001%; within the rule (0 <= gap <= 1%))
+[11:14:27] fp_heal: building blockdrop (blockdrop)
+[11:15:12] block_dropped: original network score 80.2100
+[11:15:52] block_dropped: round 1, without block 0 (0-based; kept [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) score 31.0000
+[11:16:29] block_dropped: round 1, without block 1 (0-based; kept [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) score 78.2500
+[11:17:10] block_dropped: round 1, without block 2 (0-based; kept [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11]) score 77.5200
+[11:17:49] block_dropped: round 1, without block 3 (0-based; kept [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11]) score 78.3300
+[11:18:36] block_dropped: round 1, without block 4 (0-based; kept [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11]) score 71.9900
+[11:19:31] block_dropped: round 1, without block 5 (0-based; kept [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11]) score 66.0800
+[11:20:16] block_dropped: round 1, without block 6 (0-based; kept [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11]) score 74.8900
+[11:21:07] block_dropped: round 1, without block 7 (0-based; kept [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11]) score 58.6200
+[11:22:02] block_dropped: round 1, without block 8 (0-based; kept [0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11]) score 68.7600
+[11:22:58] block_dropped: round 1, without block 9 (0-based; kept [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11]) score 65.9500
+[11:23:54] block_dropped: round 1, without block 10 (0-based; kept [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11]) score 65.5100
+[11:24:50] block_dropped: round 1, without block 11 (0-based; kept [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) score 65.5700
+[11:25:41] block_dropped: round 2, without block 0 (0-based; kept [1, 2, 4, 5, 6, 7, 8, 9, 10, 11]) score 16.8500
+[11:26:32] block_dropped: round 2, without block 1 (0-based; kept [0, 2, 4, 5, 6, 7, 8, 9, 10, 11]) score 63.6500
+[11:27:23] block_dropped: round 2, without block 2 (0-based; kept [0, 1, 4, 5, 6, 7, 8, 9, 10, 11]) score 62.4300
+[11:28:13] block_dropped: round 2, without block 4 (0-based; kept [0, 1, 2, 5, 6, 7, 8, 9, 10, 11]) score 39.0300
+[11:29:04] block_dropped: round 2, without block 5 (0-based; kept [0, 1, 2, 4, 6, 7, 8, 9, 10, 11]) score 62.7500
+[11:29:48] block_dropped: round 2, without block 6 (0-based; kept [0, 1, 2, 4, 5, 7, 8, 9, 10, 11]) score 64.1800
+[11:30:21] block_dropped: round 2, without block 7 (0-based; kept [0, 1, 2, 4, 5, 6, 8, 9, 10, 11]) score 41.1400
+[11:30:53] block_dropped: round 2, without block 8 (0-based; kept [0, 1, 2, 4, 5, 6, 7, 9, 10, 11]) score 51.4500
+[11:31:25] block_dropped: round 2, without block 9 (0-based; kept [0, 1, 2, 4, 5, 6, 7, 8, 10, 11]) score 58.8600
+[11:31:57] block_dropped: round 2, without block 10 (0-based; kept [0, 1, 2, 4, 5, 6, 7, 8, 9, 11]) score 59.8200
+[11:32:29] block_dropped: round 2, without block 11 (0-based; kept [0, 1, 2, 4, 5, 6, 7, 8, 9, 10]) score 60.7100
+[11:32:56] block_dropped: round 3, without block 0 (0-based; kept [1, 2, 4, 5, 7, 8, 9, 10, 11]) score 12.2800
+[11:33:19] block_dropped: round 3, without block 1 (0-based; kept [0, 2, 4, 5, 7, 8, 9, 10, 11]) score 32.8500
+[11:33:48] block_dropped: round 3, without block 2 (0-based; kept [0, 1, 4, 5, 7, 8, 9, 10, 11]) score 30.4800
+[11:34:17] block_dropped: round 3, without block 4 (0-based; kept [0, 1, 2, 5, 7, 8, 9, 10, 11]) score 16.5400
+[11:34:46] block_dropped: round 3, without block 5 (0-based; kept [0, 1, 2, 4, 7, 8, 9, 10, 11]) score 25.0400
+[11:35:16] block_dropped: round 3, without block 7 (0-based; kept [0, 1, 2, 4, 5, 8, 9, 10, 11]) score 20.9800
+[11:35:45] block_dropped: round 3, without block 8 (0-based; kept [0, 1, 2, 4, 5, 7, 9, 10, 11]) score 25.5600
+[11:36:14] block_dropped: round 3, without block 9 (0-based; kept [0, 1, 2, 4, 5, 7, 8, 10, 11]) score 33.9300
+[11:36:43] block_dropped: round 3, without block 10 (0-based; kept [0, 1, 2, 4, 5, 7, 8, 9, 11]) score 41.5800
+[11:37:12] block_dropped: round 3, without block 11 (0-based; kept [0, 1, 2, 4, 5, 7, 8, 9, 10]) score 41.2700
+[11:37:12] block_dropped: removed [3, 6, 10] (0-based), kept [0, 1, 2, 4, 5, 7, 8, 9, 11]; 65,315,328 parameters (75.44% of 86,583,552)
+[11:37:12] fp_heal: building original (original)
+[11:37:12] fp_heal: building slicegpt (slicegpt)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[11:37:22] slicegpt {'basis': 'per_block', 'pca': 'stream'}: matrices 58,060,800 + basis 6,615,000 = 64,675,800 against budget 64,554,464 (gap +0.188%; within the rule (0 <= gap <= 1%))
+[11:37:23] fp_heal: building svd (svd)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[11:37:35] svd {}: matrices 64,555,008 + basis 0 = 64,555,008 against budget 64,554,464 (gap +0.001%; within the rule (0 <= gap <= 1%))
+[11:37:49] fp_heal: building random_structure (random_structure)
+[11:38:48] lr-selection: 10 students x 200 steps x 256 images (micro 128), warm-up 10, amp bf16, data stream, fused AdamW True, device-side divergence flag, 2 target modes, teacher on x and mirror(x)
+[11:38:48] lr-selection:   svdllm_full@lr1e-04: lr 0.0001, 65,291,520 trainable, 14 terms, targets symmetrised/raw, held-out 2.82902
+[11:38:48] lr-selection:   svdllm_full@lr2e-04: lr 0.0002, 65,291,520 trainable, 14 terms, targets symmetrised/raw, held-out 2.82902
+[11:38:48] lr-selection:   iosvd@lr1e-04: lr 0.0001, 73,549,824 trainable, 14 terms, targets symmetrised/raw, held-out 1.79274
+[11:38:48] lr-selection:   iosvd@lr2e-04: lr 0.0002, 73,549,824 trainable, 14 terms, targets symmetrised/raw, held-out 1.79274
+[11:38:48] lr-selection:   flap@lr1e-04: lr 0.0001, 65,276,140 trainable, 14 terms, targets symmetrised/raw, held-out 6.02207
+[11:38:48] lr-selection:   flap@lr2e-04: lr 0.0002, 65,276,140 trainable, 14 terms, targets symmetrised/raw, held-out 6.02207
+[11:38:48] lr-selection:   blockdrop@lr1e-04: lr 0.0001, 64,416,768 trainable, 11 terms, targets symmetrised/raw, held-out 7.58429
+[11:38:48] lr-selection:   blockdrop@lr2e-04: lr 0.0002, 64,416,768 trainable, 11 terms, targets symmetrised/raw, held-out 7.58429
+[11:38:48] lr-selection:   original@lr1e-04: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/raw, held-out 0.06165
+[11:38:48] lr-selection:   original@lr2e-04: lr 0.0002, 85,671,168 trainable, 14 terms, targets symmetrised/raw, held-out 0.06165
+[11:40:05] lr-selection: step 20/200 (3.84 s/step, ETA 11.5 min): svdllm_full@lr1e-04 2.61591; svdllm_full@lr2e-04 3.85672; iosvd@lr1e-04 9.15312; iosvd@lr2e-04 279.80395; flap@lr1e-04 3.05399; flap@lr2e-04 3.64617; blockdrop@lr1e-04 4.06621; blockdrop@lr2e-04 4.95732; original@lr1e-04 0.12299; original@lr2e-04 0.28554
+[11:41:20] lr-selection: step 40/200 (3.80 s/step, ETA 10.1 min): svdllm_full@lr1e-04 2.42587; svdllm_full@lr2e-04 2.64691; iosvd@lr1e-04 7.57303; iosvd@lr2e-04 981.36249; flap@lr1e-04 2.35224; flap@lr2e-04 2.71738; blockdrop@lr1e-04 3.26391; blockdrop@lr2e-04 3.53684; original@lr1e-04 0.07982; original@lr2e-04 0.15104
+[11:42:28] lr-selection: step 60/200 (3.66 s/step, ETA 8.5 min): svdllm_full@lr1e-04 2.39547; svdllm_full@lr2e-04 2.42453; iosvd@lr1e-04 4.78517; iosvd@lr2e-04 773.10118; flap@lr1e-04 2.09305; flap@lr2e-04 2.18647; blockdrop@lr1e-04 2.94573; blockdrop@lr2e-04 3.01640; original@lr1e-04 0.06880; original@lr2e-04 0.12167
+[11:43:44] lr-selection: step 80/200 (3.69 s/step, ETA 7.4 min): svdllm_full@lr1e-04 2.30785; svdllm_full@lr2e-04 2.29923; iosvd@lr1e-04 3.01172; iosvd@lr2e-04 538.22603; flap@lr1e-04 1.87397; flap@lr2e-04 1.98215; blockdrop@lr1e-04 2.70211; blockdrop@lr2e-04 2.67661; original@lr1e-04 0.06340; original@lr2e-04 0.10180
+[11:44:59] lr-selection: step 100/200 (3.71 s/step, ETA 6.2 min): svdllm_full@lr1e-04 2.24387; svdllm_full@lr2e-04 2.23319; iosvd@lr1e-04 2.31857; iosvd@lr2e-04 189.75963; flap@lr1e-04 1.74496; flap@lr2e-04 1.75250; blockdrop@lr1e-04 2.57569; blockdrop@lr2e-04 2.50287; original@lr1e-04 0.06186; original@lr2e-04 0.08832
+[11:46:17] lr-selection: step 120/200 (3.74 s/step, ETA 5.0 min): svdllm_full@lr1e-04 16.30000; svdllm_full@lr2e-04 62.27562; iosvd@lr1e-04 2.07528; iosvd@lr2e-04 104.49602; flap@lr1e-04 1.71995; flap@lr2e-04 1.72750; blockdrop@lr1e-04 2.57007; blockdrop@lr2e-04 2.47777; original@lr1e-04 0.05653; original@lr2e-04 0.07554
+[11:47:33] lr-selection: step 140/200 (3.75 s/step, ETA 3.7 min): svdllm_full@lr1e-04 9.23409; svdllm_full@lr2e-04 32.70702; iosvd@lr1e-04 1.91254; iosvd@lr2e-04 77.27786; flap@lr1e-04 1.63836; flap@lr2e-04 1.62813; blockdrop@lr1e-04 2.45125; blockdrop@lr2e-04 2.35041; original@lr1e-04 0.05235; original@lr2e-04 0.06530
+[11:48:49] lr-selection: step 160/200 (3.76 s/step, ETA 2.5 min): svdllm_full@lr1e-04 7.47297; svdllm_full@lr2e-04 18.06735; iosvd@lr1e-04 1.81209; iosvd@lr2e-04 65.31998; flap@lr1e-04 1.58321; flap@lr2e-04 1.54633; blockdrop@lr1e-04 2.37736; blockdrop@lr2e-04 2.26153; original@lr1e-04 0.05005; original@lr2e-04 0.06084
+[11:50:05] lr-selection: step 180/200 (3.76 s/step, ETA 1.3 min): svdllm_full@lr1e-04 6.63816; svdllm_full@lr2e-04 15.82307; iosvd@lr1e-04 1.81589; iosvd@lr2e-04 65.64094; flap@lr1e-04 1.64230; flap@lr2e-04 1.58668; blockdrop@lr1e-04 2.40079; blockdrop@lr2e-04 2.28016; original@lr1e-04 0.05048; original@lr2e-04 0.06006
+[11:51:11] lr-selection: step 200/200 (3.72 s/step, ETA 0.0 min): svdllm_full@lr1e-04 6.06547; svdllm_full@lr2e-04 15.37405; iosvd@lr1e-04 1.81830; iosvd@lr2e-04 65.13080; flap@lr1e-04 1.62841; flap@lr2e-04 1.57422; blockdrop@lr1e-04 2.43551; blockdrop@lr2e-04 2.29746; original@lr1e-04 0.05056; original@lr2e-04 0.05992
+[11:54:24] lr-selection: done 200 steps in 935.9 s; svdllm_full@lr1e-04: held-out 2.82902 -> 6.48596; svdllm_full@lr2e-04: held-out 2.82902 -> 17.37413; iosvd@lr1e-04: held-out 1.79274 -> 1.87541; iosvd@lr2e-04: held-out 1.79274 -> 68.83661; flap@lr1e-04: held-out 6.02207 -> 1.60141; flap@lr2e-04: held-out 6.02207 -> 1.55673; blockdrop@lr1e-04: held-out 7.58429 -> 2.39164; blockdrop@lr2e-04: held-out 7.58429 -> 2.26783; original@lr1e-04: held-out 0.06165 -> 0.04875; original@lr2e-04: held-out 0.06165 -> 0.05827
+[11:54:24] lr selection svdllm_full: 1e-04 -> 6.48596, 2e-04 -> 17.37413; best 1e-04
+[11:54:24] lr selection iosvd: 1e-04 -> 1.87541, 2e-04 -> 68.83661; best 1e-04
+[11:54:24] lr selection flap: 1e-04 -> 1.60141, 2e-04 -> 1.55673; best 2e-04
+[11:54:24] lr selection blockdrop: 1e-04 -> 2.39164, 2e-04 -> 2.26783; best 2e-04
+[11:54:24] lr selection original: 1e-04 -> 0.04875, 2e-04 -> 0.05827; best 1e-04
+[11:55:05] heal A05 s0: 8 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 4 target modes, teacher on x and mirror(x)
+[11:55:05] heal A05 s0:   svdllm_full: lr 0.0001, 65,291,520 trainable, 14 terms, targets symmetrised/raw, held-out 2.82902
+[11:55:05] heal A05 s0:   iosvd: lr 0.0001, 73,549,824 trainable, 14 terms, targets symmetrised/raw, held-out 1.79274
+[11:55:05] heal A05 s0:   flap: lr 0.0002, 65,276,140 trainable, 14 terms, targets symmetrised/raw, held-out 6.02207
+[11:55:05] heal A05 s0:   blockdrop: lr 0.0002, 64,416,768 trainable, 11 terms, targets symmetrised/raw, held-out 7.58429
+[11:55:05] heal A05 s0:   original: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/raw, held-out 0.06165
+[11:55:05] heal A05 s0:   slicegpt: lr 0.0001, 58,791,480 trainable, 14 terms, targets symmetrised/centred, held-out 3.78680
+[11:55:05] heal A05 s0:   svd: lr 0.0001, 65,291,520 trainable, 14 terms, targets symmetrised/raw, held-out 59.94741
+[11:55:05] heal A05 s0:   random_structure: lr 0.0001, 85,671,168 trainable, 14 terms, targets symmetrised/symmetrised, held-out 25.62376
+[11:57:13] heal A05 s0: step 20/780 (6.26 s/step, ETA 79.3 min): svdllm_full 2.65275; iosvd 1.62474; flap 3.12175; blockdrop 4.29639; original 0.07591; slicegpt 2.96722; svd 14.61623; random_structure 11.84522
+[11:59:19] heal A05 s0: step 40/780 (6.30 s/step, ETA 77.7 min): svdllm_full 2.69139; iosvd 9.42935; flap 2.98886; blockdrop 4.93558; original 0.11975; slicegpt 2.90901; svd 8.37652; random_structure 9.12539
+[12:01:11] heal A05 s0: step 60/780 (6.06 s/step, ETA 72.7 min): svdllm_full 2.52015; iosvd 153.72340; flap 2.44572; blockdrop 6.10792; original 0.11901; slicegpt 2.56018; svd 5.91074; random_structure 8.30407
+[12:03:21] heal A05 s0: step 80/780 (6.17 s/step, ETA 72.0 min): svdllm_full 2.34975; iosvd 384.27626; flap 2.14159; blockdrop 4.51881; original 0.08732; slicegpt 2.38831; svd 4.82954; random_structure 7.85321
+[12:05:26] heal A05 s0: step 100/780 (6.18 s/step, ETA 70.0 min): svdllm_full 2.25802; iosvd 401.40903; flap 1.92313; blockdrop 3.35697; original 0.08495; slicegpt 2.31329; svd 4.29142; random_structure 7.55572
+[12:07:48] heal A05 s0: step 120/780 (6.32 s/step, ETA 69.5 min): svdllm_full 2.28865; iosvd 105.38132; flap 1.98969; blockdrop 2.97330; original 0.08054; slicegpt 2.31721; svd 4.09349; random_structure 7.46556
+[12:10:04] heal A05 s0: step 140/780 (6.39 s/step, ETA 68.1 min): svdllm_full 2.23146; iosvd 56.44857; flap 1.89472; blockdrop 2.69469; original 0.07914; slicegpt 2.25348; svd 3.83002; random_structure 7.20742
+[12:12:20] heal A05 s0: step 160/780 (6.44 s/step, ETA 66.5 min): svdllm_full 2.18366; iosvd 37.44910; flap 1.69397; blockdrop 2.52991; original 0.07692; slicegpt 2.19464; svd 3.67286; random_structure 6.90271
+[12:14:33] heal A05 s0: step 180/780 (6.46 s/step, ETA 64.6 min): svdllm_full 2.27683; iosvd 31.06604; flap 1.90003; blockdrop 2.48495; original 0.08504; slicegpt 2.23001; svd 3.58489; random_structure 6.98265
+[12:18:24] heal A05 s0: step 200/780 (6.97 s/step, ETA 67.4 min): svdllm_full 2.22506; iosvd 26.97225; flap 1.70506; blockdrop 2.42275; original 0.08466; slicegpt 2.19389; svd 3.44696; random_structure 6.71513
+[12:20:48] heal A05 s0: step 220/780 (6.99 s/step, ETA 65.3 min): svdllm_full 2.15153; iosvd 23.68976; flap 1.62062; blockdrop 2.33590; original 0.07500; slicegpt 2.15650; svd 3.27190; random_structure 6.68530
+[12:23:05] heal A05 s0: step 240/780 (6.98 s/step, ETA 62.8 min): svdllm_full 2.12409; iosvd 21.74148; flap 1.50318; blockdrop 2.24275; original 0.07037; slicegpt 2.10858; svd 3.20168; random_structure 6.48659
+[12:25:22] heal A05 s0: step 260/780 (6.97 s/step, ETA 60.4 min): svdllm_full 2.09584; iosvd 20.14715; flap 1.49287; blockdrop 2.20693; original 0.07023; slicegpt 2.09313; svd 3.12480; random_structure 6.34629
+[12:27:35] heal A05 s0: step 280/780 (6.94 s/step, ETA 57.9 min): svdllm_full 2.11613; iosvd 18.97502; flap 1.51520; blockdrop 2.18806; original 0.06832; slicegpt 2.08889; svd 3.08710; random_structure 6.27950
+[12:29:50] heal A05 s0: step 300/780 (6.93 s/step, ETA 55.5 min): svdllm_full 2.10377; iosvd 17.88035; flap 1.43361; blockdrop 2.15928; original 0.06531; slicegpt 2.07775; svd 3.02162; random_structure 6.27123
+[12:32:15] heal A05 s0: step 320/780 (6.95 s/step, ETA 53.3 min): svdllm_full 2.09819; iosvd 17.27055; flap 1.41060; blockdrop 2.12716; original 0.06433; slicegpt 2.07384; svd 2.99424; random_structure 6.01310
+[12:34:17] heal A05 s0: step 340/780 (6.90 s/step, ETA 50.6 min): svdllm_full 2.06722; iosvd 16.63419; flap 1.38208; blockdrop 2.08198; original 0.06141; slicegpt 2.04237; svd 2.92881; random_structure 5.82821
+[12:36:09] heal A05 s0: step 360/780 (6.83 s/step, ETA 47.8 min): svdllm_full 2.03665; iosvd 15.61401; flap 1.32662; blockdrop 2.02154; original 0.06041; slicegpt 2.01322; svd 2.82396; random_structure 5.47949
+[12:38:07] heal A05 s0: step 380/780 (6.77 s/step, ETA 45.2 min): svdllm_full 2.04078; iosvd 15.46062; flap 1.27666; blockdrop 1.98459; original 0.05663; slicegpt 2.01138; svd 2.80467; random_structure 5.41071
+[12:41:19] heal A05 s0: step 400/780 (6.92 s/step, ETA 43.8 min): svdllm_full 37.54899; iosvd 15.10856; flap 1.27393; blockdrop 1.93309; original 0.06104; slicegpt 1.99565; svd 2.80046; random_structure 5.32372
+[12:43:23] heal A05 s0: step 420/780 (6.88 s/step, ETA 41.3 min): svdllm_full 20.49234; iosvd 14.57374; flap 1.22143; blockdrop 1.85536; original 0.06167; slicegpt 1.94086; svd 2.70860; random_structure 5.12736
+[12:45:22] heal A05 s0: step 440/780 (6.84 s/step, ETA 38.8 min): svdllm_full 11.22114; iosvd 14.20610; flap 1.19701; blockdrop 1.85747; original 0.06154; slicegpt 1.95919; svd 2.68873; random_structure 5.09982
+[12:47:19] heal A05 s0: step 460/780 (6.80 s/step, ETA 36.2 min): svdllm_full 9.19203; iosvd 14.23563; flap 1.18798; blockdrop 1.85529; original 0.05914; slicegpt 1.96894; svd 2.67791; random_structure 5.05307
+[12:49:28] heal A05 s0: step 480/780 (6.78 s/step, ETA 33.9 min): svdllm_full 7.58951; iosvd 13.73640; flap 1.14795; blockdrop 1.82001; original 0.05591; slicegpt 1.92691; svd 2.62700; random_structure 4.95358
+[12:51:38] heal A05 s0: step 500/780 (6.77 s/step, ETA 31.6 min): svdllm_full 6.55690; iosvd 14.07928; flap 1.15041; blockdrop 1.81141; original 0.05468; slicegpt 1.95747; svd 2.67639; random_structure 4.97000
+[12:53:59] heal A05 s0: step 520/780 (6.78 s/step, ETA 29.4 min): svdllm_full 4.80579; iosvd 13.82446; flap 1.14240; blockdrop 1.79773; original 0.05243; slicegpt 1.93200; svd 2.61973; random_structure 4.84558
+[12:56:10] heal A05 s0: step 540/780 (6.77 s/step, ETA 27.1 min): svdllm_full 3.93058; iosvd 13.33241; flap 1.13860; blockdrop 1.80962; original 0.05346; slicegpt 1.95666; svd 2.62469; random_structure 4.83484
+[12:58:21] heal A05 s0: step 560/780 (6.77 s/step, ETA 24.8 min): svdllm_full 3.58697; iosvd 13.48956; flap 1.12744; blockdrop 1.77987; original 0.05086; slicegpt 1.92726; svd 2.60606; random_structure 4.81613
+[13:00:29] heal A05 s0: step 580/780 (6.75 s/step, ETA 22.5 min): svdllm_full 3.39603; iosvd 13.52360; flap 1.11804; blockdrop 1.78122; original 0.05309; slicegpt 1.93361; svd 2.61900; random_structure 4.73451
+[13:04:10] heal A05 s0: step 600/780 (6.90 s/step, ETA 20.7 min): svdllm_full 3.15190; iosvd 13.01546; flap 1.09740; blockdrop 1.74225; original 0.04956; slicegpt 1.89814; svd 2.53997; random_structure 4.65857
+[13:06:32] heal A05 s0: step 620/780 (6.90 s/step, ETA 18.4 min): svdllm_full 3.09216; iosvd 13.17640; flap 1.07522; blockdrop 1.71862; original 0.04815; slicegpt 1.90463; svd 2.55389; random_structure 4.64935
+[13:08:14] heal A05 s0: step 640/780 (6.85 s/step, ETA 16.0 min): svdllm_full 2.96741; iosvd 12.98065; flap 1.07433; blockdrop 1.69918; original 0.04655; slicegpt 1.88053; svd 2.52675; random_structure 4.61644
+[13:09:40] heal A05 s0: step 660/780 (6.77 s/step, ETA 13.5 min): svdllm_full 2.97305; iosvd 13.15899; flap 1.07758; blockdrop 1.72925; original 0.04663; slicegpt 1.91228; svd 2.57176; random_structure 4.64683
+[13:11:04] heal A05 s0: step 680/780 (6.69 s/step, ETA 11.2 min): svdllm_full 2.92267; iosvd 13.01124; flap 1.08737; blockdrop 1.72367; original 0.04702; slicegpt 1.92461; svd 2.55101; random_structure 4.63286
+[13:12:13] heal A05 s0: step 700/780 (6.60 s/step, ETA 8.8 min): svdllm_full 2.87093; iosvd 12.85724; flap 1.06665; blockdrop 1.70651; original 0.04629; slicegpt 1.89772; svd 2.52308; random_structure 4.59123
+[13:13:49] heal A05 s0: step 720/780 (6.55 s/step, ETA 6.6 min): svdllm_full 2.84396; iosvd 12.96344; flap 1.05522; blockdrop 1.69746; original 0.04406; slicegpt 1.89489; svd 2.51643; random_structure 4.60548
+[13:15:15] heal A05 s0: step 740/780 (6.49 s/step, ETA 4.3 min): svdllm_full 2.85956; iosvd 13.06240; flap 1.07240; blockdrop 1.71482; original 0.04615; slicegpt 1.91284; svd 2.53389; random_structure 4.59695
+[13:16:41] heal A05 s0: step 760/780 (6.43 s/step, ETA 2.1 min): svdllm_full 2.84376; iosvd 12.84148; flap 1.07514; blockdrop 1.71028; original 0.04501; slicegpt 1.91097; svd 2.53866; random_structure 4.58451
+[13:18:04] heal A05 s0: step 780/780 (6.37 s/step, ETA 0.0 min): svdllm_full 2.85325; iosvd 13.00586; flap 1.06843; blockdrop 1.70951; original 0.04616; slicegpt 1.91101; svd 2.53996; random_structure 4.55549
+[13:23:03] heal A05 s0: done 780 steps in 5267.7 s; svdllm_full: held-out 2.82902 -> 3.10865; iosvd: held-out 1.79274 -> 14.85747; flap: held-out 6.02207 -> 1.09603; blockdrop: held-out 7.58429 -> 1.74929; original: held-out 0.06165 -> 0.04425; slicegpt: held-out 3.78680 -> 1.91829; svd: held-out 59.94741 -> 2.81039; random_structure: held-out 25.62376 -> 4.73728
+[13:23:03] fp_heal: job main_s0 s0 done in 133.3 min; outputs under /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg
+== end rc=0 2026-11-20 13:23:04

@@ -1,0 +1,48 @@
+== start 2026-11-20 17:30:51 job fig_frontier pid 65527 host jl-vm-581628
+== cmd python scripts/fp_fig_frontier.py && touch logs/final/fig_frontier.done
+git: 6299d2c838b52136abfe58453d1d1c8e2b7c500a (uncommitted changes)
+runs: runs/final; model dinov2_vitb14_reg; pass bf16; original's GFLOPs per pass: 47.078313984 (runs/final/a07/dinov2_vitb14_reg/eval/original.json cost.gflops_per_forward)
+
+  point                                    x    k-NN     sd  n  x from
+  DINOv2-S/14 reg                     0.5291  74.594         1  analytic GFLOPs per image / the original's single pass
+      runs/final/a07/dinov2_vits14_reg/eval/original.json passes.bf16_flipavg
+  SVD-LLM 0.40                        0.8480  67.912         1  analytic GFLOPs per image / the original's single pass
+      runs/final/a06/dinov2_vitb14_reg/svdllm_f040/s0/eval/step780.json passes.bf16_flipavg
+  SVD-LLM 0.50                        1.0400  73.692         1  analytic GFLOPs per image / the original's single pass
+      runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s0/eval/step780.json passes.bf16_flipavg
+  SVD-LLM 0.65                        1.3280  76.676         1  analytic GFLOPs per image / the original's single pass
+      runs/final/a06/dinov2_vitb14_reg/svdllm_f065/s0/eval/step780.json passes.bf16_flipavg
+  original                            2.0000  78.998         1  analytic GFLOPs per image / the original's single pass
+      runs/final/a07/dinov2_vitb14_reg/eval/original.json passes.bf16_flipavg
+  Mirror + SVD-LLM 0.40               0.4000  71.602         1  metrics.json params.params_frac
+      runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f040/s0/eval/step780.json passes.bf16.top1
+  Mirror + SVD-LLM 0.50               0.5000  76.258  0.048  2  metrics.json params.params_frac
+      runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f050/s0/eval/step780.json passes.bf16.top1
+      runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f050/s1/eval/step780.json passes.bf16.top1
+  Mirror + SVD-LLM 0.65               0.6500  78.204         1  metrics.json params.params_frac
+      runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f065/s0/eval/step780.json passes.bf16.top1
+  Mirror Surgery                      0.7646  78.352  0.012  3  metrics.json params.model_params_frac
+      runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0/eval/step780.json passes.bf16.top1
+      runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1/eval/step780.json passes.bf16.top1
+      runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2/eval/step780.json passes.bf16.top1
+  original, distilled                 1.0000  78.948         1  metrics.json params.model_params_frac
+      runs/final/main/dinov2_vitb14_reg/original/s0/eval/step780.json passes.bf16.top1
+  Mirror, first 9 blocks              0.7660  78.780         1  metrics.json params.params_frac
+      runs/final/a06/dinov2_vitb14_reg/mirror_partial_k9/s0/eval/step780.json passes.bf16.top1
+  SVD-LLM 0.40                        0.4000  67.474         1  metrics.json params.model_params_frac
+      runs/final/a06/dinov2_vitb14_reg/svdllm_f040/s0/eval/step780.json passes.bf16.top1
+  SVD-LLM 0.50                        0.5000  73.513  0.010  2  metrics.json params.model_params_frac
+      runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s0/eval/step780.json passes.bf16.top1
+      runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s1/eval/step780.json passes.bf16.top1
+  SVD-LLM 0.65                        0.6500  76.568         1  metrics.json params.model_params_frac
+      runs/final/a06/dinov2_vitb14_reg/svdllm_f065/s0/eval/step780.json passes.bf16.top1
+  SVD-LLM 0.765                       0.7646  78.083  0.014  3  metrics.json params.model_params_frac
+      runs/final/main/dinov2_vitb14_reg/svdllm/s0/eval/step780.json passes.bf16.top1
+      runs/final/main/dinov2_vitb14_reg/svdllm/s1/eval/step780.json passes.bf16.top1
+      runs/final/main/dinov2_vitb14_reg/svdllm/s2/eval/step780.json passes.bf16.top1
+note: the 9-block point is drawn 1.8% to the right of its size so it does not hide the full conversion (its size is printed)
+
+Caption: Accuracy against size for dinov2_vitb14_reg: validation k-NN top-1 (all 50,000 images) against the fraction of the original's parameters. SVD-LLM alone (open squares) against Mirror Surgery, extended below its own size by SVD-LLM inside the even and odd blocks (filled circles: exactly mirror-invariant in one forward pass); Mirror Surgery on the first 9 blocks only shows the price of exactness; the original distilled with the same recipe anchors the top. Stars are flip-averaged models (two forward passes), placed at their analytic compute relative to the original's single pass. Error bars: one standard deviation over healing seeds (n = 2, 3).
+
+wrote paper/figures/fig_frontier.pdf, paper/figures/fig_frontier.png and paper/figures/fig_frontier.json
+== end rc=0 2026-11-20 17:30:53

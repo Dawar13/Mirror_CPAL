@@ -1,0 +1,292 @@
+== start 2026-11-20 08:44:42 job eval_server pid 36523 host jl-vm-581628
+== cmd python scripts/fp_eval_server.py --gpu-frac 0.25
+[08:44:49] k-NN bank: 100,000 images (14.02 GiB) on cuda in 6 s
+[08:44:53] validation: 50,000 images (7.01 GiB) on cuda in 3 s
+[08:44:54] evaluation server: queue runs/final/_queue, device cuda, data cache cache (bank: train_index bank_rows, 100000 images; queries: validation, 50000 images), batch 512, GPU cap 0.250
+[08:44:54] request 20261120T084434163782_A01-dinov2_vitb14_reg-mirror_exact_astar-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+/home/hf/torch_hub/facebookresearch_dinov2_main/dinov2/layers/block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[08:46:45] s0 step0 [bf16]: k-NN top-1 53.84, flip consistency 98.038% (50000 queries, 100000 bank images, 109 s)
+[08:48:31] original dinov2_vitb14_reg-5ea0d7431336 [bf16]: k-NN 78.94, flip consistency 96.316% (106 s; cached)
+[08:48:31] request 20261120T084434163782_A01-dinov2_vitb14_reg-mirror_exact_astar-step0.json: done in 217 s
+[08:48:31] request 20261120T084434443572_A01-dinov2_vitb14_reg-svdllm-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[08:54:40] s0 step0 [bf16]: k-NN top-1 75.77, flip consistency 93.860% (50000 queries, 100000 bank images, 368 s)
+[08:54:41] request 20261120T084434443572_A01-dinov2_vitb14_reg-svdllm-step0.json: done in 369 s
+[08:54:41] request 20261120T084715580725_A01-dinov2_vitb14_reg-mirror_exact_astar-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[08:56:16] s0 step100 [bf16_q10000]: k-NN top-1 77.99, flip consistency 99.650% (10000 queries, 100000 bank images, 94 s)
+[08:56:30] original dinov2_vitb14_reg-5ea0d7431336 [bf16_q10000]: k-NN 79.08, flip consistency 96.370% (14 s; cached)
+[08:56:30] request 20261120T084715580725_A01-dinov2_vitb14_reg-mirror_exact_astar-step100.json: done in 109 s
+[08:56:30] request 20261120T084715901243_A01-dinov2_vitb14_reg-svdllm-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[09:00:11] s0 step100 [bf16_q10000]: k-NN top-1 77.64, flip consistency 94.450% (10000 queries, 100000 bank images, 220 s)
+[09:00:12] request 20261120T084715901243_A01-dinov2_vitb14_reg-svdllm-step100.json: done in 222 s
+[09:00:12] request 20261120T085733114773_A01-dinov2_vitb14_reg-mirror_exact_astar-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[09:01:49] s0 step300 [bf16_q10000]: k-NN top-1 78.24, flip consistency 99.660% (10000 queries, 100000 bank images, 96 s)
+[09:01:49] request 20261120T085733114773_A01-dinov2_vitb14_reg-mirror_exact_astar-step300.json: done in 97 s
+[09:01:49] request 20261120T085733385865_A01-dinov2_vitb14_reg-svdllm-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[09:05:22] s0 step300 [bf16_q10000]: k-NN top-1 78.03, flip consistency 95.310% (10000 queries, 100000 bank images, 212 s)
+[09:05:22] request 20261120T085733385865_A01-dinov2_vitb14_reg-svdllm-step300.json: done in 214 s
+[09:19:53] request 20261120T091953184557_A01-dinov2_vitb14_reg-mirror_exact_astar-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s0, step 780, passes ['bf16', 'fp32'], n_query 50000, priority 2
+[09:22:50] s0 step780 [bf16]: k-NN top-1 78.35, flip consistency 99.738% (50000 queries, 100000 bank images, 176 s)
+[09:38:45] s0 step780 [fp32]: k-NN top-1 78.36, flip consistency 100.000% (50000 queries, 100000 bank images, 955 s)
+[09:38:45] request 20261120T091953184557_A01-dinov2_vitb14_reg-mirror_exact_astar-step780.json: done in 1132 s
+[09:38:45] request 20261120T091953467190_A01-dinov2_vitb14_reg-svdllm-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[09:44:06] s0 step780 [bf16]: k-NN top-1 78.08, flip consistency 95.806% (50000 queries, 100000 bank images, 319 s)
+[09:44:06] request 20261120T091953467190_A01-dinov2_vitb14_reg-svdllm-step780.json: done in 320 s
+[09:44:06] request 20261120T093036762177_A01-dinov2_vitb14_reg-mirror_exact_astar-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[09:46:07] s1 step780 [bf16]: k-NN top-1 78.36, flip consistency 99.702% (50000 queries, 100000 bank images, 120 s)
+[09:46:07] request 20261120T093036762177_A01-dinov2_vitb14_reg-mirror_exact_astar-step780.json: done in 121 s
+[09:46:07] request 20261120T093037073820_A01-dinov2_vitb14_reg-svdllm-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[09:50:59] s1 step780 [bf16]: k-NN top-1 78.07, flip consistency 95.686% (50000 queries, 100000 bank images, 291 s)
+[09:50:59] request 20261120T093037073820_A01-dinov2_vitb14_reg-svdllm-step780.json: done in 292 s
+[09:58:00] request 20261120T095755233453_A01-dinov2_vitb14_reg-mirror_exact_astar-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s2, step 780, passes ['bf16'], n_query 50000, priority 2
+[10:00:02] s2 step780 [bf16]: k-NN top-1 78.34, flip consistency 99.724% (50000 queries, 100000 bank images, 121 s)
+[10:00:02] request 20261120T095755233453_A01-dinov2_vitb14_reg-mirror_exact_astar-step780.json: done in 123 s
+[10:00:02] request 20261120T095755599980_A01-dinov2_vitb14_reg-svdllm-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm/s2, step 780, passes ['bf16'], n_query 50000, priority 2
+[10:04:16] s2 step780 [bf16]: k-NN top-1 78.10, flip consistency 95.754% (50000 queries, 100000 bank images, 253 s)
+[10:04:16] request 20261120T095755599980_A01-dinov2_vitb14_reg-svdllm-step780.json: done in 254 s
+[10:12:57] request 20261120T101255224790_A01-dinov2_vitb14_reg-mirror_exact_wspace-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[10:14:57] s0 step0 [bf16]: k-NN top-1 7.19, flip consistency 92.442% (50000 queries, 100000 bank images, 119 s)
+[10:14:57] request 20261120T101255224790_A01-dinov2_vitb14_reg-mirror_exact_wspace-step0.json: done in 120 s
+[10:15:02] request 20261120T101459487911_A01-dinov2_vitb14_reg-mirror_exact_wspace-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[10:16:14] s0 step100 [bf16_q10000]: k-NN top-1 74.28, flip consistency 99.480% (10000 queries, 100000 bank images, 71 s)
+[10:16:15] request 20261120T101459487911_A01-dinov2_vitb14_reg-mirror_exact_wspace-step100.json: done in 72 s
+[10:19:05] request 20261120T101900972384_A01-dinov2_vitb14_reg-mirror_exact_wspace-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[10:20:34] s0 step300 [bf16_q10000]: k-NN top-1 76.26, flip consistency 99.710% (10000 queries, 100000 bank images, 88 s)
+[10:20:34] request 20261120T101900972384_A01-dinov2_vitb14_reg-mirror_exact_wspace-step300.json: done in 89 s
+[10:28:49] request 20261120T102847141599_A01-dinov2_vitb14_reg-mirror_exact_wspace-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s0, step 780, passes ['bf16', 'fp32'], n_query 50000, priority 2
+[10:30:38] s0 step780 [bf16]: k-NN top-1 76.93, flip consistency 99.648% (50000 queries, 100000 bank images, 108 s)
+[10:43:10] s0 step780 [fp32]: k-NN top-1 76.90, flip consistency 100.000% (50000 queries, 100000 bank images, 752 s)
+[10:43:10] request 20261120T102847141599_A01-dinov2_vitb14_reg-mirror_exact_wspace-step780.json: done in 860 s
+[10:43:10] request 20261120T103228367316_A01-dinov2_vitb14_reg-mirror_exact_wspace-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_wspace/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[10:45:17] s1 step780 [bf16]: k-NN top-1 76.89, flip consistency 99.676% (50000 queries, 100000 bank images, 127 s)
+[10:45:17] request 20261120T103228367316_A01-dinov2_vitb14_reg-mirror_exact_wspace-step780.json: done in 128 s
+[11:03:44] request 20261120T110341536207_A06-dinov2_vitb14_reg-svdllm_f065-step780.json: run_dir /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/svdllm_f065/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[11:07:57] s0 step780 [bf16]: k-NN top-1 76.57, flip consistency 94.892% (50000 queries, 100000 bank images, 252 s)
+[11:07:57] request 20261120T110341536207_A06-dinov2_vitb14_reg-svdllm_f065-step780.json: done in 253 s
+[11:07:57] request 20261120T110341718848_A06-dinov2_vitb14_reg-svdllm_f050-step780.json: run_dir /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[11:10:37] s0 step780 [bf16]: k-NN top-1 73.51, flip consistency 92.990% (50000 queries, 100000 bank images, 159 s)
+[11:10:37] request 20261120T110341718848_A06-dinov2_vitb14_reg-svdllm_f050-step780.json: done in 160 s
+[11:10:37] request 20261120T110341861540_A06-dinov2_vitb14_reg-svdllm_f040-step780.json: run_dir /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/svdllm_f040/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[11:13:55] s0 step780 [bf16]: k-NN top-1 67.47, flip consistency 89.960% (50000 queries, 100000 bank images, 197 s)
+[11:13:55] request 20261120T110341861540_A06-dinov2_vitb14_reg-svdllm_f040-step780.json: done in 198 s
+[11:18:06] request 20261120T111805970674_A11-dinov2_vitb14_reg-svdllm_ext-step2340.json: run_dir /home/Mirror_CPAL/runs/final/a11/dinov2_vitb14_reg/svdllm_ext/s0, step 2340, passes ['bf16'], n_query 50000, priority 2
+[11:22:00] s0 step2340 [bf16]: k-NN top-1 78.33, flip consistency 96.090% (50000 queries, 100000 bank images, 233 s)
+[11:22:00] request 20261120T111805970674_A11-dinov2_vitb14_reg-svdllm_ext-step2340.json: done in 234 s
+[11:22:00] request 20261120T112100943359_A02-dinov2_vitb14_reg-mirror_exact_fit1-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_fit1/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[11:23:55] s0 step0 [bf16]: k-NN top-1 53.46, flip consistency 97.822% (50000 queries, 100000 bank images, 114 s)
+[11:23:55] request 20261120T112100943359_A02-dinov2_vitb14_reg-mirror_exact_fit1-step0.json: done in 115 s
+[11:23:55] request 20261120T112101453622_A02-dinov2_vitb14_reg-mirror_exact_fit2-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_fit2/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[11:25:50] s0 step0 [bf16]: k-NN top-1 54.15, flip consistency 98.098% (50000 queries, 100000 bank images, 114 s)
+[11:25:50] request 20261120T112101453622_A02-dinov2_vitb14_reg-mirror_exact_fit2-step0.json: done in 115 s
+[11:25:50] request 20261120T112101919112_A02-dinov2_vitb14_reg-mirror_exact_coco-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_coco/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[11:27:43] s0 step0 [bf16]: k-NN top-1 55.78, flip consistency 98.220% (50000 queries, 100000 bank images, 112 s)
+[11:27:43] request 20261120T112101919112_A02-dinov2_vitb14_reg-mirror_exact_coco-step0.json: done in 113 s
+[11:27:43] request 20261120T112102399888_A02-dinov2_vitb14_reg-pair_random_h1-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/pair_random_h1/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[11:29:38] s0 step0 [bf16]: k-NN top-1 9.97, flip consistency 92.796% (50000 queries, 100000 bank images, 114 s)
+[11:29:38] request 20261120T112102399888_A02-dinov2_vitb14_reg-pair_random_h1-step0.json: done in 115 s
+[11:55:09] request 20261120T115505554451_A05-dinov2_vitb14_reg-svdllm_full-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm_full/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[11:59:19] s0 step0 [bf16]: k-NN top-1 75.83, flip consistency 93.822% (50000 queries, 100000 bank images, 249 s)
+[11:59:20] request 20261120T115505554451_A05-dinov2_vitb14_reg-svdllm_full-step0.json: done in 250 s
+[11:59:20] request 20261120T115505903573_A05-dinov2_vitb14_reg-iosvd-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/iosvd/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[12:02:03] s0 step0 [bf16]: k-NN top-1 78.03, flip consistency 95.500% (50000 queries, 100000 bank images, 163 s)
+[12:02:03] request 20261120T115505903573_A05-dinov2_vitb14_reg-iosvd-step0.json: done in 164 s
+[12:02:03] request 20261120T115923912792_A02-dinov2_vitb14_reg-mirror_exact_fit1-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_fit1/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[12:04:02] s0 step780 [bf16]: k-NN top-1 78.34, flip consistency 99.720% (50000 queries, 100000 bank images, 118 s)
+[12:04:02] request 20261120T115923912792_A02-dinov2_vitb14_reg-mirror_exact_fit1-step780.json: done in 119 s
+[12:04:02] request 20261120T115924390220_A02-dinov2_vitb14_reg-mirror_exact_fit2-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_fit2/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[12:05:45] s0 step780 [bf16]: k-NN top-1 78.37, flip consistency 99.736% (50000 queries, 100000 bank images, 102 s)
+[12:05:45] request 20261120T115924390220_A02-dinov2_vitb14_reg-mirror_exact_fit2-step780.json: done in 103 s
+[12:05:45] request 20261120T115924863753_A02-dinov2_vitb14_reg-mirror_exact_coco-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/mirror_exact_coco/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[12:07:47] s0 step780 [bf16]: k-NN top-1 78.35, flip consistency 99.702% (50000 queries, 100000 bank images, 122 s)
+[12:07:47] request 20261120T115924863753_A02-dinov2_vitb14_reg-mirror_exact_coco-step780.json: done in 123 s
+[12:07:47] request 20261120T115925345783_A02-dinov2_vitb14_reg-pair_random_h1-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/pair_random_h1/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[12:09:50] s0 step780 [bf16]: k-NN top-1 77.01, flip consistency 99.638% (50000 queries, 100000 bank images, 121 s)
+[12:09:50] request 20261120T115925345783_A02-dinov2_vitb14_reg-pair_random_h1-step780.json: done in 122 s
+[12:09:50] request 20261120T115506222239_A05-dinov2_vitb14_reg-flap-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/flap/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[12:13:04] s0 step0 [bf16]: k-NN top-1 65.12, flip consistency 85.898% (50000 queries, 100000 bank images, 193 s)
+[12:13:04] request 20261120T115506222239_A05-dinov2_vitb14_reg-flap-step0.json: done in 194 s
+[12:13:04] request 20261120T115506512585_A05-dinov2_vitb14_reg-blockdrop-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/blockdrop/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[12:14:29] s0 step0 [bf16]: k-NN top-1 40.18, flip consistency 63.786% (50000 queries, 100000 bank images, 85 s)
+[12:14:30] request 20261120T115506512585_A05-dinov2_vitb14_reg-blockdrop-step0.json: done in 86 s
+[12:14:30] request 20261120T115506897419_A05-dinov2_vitb14_reg-original-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/original/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[12:16:19] s0 step0 [bf16]: k-NN top-1 78.94, flip consistency 96.316% (50000 queries, 100000 bank images, 108 s)
+[12:16:19] request 20261120T115506897419_A05-dinov2_vitb14_reg-original-step0.json: done in 110 s
+[12:16:19] request 20261120T115507352160_A05-dinov2_vitb14_reg-slicegpt-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/slicegpt/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[12:23:32] s0 step0 [bf16]: k-NN top-1 68.35, flip consistency 86.640% (50000 queries, 100000 bank images, 432 s)
+[12:23:32] request 20261120T115507352160_A05-dinov2_vitb14_reg-slicegpt-step0.json: done in 433 s
+[12:23:32] request 20261120T115507653347_A05-dinov2_vitb14_reg-svd-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svd/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[12:27:59] s0 step0 [bf16]: k-NN top-1 5.26, flip consistency 25.800% (50000 queries, 100000 bank images, 265 s)
+[12:27:59] request 20261120T115507653347_A05-dinov2_vitb14_reg-svd-step0.json: done in 267 s
+[12:27:59] request 20261120T115508041485_A05-dinov2_vitb14_reg-random_structure-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/random_structure/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[12:29:57] s0 step0 [bf16]: k-NN top-1 4.75, flip consistency 93.640% (50000 queries, 100000 bank images, 117 s)
+[12:29:57] request 20261120T115508041485_A05-dinov2_vitb14_reg-random_structure-step0.json: done in 118 s
+[12:29:57] request 20261120T120532985993_A05-dinov2_vitb14_reg-svdllm_full-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm_full/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[12:32:29] s0 step100 [bf16_q10000]: k-NN top-1 76.88, flip consistency 94.440% (10000 queries, 100000 bank images, 152 s)
+[12:32:29] request 20261120T120532985993_A05-dinov2_vitb14_reg-svdllm_full-step100.json: done in 153 s
+[12:32:29] request 20261120T123131409212_A05-dinov2_vitb14_reg-svdllm_full-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm_full/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[12:36:20] s1 step780 [bf16]: k-NN top-1 76.76, flip consistency 93.680% (50000 queries, 100000 bank images, 229 s)
+[12:36:20] request 20261120T123131409212_A05-dinov2_vitb14_reg-svdllm_full-step780.json: done in 231 s
+[12:36:20] request 20261120T123131741466_A05-dinov2_vitb14_reg-iosvd-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/iosvd/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[12:39:04] s1 step780 [bf16]: k-NN top-1 0.40, flip consistency 1.180% (50000 queries, 100000 bank images, 164 s)
+[12:39:04] request 20261120T123131741466_A05-dinov2_vitb14_reg-iosvd-step780.json: done in 164 s
+[12:39:04] request 20261120T120533291213_A05-dinov2_vitb14_reg-iosvd-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/iosvd/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[12:40:35] s0 step100 [bf16_q10000]: k-NN top-1 0.28, flip consistency 1.810% (10000 queries, 100000 bank images, 90 s)
+[12:40:35] request 20261120T120533291213_A05-dinov2_vitb14_reg-iosvd-step100.json: done in 91 s
+[12:40:35] request 20261120T120533563101_A05-dinov2_vitb14_reg-flap-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/flap/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[12:42:02] s0 step100 [bf16_q10000]: k-NN top-1 77.86, flip consistency 94.400% (10000 queries, 100000 bank images, 85 s)
+[12:42:02] request 20261120T120533563101_A05-dinov2_vitb14_reg-flap-step100.json: done in 86 s
+[12:42:02] request 20261120T120533823714_A05-dinov2_vitb14_reg-blockdrop-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/blockdrop/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[12:42:46] s0 step100 [bf16_q10000]: k-NN top-1 69.96, flip consistency 89.360% (10000 queries, 100000 bank images, 44 s)
+[12:42:47] request 20261120T120533823714_A05-dinov2_vitb14_reg-blockdrop-step100.json: done in 45 s
+[12:42:47] request 20261120T120534160708_A05-dinov2_vitb14_reg-original-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/original/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[12:43:42] s0 step100 [bf16_q10000]: k-NN top-1 79.10, flip consistency 96.400% (10000 queries, 100000 bank images, 55 s)
+[12:43:42] request 20261120T120534160708_A05-dinov2_vitb14_reg-original-step100.json: done in 56 s
+[12:43:42] request 20261120T120534557447_A05-dinov2_vitb14_reg-slicegpt-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/slicegpt/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[12:47:37] s0 step100 [bf16_q10000]: k-NN top-1 77.32, flip consistency 94.540% (10000 queries, 100000 bank images, 234 s)
+[12:47:37] request 20261120T120534557447_A05-dinov2_vitb14_reg-slicegpt-step100.json: done in 235 s
+[12:47:37] request 20261120T120534844472_A05-dinov2_vitb14_reg-svd-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svd/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[12:50:13] s0 step100 [bf16_q10000]: k-NN top-1 74.29, flip consistency 90.230% (10000 queries, 100000 bank images, 155 s)
+[12:50:13] request 20261120T120534844472_A05-dinov2_vitb14_reg-svd-step100.json: done in 156 s
+[12:50:13] request 20261120T120535193571_A05-dinov2_vitb14_reg-random_structure-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/random_structure/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[12:51:24] s0 step100 [bf16_q10000]: k-NN top-1 18.21, flip consistency 91.620% (10000 queries, 100000 bank images, 69 s)
+[12:51:24] request 20261120T120535193571_A05-dinov2_vitb14_reg-random_structure-step100.json: done in 71 s
+[12:51:24] request 20261120T123001935049_A05-dinov2_vitb14_reg-svdllm_full-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm_full/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[12:53:54] s0 step300 [bf16_q10000]: k-NN top-1 77.12, flip consistency 94.720% (10000 queries, 100000 bank images, 149 s)
+[12:53:54] request 20261120T123001935049_A05-dinov2_vitb14_reg-svdllm_full-step300.json: done in 150 s
+[12:53:54] request 20261120T123002232773_A05-dinov2_vitb14_reg-iosvd-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/iosvd/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[12:55:45] s0 step300 [bf16_q10000]: k-NN top-1 0.51, flip consistency 1.660% (10000 queries, 100000 bank images, 110 s)
+[12:55:45] request 20261120T123002232773_A05-dinov2_vitb14_reg-iosvd-step300.json: done in 111 s
+[12:55:45] request 20261120T123002496325_A05-dinov2_vitb14_reg-flap-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/flap/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[12:57:39] s0 step300 [bf16_q10000]: k-NN top-1 78.48, flip consistency 95.300% (10000 queries, 100000 bank images, 113 s)
+[12:57:39] request 20261120T123002496325_A05-dinov2_vitb14_reg-flap-step300.json: done in 114 s
+[12:57:39] request 20261120T123002749901_A05-dinov2_vitb14_reg-blockdrop-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/blockdrop/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[12:58:28] s0 step300 [bf16_q10000]: k-NN top-1 74.01, flip consistency 93.310% (10000 queries, 100000 bank images, 48 s)
+[12:58:28] request 20261120T123002749901_A05-dinov2_vitb14_reg-blockdrop-step300.json: done in 49 s
+[12:58:28] request 20261120T123003092147_A05-dinov2_vitb14_reg-original-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/original/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[12:59:32] s0 step300 [bf16_q10000]: k-NN top-1 78.99, flip consistency 96.430% (10000 queries, 100000 bank images, 62 s)
+[12:59:32] request 20261120T123003092147_A05-dinov2_vitb14_reg-original-step300.json: done in 63 s
+[12:59:32] request 20261120T123003489749_A05-dinov2_vitb14_reg-slicegpt-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/slicegpt/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[13:03:43] s0 step300 [bf16_q10000]: k-NN top-1 77.90, flip consistency 95.120% (10000 queries, 100000 bank images, 250 s)
+[13:03:43] request 20261120T123003489749_A05-dinov2_vitb14_reg-slicegpt-step300.json: done in 251 s
+[13:03:43] request 20261120T123003757726_A05-dinov2_vitb14_reg-svd-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svd/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[13:06:08] s0 step300 [bf16_q10000]: k-NN top-1 76.64, flip consistency 93.290% (10000 queries, 100000 bank images, 144 s)
+[13:06:08] request 20261120T123003757726_A05-dinov2_vitb14_reg-svd-step300.json: done in 145 s
+[13:06:08] request 20261120T123004092740_A05-dinov2_vitb14_reg-random_structure-step300.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/random_structure/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[13:07:19] s0 step300 [bf16_q10000]: k-NN top-1 54.98, flip consistency 98.500% (10000 queries, 100000 bank images, 69 s)
+[13:07:19] request 20261120T123004092740_A05-dinov2_vitb14_reg-random_structure-step300.json: done in 70 s
+[13:18:04] request 20261120T131804432810_A05-dinov2_vitb14_reg-svdllm_full-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm_full/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[13:21:54] s0 step780 [bf16]: k-NN top-1 76.45, flip consistency 93.160% (50000 queries, 100000 bank images, 230 s)
+[13:21:55] request 20261120T131804432810_A05-dinov2_vitb14_reg-svdllm_full-step780.json: done in 230 s
+[13:21:55] request 20261120T131804730261_A05-dinov2_vitb14_reg-iosvd-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/iosvd/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[13:24:42] s0 step780 [bf16]: k-NN top-1 0.54, flip consistency 2.184% (50000 queries, 100000 bank images, 167 s)
+[13:24:42] request 20261120T131804730261_A05-dinov2_vitb14_reg-iosvd-step780.json: done in 168 s
+[13:24:42] request 20261120T131804998132_A05-dinov2_vitb14_reg-flap-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/flap/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[13:28:46] s0 step780 [bf16]: k-NN top-1 78.41, flip consistency 95.968% (50000 queries, 100000 bank images, 242 s)
+[13:28:46] request 20261120T131804998132_A05-dinov2_vitb14_reg-flap-step780.json: done in 243 s
+[13:28:46] request 20261120T131805261135_A05-dinov2_vitb14_reg-blockdrop-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/blockdrop/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[13:30:34] s0 step780 [bf16]: k-NN top-1 75.25, flip consistency 94.252% (50000 queries, 100000 bank images, 107 s)
+[13:30:34] request 20261120T131805261135_A05-dinov2_vitb14_reg-blockdrop-step780.json: done in 108 s
+[13:30:34] request 20261120T131805592177_A05-dinov2_vitb14_reg-original-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/original/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[13:32:57] s0 step780 [bf16]: k-NN top-1 78.95, flip consistency 96.696% (50000 queries, 100000 bank images, 141 s)
+[13:32:57] request 20261120T131805592177_A05-dinov2_vitb14_reg-original-step780.json: done in 143 s
+[13:32:57] request 20261120T131805989989_A05-dinov2_vitb14_reg-slicegpt-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/slicegpt/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[13:42:04] s0 step780 [bf16]: k-NN top-1 77.86, flip consistency 95.322% (50000 queries, 100000 bank images, 546 s)
+[13:42:04] request 20261120T131805989989_A05-dinov2_vitb14_reg-slicegpt-step780.json: done in 547 s
+[13:42:04] request 20261120T131806259371_A05-dinov2_vitb14_reg-svd-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svd/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[13:47:37] s0 step780 [bf16]: k-NN top-1 77.00, flip consistency 94.244% (50000 queries, 100000 bank images, 332 s)
+[13:47:38] request 20261120T131806259371_A05-dinov2_vitb14_reg-svd-step780.json: done in 334 s
+[13:47:38] request 20261120T131806600009_A05-dinov2_vitb14_reg-random_structure-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/random_structure/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[13:49:56] s0 step780 [bf16]: k-NN top-1 70.10, flip consistency 99.386% (50000 queries, 100000 bank images, 137 s)
+[13:49:56] request 20261120T131806600009_A05-dinov2_vitb14_reg-random_structure-step780.json: done in 139 s
+[13:49:56] request 20261120T134625326965_A05-posthoc-dinov2_vitb14_reg-iosvd_lr5e-05-step780.json: run_dir /home/Mirror_CPAL/runs/final/posthoc/dinov2_vitb14_reg/iosvd_lr5e-05/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[13:53:48] s0 step780 [bf16]: k-NN top-1 78.71, flip consistency 96.176% (50000 queries, 100000 bank images, 230 s)
+[13:53:48] request 20261120T134625326965_A05-posthoc-dinov2_vitb14_reg-iosvd_lr5e-05-step780.json: done in 232 s
+[13:55:38] request 20261120T135535800553_A08-deit3_b16-mirror_exact-step0.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/mirror_exact/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[13:57:40] s0 step0 [bf16]: k-NN top-1 72.87, flip consistency 99.314% (50000 queries, 100000 bank images, 118 s)
+[13:59:11] original deit3_b16-3d7b19107827 [bf16]: k-NN 82.97, flip consistency 96.376% (91 s; cached)
+[13:59:11] request 20261120T135535800553_A08-deit3_b16-mirror_exact-step0.json: done in 214 s
+[13:59:11] request 20261120T135536092245_A08-deit3_b16-svdllm-step0.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/svdllm/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[14:03:28] s0 step0 [bf16]: k-NN top-1 80.54, flip consistency 95.310% (50000 queries, 100000 bank images, 256 s)
+[14:03:29] request 20261120T135536092245_A08-deit3_b16-svdllm-step0.json: done in 257 s
+[14:03:29] request 20261120T140144791926_A05-dinov2_vitb14_reg-svdllm_full-step0.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm_full/s0, step 0, passes ['bf16'], n_query 50000, priority 1
+[14:09:08] s0 step0 [bf16]: k-NN top-1 75.83, flip consistency 93.822% (50000 queries, 100000 bank images, 338 s)
+[14:09:08] request 20261120T140144791926_A05-dinov2_vitb14_reg-svdllm_full-step0.json: done in 339 s
+[14:09:08] request 20261120T135915426465_A08-deit3_b16-mirror_exact-step100.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/mirror_exact/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[14:10:19] s0 step100 [bf16_q10000]: k-NN top-1 82.10, flip consistency 99.740% (10000 queries, 100000 bank images, 70 s)
+[14:10:30] original deit3_b16-3d7b19107827 [bf16_q10000]: k-NN 83.35, flip consistency 96.880% (11 s; cached)
+[14:10:30] request 20261120T135915426465_A08-deit3_b16-mirror_exact-step100.json: done in 82 s
+[14:10:30] request 20261120T135915723360_A08-deit3_b16-svdllm-step100.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/svdllm/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[14:13:09] s0 step100 [bf16_q10000]: k-NN top-1 82.05, flip consistency 95.820% (10000 queries, 100000 bank images, 157 s)
+[14:13:09] request 20261120T135915723360_A08-deit3_b16-svdllm-step100.json: done in 159 s
+[14:13:09] request 20261120T140408116866_A05-dinov2_vitb14_reg-svdllm_full-step100.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm_full/s0, step 100, passes ['bf16'], n_query 10000, priority 0
+[14:16:28] s0 step100 [bf16_q10000]: k-NN top-1 76.95, flip consistency 94.470% (10000 queries, 100000 bank images, 198 s)
+[14:16:28] request 20261120T140408116866_A05-dinov2_vitb14_reg-svdllm_full-step100.json: done in 199 s
+[14:16:28] request 20261120T141515906999_A06-dinov2_vitb14_reg-mirror_svdllm_f065-step780.json: run_dir /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f065/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[14:20:21] s0 step780 [bf16]: k-NN top-1 78.20, flip consistency 99.674% (50000 queries, 100000 bank images, 231 s)
+[14:20:21] request 20261120T141515906999_A06-dinov2_vitb14_reg-mirror_svdllm_f065-step780.json: done in 233 s
+[14:20:21] request 20261120T141516175586_A06-dinov2_vitb14_reg-mirror_svdllm_f050-step780.json: run_dir /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f050/s0, step 780, passes ['bf16', 'fp32'], n_query 50000, priority 2
+[14:24:28] s0 step780 [bf16]: k-NN top-1 76.29, flip consistency 99.560% (50000 queries, 100000 bank images, 245 s)
+[14:37:14] s0 step780 [fp32]: k-NN top-1 76.30, flip consistency 100.000% (50000 queries, 100000 bank images, 766 s)
+[14:37:15] request 20261120T141516175586_A06-dinov2_vitb14_reg-mirror_svdllm_f050-step780.json: done in 1013 s
+[14:37:15] request 20261120T141516409934_A06-dinov2_vitb14_reg-mirror_svdllm_f040-step780.json: run_dir /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f040/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[14:42:38] s0 step780 [bf16]: k-NN top-1 71.60, flip consistency 99.274% (50000 queries, 100000 bank images, 321 s)
+[14:42:38] request 20261120T141516409934_A06-dinov2_vitb14_reg-mirror_svdllm_f040-step780.json: done in 324 s
+[14:42:38] request 20261120T141516800505_A06-dinov2_vitb14_reg-mirror_partial_k9-step780.json: run_dir /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/mirror_partial_k9/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[14:45:16] s0 step780 [bf16]: k-NN top-1 78.78, flip consistency 98.036% (50000 queries, 100000 bank images, 157 s)
+[14:45:17] request 20261120T141516800505_A06-dinov2_vitb14_reg-mirror_partial_k9-step780.json: done in 158 s
+[14:45:17] request 20261120T142650824897_A08-deit3_b16-mirror_exact-step780.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/mirror_exact/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[14:47:14] s0 step780 [bf16]: k-NN top-1 82.09, flip consistency 99.792% (50000 queries, 100000 bank images, 116 s)
+[14:47:14] request 20261120T142650824897_A08-deit3_b16-mirror_exact-step780.json: done in 118 s
+[14:47:14] request 20261120T142651115907_A08-deit3_b16-svdllm-step780.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/svdllm/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[14:51:34] s0 step780 [bf16]: k-NN top-1 82.20, flip consistency 96.216% (50000 queries, 100000 bank images, 258 s)
+[14:51:34] request 20261120T142651115907_A08-deit3_b16-svdllm-step780.json: done in 260 s
+[14:51:34] request 20261120T144607719246_A05-posthoc-dinov2_vitb14_reg-iosvd_lr5e-05-step780.json: run_dir /home/Mirror_CPAL/runs/final/posthoc/dinov2_vitb14_reg/iosvd_lr5e-05/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[14:55:12] s1 step780 [bf16]: k-NN top-1 78.71, flip consistency 96.262% (50000 queries, 100000 bank images, 216 s)
+[14:55:12] request 20261120T144607719246_A05-posthoc-dinov2_vitb14_reg-iosvd_lr5e-05-step780.json: done in 218 s
+[14:55:12] request 20261120T145014192283_A05-posthoc-dinov2_vitb14_reg-iosvd_lr5e-05-step780.json: run_dir /home/Mirror_CPAL/runs/final/posthoc/dinov2_vitb14_reg/iosvd_lr5e-05/s2, step 780, passes ['bf16'], n_query 50000, priority 2
+[14:58:56] s2 step780 [bf16]: k-NN top-1 78.73, flip consistency 96.330% (50000 queries, 100000 bank images, 223 s)
+[14:58:56] request 20261120T145014192283_A05-posthoc-dinov2_vitb14_reg-iosvd_lr5e-05-step780.json: done in 224 s
+[14:58:56] request 20261120T145342058349_A05-dinov2_vitb14_reg-svdllm_full-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/svdllm_full/s2, step 780, passes ['bf16'], n_query 50000, priority 2
+[15:04:38] s2 step780 [bf16]: k-NN top-1 76.06, flip consistency 92.794% (50000 queries, 100000 bank images, 340 s)
+[15:04:38] request 20261120T145342058349_A05-dinov2_vitb14_reg-svdllm_full-step780.json: done in 342 s
+[15:04:38] request 20261120T140731245666_A08-deit3_b16-mirror_exact-step300.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/mirror_exact/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[15:05:47] s0 step300 [bf16_q10000]: k-NN top-1 82.57, flip consistency 99.650% (10000 queries, 100000 bank images, 68 s)
+[15:05:47] request 20261120T140731245666_A08-deit3_b16-mirror_exact-step300.json: done in 69 s
+[15:05:47] request 20261120T140731545129_A08-deit3_b16-svdllm-step300.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/svdllm/s0, step 300, passes ['bf16'], n_query 10000, priority 0
+[15:08:28] s0 step300 [bf16_q10000]: k-NN top-1 82.37, flip consistency 96.090% (10000 queries, 100000 bank images, 160 s)
+[15:08:28] request 20261120T140731545129_A08-deit3_b16-svdllm-step300.json: done in 161 s
+[15:18:34] request 20261120T151830949437_A08-deit3_b16-mirror_exact-step780.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/mirror_exact/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[15:20:25] s1 step780 [bf16]: k-NN top-1 82.06, flip consistency 99.760% (50000 queries, 100000 bank images, 110 s)
+[15:20:25] request 20261120T151830949437_A08-deit3_b16-mirror_exact-step780.json: done in 111 s
+[15:20:25] request 20261120T151831350555_A08-deit3_b16-svdllm-step780.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/svdllm/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[15:25:39] s1 step780 [bf16]: k-NN top-1 82.17, flip consistency 96.316% (50000 queries, 100000 bank images, 313 s)
+[15:25:40] request 20261120T151831350555_A08-deit3_b16-svdllm-step780.json: done in 314 s
+[15:25:40] request 20261120T152309137226_A08-deit3_b16-mirror_exact-step780.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/mirror_exact/s2, step 780, passes ['bf16'], n_query 50000, priority 2
+[15:27:33] s2 step780 [bf16]: k-NN top-1 82.06, flip consistency 99.802% (50000 queries, 100000 bank images, 112 s)
+[15:27:33] request 20261120T152309137226_A08-deit3_b16-mirror_exact-step780.json: done in 114 s
+[15:27:33] request 20261120T152309443014_A08-deit3_b16-svdllm-step780.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/svdllm/s2, step 780, passes ['bf16'], n_query 50000, priority 2
+[15:32:41] s2 step780 [bf16]: k-NN top-1 82.16, flip consistency 96.278% (50000 queries, 100000 bank images, 307 s)
+[15:32:42] request 20261120T152309443014_A08-deit3_b16-svdllm-step780.json: done in 308 s
+[15:32:42] request 20261120T152500493124_A05-dinov2_vitb14_reg-slicegpt-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/slicegpt/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[15:44:32] s1 step780 [bf16]: k-NN top-1 77.85, flip consistency 95.462% (50000 queries, 100000 bank images, 709 s)
+[15:44:32] request 20261120T152500493124_A05-dinov2_vitb14_reg-slicegpt-step780.json: done in 711 s
+[15:47:32] request 20261120T154728308917_A05-dinov2_vitb14_reg-iosvd-step780.json: run_dir /home/Mirror_CPAL/runs/final/main/dinov2_vitb14_reg/iosvd/s2, step 780, passes ['bf16'], n_query 50000, priority 2
+[15:50:52] s2 step780 [bf16]: k-NN top-1 0.66, flip consistency 2.514% (50000 queries, 100000 bank images, 198 s)
+[15:50:52] request 20261120T154728308917_A05-dinov2_vitb14_reg-iosvd-step780.json: done in 200 s
+[15:53:42] request 20261120T155342037510_A08-deit3_b16-random_structure-step780.json: run_dir /home/Mirror_CPAL/runs/final/a08/deit3_b16/random_structure/s0, step 780, passes ['bf16'], n_query 50000, priority 2
+[15:55:27] s0 step780 [bf16]: k-NN top-1 79.70, flip consistency 99.760% (50000 queries, 100000 bank images, 103 s)
+[15:55:27] request 20261120T155342037510_A08-deit3_b16-random_structure-step780.json: done in 105 s
+[16:01:57] request 20261120T160157784789_A06-dinov2_vitb14_reg-svdllm_f050-step780.json: run_dir /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/svdllm_f050/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[16:04:26] s1 step780 [bf16]: k-NN top-1 73.52, flip consistency 92.942% (50000 queries, 100000 bank images, 148 s)
+[16:04:26] request 20261120T160157784789_A06-dinov2_vitb14_reg-svdllm_f050-step780.json: done in 149 s
+[16:04:26] request 20261120T160158075717_A06-dinov2_vitb14_reg-mirror_svdllm_f050-step780.json: run_dir /home/Mirror_CPAL/runs/final/a06/dinov2_vitb14_reg/mirror_svdllm_f050/s1, step 780, passes ['bf16'], n_query 50000, priority 2
+[16:06:46] s1 step780 [bf16]: k-NN top-1 76.22, flip consistency 99.600% (50000 queries, 100000 bank images, 138 s)
+[16:06:46] request 20261120T160158075717_A06-dinov2_vitb14_reg-mirror_svdllm_f050-step780.json: done in 140 s
+[17:45:12] stopped (signal 15); requests in running/ go back to the queue at the next start
+[17:45:12] evaluation server finished: {'stopped': True, 'seconds': 32428.7}
+== signal received 2026-11-20 17:45:12
+== end rc=143 2026-11-20 17:45:12

@@ -1,0 +1,79 @@
+== start 2026-11-20 13:33:31 job heal_deit_s0 pid 53484 host jl-vm-581628
+== cmd python scripts/fp_heal.py --spec jobs/heal/deit_s0.yaml --resume
+[13:33:36] data: (105000, 256, 256, 3) uint8; 100000 train rows, 5000 held-out rows; mode stream (0.00 GiB resident)
+[13:33:36] fp_heal: building mirror_exact (mirror_exact)
+[13:33:40] fp_heal: building svdllm (svdllm)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+/home/Mirror_CPAL/mirror/data.py:91: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  img = torch.from_numpy(np.ascontiguousarray(self.images[j])).permute(2, 0, 1)
+[13:34:31] svdllm {'damp': 1e-06}: matrices 70,562,304 + basis 0 = 70,562,304 against budget 70,562,208 (gap +0.000%; within the rule (0 <= gap <= 1%))
+[13:37:29] lr-selection: 4 students x 200 steps x 256 images (micro 128), warm-up 10, amp bf16, data stream, fused AdamW True, device-side divergence flag, 2 target modes, teacher on x and mirror(x)
+[13:37:29] lr-selection:   mirror_exact@lr1e-04: lr 0.0001, 85,759,488 trainable, 15 terms, targets symmetrised/symmetrised, held-out 5.99807
+[13:37:29] lr-selection:   mirror_exact@lr2e-04: lr 0.0002, 85,759,488 trainable, 15 terms, targets symmetrised/symmetrised, held-out 5.99807
+[13:37:29] lr-selection:   svdllm@lr1e-04: lr 0.0001, 71,387,136 trainable, 15 terms, targets symmetrised/raw, held-out 1.79554
+[13:37:29] lr-selection:   svdllm@lr2e-04: lr 0.0002, 71,387,136 trainable, 15 terms, targets symmetrised/raw, held-out 1.79554
+[13:38:54] lr-selection: step 20/200 (4.25 s/step, ETA 12.8 min): mirror_exact@lr1e-04 2.83007; mirror_exact@lr2e-04 2.73934; svdllm@lr1e-04 1.45262; svdllm@lr2e-04 1.62849
+[13:40:20] lr-selection: step 40/200 (4.28 s/step, ETA 11.4 min): mirror_exact@lr1e-04 2.34504; mirror_exact@lr2e-04 2.26508; svdllm@lr1e-04 1.29560; svdllm@lr2e-04 1.48191
+[13:41:40] lr-selection: step 60/200 (4.19 s/step, ETA 9.8 min): mirror_exact@lr1e-04 2.15057; mirror_exact@lr2e-04 2.07242; svdllm@lr1e-04 1.23296; svdllm@lr2e-04 1.31807
+[13:43:03] lr-selection: step 80/200 (4.18 s/step, ETA 8.4 min): mirror_exact@lr1e-04 2.06889; mirror_exact@lr2e-04 1.97752; svdllm@lr1e-04 1.18678; svdllm@lr2e-04 1.22492
+[13:44:29] lr-selection: step 100/200 (4.21 s/step, ETA 7.0 min): mirror_exact@lr1e-04 1.95040; mirror_exact@lr2e-04 1.86342; svdllm@lr1e-04 1.13971; svdllm@lr2e-04 1.18825
+[13:45:59] lr-selection: step 120/200 (4.25 s/step, ETA 5.7 min): mirror_exact@lr1e-04 1.95475; mirror_exact@lr2e-04 1.85597; svdllm@lr1e-04 1.09859; svdllm@lr2e-04 1.15318
+[13:47:20] lr-selection: step 140/200 (4.23 s/step, ETA 4.2 min): mirror_exact@lr1e-04 1.89711; mirror_exact@lr2e-04 1.78383; svdllm@lr1e-04 1.07214; svdllm@lr2e-04 1.07585
+[13:48:38] lr-selection: step 160/200 (4.18 s/step, ETA 2.8 min): mirror_exact@lr1e-04 1.94973; mirror_exact@lr2e-04 1.83107; svdllm@lr1e-04 1.07096; svdllm@lr2e-04 1.05913
+[13:49:55] lr-selection: step 180/200 (4.14 s/step, ETA 1.4 min): mirror_exact@lr1e-04 1.91848; mirror_exact@lr2e-04 1.79699; svdllm@lr1e-04 1.05756; svdllm@lr2e-04 1.03920
+[13:51:18] lr-selection: step 200/200 (4.15 s/step, ETA 0.0 min): mirror_exact@lr1e-04 1.90560; mirror_exact@lr2e-04 1.78135; svdllm@lr1e-04 1.03630; svdllm@lr2e-04 1.01708
+/home/Mirror_CPAL/mirror/heal.py:496: UserWarning: torch.linalg.svd: During SVD computation with the selected cusolver driver, batches 0 failed to converge. A more accurate method will be used to compute the SVD as a fallback. Check doc at https://pytorch.org/docs/stable/generated/torch.linalg.svd.html (Triggered internally at /pytorch/aten/src/ATen/native/cuda/linalg/BatchLinearAlgebraLib.cpp:692.)
+  return int(torch.linalg.matrix_rank(self.U.detach().to(torch.float64) @ self.V.detach().to(torch.float64)))
+[13:55:07] lr-selection: done 200 steps in 1058.0 s; mirror_exact@lr1e-04: held-out 5.99807 -> 2.00831; mirror_exact@lr2e-04: held-out 5.99807 -> 1.88073; svdllm@lr1e-04: held-out 1.79554 -> 1.04498; svdllm@lr2e-04: held-out 1.79554 -> 1.02690
+[13:55:07] lr selection mirror_exact: 1e-04 -> 2.00831, 2e-04 -> 1.88073; best 2e-04
+[13:55:07] lr selection svdllm: 1e-04 -> 1.04498, 2e-04 -> 1.02690; best 2e-04
+[13:55:35] heal A08 s0: 2 students x 780 steps x 256 images (micro 128), warm-up 39, amp bf16, data stream, fused AdamW True, device-side divergence flag, 2 target modes, teacher on x and mirror(x)
+[13:55:35] heal A08 s0:   mirror_exact: lr 0.0002, 85,759,488 trainable, 15 terms, targets symmetrised/symmetrised, held-out 5.99807
+[13:55:35] heal A08 s0:   svdllm: lr 0.0002, 71,387,136 trainable, 15 terms, targets symmetrised/raw, held-out 1.79554
+[13:56:21] heal A08 s0: step 20/780 (2.25 s/step, ETA 28.5 min): mirror_exact 2.92717; svdllm 1.43063
+[13:57:07] heal A08 s0: step 40/780 (2.29 s/step, ETA 28.3 min): mirror_exact 2.34928; svdllm 1.42677
+[13:57:52] heal A08 s0: step 60/780 (2.28 s/step, ETA 27.3 min): mirror_exact 2.24033; svdllm 1.35705
+[13:58:33] heal A08 s0: step 80/780 (2.22 s/step, ETA 25.9 min): mirror_exact 2.03368; svdllm 1.35864
+[13:59:13] heal A08 s0: step 100/780 (2.17 s/step, ETA 24.6 min): mirror_exact 1.88743; svdllm 1.27768
+[13:59:58] heal A08 s0: step 120/780 (2.18 s/step, ETA 24.0 min): mirror_exact 1.88333; svdllm 1.28318
+[14:00:41] heal A08 s0: step 140/780 (2.18 s/step, ETA 23.2 min): mirror_exact 1.80707; svdllm 1.21676
+[14:01:25] heal A08 s0: step 160/780 (2.18 s/step, ETA 22.5 min): mirror_exact 1.84372; svdllm 1.21753
+[14:02:10] heal A08 s0: step 180/780 (2.19 s/step, ETA 21.9 min): mirror_exact 1.79694; svdllm 1.19669
+[14:03:31] heal A08 s0: step 200/780 (2.38 s/step, ETA 23.0 min): mirror_exact 1.75468; svdllm 1.16626
+[14:04:21] heal A08 s0: step 220/780 (2.39 s/step, ETA 22.3 min): mirror_exact 1.74994; svdllm 1.16386
+[14:05:08] heal A08 s0: step 240/780 (2.38 s/step, ETA 21.5 min): mirror_exact 1.67878; svdllm 1.11005
+[14:05:56] heal A08 s0: step 260/780 (2.38 s/step, ETA 20.6 min): mirror_exact 1.71274; svdllm 1.14478
+[14:06:42] heal A08 s0: step 280/780 (2.38 s/step, ETA 19.8 min): mirror_exact 1.68438; svdllm 1.09248
+[14:07:27] heal A08 s0: step 300/780 (2.37 s/step, ETA 19.0 min): mirror_exact 1.69431; svdllm 1.13488
+[14:08:17] heal A08 s0: step 320/780 (2.38 s/step, ETA 18.2 min): mirror_exact 1.68128; svdllm 1.06611
+[14:09:04] heal A08 s0: step 340/780 (2.37 s/step, ETA 17.4 min): mirror_exact 1.63813; svdllm 1.04056
+[14:09:50] heal A08 s0: step 360/780 (2.37 s/step, ETA 16.6 min): mirror_exact 1.59510; svdllm 1.01131
+[14:10:36] heal A08 s0: step 380/780 (2.37 s/step, ETA 15.8 min): mirror_exact 1.56424; svdllm 0.98273
+[14:11:58] heal A08 s0: step 400/780 (2.45 s/step, ETA 15.5 min): mirror_exact 1.57617; svdllm 0.98804
+[14:12:46] heal A08 s0: step 420/780 (2.45 s/step, ETA 14.7 min): mirror_exact 1.57271; svdllm 0.95100
+[14:13:33] heal A08 s0: step 440/780 (2.45 s/step, ETA 13.9 min): mirror_exact 1.54666; svdllm 0.96415
+[14:14:20] heal A08 s0: step 460/780 (2.44 s/step, ETA 13.0 min): mirror_exact 1.54075; svdllm 0.94383
+[14:15:07] heal A08 s0: step 480/780 (2.44 s/step, ETA 12.2 min): mirror_exact 1.54743; svdllm 0.93357
+[14:15:51] heal A08 s0: step 500/780 (2.43 s/step, ETA 11.3 min): mirror_exact 1.53736; svdllm 0.93642
+[14:16:35] heal A08 s0: step 520/780 (2.42 s/step, ETA 10.5 min): mirror_exact 1.51646; svdllm 0.89886
+[14:17:18] heal A08 s0: step 540/780 (2.41 s/step, ETA 9.6 min): mirror_exact 1.54839; svdllm 0.89766
+[14:18:01] heal A08 s0: step 560/780 (2.40 s/step, ETA 8.8 min): mirror_exact 1.51115; svdllm 0.87070
+[14:18:49] heal A08 s0: step 580/780 (2.40 s/step, ETA 8.0 min): mirror_exact 1.53249; svdllm 0.88579
+[14:20:07] heal A08 s0: step 600/780 (2.45 s/step, ETA 7.4 min): mirror_exact 1.55087; svdllm 0.87401
+[14:20:56] heal A08 s0: step 620/780 (2.45 s/step, ETA 6.5 min): mirror_exact 1.47169; svdllm 0.82215
+[14:21:43] heal A08 s0: step 640/780 (2.45 s/step, ETA 5.7 min): mirror_exact 1.49958; svdllm 0.82725
+[14:22:27] heal A08 s0: step 660/780 (2.44 s/step, ETA 4.9 min): mirror_exact 1.50296; svdllm 0.83276
+[14:23:11] heal A08 s0: step 680/780 (2.43 s/step, ETA 4.1 min): mirror_exact 1.46344; svdllm 0.83119
+[14:23:52] heal A08 s0: step 700/780 (2.42 s/step, ETA 3.2 min): mirror_exact 1.46266; svdllm 0.81888
+[14:24:35] heal A08 s0: step 720/780 (2.41 s/step, ETA 2.4 min): mirror_exact 1.45731; svdllm 0.81220
+[14:25:17] heal A08 s0: step 740/780 (2.41 s/step, ETA 1.6 min): mirror_exact 1.48159; svdllm 0.81926
+[14:26:02] heal A08 s0: step 760/780 (2.40 s/step, ETA 0.8 min): mirror_exact 1.47837; svdllm 0.80936
+[14:26:50] heal A08 s0: step 780/780 (2.40 s/step, ETA 0.0 min): mirror_exact 1.47265; svdllm 0.82649
+[14:29:00] heal A08 s0: done 780 steps in 2002.9 s; mirror_exact: held-out 5.99807 -> 1.56784; svdllm: held-out 1.79554 -> 0.83014
+[14:29:01] fp_heal: job deit_s0 s0 done in 55.5 min; outputs under /home/Mirror_CPAL/runs/final/a08/deit3_b16
+== end rc=0 2026-11-20 14:29:02
