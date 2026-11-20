@@ -59,8 +59,18 @@ figures and the previous draft: `results/paper_next/`, `paper/Learned_Twice_Stor
 - Suggested framing: lead with exactness and with stacking on low rank (the frontier figure), not with single-size
   accuracy superiority over every compressor.
 
-## Not in git
+## Large files (Git LFS)
 
-The healed checkpoints (only the three Mirror A* step-780 checkpoints were kept, 329 MB each, above GitHub's 100 MB
-file limit; Dawar has them), the operator structure files (about 128 MB each) and large feature arrays. None is needed
-to write the paper; every number and figure above is reproducible from the committed files.
+Run `git lfs install` once, then `git lfs pull` after cloning, to get the large files stored through Git LFS:
+
+- `artifacts/final_phase/mirror_exact_astar/s{0,1,2}/step780.pt`: the three healed Mirror A* checkpoints
+  (329 MB each; a `.sha256` file beside each). They load with the operator structure
+  `results/MUST-07/structure/dinov2_vitb14_reg_s0.npz` and the run's `spec.json` in
+  `runs/final/main/dinov2_vitb14_reg/mirror_exact_astar/s<seed>/`.
+- `results/MUST-07/structure/*.npz`: the fitted operator structures of all ten models (128 to 439 MB).
+- `results/e1_operators.npz` and `runs/x2/perlayer_reg_s{0,1,2}/results/e1_operators.npz`: the E1 operators and
+  the A02 fit inputs.
+
+Not in the repository: every other healed checkpoint (deleted with the GPU instance), the CORE-07 feature caches,
+the previous phase's healed states (`runs/MUST-09`) and the earlier A100 artefacts. None is needed to write the
+paper; every number and figure above comes from committed files.
