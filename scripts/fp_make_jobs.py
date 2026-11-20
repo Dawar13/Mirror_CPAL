@@ -175,6 +175,13 @@ def heal_jobs():
     spec, gb = heal_spec("main_s2_iosvd", "A05", "main", 2, st, hook_steps=(), lowrank=1)
     add("heal_main_s2_iosvd", "W2", spec, gb, units_of(st), cut=6, deps=["gate_p"], when=[sel_file("iosvd")],
         prio=40, note="third IO-SVD seed (cut order 6)")
+    # Post hoc, not pre-registered (Dawar, 20 November 2026): IO-SVD diverged at the pre-registered 1e-4 in the seed-0
+    # heal (and 2e-4 in its trial), so one clearly labelled run at 5e-5, seed 0, in its own group; it enters no
+    # pre-registered score (the pre-registered IO-SVD runs are reported as they are)
+    st = [{"method": "iosvd", "variant": "lr5e-05", "lr": 5e-5}]
+    spec, gb = heal_spec("posthoc_iosvd_lr5e-05", "A05-posthoc", "posthoc", 0, st, hook_steps=(), lowrank=1)
+    add("heal_posthoc_iosvd", "W2", spec, gb, units_of(st), deps=["gate_p"], prio=58,
+        note="post hoc, not pre-registered: IO-SVD at 5e-5 after its divergence at 1e-4")
 
     # W2: A02 heals from fit sets 1, 2 and COCO (the adopted operator type fitted on each fit set)
     st = ([{"method": "mirror_exact", "variant": r, "lr": LR1,

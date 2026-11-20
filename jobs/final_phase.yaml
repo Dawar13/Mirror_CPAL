@@ -443,6 +443,18 @@ jobs:
   command: python scripts/fp_heal.py --spec jobs/heal/main_s2_iosvd.yaml --resume
   done: runs/final/main/dinov2_vitb14_reg/_jobs/main_s2_iosvd/s2/DONE
   note: third IO-SVD seed (cut order 6)
+- id: heal_posthoc_iosvd
+  wave: W2
+  kind: heal
+  gpu_mem_gb: 27.0
+  heal_units: 1.0
+  cut_rank: never_cut
+  priority: 58
+  deps:
+  - gate_p
+  command: python scripts/fp_heal.py --spec jobs/heal/posthoc_iosvd_lr5e-05.yaml --resume
+  done: runs/final/posthoc/dinov2_vitb14_reg/_jobs/posthoc_iosvd_lr5e-05/s0/DONE
+  note: 'post hoc, not pre-registered: IO-SVD at 5e-5 after its divergence at 1e-4'
 - id: heal_a02
   wave: W2
   kind: heal
