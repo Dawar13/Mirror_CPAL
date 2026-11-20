@@ -41,7 +41,7 @@ mkdir -p "$W0" "$STATE"
 if [ -z "${VIRTUAL_ENV:-}" ] && [ -f .venv/bin/activate ]; then . .venv/bin/activate; fi
 export HF_HOME="${HF_HOME:-/home/hf}"
 PY="$(command -v python || command -v python3)"
-ncpu=$(nproc 2>/dev/null || echo 4)
+ncpu=$(env -u OMP_NUM_THREADS -u OMP_THREAD_LIMIT nproc 2>/dev/null || echo 4)   # GNU nproc honours OMP_NUM_THREADS (the runner sets 4)
 WORKERS="${WORKERS:-$(( ncpu > 3 ? ncpu - 2 : 1 ))}"
 MANIFEST="${MANIFEST:-jobs/final_phase.yaml}"
 DELETE_SHARDS="${DELETE_SHARDS:-1}"

@@ -66,7 +66,7 @@ LOGDIR="$ROOT/logs/h100_data"; MARK_HF="$HF_HOME/mirror_markers"
 mkdir -p "$LOGDIR" "$ROOT/cache" "$ROOT/results/data_check" "$HF_HOME" "$MARK_HF"
 RUN_ID="$(date -u +%Y%m%dT%H%M%S)"
 ncpu=$(awk '$1 != "max" {printf "%d", $1 / $2}' /sys/fs/cgroup/cpu.max 2>/dev/null); ncpu=${ncpu:-0}
-[ "$ncpu" -ge 1 ] 2>/dev/null || ncpu=$(nproc)
+[ "$ncpu" -ge 1 ] 2>/dev/null || ncpu=$(env -u OMP_NUM_THREADS -u OMP_THREAD_LIMIT nproc)   # nproc honours OMP_NUM_THREADS
 if [ -n "$WORKERS" ]; then W_MAIN=$WORKERS; W_SIDE=$WORKERS
 elif [ "$SERIAL" = 1 ]; then W_MAIN=$(( ncpu > 3 ? ncpu - 2 : 1 )); W_SIDE=$W_MAIN
 else W_MAIN=$(( ncpu * 2 / 3 > 2 ? ncpu * 2 / 3 : 2 )); W_SIDE=$(( ncpu / 4 > 2 ? ncpu / 4 : 2 )); fi
